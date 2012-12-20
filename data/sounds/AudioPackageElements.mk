@@ -9,6 +9,7 @@ LOCAL_PATH:= frameworks/base/data/sounds
 
 # Alarms
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/alarms/old/Alarm_Beep_03.ogg:system/media/audio/alarms/Alarm_Beep.ogg \
 	$(LOCAL_PATH)/alarms/ogg/Barium.ogg:system/media/audio/alarms/Barium.ogg \
 	$(LOCAL_PATH)/alarms/ogg/Cesium.ogg:system/media/audio/alarms/Cesium.ogg \
 	$(LOCAL_PATH)/alarms/ogg/Copernicium.ogg:system/media/audio/alarms/Copernicium.ogg \

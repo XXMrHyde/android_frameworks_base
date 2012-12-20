@@ -2723,10 +2723,13 @@ public final class Settings {
         /**
          * Display style of the status bar battery information
          * 0: Display the stock battery information
-         * 1: Display cm battery percentage implementation / dont show stock icon
-         * 2: Display cm circle battery implementation without percentage
-         * 3: Display cm circle battery implementation with percentage
-         * 4: Hide the battery information
+         * 1: Display cm circle battery implementation without percentage
+         * 2: Display cm circle battery implementation with percentage
+         * 3: Display a battery icon from Alphablue Theme
+         * 4: Display a AOKP battery icon
+         * 5: Display a HoneyComb styled battery icon
+         * 6: Display cm battery percentage implementation / dont show stock icon
+         * 7: Hide the battery information
          * default: 0
          * @hide
          */
@@ -2736,11 +2739,12 @@ public final class Settings {
          * Whether to show the clock in status bar
          * of the stock battery icon
          * 0: don't show the clock
-         * 1: show the clock
+         * 1: Right clock
+         * 2: Center clock
          * default: 1
          * @hide
          */
-        public static final String STATUS_BAR_CLOCK = "status_bar_clock";
+        public static final String STATUS_BAR_CLOCK_STYLE = "status_bar_clock_style";
 
         /**
          * Whether to show the signal text or signal bars.
