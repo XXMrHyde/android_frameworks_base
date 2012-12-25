@@ -159,7 +159,6 @@
     
 
     <LinearLayout android:id="@+id/ticker"
-		android:background="@drawable/status_bar_bg_tile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="6dip"
