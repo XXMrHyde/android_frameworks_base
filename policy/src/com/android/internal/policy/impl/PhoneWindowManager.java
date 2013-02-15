@@ -680,6 +680,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
     MyOrientationListener mOrientationListener;
 
+	public PhoneWindowManager() {
+		mDeviceKeyHandler = null;
+	}
+
     public PhoneWindowManager(IDeviceHandler device) {
         mDeviceKeyHandler = (device != null) ? device.getDeviceKeyHandler() : null;
     }
