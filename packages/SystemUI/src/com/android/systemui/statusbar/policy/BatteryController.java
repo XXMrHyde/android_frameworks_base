@@ -18,7 +18,6 @@ package com.android.systemui.statusbar.policy;
 
 import java.util.ArrayList;
 
-import android.bluetooth.BluetoothAdapter.BluetoothStateChangeCallback;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -28,7 +27,6 @@ import android.database.ContentObserver;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Slog;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,7 +40,7 @@ public class BatteryController extends BroadcastReceiver {
     private ArrayList<ImageView> mIconViews = new ArrayList<ImageView>();
     private ArrayList<TextView> mLabelViews = new ArrayList<TextView>();
 
-    private static final int BATTERY_STYLE_NORMAL         = 0;
+    public static final int BATTERY_STYLE_NORMAL         = 0;
     /***
      * BATTERY_STYLE_CIRCLE* cannot be handled in this controller, since we cannot get views from
      * statusbar here. Yet it is listed for completion and not to confuse at future updates
@@ -56,25 +54,14 @@ public class BatteryController extends BroadcastReceiver {
     private static final int BATTERY_STYLE_AOKP           = 4;
     private static final int BATTERY_STYLE_HCOMB          = 5;
     private static final int BATTERY_STYLE_PERCENT        = 6;
-    private static final int BATTERY_STYLE_GONE           = 7;
-
-    private static final int BATTERY_ICON_STYLE_NORMAL       = R.drawable.stat_sys_battery;
-    private static final int BATTERY_ICON_STYLE_CHARGE       = R.drawable.stat_sys_battery_charge;
-    private static final int BATTERY_ICON_STYLE_NORMAL_ABM   = R.drawable.stat_sys_battery_abm;
-    private static final int BATTERY_ICON_STYLE_CHARGE_ABM   = R.drawable.stat_sys_battery_charge_abm;
-    private static final int BATTERY_ICON_STYLE_NORMAL_AOKP  = R.drawable.stat_sys_battery_aokp;
-    private static final int BATTERY_ICON_STYLE_CHARGE_AOKP  = R.drawable.stat_sys_battery_charge_aokp;
-    private static final int BATTERY_ICON_STYLE_NORMAL_HCOMB = R.drawable.stat_sys_battery_hcomb;
-    private static final int BATTERY_ICON_STYLE_CHARGE_HCOMB = R.drawable.stat_sys_battery_charge_hcomb;
-    private static final int BATTERY_ICON_STYLE_NORMAL_MIN   = R.drawable.stat_sys_battery_min;
-    private static final int BATTERY_ICON_STYLE_CHARGE_MIN   = R.drawable.stat_sys_battery_charge_min;
+    public static final int BATTERY_STYLE_GONE            = 7;
 
     private static final int BATTERY_TEXT_STYLE_NORMAL  = R.string.status_bar_settings_battery_meter_format;
     private static final int BATTERY_TEXT_STYLE_MIN     = R.string.status_bar_settings_battery_meter_min_format;
 
     private boolean mBatteryPlugged = false;
+    private int mBatteryStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
     private int mBatteryStyle;
-    private int mBatteryIcon = BATTERY_ICON_STYLE_NORMAL;
 
     Handler mHandler;
 
@@ -103,7 +90,6 @@ public class BatteryController extends BroadcastReceiver {
 
     public BatteryController(Context context) {
         mContext = context;
-
         mHandler = new Handler();
 
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
@@ -112,7 +98,7 @@ public class BatteryController extends BroadcastReceiver {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        context.registerReceiver(this, filter);
+        mContext.registerReceiver(this, filter);
     }
 
     public void addIconView(ImageView v) {
@@ -127,58 +113,135 @@ public class BatteryController extends BroadcastReceiver {
         mChangeCallbacks.add(cb);
     }
 
+    // Allow override battery icons
+    public int getIconStyleUnknown() {
+        return R.drawable.stat_sys_battery;
+    }
+    public int getIconStyleNormal() {
+        return R.drawable.stat_sys_battery;
+    }
+    public int getIconStyleCharge() {
+        return R.drawable.stat_sys_battery_charge;
+    }
+    public int getIconStyleNormalABM() {
+        return R.drawable.stat_sys_battery_abm;
+    }
+    public int getIconStyleChargeABM() {
+        return R.drawable.stat_sys_battery_charge_abm;
+    }
+    public int getIconStyleNormalAOKP() {
+        return R.drawable.stat_sys_battery_aokp;
+    }
+    public int getIconStyleChargeAOKP() {
+        return R.drawable.stat_sys_battery_charge_aokp;
+    }
+    public int getIconStyleNormalHCOMB() {
+        return R.drawable.stat_sys_battery_hcomb;
+    }
+    public int getIconStyleChargeHCOMB() {
+        return R.drawable.stat_sys_battery_charge_hcomb;
+    }
+    public int getIconStyleNormalMin() {
+        return R.drawable.stat_sys_battery_min;
+    }
+    public int getIconStyleChargeMin() {
+        return R.drawable.stat_sys_battery_charge_min;
+    }
+
+    protected int getBatteryStyle() {
+        return mBatteryStyle;
+    }
+
+    protected int getBatteryStatus() {
+        return mBatteryStatus;
+    }
+
+    protected boolean isBatteryPlugged() {
+        return mBatteryPlugged;
+    }
+
+    protected boolean isBatteryPresent() {
+        // the battery widget always is shown.
+        return true;
+    }
+
+    private boolean isBatteryStatusUnknown() {
+        return getBatteryStatus() == BatteryManager.BATTERY_STATUS_UNKNOWN;
+    }
+
+    private boolean isBatteryStatusCharging() {
+        return getBatteryStatus() == BatteryManager.BATTERY_STATUS_CHARGING;
+    }
+
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();
         if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
             final int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             mBatteryPlugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0;
-            int N = mIconViews.size();
-            for (int i=0; i<N; i++) {
-                ImageView v = mIconViews.get(i);
-                v.setImageLevel(level);
-                v.setContentDescription(mContext.getString(R.string.accessibility_battery_level,
-                        level));
-            }
-            N = mLabelViews.size();
-            for (int i=0; i<N; i++) {
-                TextView v = mLabelViews.get(i);
-                v.setText(mContext.getString(BATTERY_TEXT_STYLE_MIN,
-                        level));
-            }
-
-            for (BatteryStateChangeCallback cb : mChangeCallbacks) {
-                cb.onBatteryLevelChanged(level, mBatteryPlugged);
-            }
+            mBatteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
+                                                BatteryManager.BATTERY_STATUS_UNKNOWN);
+            updateViews(level);
             updateBattery();
         }
     }
 
-    private void updateBattery() {
+    protected void updateViews(int level) {
+        int N = mIconViews.size();
+        for (int i=0; i<N; i++) {
+            ImageView v = mIconViews.get(i);
+            v.setImageLevel(level);
+            v.setContentDescription(mContext.getString(R.string.accessibility_battery_level,
+                    level));
+        }
+        N = mLabelViews.size();
+        for (int i=0; i<N; i++) {
+            TextView v = mLabelViews.get(i);
+            v.setText(mContext.getString(BATTERY_TEXT_STYLE_MIN,
+                    level));
+        }
+
+        for (BatteryStateChangeCallback cb : mChangeCallbacks) {
+            cb.onBatteryLevelChanged(level, isBatteryStatusCharging());
+        }
+    }
+
+    protected void updateBattery() {
         int mIcon = View.GONE;
         int mText = View.GONE;
-        int mIconStyle = BATTERY_ICON_STYLE_NORMAL;
+        int mIconStyle = getIconStyleNormal();
 
-        if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
-            mIcon = (View.VISIBLE);
-            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE
-                    : BATTERY_ICON_STYLE_NORMAL;
-        } else if (mBatteryStyle == BATTERY_STYLE_ABM) {
-            mIcon = (View.VISIBLE);
-            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_ABM
-                    : BATTERY_ICON_STYLE_NORMAL_ABM;
-        } else if (mBatteryStyle == BATTERY_STYLE_AOKP) {
-            mIcon = (View.VISIBLE);
-            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_AOKP
-                    : BATTERY_ICON_STYLE_NORMAL_AOKP;
-        } else if (mBatteryStyle == BATTERY_STYLE_HCOMB) {
-            mIcon = (View.VISIBLE);
-            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_HCOMB
-                    : BATTERY_ICON_STYLE_NORMAL_HCOMB;
-        } else if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
-            mIcon = (View.VISIBLE);
-            mText = (View.VISIBLE);
-            mIconStyle = mBatteryPlugged ? BATTERY_ICON_STYLE_CHARGE_MIN
-                    : BATTERY_ICON_STYLE_NORMAL_MIN;
+        if (isBatteryPresent()) {
+            if ( isBatteryStatusUnknown() &&
+                (mBatteryStyle == BATTERY_STYLE_NORMAL ||
+				 mBatteryStyle == BATTERY_STYLE_ABM ||
+				 mBatteryStyle == BATTERY_STYLE_AOKP ||
+				 mBatteryStyle == BATTERY_STYLE_HCOMB ||
+				 mBatteryStyle == BATTERY_STYLE_PERCENT)) {
+                // Unknown status doesn't relies on any style
+                mIcon = (View.VISIBLE);
+                mIconStyle = getIconStyleUnknown();
+            } else if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
+                mIcon = (View.VISIBLE);
+                mIconStyle = isBatteryStatusCharging() ?
+                                getIconStyleCharge() : getIconStyleNormal();
+            } else if (mBatteryStyle == BATTERY_STYLE_ABM) {
+                mIcon = (View.VISIBLE);
+                mIconStyle = isBatteryStatusCharging() ?
+                                getIconStyleChargeABM() : getIconStyleNormalABM();
+            } else if (mBatteryStyle == BATTERY_STYLE_AOKP) {
+                mIcon = (View.VISIBLE);
+                mIconStyle = isBatteryStatusCharging() ?
+                                getIconStyleChargeAOKP() : getIconStyleNormalAOKP();
+            } else if (mBatteryStyle == BATTERY_STYLE_HCOMB) {
+                mIcon = (View.VISIBLE);
+                mIconStyle = isBatteryStatusCharging() ?
+                                getIconStyleChargeHCOMB() : getIconStyleNormalHCOMB();
+            } else if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
+                mIcon = (View.VISIBLE);
+                mText = (View.VISIBLE);
+                mIconStyle = isBatteryStatusCharging() ?
+                                getIconStyleChargeMin() : getIconStyleNormalMin();
+            }
         }
 
         int N = mIconViews.size();
@@ -196,9 +259,8 @@ public class BatteryController extends BroadcastReceiver {
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
-
         mBatteryStyle = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY, 0));
+                Settings.System.STATUS_BAR_BATTERY, BATTERY_STYLE_NORMAL));
         updateBattery();
     }
 }
