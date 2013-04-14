@@ -24,11 +24,8 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
     private LevelListDrawable batteryLevels;
     private LevelListDrawable chargingBatteryLevels;
 
-    public BatteryTile(Context context, LayoutInflater inflater,
-            QuickSettingsContainerView container, QuickSettingsController qsc) {
-        super(context, inflater, container, qsc);
-
-        mTileLayout = R.layout.quick_settings_tile_battery;
+    public BatteryTile(Context context, QuickSettingsController qsc) {
+        super(context, qsc, R.layout.quick_settings_tile_battery);
 
         mOnClick = new View.OnClickListener() {
             @Override
@@ -41,7 +38,7 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
     @Override
     void onPostCreate() {
         updateTile();
-        BatteryController controller = new BatteryController(mContext);
+        BatteryController controller = new BatteryController(mContext, false);
         controller.addStateChangedCallback(this);
         super.onPostCreate();
     }

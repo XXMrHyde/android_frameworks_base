@@ -1570,9 +1570,10 @@ public final class InputMethodManager {
         boolean handled = false;
         synchronized (mH) {
             if (DEBUG) Log.d(TAG, "dispatchKeyEvent");
-
+            boolean symShowIME = context.getResources().getBoolean(
+                    com.android.internal.R.bool.config_symKeyShowsImePicker);
             if (mCurMethod != null) {
-                if (key.getAction() == KeyEvent.ACTION_DOWN
+                if (symShowIME && key.getAction() == KeyEvent.ACTION_DOWN
                         && key.getKeyCode() == KeyEvent.KEYCODE_SYM) {
                     showInputMethodPickerLocked();
                     handled = true;

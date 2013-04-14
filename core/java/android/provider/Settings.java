@@ -2513,6 +2513,35 @@ public final class Settings {
         public static final String POINTER_SPEED = "pointer_speed";
 
         /**
+         * Whether to enable pie controls?
+         * The value is integer:
+         * 2 = always on
+         * 1 = expanded desktop
+         * 0 = off
+         * Default: 0
+         * @hide
+         */
+        public static final String PIE_CONTROLS = "pie_controls";
+
+        /**
+         * Locations of the pie in the screen.
+         * (1<<0) = LEFT
+         * (1<<1) = BOTTOM
+         * (1<<2) = RIGHT
+         * (1<<3) = TOP
+         * Default: BOTTOM
+         * @hide
+         */
+        public static final String PIE_POSITIONS = "pie_positions";
+
+        /**
+         * Relative pie size (fraction)
+         * Default: 1.0f
+         * @hide
+         */
+        public static final String PIE_SIZE = "pie_size";
+
+        /**
          * Quick Settings Panel Tiles to Use
          *
          * @hide
@@ -2546,6 +2575,13 @@ public final class Settings {
          * @hide
          */
         public static final String QS_DYNAMIC_USBTETHER = "qs_dyanmic_usbtether";
+
+        /**
+         * Quick Settings Panel Dynamic Tiles
+         *
+         * @hide
+         */
+        public static final String QS_DYNAMIC_DOCK_BATTERY = "qs_dyanmic_dock_battery";
 
         /**
          * Quick Settings Panel Dynamic Tiles
@@ -2904,6 +2940,55 @@ public final class Settings {
         public static final String POWER_MENU_PROFILES_ENABLED = "power_menu_profiles_enabled";
 
         /**
+         * Enable Stylus Gestures
+         *
+         * @hide
+         */
+        public static final String ENABLE_STYLUS_GESTURES = "enable_stylus_gestures";
+
+        /**
+         * Left Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_LEFT_SWIPE = "gestures_left_swipe";
+
+        /**
+         * Right Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_RIGHT_SWIPE = "gestures_right_swipe";
+
+        /**
+         * Up Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_UP_SWIPE = "gestures_up_swipe";
+
+        /**
+         * down Swipe Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_DOWN_SWIPE = "gestures_down_swipe";
+
+        /**
+         * Long press Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_LONG_PRESS = "gestures_long_press";
+
+        /**
+         * double tap Action
+         *
+         * @hide
+         */
+        public static final String GESTURES_DOUBLE_TAP = "gestures_double_tap";
+
+        /**
          * Whether power menu airplane toggle is enabled
          * @hide
          */
@@ -2975,6 +3060,15 @@ public final class Settings {
           */
          public static final String KEY_ASSIST_ACTION = "key_assist_action";
 
+         /**
+          * Swap volume buttons when the screen is rotated
+          * 0 - Disabled
+          * 1 - Enabled (screen is rotated by 90 or 180 degrees: phone, hybrid)
+          * 2 - Enabled (screen is rotated by 180 or 270 degrees: tablet)
+          * @hide
+          */
+         public static final String SWAP_VOLUME_KEYS_ON_ROTATION = "swap_volume_keys_on_rotation";
+
         /**
          * Weather to minimize lockscreen challenge on screen turned on
          * @hide
@@ -3026,6 +3120,17 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_CONVERT_SOUND_TO_VIBRATION = "convert_sound_to_vibration";
+
+        /**
+         * Custom navring actions
+         *
+         * @hide
+         */
+        public static final String[] NAVIGATION_RING_TARGETS = new String[] {
+            "navigation_ring_targets_0",
+            "navigation_ring_targets_1",
+            "navigation_ring_targets_2",
+        };
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
