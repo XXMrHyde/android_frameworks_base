@@ -82,7 +82,7 @@ public class CarrierText extends TextView {
                 setText(text != null ? text.toString().toUpperCase() : null);
             } else {
                 setText(text);
-+           }
+           }
         } else {
             setText(customLabel);
         }
