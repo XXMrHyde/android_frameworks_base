@@ -3113,6 +3113,13 @@ public final class Settings {
           */
          public static final String VOLUME_KEY_CURSOR_CONTROL = "volume_key_cursor_control";
 
+	    /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
         /**
          * toggle to "fix" the following: (found in NotificationManagerService)
          *  new in 4.2: if there was supposed to be a sound and we're in vibrate mode,
