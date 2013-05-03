@@ -38,6 +38,10 @@ public class Prefs {
         return context.getSharedPreferences(Prefs.SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit();
     }
 
+    public static void setLastBatteryLevel(Context context, int level) {
+        edit(context).putInt(LAST_BATTERY_LEVEL, level).commit();
+    }
+
     public static int getLastBatteryLevel(Context context) {
         return read(context).getInt(LAST_BATTERY_LEVEL, 50);
     }
