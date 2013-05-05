@@ -17,21 +17,21 @@
 <com.android.internal.policy.impl.keyguard.KeyguardMultiUserSelectorView
     xmlns:androidprv="http://schemas.android.com/apk/res/android"
     xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@id/keyguard_user_selector"
+    android:id="@id/keyguard_user_selector"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:layout_gravity="bottom"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:orientation="horizontal"
-	android:visibility="gone"
-	android:contentDescription="@string/keyguard_accessibility_user_selector"
-	android:layout_childType="userSwitcher">
+    android:visibility="gone"
+    android:contentDescription="@string/keyguard_accessibility_user_selector"
+    android:layout_childType="userSwitcher">
 
     <com.android.internal.policy.impl.keyguard.KeyguardLinearLayout
-		android:layout_gravity="bottom|center"
-		android:orientation="horizontal"
-		android:id="@id/keyguard_users_grid"
-		android:layout_width="wrap_content"
-		android:layout_height="@dimen/keyguard_avatar_size"
-		android:layout_marginBottom="400.0dip" />
+        android:id="@id/keyguard_users_grid"
+        android:layout_gravity="bottom|center"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/keyguard_avatar_size"
+        android:orientation="horizontal"
+        android:layout_marginBottom="400.0dip" />
 
 </com.android.internal.policy.impl.keyguard.KeyguardMultiUserSelectorView>
