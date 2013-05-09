@@ -56,9 +56,6 @@ public class BatteryBar extends RelativeLayout implements Animatable {
     LinearLayout mChargerLayout;
     View mCharger;
 
-    public static final int STYLE_REGULAR = 0;
-    public static final int STYLE_SYMMETRIC = 1;
-
     boolean vertical = false;
 
     class SettingsObserver extends ContentObserver {

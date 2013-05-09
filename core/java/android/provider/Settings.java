@@ -2784,10 +2784,6 @@ public final class Settings {
          */
         public static final String STATUSBAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
 
-
-
-
-
         /**
          * Whether to show the clock in status bar
          * of the stock battery icon
