@@ -18,9 +18,20 @@ package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
 import android.app.StatusBarManager;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.database.ContentObserver;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.MotionEvent;
@@ -44,6 +55,32 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
 
+    class SettingsObserver extends ContentObserver {
+
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
+
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateSettings();
+        }
+    };
+
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -56,6 +93,9 @@ public class PhoneStatusBarView extends PanelBar {
             mSettingsPanelDragzoneFrac = 0f;
         }
         mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
+        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+        settingsObserver.observe();
+        updateSettings();
     }
 
     public void setBar(PhoneStatusBar bar) {
@@ -71,6 +111,9 @@ public class PhoneStatusBarView extends PanelBar {
         for (PanelView pv : mPanels) {
             pv.setRubberbandingEnabled(!mFullWidthNotifications);
         }
+        IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        mContext.registerReceiver(mBroadcastReceiver, f);
+        updateSettings();
     }
 
     @Override
@@ -88,6 +131,7 @@ public class PhoneStatusBarView extends PanelBar {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mBar.onBarViewDetached();
+        mContext.unregisterReceiver(mBroadcastReceiver);
     }
  
     @Override
@@ -240,7 +284,14 @@ public class PhoneStatusBarView extends PanelBar {
         if (panel.getAlpha() != alpha) {
             panel.setAlpha(alpha);
         }
-
+        updateSettings();
         mBar.updateCarrierLabelVisibility(false);
+    }
+    protected void updateSettings() {
+        ContentResolver resolver = getContext().getContentResolver();
+
+        int color = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
+
+        setBackgroundColor(color);
     }
 }
