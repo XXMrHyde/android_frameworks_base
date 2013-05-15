@@ -67,7 +67,7 @@ public class BatteryBar extends RelativeLayout implements Animatable {
         void observer() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR), false, this);
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_POSITION), false, this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_COLOR), false,
                     this);

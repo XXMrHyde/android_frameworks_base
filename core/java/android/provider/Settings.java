@@ -2734,6 +2734,16 @@ public final class Settings {
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
         /**
+         * Whether to show the clock in status bar
+         * 0: don't show the clock
+         * 1: Right clock
+         * 2: Center clock
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
+
+        /**
          * Display style of AM/PM next to clock in status bar
          * 0: Normal display (Eclair stock)
          * 1: Small display (Froyo stock)
@@ -2744,7 +2754,7 @@ public final class Settings {
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
         /**
-         * Display style of the status bar battery information
+         * Display style of the status bar battery status
          * 0: Display the stock battery information
          * 1: Display cm circle battery implementation without percentage
          * 2: Display cm circle battery implementation with percentage
@@ -2753,52 +2763,21 @@ public final class Settings {
          * 5: Display a HoneyComb styled battery icon
          * 6: Display cm battery percentage implementation / dont show stock icon
          * 7: Hide the battery information
+         * default: 2
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
+
+        /**
+         * Whether to show the additional battery bar
+         * 0: Don't show the additional battery bar
+         * 1: On statusbar
+         * 2: Top of navigation bar
+         * 3: Buttom of navigation bar
          * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY = "status_bar_battery";
-
-        /**
-         * Whether to show the battery bar
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_BAR = "statusbar_battery_bar";
-
-        /**
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_BAR_STYLE = "statusbar_battery_bar_style";
-
-        /**
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
-
-        /**
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
-
-        /**
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
-
-        /**
-         * @hide
-         */
-        public static final String STATUS_BAR_COLOR = "status_bar_color";
-
-        /**
-         * Whether to show the clock in status bar
-         * of the stock battery icon
-         * 0: don't show the clock
-         * 1: Right clock
-         * 2: Center clock
-         * default: 1
-         * @hide
-         */
-        public static final String STATUS_BAR_CLOCK_STYLE = "status_bar_clock_style";
+        public static final String STATUS_BAR_BATTERY_BAR_POSITION = "status_bar_battery_bar_position";
 
         /**
          * Whether to show the signal text or signal bars.
@@ -2816,6 +2795,41 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
+         * Whether to show the additional battery bar center-mirrored
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_STYLE = "statusbar_battery_bar_style";
+
+        /**
+         * Whether to show the charging animation of the additional battery bar
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
+
+        /**
+         * Color of the additional battery bar
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
+
+        /**
+         * Thickness of the additional battery bar
+         * 0: 1dp
+         * 1: 2dp
+         * 2: 3dp
+         * 2: 4dp
+         * default: 0
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
+
+        /**
+         * Color of the status bar background
+         * @hide
+         */
+        public static final String STATUS_BAR_COLOR = "status_bar_color";
 
         /**
          * Whether to show the IME switcher in the status bar

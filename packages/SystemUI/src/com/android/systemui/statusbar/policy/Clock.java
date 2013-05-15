@@ -82,7 +82,7 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AM_PM), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_STYLE), false, this);
+                    Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
         }
 
         void unobserve() {
@@ -272,7 +272,7 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
         }
 
         mClockStyle = (Settings.System.getInt(resolver,
-			Settings.System.STATUS_BAR_CLOCK_STYLE, 1));
+			Settings.System.STATUS_BAR_CLOCK_POSITION, 1));
         updateClockVisibility(true);
     }
 

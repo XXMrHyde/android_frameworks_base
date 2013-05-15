@@ -943,7 +943,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         Clock clock = (Clock) mBarContents.findViewById(R.id.clock);
         CenterClock cclock = (CenterClock) mBarContents.findViewById(R.id.center_clock);
         View network_text = mBarContents.findViewById(R.id.network_text);
-        mClockStyle = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_STYLE, 1);
+        mClockStyle = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 1);
         if (mClockStyle != 0 && clock != null && cclock != null) {
             clock.updateClockVisibility(show);
             cclock.updateClockVisibility(show);

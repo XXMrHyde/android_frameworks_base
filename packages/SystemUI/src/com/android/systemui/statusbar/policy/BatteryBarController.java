@@ -60,7 +60,7 @@ public class BatteryBarController extends LinearLayout {
         void observer() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR), false, this);
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_POSITION), false, this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_STYLE), false,
                     this);
@@ -191,7 +191,7 @@ public class BatteryBarController extends LinearLayout {
         mStyle = Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.STATUSBAR_BATTERY_BAR_STYLE, 0) == 1;
         mLocation = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.STATUSBAR_BATTERY_BAR, 0);
+                Settings.System.STATUS_BAR_BATTERY_BAR_POSITION, 0);
 
         if (isLocationValid(mLocation)) {
             removeBars();

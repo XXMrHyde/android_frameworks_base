@@ -34,7 +34,7 @@ public class CenterClock extends Clock {
 	void observe() {
 	    ContentResolver resolver = mContext.getContentResolver();
 	    resolver.registerContentObserver(Settings.System.getUriFor(
-	            Settings.System.STATUS_BAR_CLOCK_STYLE), false, this);
+	            Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
 	}
     }
 	
@@ -52,7 +52,7 @@ public class CenterClock extends Clock {
 	
     public void updateClockVisibility(boolean show) {
 	ContentResolver resolver = mContext.getContentResolver();
-	mClockStyle = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_STYLE, 1));
+	mClockStyle = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 1));
 	if (mClockStyle == CLOCK_STYLE_CENTER)
 	    setVisibility(show ? View.VISIBLE : View.GONE);
 	else
