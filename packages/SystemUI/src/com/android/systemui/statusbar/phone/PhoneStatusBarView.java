@@ -37,6 +37,7 @@ import android.util.Slog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.PieController.Position;
 
@@ -287,6 +288,7 @@ public class PhoneStatusBarView extends PanelBar {
         updateSettings();
         mBar.updateCarrierLabelVisibility(false);
     }
+
     protected void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
 
