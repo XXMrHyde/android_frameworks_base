@@ -16,19 +16,25 @@
 
 package com.android.systemui.statusbar.phone;
 
+import java.util.List;
+
 import android.app.ActivityManager;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask; 
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -45,6 +51,7 @@ public class PhoneStatusBarView extends PanelBar {
     private static final String TAG = "PhoneStatusBarView";
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
 
+    ActivityManager mActivityManager; 
     PhoneStatusBar mBar;
     int mScrimColor;
     float mSettingsPanelDragzoneFrac;
@@ -56,29 +63,42 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
 
-    class SettingsObserver extends ContentObserver {
+    int mStatusBarColor;
+    float mAlpha;
 
-        public SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(
-                   Settings.System.getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
-
-        }
-
+    private Runnable mUpdateInHomeAlpha = new Runnable() {
         @Override
-        public void onChange(boolean selfChange) {
-            updateSettings();
+        public void run() {
+            new AsyncTask<Void, Void, Boolean>() {
+                @Override
+                protected Boolean doInBackground(Void... params) {
+                    final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager.getRecentTasksForUser(
+                            1, ActivityManager.RECENT_WITH_EXCLUDED, UserHandle.CURRENT.getIdentifier());
+                    if (recentTasks.size() > 0) {
+                        ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(0);
+                        Intent intent = new Intent(recentInfo.baseIntent);
+                        if (recentInfo.origActivity != null) {
+                            intent.setComponent(recentInfo.origActivity);
+                        }
+                        if (isCurrentHomeActivity(intent.getComponent(), null)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                @Override
+                protected void onPostExecute(Boolean inHome) {
+                    setBackgroundAlpha(inHome ? mAlpha : 1);
+                }
+            }.execute();
         }
-    }
+    };
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateSettings();
+            setBackgroundAlpha(mAlpha);
         }
     };
 
@@ -97,6 +117,12 @@ public class PhoneStatusBarView extends PanelBar {
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
         updateSettings();
+        Drawable bg = mContext.getResources().getDrawable(R.drawable.status_bar_background);
+        if(bg instanceof ColorDrawable) {
+            ColorDrawable statusbarbg = new ColorDrawable(
+                    mStatusBarColor != -1 ? mStatusBarColor : ((ColorDrawable) bg).getColor());
+            setBackground(statusbarbg);
+        }
     }
 
     public void setBar(PhoneStatusBar bar) {
@@ -114,7 +140,7 @@ public class PhoneStatusBarView extends PanelBar {
         }
         IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         mContext.registerReceiver(mBroadcastReceiver, f);
-        updateSettings();
+        setBackgroundAlpha(mAlpha);
     }
 
     @Override
@@ -285,15 +311,60 @@ public class PhoneStatusBarView extends PanelBar {
         if (panel.getAlpha() != alpha) {
             panel.setAlpha(alpha);
         }
-        updateSettings();
+        setBackgroundAlpha(mAlpha);
         mBar.updateCarrierLabelVisibility(false);
+    }
+
+    protected void setBackgroundAlpha(float alpha) {
+        Drawable bg = getBackground();
+        if (bg == null)
+            return;
+        
+        if(bg instanceof ColorDrawable) {
+            ((ColorDrawable) bg).setColor(mStatusBarColor);
+        }
+        int a = (int) (mAlpha * 255);
+        bg.setAlpha(a);
+    }
+
+    private boolean isCurrentHomeActivity(ComponentName component, ActivityInfo homeInfo) {
+        if (homeInfo == null) {
+            final PackageManager pm = mContext.getPackageManager();
+            homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+                .resolveActivityInfo(pm, 0);
+        }
+        return homeInfo != null
+            && homeInfo.packageName.equals(component.getPackageName())
+            && homeInfo.name.equals(component.getClassName());
+    }
+
+    class SettingsObserver extends ContentObserver {
+
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
+
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.STATUS_BAR_ALPHA), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
     }
 
     protected void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
 
-        int color = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
+        mStatusBarColor = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
+        mAlpha = 1.0f - Settings.System.getFloat(resolver, Settings.System.STATUS_BAR_ALPHA, 1.0f);
 
-        setBackgroundColor(color);
+        setBackgroundAlpha(mAlpha);
     }
 }

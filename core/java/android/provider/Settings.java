@@ -2831,6 +2831,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_COLOR = "status_bar_color";
 
+         /**
+         * Transparency of the status bar background
+         * @hide
+         */
+        public static final String STATUS_BAR_ALPHA = "status_bar_alpha"; 
+
         /**
          * Whether to show the IME switcher in the status bar
          * @hide
