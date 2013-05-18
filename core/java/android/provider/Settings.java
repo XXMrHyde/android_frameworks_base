@@ -2835,7 +2835,13 @@ public final class Settings {
          * Transparency of the status bar background
          * @hide
          */
-        public static final String STATUS_BAR_ALPHA = "status_bar_alpha"; 
+        public static final String STATUS_BAR_ALPHA = "status_bar_alpha";
+
+        /**
+         * Color of the navigation bar background
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
 
         /**
          * Whether to show the IME switcher in the status bar

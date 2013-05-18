@@ -351,6 +351,7 @@ public class PhoneStatusBarView extends PanelBar {
 
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.STATUS_BAR_ALPHA), false, this);
+            updateSettings();
         }
 
         @Override

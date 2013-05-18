@@ -3043,7 +3043,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // Status bar may go away, so the screen area it occupies
                     // is available to apps but just covering them when the
                     // status bar is visible.
-                    mDockTop = mUnrestrictedScreenTop + mStatusBarHeight;
+                    mDockTop = mUnrestrictedScreenTop+mStatusBarHeight;
 
                     mContentTop = mCurTop = mDockTop;
                     mContentBottom = mCurBottom = mDockBottom;
@@ -3204,7 +3204,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             pf.left = df.left = cf.left = vf.left = getWallpaperLeft(mUserRotation);
             pf.top = df.top = cf.top = vf.top = getWallpaperTop(mUserRotation);
             pf.right = df.right = cf.right = vf.right = getWallpaperRight(mUserRotation);
-            pf.bottom = df.bottom = cf.bottom = vf.bottom = getWallpaperBottom(mUserRotation); 
+            pf.bottom = df.bottom = cf.bottom = vf.bottom = getWallpaperBottom(mUserRotation);
         } else {
             if ((fl & (FLAG_LAYOUT_IN_SCREEN | FLAG_FULLSCREEN | FLAG_LAYOUT_INSET_DECOR))
                     == (FLAG_LAYOUT_IN_SCREEN | FLAG_LAYOUT_INSET_DECOR)
@@ -3400,13 +3400,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         df.bottom = cf.bottom = mDockBottom;
                     } else {
                         df.left = cf.left = mRestrictedScreenLeft;
-                        df.top = cf.top = mRestrictedScreenTop; 
+                        df.top = cf.top = mRestrictedScreenTop;
                         df.right = cf.right = mRestrictedScreenLeft+mRestrictedScreenWidth;
                         df.bottom = cf.bottom = mRestrictedScreenTop+mRestrictedScreenHeight;
                     }
                     if (adjust != SOFT_INPUT_ADJUST_NOTHING) {
                         vf.left = mRestrictedScreenLeft;
-                        vf.top =  mRestrictedScreenTop; 
+                        vf.top =  mRestrictedScreenTop;
                         vf.right = mRestrictedScreenLeft+mRestrictedScreenWidth;
                         vf.bottom = mRestrictedScreenTop+mRestrictedScreenHeight;
                     } else {
