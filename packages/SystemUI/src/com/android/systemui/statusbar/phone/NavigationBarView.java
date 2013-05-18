@@ -208,7 +208,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mContext.registerReceiver(mNavBarReceiver, new IntentFilter(NAVBAR_EDIT));
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
-        updateSettings();
         Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
         if(bg instanceof ColorDrawable) {
             ColorDrawable navigationbarbg = new ColorDrawable(
@@ -314,6 +313,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                             : (mVertical ? mBackLandIcon : mBackIcon));
         }
         setDisabledFlags(mDisabledFlags, true);
+        setBackground();
     }
 
     @Override
@@ -355,6 +355,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         setButtonWithTagVisibility(NavigationButtons.MENU_BIG, disableRecent ? View.INVISIBLE : View.VISIBLE);
         setButtonWithTagVisibility(NavigationButtons.SEARCH, disableRecent ? View.INVISIBLE : View.VISIBLE);
         getSearchLight().setVisibility((disableHome && !disableSearch) ? View.VISIBLE : View.GONE);
+        setBackground();
     }
 
     public void setSlippery(boolean newSlippery) {
@@ -618,6 +619,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_COLOR), false, this);
+
+            updateSettings();
         }
 
         @Override
@@ -626,9 +629,24 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
     }
 
+    private boolean isKeyguardEnabled() {
+        return ((mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0) && !((mDisabledFlags & View.STATUS_BAR_DISABLE_SEARCH) != 0);
+    }
+
+    private void setBackground() {
+        Drawable bg = getBackground();
+        if(bg == null) return;
+
+        if(bg instanceof ColorDrawable) {
+            ((ColorDrawable) bg).setColor(mNavigationBarColor);
+        }
+    }
+
     protected void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
 
         mNavigationBarColor = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_COLOR, 0xFF000000);
+
+        setBackground();
     }
 }
