@@ -44,8 +44,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 
+import com.android.internal.util.pie.PiePosition;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.policy.PieController.Position;
 
 public class PhoneStatusBarView extends PanelBar {
     private static final String TAG = "PhoneStatusBarView";
@@ -238,10 +238,10 @@ public class PhoneStatusBarView extends PanelBar {
         mLastFullyOpenedPanel = null;
 
         // show up you pie controls
-        mBar.updatePieTriggerMask(Position.LEFT.FLAG
-                | Position.TOP.FLAG
-                | Position.RIGHT.FLAG
-                | Position.TOP.FLAG);
+        mBar.updatePieTriggerMask(PiePosition.LEFT.FLAG
+                | PiePosition.TOP.FLAG
+                | PiePosition.RIGHT.FLAG
+                | PiePosition.TOP.FLAG);
     }
 
     @Override
@@ -253,9 +253,9 @@ public class PhoneStatusBarView extends PanelBar {
 
         // back off you pie controls!
         if (mShouldFade) {
-            mBar.updatePieTriggerMask(Position.LEFT.FLAG
-                    | Position.RIGHT.FLAG
-                    | Position.TOP.FLAG);
+            mBar.updatePieTriggerMask(PiePosition.LEFT.FLAG
+                    | PiePosition.RIGHT.FLAG
+                    | PiePosition.TOP.FLAG);
         }
 
         mFadingPanel = openPanel;
