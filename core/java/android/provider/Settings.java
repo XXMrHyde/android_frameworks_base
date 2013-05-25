@@ -2844,6 +2844,24 @@ public final class Settings {
         public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
 
         /**
+         * Sets the portrait background of notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_BACKGROUND = "notification_drawer_background";
+
+        /**
+         * Sets the landscape background of notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_BACKGROUND_LANDSCAPE = "notification_drawer_background_landscape";
+
+        /**
+         * Sets the alpha (transparency) of notification wallpaper
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_BACKGROUND_ALPHA = "notification_drawer_background_alpha";
+
+        /**
          * Whether to show the IME switcher in the status bar
          * @hide
          */
