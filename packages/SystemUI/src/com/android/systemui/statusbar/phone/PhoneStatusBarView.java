@@ -19,6 +19,7 @@ package com.android.systemui.statusbar.phone;
 import java.util.List;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -47,11 +48,14 @@ import android.view.accessibility.AccessibilityEvent;
 import com.android.internal.util.pie.PiePosition;
 import com.android.systemui.R;
 
+import java.util.List;
+
 public class PhoneStatusBarView extends PanelBar {
     private static final String TAG = "PhoneStatusBarView";
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
 
-    ActivityManager mActivityManager; 
+    ActivityManager mActivityManager;
+    KeyguardManager mKeyguardManager;
     PhoneStatusBar mBar;
     int mScrimColor;
     float mSettingsPanelDragzoneFrac;
@@ -65,6 +69,7 @@ public class PhoneStatusBarView extends PanelBar {
 
     int mStatusBarColor;
     float mAlpha;
+    int mAlphaMode; 
 
     private Runnable mUpdateInHomeAlpha = new Runnable() {
         @Override
@@ -98,7 +103,7 @@ public class PhoneStatusBarView extends PanelBar {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            setBackgroundAlpha(mAlpha);
+            updateBackgroundAlpha();
         }
     };
 
@@ -114,6 +119,8 @@ public class PhoneStatusBarView extends PanelBar {
             mSettingsPanelDragzoneFrac = 0f;
         }
         mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
+        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
         updateSettings();
@@ -140,7 +147,7 @@ public class PhoneStatusBarView extends PanelBar {
         }
         IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         mContext.registerReceiver(mBroadcastReceiver, f);
-        setBackgroundAlpha(mAlpha);
+        updateBackgroundAlpha();
     }
 
     @Override
@@ -159,6 +166,11 @@ public class PhoneStatusBarView extends PanelBar {
         super.onDetachedFromWindow();
         mBar.onBarViewDetached();
         mContext.unregisterReceiver(mBroadcastReceiver);
+    }
+
+    private boolean isKeyguardEnabled() {
+        if(mKeyguardManager == null) return false;
+        return mKeyguardManager.isKeyguardLocked();
     }
  
     @Override
@@ -311,7 +323,7 @@ public class PhoneStatusBarView extends PanelBar {
         if (panel.getAlpha() != alpha) {
             panel.setAlpha(alpha);
         }
-        setBackgroundAlpha(mAlpha);
+        updateBackgroundAlpha();
         mBar.updateCarrierLabelVisibility(false);
     }
 
@@ -323,8 +335,19 @@ public class PhoneStatusBarView extends PanelBar {
         if(bg instanceof ColorDrawable) {
             ((ColorDrawable) bg).setColor(mStatusBarColor);
         }
-        int a = (int) (mAlpha * 255);
+        int a = Math.round(alpha * 255);
         bg.setAlpha(a);
+    }
+
+    public void updateBackgroundAlpha() {
+        if(mFadingPanel != null || (isKeyguardEnabled() && mAlphaMode == 0)) {
+            setBackgroundAlpha(1);
+        } else if (isKeyguardEnabled() || mAlphaMode == 2) {
+            setBackgroundAlpha(mAlpha);
+        } else {
+            removeCallbacks(mUpdateInHomeAlpha);
+            postDelayed(mUpdateInHomeAlpha, 100);
+        }
     }
 
     private boolean isCurrentHomeActivity(ComponentName component, ActivityInfo homeInfo) {
@@ -348,9 +371,10 @@ public class PhoneStatusBarView extends PanelBar {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
-
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.STATUS_BAR_ALPHA), false, this);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_ALPHA_MODE), false, this); 
             updateSettings();
         }
 
@@ -365,7 +389,8 @@ public class PhoneStatusBarView extends PanelBar {
 
         mStatusBarColor = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
         mAlpha = 1.0f - Settings.System.getFloat(resolver, Settings.System.STATUS_BAR_ALPHA, 1.0f);
+        mAlphaMode = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_ALPHA_MODE, 1);
 
-        setBackgroundAlpha(mAlpha);
+        updateBackgroundAlpha();
     }
 }
