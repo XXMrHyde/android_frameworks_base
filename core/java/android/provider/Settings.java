@@ -2790,17 +2790,6 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
 
         /**
-         * Whether to show the additional battery bar
-         * 0: Don't show the additional battery bar
-         * 1: On statusbar
-         * 2: Top of navigation bar
-         * 3: Buttom of navigation bar
-         * default: 0
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_BAR_POSITION = "status_bar_battery_bar_position";
-
-        /**
          * Whether to show the signal text or signal bars.
          * default: 0
          * 0: show signal bars
@@ -2816,6 +2805,17 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
+         * Whether to show the additional battery bar
+         * 0: Don't show the additional battery bar
+         * 1: On statusbar
+         * 2: Top of navigation bar
+         * 3: Buttom of navigation bar
+         * default: 0
+         * @hide
+         */
+        public static final String STATUSBAR_BATTERY_BAR_POSITION = "status_bar_battery_bar_position";
 
         /**
          * Whether to show the additional battery bar center-mirrored
