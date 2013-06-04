@@ -1150,7 +1150,8 @@ public class PhoneStatusBar extends BaseStatusBar {
         for (View remove : toRemove) {
             mPile.removeView(remove);
         }
-
+        //set alpha for notification pile before it is added
+        setNotificationRowAlphaHelper();
         for (int i=0; i<toShow.size(); i++) {
             View v = toShow.get(i);
             if (v.getParent() == null) {
@@ -2972,7 +2973,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                 mSettingsContainer.removeAllViews();
                 mQS.setupQuickSettings();
                 mSettingsContainer.requestLayout();
-                setNotificationWallpaperHelper(); 
+                setNotificationWallpaperHelper();
+                setNotificationRowAlphaHelper();
             }
         }
 
@@ -3006,8 +3008,12 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.getUriFor(Settings.System.QS_DYNAMIC_WIFI),
                     false, this);
 
-          cr.registerContentObserver(
+            cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND_ALPHA),
+                    false, this);
+
+            cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA),
                     false, this);
             setNotificationWallpaperHelper();
         }
@@ -3027,6 +3033,19 @@ public class PhoneStatusBar extends BaseStatusBar {
             }
             background.setAlpha((int) ((1-wallpaperAlpha) * 255));
         }
-    } 
+    }
 
+    private void setNotificationRowAlphaHelper() {
+        float notificationRowAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA, 0.0f);
+        if (mPile != null) {
+            int N = mNotificationData.size();
+            for (int i=0; i<N; i++) {
+              Entry ent = mNotificationData.get(N-i-1);
+              View expanded = ent.expanded;
+              if (expanded !=null && expanded.getBackground()!=null) expanded.getBackground().setAlpha((int) ((1-notificationRowAlpha) * 255));
+              View large = ent.getLargeView();
+              if (large != null && large.getBackground()!=null) large.getBackground().setAlpha((int) ((1-notificationRowAlpha) * 255));
+            }
+        }
+    }
 }

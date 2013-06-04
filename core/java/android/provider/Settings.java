@@ -2890,6 +2890,12 @@ public final class Settings {
         public static final String NOTIFICATION_DRAWER_BACKGROUND_ALPHA = "notification_drawer_background_alpha";
 
         /**
+         * Sets the alpha (transparency) of notification rows
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
+
+        /**
          * Whether to show the IME switcher in the status bar
          * @hide
          */
