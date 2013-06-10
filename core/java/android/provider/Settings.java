@@ -2749,6 +2749,12 @@ public final class Settings {
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
         /**
+         * Show/hide clock
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_CLOCK = "statusbar_show_clock";
+
+        /**
          * Whether to show the clock in status bar
          * 0: don't show the clock
          * 1: Right clock

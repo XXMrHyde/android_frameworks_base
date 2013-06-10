@@ -242,7 +242,8 @@ public class PhoneStatusBar extends BaseStatusBar {
     private boolean mShowCarrierInPanel = false;
 
     // clock
-    private int mClockStyle;	    
+    private boolean mShowClock;
+    private int mClockPosition;
     LinearLayout mCenterClockLayout;
 
     // drag bar
@@ -1323,16 +1324,16 @@ public class PhoneStatusBar extends BaseStatusBar {
     public void showClock(boolean show) {
         if (mStatusBarView == null) return;
             ContentResolver resolver = mContext.getContentResolver();
-            mClockStyle = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 1));
-		    Clock clock = (Clock) mStatusBarView.findViewById(R.id.clock);
-		    CenterClock cclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
-		if (mClockStyle != 0 && clock !=null && cclock != null){
-	    	clock.updateClockVisibility(show);    
-	    	cclock.updateClockVisibility(show);
-	 }
-	 else{
-	     clock.updateClockVisibility(false);
-	     cclock.updateClockVisibility(false);
+            mShowClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+            boolean rightClock = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 0);
+            boolean centerClock = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+		    View clock = mStatusBarView.findViewById(R.id.clock);
+		    View cclock = mStatusBarView.findViewById(R.id.center_clock);
+		if (rightClock && clock != null) {
+            clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
+        }
+        if (centerClock && cclock != null) {
+            cclock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
         }
     }
 

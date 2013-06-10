@@ -27,15 +27,17 @@ import android.view.View;
 public class CenterClock extends Clock {
 
     protected class SettingsObserver extends ContentObserver {
-	SettingsObserver(Handler handler) {
-	    super(handler);
-	}
+	    SettingsObserver(Handler handler) {
+	        super(handler);
+	    }
 
-	void observe() {
-	    ContentResolver resolver = mContext.getContentResolver();
-	    resolver.registerContentObserver(Settings.System.getUriFor(
-	            Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
-	}
+	    void observe() {
+	        ContentResolver resolver = mContext.getContentResolver();
+	        resolver.registerContentObserver(Settings.System.getUriFor(
+	                Settings.System.STATUS_BAR_SHOW_CLOCK), false, this);
+	        resolver.registerContentObserver(Settings.System.getUriFor(
+	                Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
+	    }
     }
 	
     public CenterClock(Context context) {
@@ -50,11 +52,15 @@ public class CenterClock extends Clock {
 	super(context, attrs, defStyle);
     }
 	
-    public void updateClockVisibility(boolean show) {
+    public void updateClockVisibility() {
 	ContentResolver resolver = mContext.getContentResolver();
-	mClockStyle = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 1));
-	if (mClockStyle == CLOCK_STYLE_CENTER)
-	    setVisibility(show ? View.VISIBLE : View.GONE);
+
+    mShowClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+
+    mCenterClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+
+	if (mShowClock && mCenterClock)
+	    setVisibility(View.VISIBLE);
 	else
 	    setVisibility(View.GONE);
 	
