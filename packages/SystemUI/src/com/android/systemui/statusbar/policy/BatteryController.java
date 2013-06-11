@@ -61,6 +61,7 @@ public class BatteryController extends BroadcastReceiver {
 
     private boolean mBatteryPlugged = false;
     private int mBatteryStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
+    private boolean mShowBatteryStatus = true;
     private int mBatteryStyle;
 
     Handler mHandler;
@@ -74,6 +75,8 @@ public class BatteryController extends BroadcastReceiver {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
         }
@@ -231,7 +234,7 @@ public class BatteryController extends BroadcastReceiver {
         int mText = View.GONE;
         int mIconStyle = getIconStyleNormal();
 
-        if (isBatteryPresent()) {
+        if (isBatteryPresent() && mShowBatteryStatus) {
             if ( isBatteryStatusUnknown() &&
                 (mBatteryStyle == BATTERY_STYLE_NORMAL ||
 				 mBatteryStyle == BATTERY_STYLE_ABM ||
@@ -280,6 +283,8 @@ public class BatteryController extends BroadcastReceiver {
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+        mShowBatteryStatus = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 0) == 1);
         mBatteryStyle = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_NORMAL));
         updateBattery();

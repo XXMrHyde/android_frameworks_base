@@ -2752,7 +2752,19 @@ public final class Settings {
          * Show/hide clock
          * @hide
          */
-        public static final String STATUS_BAR_SHOW_CLOCK = "statusbar_show_clock";
+        public static final String STATUS_BAR_SHOW_CLOCK = "status_bar_show_clock";
+
+        /**
+         * Show/hide battery status
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_STATUS = "status_bar_show_battery_status";
+
+        /**
+         * Show/hide battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
 
         /**
          * Whether to show the clock in status bar

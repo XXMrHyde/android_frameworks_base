@@ -40,10 +40,11 @@ public class BatteryBarController extends LinearLayout {
     BatteryBar alternateStyleBar;
 
     boolean mStyle = true;
-    int mLocation = 0;
+    boolean mShowBatteryBar = false;
+    int mLocation = 1;
 
     protected final static int CURRENT_LOC = 1;
-    int mLocationToLookFor = 0;
+    int mLocationToLookFor = 1;
 
     private int mBatteryLevel = 0;
     private boolean mBatteryCharging = false;
@@ -59,6 +60,8 @@ public class BatteryBarController extends LinearLayout {
 
         void observer() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_SHOW_BATTERY_BAR), false, this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_POSITION), false, this);
             resolver.registerContentObserver(
@@ -80,7 +83,7 @@ public class BatteryBarController extends LinearLayout {
 
         if (attrs != null) {
             String ns = "http://schemas.android.com/apk/res/com.android.systemui";
-            mLocationToLookFor = attrs.getAttributeIntValue(ns, "viewLocation", 0);
+            mLocationToLookFor = attrs.getAttributeIntValue(ns, "viewLocation", 1);
         }
     }
 
@@ -188,19 +191,28 @@ public class BatteryBarController extends LinearLayout {
     }
 
     public void updateSettings() {
+        mShowBatteryBar = Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.STATUS_BAR_SHOW_BATTERY_BAR, 0) == 1;
         mStyle = Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.STATUSBAR_BATTERY_BAR_STYLE, 0) == 1;
         mLocation = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.STATUSBAR_BATTERY_BAR_POSITION, 0);
+                Settings.System.STATUSBAR_BATTERY_BAR_POSITION, 1);
 
-        if (isLocationValid(mLocation)) {
-            removeBars();
-            addBars();
-            setVisibility(View.VISIBLE);
-        } else {
-            removeBars();
+        if (mShowBatteryBar) {
+            if (isLocationValid(mLocation)) {
+                updateBars();
+            } else {
+                removeBars();
+                setVisibility(View.GONE);
+            }
+        } else
             setVisibility(View.GONE);
-        }
+    }
+
+    public void updateBars() {
+        removeBars();
+        addBars();
+        setVisibility(View.VISIBLE);
     }
 
     protected boolean isLocationValid(int location) {
