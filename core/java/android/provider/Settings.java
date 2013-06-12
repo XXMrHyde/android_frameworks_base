@@ -2777,6 +2777,12 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
 
         /**
+         * Color of the clock in status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_COLOR = "statusbar_clock_color";
+
+        /**
          * Display style of AM/PM next to clock in status bar
          * 0: Normal display (Eclair stock)
          * 1: Small display (Froyo stock)
