@@ -2914,6 +2914,12 @@ public final class Settings {
         public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
 
         /**
+         * Always show settings button toggle
+         * @hide
+         */
+        public static final String NOTIFICATION_SETTINGS_BUTTON = "notification_settings_btn"; 
+
+        /**
          * Whether to show the IME switcher in the status bar
          * @hide
          */
