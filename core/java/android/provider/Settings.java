@@ -2917,7 +2917,14 @@ public final class Settings {
          * Always show settings button toggle
          * @hide
          */
-        public static final String NOTIFICATION_SETTINGS_BUTTON = "notification_settings_btn"; 
+        public static final String NOTIFICATION_SETTINGS_BUTTON = "notification_settings_btn";
+
+
+        /**
+         * Show Wifi network name in notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid"; 
 
         /**
          * Whether to show the IME switcher in the status bar
