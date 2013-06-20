@@ -241,6 +241,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     private View mCarrierAndWifiView;
     private boolean mCarrierAndWifiViewVisible = false;
     private int mCarrierAndWifiViewHeight;
+    private int mLabelColor = 0xff999999;
     private TextView mEmergencyCallLabel;
     private int mNotificationHeaderHeight;
 
@@ -363,6 +364,8 @@ public class PhoneStatusBar extends BaseStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_SETTINGS_BUTTON), false, this);
             update();
         }
@@ -379,8 +382,19 @@ public class PhoneStatusBar extends BaseStatusBar {
                     Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
             mBrightnessControl = !autoBrightness && Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0) == 1;
+            mLabelColor = Settings.System.getInt(resolver,
+                    Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR, 0xff999999);
             boolean notificationSettingsBtn = Settings.System.getInt(
                     resolver, Settings.System.NOTIFICATION_SETTINGS_BUTTON, 0) == 1;
+
+            if (mCarrierLabel != null) {
+                mCarrierLabel.setTextColor(mLabelColor);
+            }
+
+            if (mWifiLabel != null) {
+                mWifiLabel.setTextColor(mLabelColor);
+            }
+
             if (mHasSettingsPanel) {
                 mSettingsButton.setVisibility(notificationSettingsBtn ? View.VISIBLE : View.GONE);
             } else {

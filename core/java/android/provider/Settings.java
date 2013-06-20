@@ -2914,6 +2914,12 @@ public final class Settings {
         public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
 
         /**
+         * Color of the carrier and wifi network name in the notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
+
+        /**
          * Always show settings button toggle
          * @hide
          */
