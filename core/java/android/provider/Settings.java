@@ -2793,21 +2793,6 @@ public final class Settings {
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
         /**
-         * Display style of the status bar battery status
-         * 0: Display the stock battery information
-         * 1: Display cm circle battery implementation without percentage
-         * 2: Display cm circle battery implementation with percentage
-         * 3: Display a battery icon from Alphablue Theme
-         * 4: Display a AOKP battery icon
-         * 5: Display a HoneyComb styled battery icon
-         * 6: Display cm battery percentage implementation / dont show stock icon
-         * 7: Hide the battery information
-         * default: 2
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
-
-        /**
          * Whether to show the signal text or signal bars.
          * default: 0
          * 0: show signal bars
@@ -2823,6 +2808,46 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
+         * Display style of the status bar battery status
+         * 0: Icon
+         * 1: Percentage
+         * 2: Icon & percentage
+         * 3: Circle
+         * 4: Circle & percentage
+         * 5: Circle dotted
+         * 6: Circle dotted & percentage
+         * 7: Style from Alpha Blue Theme
+         * 8: AOKP like
+         * 9: HoneyComb like
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "battery_status_style";
+
+        /**
+         * Circle battery icon color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_COLOR = "circle_battery_color";
+
+        /**
+         * Battery icon text color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "battery_text_color";
+
+        /**
+         * Battery icon text charging color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR = "battery_text_charging_color";
+
+        /**
+         * Circle battery animation speed during charge in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
 
         /**
          * Whether to show the additional battery bar
