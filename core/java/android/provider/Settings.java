@@ -2829,6 +2829,12 @@ public final class Settings {
          * Circle battery icon color in statusbar
          * @hide
          */
+        public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+
+        /**
+         * Whether to show the Circle battery status dotted in statusbar
+         * @hide
+         */
         public static final String STATUS_BAR_CIRCLE_BATTERY_COLOR = "circle_battery_color";
 
         /**

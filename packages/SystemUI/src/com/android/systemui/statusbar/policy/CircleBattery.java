@@ -72,6 +72,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
 
     private boolean mShowBatteryStatus = true;
     private boolean mIsCharging = false;
+    private boolean mIsCircleDotted = false;
     private int mBatteryStyle;
     private int mCircleColor;
     private int mCircleTextColor;
@@ -99,6 +100,8 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
                     Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOTTED), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CIRCLE_BATTERY_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -215,8 +218,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         }
 
         usePaint.setAntiAlias(true);
-        if (mBatteryStyle == BatteryController.BATTERY_STYLE_DOTTED_CIRCLE_PERCENT ||
-            mBatteryStyle == BatteryController.BATTERY_STYLE_DOTTED_CIRCLE) {
+        if (mIsCircleDotted) {
             // change usePaint from solid to dashed
             usePaint.setPathEffect(new DashPathEffect(new float[]{3,2},0));
         }else {
@@ -271,9 +273,11 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         ContentResolver resolver = mContext.getContentResolver();
 
         mShowBatteryStatus = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 0) == 1);
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
         mBatteryStyle = Settings.System.getInt(resolver,
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0);
+        mIsCircleDotted = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1);
         mCircleColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_BATTERY_COLOR, 0xff33b5ef);
         mCircleTextColor = Settings.System.getInt(resolver,
