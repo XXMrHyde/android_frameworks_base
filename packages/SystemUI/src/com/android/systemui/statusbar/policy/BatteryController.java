@@ -27,6 +27,7 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -334,14 +335,14 @@ public class BatteryController extends BroadcastReceiver {
         }
     }
 
-    private void updateSettings() {
+    public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
         mShowBatteryStatus = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 0) == 1);
 
-        mBatteryStyle = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_NORMAL));
+        mBatteryStyle = (Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_NORMAL, UserHandle.USER_CURRENT));
 
         mTextColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xff33b5ef);

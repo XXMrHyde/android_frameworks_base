@@ -35,6 +35,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
@@ -268,14 +269,14 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         drawCircle(canvas, getBatteryLevel(), offset, mTextLeftX, mRectLeft);
     }
 
-    private void updateSettings() {
+    public void updateSettings() {
         Resources res = getResources();
         ContentResolver resolver = mContext.getContentResolver();
 
         mShowBatteryStatus = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
-        mBatteryStyle = Settings.System.getInt(resolver,
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0);
+        mBatteryStyle = (Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0, UserHandle.USER_CURRENT));
         mIsCircleDotted = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1);
         mCircleColor = Settings.System.getInt(resolver,
@@ -298,11 +299,9 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         mCircleSize = 0;
 
         mActivated = (mBatteryStyle == BatteryController.BATTERY_STYLE_CIRCLE ||
-                      mBatteryStyle == BatteryController.BATTERY_STYLE_CIRCLE_PERCENT ||
-                      mBatteryStyle == BatteryController.BATTERY_STYLE_DOTTED_CIRCLE ||
-                      mBatteryStyle == BatteryController.BATTERY_STYLE_DOTTED_CIRCLE_PERCENT);
-        mPercentage = (mBatteryStyle == BatteryController.BATTERY_STYLE_CIRCLE_PERCENT ||
-                       mBatteryStyle == BatteryController.BATTERY_STYLE_DOTTED_CIRCLE_PERCENT);
+                      mBatteryStyle == BatteryController.BATTERY_STYLE_CIRCLE_PERCENT);
+        mPercentage = (mBatteryStyle == BatteryController.BATTERY_STYLE_CIRCLE_PERCENT);
+
         updateVisibility();
     }
 

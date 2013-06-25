@@ -26,6 +26,8 @@ import android.view.View;
 
 public class CenterClock extends Clock {
 
+    private boolean mHidden;
+
     protected class SettingsObserver extends ContentObserver {
 	    SettingsObserver(Handler handler) {
 	        super(handler);
@@ -38,31 +40,50 @@ public class CenterClock extends Clock {
 	        resolver.registerContentObserver(Settings.System.getUriFor(
 	                Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
 	    }
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
     }
 	
     public CenterClock(Context context) {
-	this(context, null);
+	    this(context, null);
     }
 	
     public CenterClock(Context context, AttributeSet attrs) {
-	this(context, attrs, 0);
+	    this(context, attrs, 0);
     }
 	
     public CenterClock(Context context, AttributeSet attrs, int defStyle) {
-	super(context, attrs, defStyle);
+	    super(context, attrs, defStyle);
+        updateSettings();
     }
-	
-    public void updateClockVisibility() {
-	ContentResolver resolver = mContext.getContentResolver();
 
-    mShowClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+    public void setHidden(boolean hidden) {
+        mHidden = hidden;
+        updateVisibility();
+    }
 
-    mCenterClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+    public void updateSettings() {
+	    ContentResolver resolver = mContext.getContentResolver();
 
-	if (mShowClock && mCenterClock)
-	    setVisibility(View.VISIBLE);
-	else
-	    setVisibility(View.GONE);
-	
+        mShowClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+
+        mCenterClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+
+        updateVisibility();
+    }
+
+    public void updateVisibility() {
+
+	    if (mShowClock && mCenterClock) {
+	        setVisibility(View.VISIBLE);
+	    } else {
+	        setVisibility(View.GONE);
+        }
     }
 }

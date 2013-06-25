@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -61,7 +62,9 @@ public class Clock extends TextView {
 
     protected boolean mShowClock;
     protected boolean mCenterClock;
+    private boolean mHidden;
     protected int mClockColor = com.android.internal.R.color.holo_blue_light;
+
     Handler mHandler;
 
     protected class SettingsObserver extends ContentObserver {
@@ -104,6 +107,11 @@ public class Clock extends TextView {
         mHandler = new Handler();
         mObserver = new SettingsObserver(mHandler);
         updateSettings();
+    }
+
+    public void setHidden(boolean hidden) {
+        mHidden = hidden;
+        updateVisibility();
     }
 
     @Override
@@ -248,17 +256,20 @@ public class Clock extends TextView {
 
     }
 
-    protected void updateSettings() {
+    public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
         mShowClock = (Settings.System.getInt(resolver,
-			Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
 
         mCenterClock = (Settings.System.getInt(resolver,
-			Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
 
-        int amPmStyle = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE));
+        int amPmStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_AM_PM, 2, UserHandle.USER_CURRENT);
+
+        mClockColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK_COLOR, 0xff33b5e5);
 
         if (mAmPmStyle != amPmStyle) {
             mAmPmStyle = amPmStyle;
@@ -269,21 +280,20 @@ public class Clock extends TextView {
             }
         }
 
-        mClockColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CLOCK_COLOR, 0xff33b5e5);
         if (mClockColor == Integer.MIN_VALUE) {
             // flag to reset the color
             mClockColor = 0xff33b5e5;
         }
         setTextColor(mClockColor);
-        updateClockVisibility();
+        updateVisibility();
     }
 
-    public void updateClockVisibility() {
-        if (mShowClock && !mCenterClock)
+    public void updateVisibility() {
+        if (mShowClock && !mCenterClock && !mHidden) {
             setVisibility(View.VISIBLE);
-        else
+        } else {
             setVisibility(View.GONE);
+        }
     }
 }
 

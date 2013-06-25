@@ -73,11 +73,11 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
-import com.android.systemui.statusbar.policy.CenterClock;
-import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BluetoothController;
+import com.android.systemui.statusbar.policy.CenterClock;
 import com.android.systemui.statusbar.policy.CircleBattery;
+import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.policy.CompatModeButton;
 import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NetworkController;
@@ -165,6 +165,10 @@ public class TabletStatusBar extends BaseStatusBar implements
 
     ViewGroup mBarContents;
 
+    SignalClusterView mSignalView;
+    Clock mClock; 
+    CenterClock mCclock;
+
     // hide system chrome ("lights out") support
     View mShadow;
 
@@ -182,9 +186,6 @@ public class TabletStatusBar extends BaseStatusBar implements
 
     private InputMethodsPanel mInputMethodsPanel;
     private CompatModePanel mCompatModePanel;
-
-    // clock
-    private boolean mShowClock;
 
     private int mSystemUiVisibility = 0;
 
@@ -561,9 +562,11 @@ public class TabletStatusBar extends BaseStatusBar implements
         mBluetoothController.addIconView((ImageView)sb.findViewById(R.id.bluetooth));
 
         mNetworkController = new NetworkController(mContext);
-        final SignalClusterView signalCluster =
-                (SignalClusterView)sb.findViewById(R.id.signal_cluster);
-        mNetworkController.addSignalCluster(signalCluster);
+        mSignalView = (SignalClusterView) sb.findViewById(R.id.signal_cluster);
+        mNetworkController.addSignalCluster(mSignalView);
+
+        mClock = (Clock) sb.findViewById(R.id.clock);
+        mCclock = (CenterClock) sb.findViewById(R.id.center_clock);
 
         // The navigation buttons
         mBackButton = (ImageView)sb.findViewById(R.id.back);
@@ -946,21 +949,17 @@ public class TabletStatusBar extends BaseStatusBar implements
 
     public void showClock(boolean show) {
         ContentResolver resolver = mContext.getContentResolver();
-        mShowClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
-        boolean rightClock = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 0);
-        boolean centerClock = (Settings.System.getInt(resolver,Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
-		View clock = mBarContents.findViewById(R.id.clock);
-		View cclock = mBarContents.findViewById(R.id.center_clock);
-        View network_text = mBarContents.findViewById(R.id.network_text);
-		if (rightClock && clock != null) {
-            clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
-        }
-        if (centerClock && cclock != null) {
-            cclock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
-        }
 
-        if (network_text != null) {
-            network_text.setVisibility((!show) ? View.VISIBLE : View.GONE);
+        boolean centerClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 1) == 1);
+		if (!centerClock && mClock != null) {
+            mClock.setHidden(!show);
+        }
+        if (centerClock && mCclock != null) {
+            mCclock.setHidden(!show);
+        }
+        View networkText = mBarContents.findViewById(R.id.network_text);
+        if (networkText != null) {
+            networkText.setVisibility((!show) ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -1622,6 +1621,23 @@ public class TabletStatusBar extends BaseStatusBar implements
     protected boolean shouldDisableNavbarGestures() {
         return mNotificationPanel.getVisibility() == View.VISIBLE
                 || (mDisabled & StatusBarManager.DISABLE_HOME) != 0;
+    }
+
+    @Override
+    public void userSwitched(int newUserId) {
+        if (mSignalView != null) {
+            mSignalView.updateSettings();
+        }
+        if (mClock != null) {
+            mClock.updateSettings();
+        }
+        if (mCclock != null) {
+            mCclock.updateSettings();
+        } 
+        if (mBatteryController != null) {
+            mBatteryController.updateSettings();
+        }
+        super.userSwitched(newUserId);
     }
 }
 
