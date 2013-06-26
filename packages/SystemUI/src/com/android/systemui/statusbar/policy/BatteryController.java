@@ -48,9 +48,9 @@ public class BatteryController extends BroadcastReceiver {
     private static final int BATTERY_STYLE_PERCENT      = 1;
     private static final int BATTERY_STYLE_ICON_PERCENT = 2;
 
-    private static final int BATTERY_STYLE_ABM          = 7;
-    private static final int BATTERY_STYLE_AOKP         = 8;
-    private static final int BATTERY_STYLE_HCOMB        = 9;
+    private static final int BATTERY_STYLE_ABM          = 5;
+    private static final int BATTERY_STYLE_AOKP         = 6;
+    private static final int BATTERY_STYLE_HCOMB        = 7;
 
     /***
      * BATTERY_STYLE_CIRCLE* cannot be handled in this controller, since we cannot get views from
@@ -61,9 +61,6 @@ public class BatteryController extends BroadcastReceiver {
      */
     public  static final int BATTERY_STYLE_CIRCLE                = 3;
     public  static final int BATTERY_STYLE_CIRCLE_PERCENT        = 4;
-    public  static final int BATTERY_STYLE_DOTTED_CIRCLE         = 5;
-    public  static final int BATTERY_STYLE_DOTTED_CIRCLE_PERCENT = 6; 
-
 
     private static final int BATTERY_TEXT_STYLE_NORMAL  = R.string.status_bar_settings_battery_meter_format;
     private static final int BATTERY_TEXT_STYLE_MIN     = R.string.status_bar_settings_battery_meter_min_format;

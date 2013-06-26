@@ -28,6 +28,8 @@ public class CenterClock extends Clock {
 
     private boolean mHidden;
 
+    protected int mClockColor = com.android.internal.R.color.holo_blue_light;
+
     protected class SettingsObserver extends ContentObserver {
 	    SettingsObserver(Handler handler) {
 	        super(handler);
@@ -39,6 +41,8 @@ public class CenterClock extends Clock {
 	                Settings.System.STATUS_BAR_SHOW_CLOCK), false, this);
 	        resolver.registerContentObserver(Settings.System.getUriFor(
 	                Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_COLOR), false, this);
 	    }
         void unobserve() {
             mContext.getContentResolver().unregisterContentObserver(this);
@@ -75,6 +79,13 @@ public class CenterClock extends Clock {
 
         mCenterClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
 
+        mClockColor = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_COLOR, 0xff33b5e5);
+
+        if (mClockColor == Integer.MIN_VALUE) {
+            // flag to reset the color
+            mClockColor = 0xff33b5e5;
+        }
+        setTextColor(mClockColor);
         updateVisibility();
     }
 
