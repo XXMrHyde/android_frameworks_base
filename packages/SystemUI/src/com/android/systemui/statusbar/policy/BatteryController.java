@@ -59,16 +59,16 @@ public class BatteryController extends BroadcastReceiver {
      *
      * set to public to be reused by CircleBattery
      */
-    public  static final int BATTERY_STYLE_CIRCLE                = 3;
-    public  static final int BATTERY_STYLE_CIRCLE_PERCENT        = 4;
+    public  static final int BATTERY_STYLE_CIRCLE         = 3;
+    public  static final int BATTERY_STYLE_CIRCLE_PERCENT = 4;
 
     private static final int BATTERY_TEXT_STYLE_NORMAL  = R.string.status_bar_settings_battery_meter_format;
     private static final int BATTERY_TEXT_STYLE_MIN     = R.string.status_bar_settings_battery_meter_min_format;
 
     private boolean mBatteryPlugged = false;
+    private boolean mShowBatteryStatus = true;
     private int mBatteryStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
     private int mBatteryLevel = 0;
-    private boolean mShowBatteryStatus = true;
     private int mBatteryStyle;
     private int mTextColor = 0xff33b5e5;
     private int mTextChargingColor = 0xff33b5e5;

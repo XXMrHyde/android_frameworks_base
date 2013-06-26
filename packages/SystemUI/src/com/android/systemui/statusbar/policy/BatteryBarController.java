@@ -65,11 +65,9 @@ public class BatteryBarController extends LinearLayout {
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_POSITION), false, this);
             resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_STYLE), false,
-                    this);
+                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_STYLE), false, this);
             resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_THICKNESS),
-                    false, this);
+                    Settings.System.getUriFor(Settings.System.STATUSBAR_BATTERY_BAR_THICKNESS), false, this);
         }
 
         @Override
