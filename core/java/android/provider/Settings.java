@@ -2948,6 +2948,12 @@ public final class Settings {
         public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
 
         /**
+         * Color of the notification header clock
+         * @hide
+         */
+        public static final String NOTIFICATION_HEADER_CLOCK_COLOR = "notification_header_clock_color";
+
+        /**
          * Always show settings button toggle
          * @hide
          */

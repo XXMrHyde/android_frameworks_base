@@ -70,8 +70,32 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
     private Calendar mCalendar;
     private String mClockFormatString;
     private SimpleDateFormat mClockFormat;
+    private SettingsObserver mObserver;
+
+    protected int mHeaderClockColor = 0xffffffff;
 
     Handler mHandler;
+
+    protected class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_HEADER_CLOCK_COLOR), false, this);
+        }
+
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
 
     public ClockExpanded(Context context) {
         this(context, null);
@@ -84,8 +108,10 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
     public ClockExpanded(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mHandler = new Handler();
+        mObserver = new SettingsObserver(mHandler);
         setOnClickListener(this);
         setOnLongClickListener(this);
+        updateSettings();
     }
 
     @Override
@@ -102,6 +128,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
             filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
 
             getContext().registerReceiver(mIntentReceiver, filter, null, getHandler());
+            mObserver.observe();
         }
 
         // NOTE: It's safe to do these after registering the receiver since the receiver always runs
@@ -111,7 +138,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         // Make sure we update to the current time
-        updateClock();
+        updateSettings();
     }
 
     @Override
@@ -254,6 +281,23 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
 
         // consume event
         return true;
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mHeaderClockColor = Settings.System.getInt(resolver,
+                Settings.System.NOTIFICATION_HEADER_CLOCK_COLOR, 0xffffffff);
+
+        if (mAttached) {
+            updateClock();
+        }
+
+        if (mHeaderClockColor == Integer.MIN_VALUE) {
+            // flag to reset the color
+            mHeaderClockColor = 0xffffffff;
+        }
+        setTextColor(mHeaderClockColor);
     }
 }
 
