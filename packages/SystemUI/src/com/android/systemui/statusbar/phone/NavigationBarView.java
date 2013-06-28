@@ -81,6 +81,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private OnTouchListener mRecentsPreloadListener;
     private OnTouchListener mHomeSearchActionListener;
 
+    private SettingsObserver mSettingsObserver;
+    private boolean mAttached = false;
+
     protected IStatusBarService mBarService;
     final Display mDisplay;
     View mCurrentView = null;
@@ -455,6 +458,25 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mRotatedViews[Configuration.ORIENTATION_PORTRAIT] = findViewById(R.id.rot0);
         mRotatedViews[Configuration.ORIENTATION_LANDSCAPE] = findViewById(R.id.rot90);
         mCurrentView = mRotatedViews[mContext.getResources().getConfiguration().orientation];
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (!mAttached) {
+            mAttached = true;
+            mSettingsObserver = new SettingsObserver(new Handler());
+            mSettingsObserver.observe();
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mAttached) {
+            mAttached = false;
+            mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
+        }
     }
 
     public void reorient() {
