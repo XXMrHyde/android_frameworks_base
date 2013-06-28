@@ -84,7 +84,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_HEADER_CLOCK_COLOR), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR), false, this);
         }
 
         void unobserve() {
@@ -147,6 +147,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
         if (mAttached) {
             getContext().unregisterReceiver(mIntentReceiver);
             mAttached = false;
+            mObserver.unobserve();
         }
     }
 
@@ -287,7 +288,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
         ContentResolver resolver = mContext.getContentResolver();
 
         mHeaderClockColor = Settings.System.getInt(resolver,
-                Settings.System.NOTIFICATION_HEADER_CLOCK_COLOR, 0xffffffff);
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR, 0xffffffff);
 
         if (mAttached) {
             updateClock();

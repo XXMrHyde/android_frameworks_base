@@ -2918,6 +2918,18 @@ public final class Settings {
         public static final String NAVIGATION_BAR_COLOR = "navigation_bar_color";
 
         /**
+         * Color of the status bar expanded clock
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOCK_COLOR = "status_bar_expanded_clock_color";
+
+        /**
+         * Always show the settings button at the status bar expanded header
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+
+        /**
          * Sets the portrait background of notification drawer
          * @hide
          */
@@ -2946,19 +2958,6 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
-
-        /**
-         * Color of the notification header clock
-         * @hide
-         */
-        public static final String NOTIFICATION_HEADER_CLOCK_COLOR = "notification_header_clock_color";
-
-        /**
-         * Always show settings button toggle
-         * @hide
-         */
-        public static final String NOTIFICATION_SETTINGS_BUTTON = "notification_settings_btn";
-
 
         /**
          * Show Wifi network name in notification drawer

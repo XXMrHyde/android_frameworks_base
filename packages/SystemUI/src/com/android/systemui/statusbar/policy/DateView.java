@@ -19,13 +19,17 @@ package com.android.systemui.statusbar.policy;
 import android.app.ActivityManagerNative;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.CalendarContract;
+import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -48,6 +52,33 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
     private boolean mWindowVisible;
     private boolean mUpdating;
 
+    private SettingsObserver mObserver;
+
+    protected int mHeaderClockColor = 0xffffffff;
+
+    Handler mHandler;
+
+    protected class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR), false, this);
+        }
+
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -62,6 +93,8 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
 
     public DateView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mHandler = new Handler();
+        mObserver = new SettingsObserver(mHandler);
         setOnClickListener(this);
         setOnLongClickListener(this);
     }
@@ -70,7 +103,9 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mAttachedToWindow = true;
+        mObserver.observe();
         setUpdates();
+        updateSettings();
     }
 
     @Override
@@ -83,6 +118,7 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
             mParent = null;
         }
         setUpdates();
+        mObserver.unobserve();
     }
 
     @Override
@@ -191,5 +227,22 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
 
         // consume event
         return true;
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mHeaderClockColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR, 0xffffffff);
+
+        if (mAttachedToWindow) {
+            updateClock();
+        }
+
+        if (mHeaderClockColor == Integer.MIN_VALUE) {
+            // flag to reset the color
+            mHeaderClockColor = 0xffffffff;
+        }
+        setTextColor(mHeaderClockColor);
     }
 }

@@ -236,6 +236,7 @@ public class PhoneStatusBar extends BaseStatusBar {
     View mNotificationPanelHeader;
     View mDateTimeView;
     View mClearButton;
+    boolean mShowSettingsButton = false;
     ImageView mSettingsButton, mQuickSettingsButton, mNotificationButton; 
 
     // carrier/wifi label
@@ -373,7 +374,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_SETTINGS_BUTTON), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON), false, this);
             update();
         }
 
@@ -392,8 +393,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                             0, UserHandle.USER_CURRENT) == 1;
             mLabelColor = Settings.System.getInt(resolver,
                     Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR, 0xff999999);
-            boolean notificationSettingsBtn = Settings.System.getInt(
-                    resolver, Settings.System.NOTIFICATION_SETTINGS_BUTTON, 0) == 1;
+            mShowSettingsButton = Settings.System.getInt(
+                    resolver, Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON, 0) == 1;
 
             if (mCarrierLabel != null) {
                 mCarrierLabel.setTextColor(mLabelColor);
@@ -404,7 +405,7 @@ public class PhoneStatusBar extends BaseStatusBar {
             }
 
             if (mHasSettingsPanel) {
-                mSettingsButton.setVisibility(notificationSettingsBtn ? View.VISIBLE : View.GONE);
+                mSettingsButton.setVisibility(mShowSettingsButton ? View.VISIBLE : View.GONE);
             } else {
                 mSettingsButton.setVisibility(View.GONE);
             }
@@ -586,8 +587,8 @@ public class PhoneStatusBar extends BaseStatusBar {
         mSettingsButton = (ImageView) mStatusBarWindow.findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
 
-        boolean notificationSettingsBtn = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.NOTIFICATION_SETTINGS_BUTTON, 0) == 1;
+        mShowSettingsButton = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON, 0) == 1;
 
         mQuickSettingsButton = (ImageView) mStatusBarWindow.findViewById(R.id.quicksettings_button);
         if (mQuickSettingsButton != null) {
@@ -604,7 +605,7 @@ public class PhoneStatusBar extends BaseStatusBar {
                     if (buttonHolder != null) {
                         buttonHolder.setVisibility(View.GONE);
                     }
-                mSettingsButton.setVisibility(notificationSettingsBtn ? View.VISIBLE : View.GONE);
+                mSettingsButton.setVisibility(mShowSettingsButton ? View.VISIBLE : View.GONE);
                 }
             } else {
                 // no settings panel, go straight to settings
