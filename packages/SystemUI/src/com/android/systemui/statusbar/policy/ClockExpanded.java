@@ -72,7 +72,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
     private SimpleDateFormat mClockFormat;
     private SettingsObserver mObserver;
 
-    protected int mHeaderClockColor = 0xffffffff;
+    protected int mHeaderClockDateColor = 0xffffffff;
 
     Handler mHandler;
 
@@ -84,7 +84,7 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
         }
 
         void unobserve() {
@@ -287,18 +287,18 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mHeaderClockColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_CLOCK_COLOR, 0xffffffff);
+        mHeaderClockDateColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff);
 
         if (mAttached) {
             updateClock();
         }
 
-        if (mHeaderClockColor == Integer.MIN_VALUE) {
+        if (mHeaderClockDateColor == Integer.MIN_VALUE) {
             // flag to reset the color
-            mHeaderClockColor = 0xffffffff;
+            mHeaderClockDateColor = 0xffffffff;
         }
-        setTextColor(mHeaderClockColor);
+        setTextColor(mHeaderClockDateColor);
     }
 }
 

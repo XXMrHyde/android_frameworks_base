@@ -2921,7 +2921,7 @@ public final class Settings {
          * Color of the status bar expanded clock
          * @hide
          */
-        public static final String STATUS_BAR_EXPANDED_CLOCK_COLOR = "status_bar_expanded_clock_color";
+        public static final String STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR = "status_bar_expanded_clock_date_color";
 
         /**
          * Always show the settings button at the status bar expanded header
