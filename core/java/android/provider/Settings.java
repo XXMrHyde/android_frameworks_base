@@ -2963,7 +2963,12 @@ public final class Settings {
          * Show Wifi network name in notification drawer
          * @hide
          */
-        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid"; 
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";
+
+         /**
+         * Ability to enable/disable Daul pane prefs.
+         */
+        public static final String DUAL_PANE_PREFS = "dual_pane_prefs"; 
 
         /**
          * Whether to show the IME switcher in the status bar
