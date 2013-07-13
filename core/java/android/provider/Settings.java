@@ -2598,6 +2598,122 @@ public final class Settings {
         public static final String PIE_SENSITIVITY = "pie_sensitivity";
 
         /**
+         * Whether to show custom carrier label on pie
+         * @hide
+         */
+        public static final String PIE_ENABLE_CUSTOM_CARRIER_LABEL = "enable_custom_carrier_label";
+
+        /**
+         * Whether to customize pie colors
+         * @hide
+         */
+        public static final String PIE_ENABLE_THEME_DEFAULT = "enable_theme_default";
+
+        /**
+         * Whether to show a customized pie icon color
+         * @hide
+         */
+        public static final String PIE_DISABLE_ICON_OVERLAY = "disable_icon_overlay";
+
+        /**
+         * Color of the pie snap
+         * @hide
+         */
+        public static final String PIE_SNAP_COLOR = "pie_snap_color";
+
+        /**
+         * Color of the pie overlay
+         * @hide
+         */
+        public static final String PIE_OVERLAY_COLOR = "pie_overlay_color";
+
+        /**
+         * Color of the pie text
+         * @hide
+         */
+        public static final String PIE_TEXT_COLOR = "pie_text_color";
+
+        /**
+         * Color of the pie normal button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_NORMAL_COLOR = "button_background_normal_color";
+
+        /**
+         * Color of the pie selected button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_SELECTED_COLOR = "button_background_selected_color";
+
+        /**
+         * Color of the pie long pressed button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_LONG_PRESSED_COLOR = "button_background_long_pressed_color";
+
+        /**
+         * Color of the pie button outline
+         * @hide
+         */
+        public static final String PIE_BUTTON_OUTLINE_COLOR = "button_outline_color";
+
+        /**
+         * Color of the pie button_icon
+         * @hide
+         */
+        public static final String PIE_BUTTON_ICON_COLOR = "button_icon_color";
+
+
+        /**
+         * Backup color of the pie snap
+         * @hide
+         */
+        public static final String PIE_SNAP_COLOR_B = "pie_snap_color_b";
+
+        /**
+         * Backup color of the pie overlay
+         * @hide
+         */
+        public static final String PIE_OVERLAY_COLOR_B = "pie_overlay_color_b";
+
+        /**
+         * Backup color of the pie text
+         * @hide
+         */
+        public static final String PIE_TEXT_COLOR_B = "pie_text_color_b";
+
+        /**
+         * Backup color of the pie normal button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_NORMAL_COLOR_B = "button_background_normal_color_b";
+
+        /**
+         * Backup color of the pie selected button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_SELECTED_COLOR_B = "button_background_selected_color_b";
+
+        /**
+         * Backup color of the pie long pressed button background
+         * @hide
+         */
+        public static final String PIE_BUTTON_BG_LONG_PRESSED_COLOR_B = "button_background_long_pressed_color_b";
+
+        /**
+         * Backup color of the pie button outline
+         * @hide
+         */
+        public static final String PIE_BUTTON_OUTLINE_COLOR_B = "button_outline_color_b";
+
+        /**
+         * Backup color of the pie button_icon
+         * @hide
+         */
+        public static final String PIE_BUTTON_ICON_COLOR_B = "button_icon_color_b";
+
+
+        /**
          * Quick Settings Panel Tiles to Use
          *
          * @hide

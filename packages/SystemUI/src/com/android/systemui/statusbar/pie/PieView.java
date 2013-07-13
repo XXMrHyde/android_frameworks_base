@@ -16,9 +16,11 @@
 package com.android.systemui.statusbar.pie;
 
 import android.animation.ValueAnimator;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -26,6 +28,7 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Slog;
 import android.view.MotionEvent;
@@ -252,6 +255,28 @@ public class PieView extends View implements View.OnTouchListener {
     }
     private OnExitListener mOnExitListener = null;
 
+    private final class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_SNAP_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_OVERLAY_COLOR), false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            getColors();
+        }
+    }
+
+    private SettingsObserver mSettingsObserver = new SettingsObserver(mHandler);
+
     public PieView(Context context) {
         super(context);
 
@@ -263,6 +288,7 @@ public class PieView extends View implements View.OnTouchListener {
         setWillNotDraw(false);
         setFocusable(true);
         setOnTouchListener(this);
+        mSettingsObserver.observe();
 
         getDimensions();
         getColors();
@@ -301,14 +327,27 @@ public class PieView extends View implements View.OnTouchListener {
 
     private void getColors() {
         final Resources res = mContext.getResources();
+        final ContentResolver resolver = mContext.getContentResolver();
 
-        mSnapPaint.setColor(res.getColor(R.color.pie_snap_color));
+        boolean isThemeDefaultEnabled = Settings.System.getInt(resolver,
+			    Settings.System.PIE_ENABLE_THEME_DEFAULT, 1) == 1;
+        int snapPaintColor = Settings.System.getInt(resolver,
+                Settings.System.PIE_SNAP_COLOR, res.getColor(R.color.pie_snap_color));
+        int overlayPaintColor = Settings.System.getInt(resolver,
+                Settings.System.PIE_OVERLAY_COLOR, res.getColor(R.color.pie_overlay_color));
+
+        if (isThemeDefaultEnabled) {
+            mSnapPaint.setColor(res.getColor(R.color.pie_snap_color));
+            mSnapActivePaint.setColor(res.getColor(R.color.pie_snap_color));
+            mBackgroundPaint.setColor(res.getColor(R.color.pie_overlay_color));
+        } else {
+            mSnapPaint.setColor(snapPaintColor);
+            mSnapActivePaint.setColor(snapPaintColor);
+            mBackgroundPaint.setColor(overlayPaintColor);
+        }
         mSnapPaint.setStyle(Style.STROKE);
         mSnapPaint.setStrokeWidth(res.getDimensionPixelSize(R.dimen.pie_snap_outline));
         mSnapPaint.setAntiAlias(true);
-        mSnapActivePaint.setColor(res.getColor(R.color.pie_snap_color));
-
-        mBackgroundPaint.setColor(res.getColor(R.color.pie_overlay_color));
         mBackgroundTargetAlpha = mBackgroundPaint.getAlpha();
     }
 

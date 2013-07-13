@@ -27,6 +27,7 @@ import android.graphics.Typeface;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiSsid;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 
@@ -70,8 +71,20 @@ public class PieSysInfo extends PieSliceContainer implements ValueAnimator.Anima
         super(parent, initialFlags);
         mController = controller;
         mContext = context;
+        int textColor;
 
-        int textColor = context.getResources().getColor(R.color.pie_text_color);
+        final Resources res = mContext.getResources();
+
+        boolean isThemeDefaultEnabled = Settings.System.getInt(context.getContentResolver(),
+			    Settings.System.PIE_ENABLE_THEME_DEFAULT, 1) == 1;
+
+
+        if (isThemeDefaultEnabled) {
+            textColor = context.getResources().getColor(R.color.pie_text_color);
+        } else {
+            textColor = Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.PIE_TEXT_COLOR, res.getColor(R.color.pie_text_color));
+        }
 
         mClockPaint.setColor(textColor);
         mClockPaint.setAntiAlias(true);
