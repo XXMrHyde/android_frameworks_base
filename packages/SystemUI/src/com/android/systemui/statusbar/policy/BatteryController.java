@@ -336,10 +336,10 @@ public class BatteryController extends BroadcastReceiver {
         ContentResolver resolver = mContext.getContentResolver();
 
         mShowBatteryStatus = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 0) == 1);
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
 
         mBatteryStyle = (Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_NORMAL, UserHandle.USER_CURRENT));
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_CIRCLE_PERCENT, UserHandle.USER_CURRENT));
 
         mTextColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xff33b5ef);

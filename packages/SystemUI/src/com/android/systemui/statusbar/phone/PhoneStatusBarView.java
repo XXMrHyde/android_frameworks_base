@@ -388,7 +388,7 @@ public class PhoneStatusBarView extends PanelBar {
         ContentResolver resolver = getContext().getContentResolver();
 
         mStatusBarColor = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
-        mAlpha = 1.0f - Settings.System.getFloat(resolver, Settings.System.STATUS_BAR_ALPHA, 1.0f);
+        mAlpha = 1.0f - Settings.System.getFloat(resolver, Settings.System.STATUS_BAR_ALPHA, 0.0f);
         mAlphaMode = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_ALPHA_MODE, 1);
 
         updateBackgroundAlpha();

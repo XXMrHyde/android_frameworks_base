@@ -276,7 +276,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         mShowBatteryStatus = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
         mBatteryStyle = (Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 0, UserHandle.USER_CURRENT));
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 4, UserHandle.USER_CURRENT));
         mIsCircleDotted = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1);
         mCircleColor = Settings.System.getInt(resolver,
