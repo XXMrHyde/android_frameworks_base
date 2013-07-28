@@ -2900,6 +2900,48 @@ public final class Settings {
         public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
 
         /**
+         * Show/hide network speed indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
+
+        /**
+         * Show/hide network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD = "status_bar_network_speed_show_download";
+
+        /**
+         * Show/hide network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD = "status_bar_network_speed_show_upload";
+
+        /**
+         * Display network speed indicator value as bit/byte
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
+
+        /**
+         * Show/hide network speed indicator on no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
+
+        /**
+         * Color of the network speed download indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR = "status_bar_network_speed_download_color";
+
+        /**
+         * Color of the network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
+
+        /**
          * Whether to show the clock in status bar
          * 0: don't show the clock
          * 1: Right clock

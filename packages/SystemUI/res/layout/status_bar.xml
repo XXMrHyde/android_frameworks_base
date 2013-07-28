@@ -80,7 +80,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"/>    
+                android:orientation="horizontal"/>
+
+           <LinearLayout android:id="@+id/traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+		        <com.android.systemui.statusbar.policy.TrafficUl
+		            android:id="@+id/traffic_ul"
+		            android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:singleLine="true"
+		            android:layout_marginRight="4dp"
+		            android:gravity="center"
+		            />  
+
+		        <com.android.systemui.statusbar.policy.TrafficDl
+		            android:id="@+id/traffic_dl"
+		            android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:singleLine="true"
+		            android:layout_marginRight="4dp"
+		            android:gravity="center"
+		            />
+            </LinearLayout>
     
             <LinearLayout
                 android:id="@+id/signal_battery_cluster"
