@@ -2763,6 +2763,12 @@ public final class Settings {
         */
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
+
+        /**
+         * Ability to enable/disable Daul pane prefs.
+         */
+        public static final String DUAL_PANE_PREFS = "dual_pane_prefs";
+
         /**
          * Display style of AM/PM next to clock in status bar
          * 0: Normal display (Eclair stock)
