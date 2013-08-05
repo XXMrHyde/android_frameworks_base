@@ -21,18 +21,23 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ServiceManager;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.animation.AccelerateInterpolator;
@@ -76,6 +81,9 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private OnTouchListener mRecentsPreloadListener;
     private OnTouchListener mHomeSearchActionListener;
 
+    private SettingsObserver mSettingsObserver;
+    private boolean mAttached = false;
+
     protected IStatusBarService mBarService;
     final Display mDisplay;
     View mCurrentView = null;
@@ -95,6 +103,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
+
+    private int mNavBarColor;
 
     // workaround for LayoutTransitions leaving the nav buttons in a weird state (bug 5549288)
     final static boolean WORKAROUND_INVALID_LAYOUT = true;
@@ -120,6 +130,25 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                     }
                     break;
             }
+        }
+    }
+
+    class SettingsObserver extends ContentObserver {
+
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_COLOR), false, this);
+            updateSettings();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
         }
     }
 
@@ -217,6 +246,12 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mNavBarReceiver = new NavBarReceiver();
         mContext.registerReceiverAsUser(mNavBarReceiver, UserHandle.ALL,
                 new IntentFilter(NAVBAR_EDIT), null, null);
+        Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
+        if(bg instanceof ColorDrawable) {
+            ColorDrawable navbarbg = new ColorDrawable(
+                    mNavBarColor != -1 ? mNavBarColor : ((ColorDrawable) bg).getColor());
+            setBackground(navbarbg);
+        }
     }
 
     protected void updateResources() {
@@ -248,13 +283,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
                 }
             }
         }
-    }
-
-    public void updateSettings() {
-        mEditBar.updateKeys();
-        removeButtonListeners();
-        updateButtonListeners();
-        setDisabledFlags(mDisabledFlags, true /* force */);
     }
 
     @Override
@@ -324,6 +352,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         }
 
         setDisabledFlags(mDisabledFlags, true);
+        setBackground();
     }
 
     @Override
@@ -364,6 +393,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         setButtonWithTagVisibility(NavigationButtons.MENU_BIG, disableRecent ? View.INVISIBLE : View.VISIBLE);
         setButtonWithTagVisibility(NavigationButtons.SEARCH, disableRecent ? View.INVISIBLE : View.VISIBLE);
         getSearchLight().setVisibility((disableHome && !disableSearch) ? View.VISIBLE : View.GONE);
+        setBackground();
     }
 
     public void setSlippery(boolean newSlippery) {
@@ -459,6 +489,25 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mRotatedViews[Configuration.ORIENTATION_PORTRAIT] = findViewById(R.id.rot0);
         mRotatedViews[Configuration.ORIENTATION_LANDSCAPE] = findViewById(R.id.rot90);
         mCurrentView = mRotatedViews[mContext.getResources().getConfiguration().orientation];
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (!mAttached) {
+            mAttached = true;
+            mSettingsObserver = new SettingsObserver(new Handler());
+            mSettingsObserver.observe();
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mAttached) {
+            mAttached = false;
+            mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
+        }
     }
 
     public void reorient() {
@@ -615,4 +664,25 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         pw.println("    }");
     }
 
+    protected void setBackground() {
+        Drawable bg = getBackground();
+        if (bg == null)
+            return;
+        
+        if(bg instanceof ColorDrawable) {
+            ((ColorDrawable) bg).setColor(mNavBarColor);
+        }
+    }
+
+    protected void updateSettings() {
+        ContentResolver resolver = getContext().getContentResolver();
+
+        mNavBarColor = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_COLOR, 0xFF000000);
+
+        mEditBar.updateKeys();
+        removeButtonListeners();
+        updateButtonListeners();
+        setDisabledFlags(mDisabledFlags, true /* force */);
+        setBackground();
+    }
 }
