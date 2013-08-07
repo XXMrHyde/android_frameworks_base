@@ -2861,6 +2861,30 @@ public final class Settings {
         public static final String POWER_UI_LOW_BATTERY_WARNING_POLICY = "power_ui_low_battery_warning_policy";
 
         /**
+         * Show/hide clock
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_CLOCK = "status_bar_show_clock";
+
+        /**
+         * Show/hide battery status
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_STATUS = "status_bar_show_battery_status";
+
+        /**
+         * Show/hide battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
+
+        /**
+         * Show/hide network speed indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
+
+        /**
          * Color of the status bar background
          * @hide
          */
@@ -2878,6 +2902,143 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_ALPHA_MODE = "status_bar_alpha_mode";
+
+        /**
+         * Whether to show the clock centered in status bar
+         * 0: Right clock
+         * 1: Center clock
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
+
+        /**
+         * Color of the clock in status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_COLOR = "statusbar_clock_color";
+
+        /**
+         * Display style of the status bar battery status
+         * 0: Icon
+         * 1: Percentage
+         * 2: Icon & percentage
+         * 3: Circle
+         * 4: Circle & percentage
+         * 5: Circle dotted
+         * 6: Circle dotted & percentage
+         * 7: Style from Alpha Blue Theme
+         * 8: AOKP like
+         * 9: HoneyComb like
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "battery_status_style";
+
+        /**
+         * Circle battery icon color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+
+        /**
+         * Whether to show the Circle battery status dotted in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_COLOR = "circle_battery_color";
+
+        /**
+         * Battery icon text color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "battery_text_color";
+
+        /**
+         * Battery icon text charging color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR = "battery_text_charging_color";
+
+        /**
+         * Circle battery animation speed during charge in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
+
+        /**
+         * Whether to show the additional battery bar
+         * 0: Don't show the additional battery bar
+         * 1: On statusbar
+         * 2: Top of navigation bar
+         * 3: Buttom of navigation bar
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_POSITION = "status_bar_battery_bar_position";
+
+        /**
+         * Whether to show the additional battery bar center-mirrored
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_STYLE = "statusbar_battery_bar_style";
+
+        /**
+         * Whether to show the charging animation of the additional battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
+
+        /**
+         * Color of the additional battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
+
+        /**
+         * Thickness of the additional battery bar
+         * 0: 1dp
+         * 1: 2dp
+         * 2: 3dp
+         * 2: 4dp
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
+
+        /**
+         * Show/hide network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD = "status_bar_network_speed_show_download";
+
+        /**
+         * Show/hide network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD = "status_bar_network_speed_show_upload";
+
+        /**
+         * Display network speed indicator value as bit/byte
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
+
+        /**
+         * Show/hide network speed indicator on no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
+
+        /**
+         * Color of the network speed download indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR = "status_bar_network_speed_download_color";
+
+        /**
+         * Color of the network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
 
         /**
          * Color of the navigation bar background
@@ -2906,28 +3067,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
-
-        /**
-         * Display style of the status bar battery information
-         * 0: Display the stock battery information
-         * 1: Display cm battery percentage implementation / dont show stock icon
-         * 2: Display cm circle battery implementation without percentage
-         * 3: Display cm circle battery implementation with percentage
-         * 4: Hide the battery information
-         * default: 0
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY = "status_bar_battery";
-
-        /**
-         * Whether to show the clock in status bar
-         * of the stock battery icon
-         * 0: don't show the clock
-         * 1: show the clock
-         * default: 1
-         * @hide
-         */
-        public static final String STATUS_BAR_CLOCK = "status_bar_clock";
 
         /**
          * Whether to show the signal text or signal bars.

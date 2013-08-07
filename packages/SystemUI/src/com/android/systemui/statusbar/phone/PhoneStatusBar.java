@@ -103,6 +103,7 @@ import com.android.systemui.statusbar.SignalClusterTextView;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.policy.BatteryController;
+import com.android.systemui.statusbar.policy.CenterClock;
 import com.android.systemui.statusbar.policy.CircleBattery;
 import com.android.systemui.statusbar.policy.CircleDockBattery;
 import com.android.systemui.statusbar.policy.Clock;
@@ -242,6 +243,8 @@ public class PhoneStatusBar extends BaseStatusBar {
     private CircleBattery mCircleBattery;
     private CircleDockBattery mCircleDockBattery;
     private Clock mClock;
+    private CenterClock mCclock;
+    LinearLayout mCenterClockLayout;
 
     private boolean mShowCarrierInPanel = false;
 
@@ -517,6 +520,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         mMoreIcon = mStatusBarView.findViewById(R.id.moreIcon);
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
+        mCenterClockLayout = (LinearLayout) mStatusBarView.findViewById(R.id.center_clock_layout);
         mTickerView = mStatusBarView.findViewById(R.id.ticker);
 
         /* Destroy the old widget before recreating the expanded dialog
@@ -655,6 +659,7 @@ public class PhoneStatusBar extends BaseStatusBar {
         mSignalView = (SignalClusterView) mStatusBarView.findViewById(R.id.signal_cluster);
         mSignalTextView = (SignalClusterTextView) mStatusBarView.findViewById(R.id.signal_cluster_text);
         mClock = (Clock) mStatusBarView.findViewById(R.id.clock);
+        mCclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
 
         mNetworkController.addSignalCluster(mSignalView);
         mSignalView.setNetworkController(mNetworkController);
@@ -1374,8 +1379,14 @@ public class PhoneStatusBar extends BaseStatusBar {
     }
 
     public void showClock(boolean show) {
-        if (mClock != null) {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        boolean centerClock = (Settings.System.getInt(resolver, Settings.System.STATUS_BAR_CLOCK_POSITION, 1) == 1);
+		if (!centerClock && mClock != null) {
             mClock.setHidden(!show);
+        }
+        if (centerClock && mCclock != null) {
+            mCclock.setHidden(!show);
         }
     }
 
@@ -2206,6 +2217,8 @@ public class PhoneStatusBar extends BaseStatusBar {
             final View dockBattery2 = mStatusBarView.findViewById(R.id.dock_battery_text);
             final View dockBattery3 = mStatusBarView.findViewById(R.id.circle_dock_battery);
             final View clock = mStatusBarView.findViewById(R.id.clock);
+            final View trafficUl = mStatusBarView.findViewById(R.id.traffic_ul);
+            final View trafficDl = mStatusBarView.findViewById(R.id.traffic_dl);
 
             List<ObjectAnimator> lightsOutObjs = new ArrayList<ObjectAnimator>();
             lightsOutObjs.add(ObjectAnimator.ofFloat(notifications, View.ALPHA, 0));
@@ -2225,6 +2238,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                 lightsOutObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 0.5f));
             }
             lightsOutObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 0.5f));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(trafficUl, View.ALPHA, 0.5f));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(trafficDl, View.ALPHA, 0.5f));
 
             List<ObjectAnimator> lightsOnObjs = new ArrayList<ObjectAnimator>();
             lightsOnObjs.add(ObjectAnimator.ofFloat(notifications, View.ALPHA, 1));
@@ -2244,6 +2259,8 @@ public class PhoneStatusBar extends BaseStatusBar {
                 lightsOnObjs.add(ObjectAnimator.ofFloat(dockBattery3, View.ALPHA, 1));
             }
             lightsOnObjs.add(ObjectAnimator.ofFloat(clock, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(trafficUl, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(trafficDl, View.ALPHA, 1));
 
             final AnimatorSet lightsOutAnim = new AnimatorSet();
             lightsOutAnim.playTogether(
@@ -2361,16 +2378,20 @@ public class PhoneStatusBar extends BaseStatusBar {
         public void tickerStarting() {
             mTicking = true;
             mStatusBarContents.setVisibility(View.GONE);
+			mCenterClockLayout.setVisibility(View.GONE);
             mTickerView.setVisibility(View.VISIBLE);
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_up_in, null));
             mStatusBarContents.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out, null));
+			mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out, null));
         }
 
         @Override
         public void tickerDone() {
             mStatusBarContents.setVisibility(View.VISIBLE);
+			mCenterClockLayout.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mStatusBarContents.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
+			mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_down_out,
                         mTickingDoneListener));
         }
@@ -2378,8 +2399,10 @@ public class PhoneStatusBar extends BaseStatusBar {
         @Override
         public void tickerHalting() {
             mStatusBarContents.setVisibility(View.VISIBLE);
+			mCenterClockLayout.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mStatusBarContents.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
+			mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
             // we do not animate the ticker away at this point, just get rid of it (b/6992707)
         }
     }
@@ -2741,6 +2764,9 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
         if (mClock != null) {
             mClock.updateSettings();
+        }
+        if (mCclock != null) {
+            mCclock.updateSettings();
         }
         if (mNavigationBarView != null) {
             mNavigationBarView.updateSettings();

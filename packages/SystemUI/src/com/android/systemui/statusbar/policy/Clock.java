@@ -53,6 +53,12 @@ import libcore.icu.LocaleData;
  * Digital clock for the status bar.
  */
 public class Clock extends TextView implements OnClickListener, OnLongClickListener {
+    private static final int AM_PM_STYLE_NORMAL  = 0;
+    private static final int AM_PM_STYLE_SMALL   = 1;
+    private static final int AM_PM_STYLE_GONE    = 2;
+
+    private int mAmPmStyle = AM_PM_STYLE_GONE;
+
     private boolean mAttached;
     private Calendar mCalendar;
     private String mClockFormatString;
@@ -61,15 +67,13 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
     private SettingsObserver mObserver;
     private boolean mHidden;
 
-    private static final int AM_PM_STYLE_NORMAL  = 0;
-    private static final int AM_PM_STYLE_SMALL   = 1;
-    private static final int AM_PM_STYLE_GONE    = 2;
-
-    private int mAmPmStyle = AM_PM_STYLE_GONE;
+    protected boolean mShowClock;
+    protected boolean mCenterClock;
+    protected int mClockColor = com.android.internal.R.color.holo_blue_light;
 
     Handler mHandler;
 
-    class SettingsObserver extends ContentObserver {
+    protected class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
         }
@@ -79,7 +83,11 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AM_PM), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK), false, this);
+                    Settings.System.STATUS_BAR_SHOW_CLOCK), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_COLOR), false, this);
         }
 
         void unobserve() {
@@ -154,7 +162,7 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
         }
     }
 
-    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+    protected final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -175,7 +183,7 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
         }
     };
 
-    final void updateClock() {
+    protected final void updateClock() {
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         setText(getSmallTime());
     }
@@ -253,8 +261,16 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
     }
 
     public void updateSettings() {
-        int amPmStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int amPmStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AM_PM, 2, UserHandle.USER_CURRENT);
+        mShowClock = (Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
+        mCenterClock = (Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+        mClockColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK_COLOR, 0xff33b5e5);
 
         if (mAmPmStyle != amPmStyle) {
             mAmPmStyle = amPmStyle;
@@ -265,13 +281,20 @@ public class Clock extends TextView implements OnClickListener, OnLongClickListe
             }
         }
 
+        if (mClockColor == Integer.MIN_VALUE) {
+            // flag to reset the color
+            mClockColor = 0xff33b5e5;
+        }
+        setTextColor(mClockColor);
         updateVisibility();
     }
 
-    private void updateVisibility() {
-        boolean showClock = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CLOCK, 1, UserHandle.USER_CURRENT) == 1;
-        setVisibility(showClock && !mHidden ? View.VISIBLE : View.GONE);
+    protected void updateVisibility() {
+        if (mShowClock && !mCenterClock && !mHidden) {
+            setVisibility(View.VISIBLE);
+        } else {
+            setVisibility(View.GONE);
+        }
     }
 
     private void collapseStartActivity(Intent what) {

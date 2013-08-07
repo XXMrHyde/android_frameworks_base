@@ -80,7 +80,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"/>    
+                android:orientation="horizontal"/>
+
+           <LinearLayout android:id="@+id/traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+               <com.android.systemui.statusbar.policy.TrafficUl
+                   android:id="@+id/traffic_ul"
+                   android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:singleLine="true"
+                   android:layout_marginRight="4dp"
+                   android:gravity="center"
+               />
+
+               <com.android.systemui.statusbar.policy.TrafficDl
+                   android:id="@+id/traffic_dl"
+                   android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:singleLine="true"
+                   android:layout_marginRight="4dp"
+                   android:gravity="center"
+               />
+            </LinearLayout>
     
             <LinearLayout
                 android:id="@+id/signal_battery_cluster"
@@ -165,6 +191,23 @@
         </LinearLayout>
     </LinearLayout>
 
+	<LinearLayout
+		android:id="@+id/center_clock_layout"
+		android:gravity="center"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<com.android.systemui.statusbar.policy.CenterClock
+		    android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+		    android:gravity="center"
+		    android:id="@+id/center_clock"
+		    android:paddingLeft="6.0dip"
+		    android:layout_width="wrap_content"
+		    android:layout_height="fill_parent"
+		    android:singleLine="true"
+        />
+	</LinearLayout>
+
     <LinearLayout android:id="@+id/ticker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -207,4 +250,8 @@
                 />
         </com.android.systemui.statusbar.phone.TickerView>
     </LinearLayout>
+    <com.android.systemui.statusbar.policy.BatteryBarController
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        systemui:viewLocation="1" />
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>
