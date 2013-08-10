@@ -3041,6 +3041,37 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
 
         /**
+         * Color of the status bar expanded clock
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR = "status_bar_expanded_clock_date_color";
+
+        /**
+         * Always show the settings button at the status bar expanded header
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+
+	    /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+        /**
+         * Color of the carrier and wifi network name in the notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
+
+        /**
+         * Show Wifi network name in notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";
+
+        /**
          * Color of the navigation bar background
          * @hide
          */
