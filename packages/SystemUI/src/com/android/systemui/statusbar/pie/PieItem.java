@@ -16,6 +16,7 @@
  */
 package com.android.systemui.statusbar.pie;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -25,6 +26,7 @@ import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PorterDuff.Mode;
+import android.provider.Settings; 
 import android.view.View;
 import android.widget.ImageView;
 
@@ -41,6 +43,7 @@ import com.android.systemui.statusbar.pie.PieView.PieDrawable;
 public class PieItem extends PieView.PieDrawable {
 
     private PieView mPieLayout;
+    private Context mContext;
 
     private Paint mBackgroundPaint = new Paint();
     private Paint mSelectedPaint = new Paint();
@@ -52,6 +55,10 @@ public class PieItem extends PieView.PieDrawable {
 
     public final int width;
     public final Object tag;
+
+    private boolean mIsThemeDefaultEnabled;
+
+    private ContentResolver mResolver; 
 
     /**
      * The gap between two pie items. This more like a padding on both sides of the item.
@@ -88,6 +95,7 @@ public class PieItem extends PieView.PieDrawable {
     public final static int CAN_LONG_PRESS = 0x400;
 
     public PieItem(Context context, PieView parent, int flags, int width, Object tag, View view) {
+        mContext = context;
         mView = view;
         mPieLayout = parent;
         this.tag = tag;
@@ -95,18 +103,36 @@ public class PieItem extends PieView.PieDrawable {
         this.flags = flags | PieDrawable.VISIBLE | PieDrawable.DISPLAY_ALL;
 
         final Resources res = context.getResources();
+        mResolver = context.getContentResolver();
 
-        mBackgroundPaint.setColor(res.getColor(R.color.pie_background_color));
+        mIsThemeDefaultEnabled = (Settings.System.getInt(mResolver,
+			    Settings.System.PIE_ENABLE_THEME_DEFAULT, 1) == 1);
+        int backgroundPaintColor = Settings.System.getInt(mResolver,
+                Settings.System.PIE_BUTTON_BG_NORMAL_COLOR, res.getColor(R.color.pie_background_color));
+        int selectedPaintColor = Settings.System.getInt(mResolver,
+                Settings.System.PIE_BUTTON_BG_SELECTED_COLOR, res.getColor(R.color.pie_selected_color));
+        int longPressPaintColor = Settings.System.getInt(mResolver,
+                Settings.System.PIE_BUTTON_BG_LONG_PRESSED_COLOR, res.getColor(R.color.pie_long_pressed_color));
+        int outlinePaintColor = Settings.System.getInt(mResolver,
+                Settings.System.PIE_BUTTON_OUTLINE_COLOR, res.getColor(R.color.pie_outline_color));
+
+        if (mIsThemeDefaultEnabled) {
+            mBackgroundPaint.setColor(res.getColor(R.color.pie_background_color));
+            mSelectedPaint.setColor(res.getColor(R.color.pie_selected_color));
+            mLongPressPaint.setColor(res.getColor(R.color.pie_long_pressed_color));
+            mOutlinePaint.setColor(res.getColor(R.color.pie_outline_color));
+        } else {
+            mBackgroundPaint.setColor(backgroundPaintColor);
+            mSelectedPaint.setColor(selectedPaintColor);
+            mLongPressPaint.setColor(longPressPaintColor);
+            mOutlinePaint.setColor(outlinePaintColor);
+        }
         mBackgroundPaint.setAntiAlias(true);
-        mSelectedPaint.setColor(res.getColor(R.color.pie_selected_color));
         mSelectedPaint.setAntiAlias(true);
-        mLongPressPaint.setColor(res.getColor(R.color.pie_long_pressed_color));
         mLongPressPaint.setAntiAlias(true);
-        mOutlinePaint.setColor(res.getColor(R.color.pie_outline_color));
         mOutlinePaint.setAntiAlias(true);
         mOutlinePaint.setStyle(Style.STROKE);
         mOutlinePaint.setStrokeWidth(res.getDimensionPixelSize(R.dimen.pie_outline));
-
         setColor(res.getColor(R.color.pie_foreground_color));
     }
 
@@ -160,9 +186,24 @@ public class PieItem extends PieView.PieDrawable {
 
     public void setColor(int color) {
         if (mView instanceof ImageView) {
+            final Resources res = mContext.getResources();
+
+            boolean isIconOverlayDisabled = (Settings.System.getInt(mResolver,
+			        Settings.System.PIE_DISABLE_ICON_OVERLAY, 1) == 1);
+            int iconPaintColor = Settings.System.getInt(mResolver,
+                    Settings.System.PIE_BUTTON_ICON_COLOR, res.getColor(R.color.pie_foreground_color));
+
             ImageView imageView = (ImageView)mView;
             Drawable drawable = imageView.getDrawable();
-            drawable.setColorFilter(color, Mode.SRC_ATOP);
+
+            if (mIsThemeDefaultEnabled && !isIconOverlayDisabled) {
+                drawable.setColorFilter(color, Mode.SRC_ATOP);
+            } else if (!mIsThemeDefaultEnabled && !isIconOverlayDisabled) {
+                color = iconPaintColor;
+                drawable.setColorFilter(color, Mode.SRC_ATOP);
+            } else {
+                drawable.setColorFilter(null);      
+            }
             imageView.setImageDrawable(drawable);
         }
     }

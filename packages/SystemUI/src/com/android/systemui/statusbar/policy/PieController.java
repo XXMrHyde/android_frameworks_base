@@ -218,6 +218,22 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
                     Settings.System.EXPANDED_DESKTOP_STATE), false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.EXPANDED_DESKTOP_STYLE), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_ENABLE_THEME_DEFAULT), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_DISABLE_ICON_OVERLAY), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_TEXT_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_BUTTON_BG_NORMAL_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_BUTTON_BG_SELECTED_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_BUTTON_BG_LONG_PRESSED_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_BUTTON_OUTLINE_COLOR), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PIE_BUTTON_ICON_COLOR), false, this, UserHandle.USER_ALL);
             // trigger setupListener()
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_POSITIONS), false, this, UserHandle.USER_ALL);
@@ -264,6 +280,8 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
                 if (isShowing()) {
                     mPieContainer.exit();
                 }
+            } else if (action.equals("com.android.settings.LABEL_CHANGED")) {
+                getOperatorState();
             }
         }
     };
@@ -321,6 +339,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             filter.addAction(Intent.ACTION_SCREEN_OFF);
+            filter.addAction("com.android.settings.LABEL_CHANGED"); 
             mContext.registerReceiver(mBroadcastReceiver, filter);
         }
 
@@ -704,6 +723,11 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
     }
 
     public String getOperatorState() {
+        boolean isCustomCarrierLabelEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.PIE_ENABLE_CUSTOM_CARRIER_LABEL, 0) == 1;
+        String customLabel = Settings.System.getString(mContext.getContentResolver(),
+                Settings.System.CUSTOM_CARRIER_LABEL);
+
         if (mTelephonyManager == null) {
             return null;
         }
@@ -715,6 +739,9 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
         }
         if (mServiceState.isEmergencyOnly()) {
             return mContext.getString(R.string.pie_phone_status_emergency_only);
+        }
+        if (isCustomCarrierLabelEnabled && customLabel != null && customLabel.trim().length() > 0) {
+            return customLabel;
         }
         return mServiceState.getOperatorAlphaLong();
     }
