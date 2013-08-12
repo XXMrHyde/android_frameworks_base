@@ -49,6 +49,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
@@ -3129,7 +3130,11 @@ public class PhoneStatusBar extends BaseStatusBar {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (mSettingsContainer != null) {
+                mSettingsContainer.removeAllViews();
                 mQS.setupQuickSettings();
+                mSettingsContainer.requestLayout();
+                setNotificationbackground();
+
             }
         }
 
@@ -3162,6 +3167,42 @@ public class PhoneStatusBar extends BaseStatusBar {
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QS_DYNAMIC_WIFI),
                     false, this, UserHandle.USER_ALL);
+
+            cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND),
+                    false, this); 
+
+            cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND_ALPHA),
+                    false, this);
+
+            cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA),
+                    false, this); 
+            setNotificationbackground(); 
         }
+    }
+
+    private void setNotificationbackground() {
+        int notifBgColor = Settings.System.getInt(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_BACKGROUND, 0xe60e0e0e); 
+        float notifBgAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_BACKGROUND_ALPHA, 0.0f);
+        float notifRowAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA, 0.0f);
+
+        mNotificationPanel.setBackgroundResource(0); 
+        mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
+        Drawable background = mNotificationPanel.getBackground();
+        background.setAlpha(0);
+        background.setColorFilter(notifBgColor, Mode.SRC_ATOP);
+        background.setAlpha((int) ((1-notifBgAlpha) * 255));
+        if (mPile != null) {
+            int N = mNotificationData.size();
+            for (int i=0; i<N; i++) {
+              Entry ent = mNotificationData.get(N-i-1);
+              View expanded = ent.expanded;
+              if (expanded !=null && expanded.getBackground()!=null) expanded.getBackground().setAlpha((int) ((1-notifRowAlpha) * 255));
+              View large = ent.getLargeView();
+              if (large != null && large.getBackground()!=null) large.getBackground().setAlpha((int) ((1-notifRowAlpha) * 255));
+            }
+        } 
     }
 }

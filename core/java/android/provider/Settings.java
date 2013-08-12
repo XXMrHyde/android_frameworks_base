@@ -3052,6 +3052,24 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
 
+        /**
+         * Sets the background of the expanded statusbar, (notification drawer and quicksettings)
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_BACKGROUND = "notification_drawer_background";
+
+        /**
+         * Sets the alpha (transparency) of the expanded statusbar, (notification drawer and quicksettings)
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_BACKGROUND_ALPHA = "notification_drawer_background_alpha";
+
+        /**
+         * Sets the alpha (transparency) of the notification drawer rows
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
+
 	    /**
          * Holds the text for the Carrier label. An empty string
          * will bring the default text back.
