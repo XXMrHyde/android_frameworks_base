@@ -723,8 +723,8 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
     }
 
     public String getOperatorState() {
-        boolean isCustomCarrierLabelEnabled = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.PIE_ENABLE_CUSTOM_CARRIER_LABEL, 0) == 1;
+        boolean showCustomCarrierLabel = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.PIE_SHOW_CUSTOM_CARRIER_LABEL, 1) == 1;
         String customLabel = Settings.System.getString(mContext.getContentResolver(),
                 Settings.System.CUSTOM_CARRIER_LABEL);
 
@@ -740,7 +740,7 @@ public class PieController implements BaseStatusBar.NavigationBarCallback, PieVi
         if (mServiceState.isEmergencyOnly()) {
             return mContext.getString(R.string.pie_phone_status_emergency_only);
         }
-        if (isCustomCarrierLabelEnabled && customLabel != null && customLabel.trim().length() > 0) {
+        if (showCustomCarrierLabel && customLabel != null && customLabel.trim().length() > 0) {
             return customLabel;
         }
         return mServiceState.getOperatorAlphaLong();

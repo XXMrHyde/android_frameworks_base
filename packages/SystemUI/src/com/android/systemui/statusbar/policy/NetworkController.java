@@ -239,6 +239,7 @@ public class NetworkController extends BroadcastReceiver {
 
         // broadcasts
         IntentFilter filter = new IntentFilter();
+        filter.addAction("com.android.settings.LABEL_VISIBILITY_CHANGED");
         filter.addAction("com.android.settings.LABEL_CHANGED");
         filter.addAction(WifiManager.RSSI_CHANGED_ACTION);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -424,6 +425,8 @@ public class NetworkController extends BroadcastReceiver {
         } else if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) ||
                  action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
             updateConnectivity(intent);
+            refreshViews();
+        } else if (action.equals("com.android.settings.LABEL_VISIBILITY_CHANGED")) {
             refreshViews();
         } else if (action.equals("com.android.settings.LABEL_CHANGED")) {
             refreshViews();
@@ -1067,7 +1070,9 @@ public class NetworkController extends BroadcastReceiver {
         final boolean emergencyOnly = isEmergencyOnly();
 
         final String customLabel = Settings.System.getString(mContext.getContentResolver(),
-                Settings.System.CUSTOM_CARRIER_LABEL); 
+                Settings.System.CUSTOM_CARRIER_LABEL);
+        boolean showCustomLabel = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL, 1) == 1;
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
@@ -1223,7 +1228,7 @@ public class NetworkController extends BroadcastReceiver {
             }
         }
 
-        if (customLabel != null && customLabel.trim().length() > 0) {
+        if (showCustomLabel && customLabel != null && customLabel.trim().length() > 0) {
             combinedLabel = customLabel;
             mobileLabel = customLabel;     
             if (Settings.System.getInt(mContext.getContentResolver(),

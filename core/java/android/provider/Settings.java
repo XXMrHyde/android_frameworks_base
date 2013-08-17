@@ -2813,6 +2813,24 @@ public final class Settings {
         */
         public static final String COMBINED_BAR_AUTO_HIDE = "combined_bar_auto_hide";
 
+        /**
+         * Whether to show custom carrier label on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL = "lockscreen_show_custom_carrier_label";
+
+        /**
+         * Color of the carrier and wifi network name on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_CARRIER_LABEL_COLOR = "lockscreen_carrier_wifi_label_color";
+
+	    /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
         /**
          * Ability to enable/disable Daul pane prefs.
@@ -3070,30 +3088,29 @@ public final class Settings {
          */
         public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
 
-	    /**
-         * Holds the text for the Carrier label. An empty string
-         * will bring the default text back.
+        /**
+         * Whether to show custom carrier label on notification drawer
          * @hide
          */
-        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+        public static final String NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL = "notification_show_custom_carrier_label";
 
         /**
-         * Color of the carrier and wifi network name in the notification drawer
-         * @hide
-         */
-        public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
-
-        /**
-         * Show Wifi network name in notification drawer
+         * Show Wifi network name on notification drawer
          * @hide
          */
         public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";
 
         /**
+         * Color of the carrier and wifi network name on notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
+
+        /**
          * Whether to show custom carrier label on pie
          * @hide
          */
-        public static final String PIE_ENABLE_CUSTOM_CARRIER_LABEL = "enable_custom_carrier_label";
+        public static final String PIE_SHOW_CUSTOM_CARRIER_LABEL = "show_custom_carrier_label";
 
         /**
          * Whether to customize pie colors

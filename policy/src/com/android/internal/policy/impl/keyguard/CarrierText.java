@@ -75,17 +75,26 @@ public class CarrierText extends TextView {
 
     protected void updateCarrierText(State simState, CharSequence plmn, CharSequence spn) {
         CharSequence text = getCarrierTextForSimState(simState, plmn, spn);
+        boolean showCustomLabel = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL, 1) == 1;
         String customLabel = Settings.System.getString(getContext().getContentResolver(),
                 Settings.System.CUSTOM_CARRIER_LABEL);
+        int labelColor = Settings.System.getInt(getContext().getContentResolver(),
+                    Settings.System.LOCKSCREEN_CARRIER_LABEL_COLOR, 0xffbebebe);
         if (customLabel == null || customLabel.length() == 0) {
             if (KeyguardViewManager.USE_UPPER_CASE) {
                 setText(text != null ? text.toString().toUpperCase() : null);
             } else {
                 setText(text);
-           } 
+            } 
         } else {
-            setText(customLabel);
+            if (showCustomLabel) {
+                setText(customLabel);
+            } else {
+                setText(text);
+            }
         }
+        setTextColor(labelColor);
     }
 
     @Override
