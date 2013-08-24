@@ -109,7 +109,36 @@
 			</com.android.systemui.recent.RecentsVerticalScrollView>
 
 			<ImageView
-			    android:id="@+id/recents_clear"
+			    android:id="@+id/recents_clear_top_left"
+			    android:clickable="true"
+			    android:layout_width="50dp"
+			    android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+			    android:scaleType="center"
+			    android:layout_gravity="top|left"
+			    android:src="@drawable/ic_recents_clear" />
+
+			<ImageView
+			    android:id="@+id/recents_clear_top_right"
+			    android:clickable="true"
+			    android:layout_width="50dp"
+			    android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+			    android:scaleType="center"
+			    android:layout_gravity="top|right"
+			    android:src="@drawable/ic_recents_clear" />
+
+			<ImageView
+			    android:id="@+id/recents_clear_bottom_left"
+			    android:clickable="true"
+			    android:layout_width="50dp"
+			    android:layout_height="50dp"
+			    android:scaleType="center"
+			    android:layout_gravity="bottom|left"
+			    android:src="@drawable/ic_recents_clear" />
+
+			<ImageView
+			    android:id="@+id/recents_clear_bottom_right"
 			    android:clickable="true"
 			    android:layout_width="50dp"
 			    android:layout_height="50dp"

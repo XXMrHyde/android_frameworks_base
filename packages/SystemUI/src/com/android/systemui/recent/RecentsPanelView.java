@@ -84,6 +84,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private PopupMenu mPopup;
     private View mRecentsScrim;
     private View mRecentsNoApps;
+    private boolean mNoApps;
     private ViewGroup mRecentsContainer;
     private StatusBarTouchProxy mStatusBarTouchProxy;
 
@@ -102,7 +103,10 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private boolean mFitThumbnailToXY;
     private int mRecentItemLayoutId;
     private boolean mHighEndGfx;
-    private ImageView mClearRecents;
+    private ImageView mClearRecentsTopLeft;
+    private ImageView mClearRecentsTopRight;
+    private ImageView mClearRecentsBottomLeft;
+    private ImageView mClearRecentsBottomRight;
     private LinearColorBar mRamUsageBar;
 
     private long mFreeMemory;
@@ -113,6 +117,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     TextView mUsedMemText;
     TextView mFreeMemText;
     TextView mRamText;
+
+    private static int mClearPosition;
 
     MemInfoReader mMemInfoReader = new MemInfoReader();
 
@@ -370,11 +376,11 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
         if (show) {
             // if there are no apps, bring up a "No recent apps" message
-            boolean noApps = mRecentTaskDescriptions != null
+            mNoApps = mRecentTaskDescriptions != null
                     && (mRecentTaskDescriptions.size() == 0);
             mRecentsNoApps.setAlpha(1f);
-            mRecentsNoApps.setVisibility(noApps ? View.VISIBLE : View.INVISIBLE);
-            mClearRecents.setVisibility(noApps ? View.GONE : View.VISIBLE);
+            mRecentsNoApps.setVisibility(mNoApps ? View.VISIBLE : View.INVISIBLE);
+            updateClearRecentsVisibility();
             onAnimationEnd(null);
             setFocusable(true);
             setFocusableInTouchMode(true);
@@ -487,33 +493,10 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
         mRecentsScrim = findViewById(R.id.recents_bg_protect);
         mRecentsNoApps = findViewById(R.id.recents_no_apps);
-
-        mClearRecents = (ImageView) findViewById(R.id.recents_clear);
-        if (mClearRecents != null){
-            mClearRecents.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mRecentsContainer.removeAllViewsInLayout();
-                }
-            });
-            mClearRecents.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mRecentsContainer.removeAllViewsInLayout();
-                    try {
-                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
-                        OutputStreamWriter osw = new OutputStreamWriter(pb.start().getOutputStream());
-                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
-                        osw.write("\nexit\n");
-                        osw.flush();
-                        osw.close();
-                    } catch (Exception e) {
-                        Log.d(TAG, "Flush caches failed!");
-                    }
-                    return true;
-                }
-            });
-        }
+        mClearRecentsTopLeft = (ImageView) findViewById(R.id.recents_clear_top_left);
+        mClearRecentsTopRight = (ImageView) findViewById(R.id.recents_clear_top_right);
+        mClearRecentsBottomLeft = (ImageView) findViewById(R.id.recents_clear_bottom_left);
+        mClearRecentsBottomRight = (ImageView) findViewById(R.id.recents_clear_bottom_right);
 
         if (mRecentsScrim != null) {
             mHighEndGfx = ActivityManager.isHighEndGfx();
@@ -524,6 +507,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 ((BitmapDrawable) mRecentsScrim.getBackground()).setTileModeY(TileMode.REPEAT);
             }
         }
+        setClearRecentsListeners();
         updateRamBar();
     }
 
@@ -1007,6 +991,139 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         } catch (IOException e) {}
         mCachedMemory = result;
 
+    }
+
+    private void updateClearRecentsVisibility() {
+        mClearPosition = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.RECENTS_CLEAR_ALL_BTN_POS, 2);
+
+        if (mClearPosition == 0) {
+            mClearRecentsTopLeft.setVisibility(mNoApps ? View.GONE : View.VISIBLE);
+            mClearRecentsTopRight.setVisibility(View.GONE);
+            mClearRecentsBottomLeft.setVisibility(View.GONE);
+            mClearRecentsBottomRight.setVisibility(View.GONE);
+        } else if (mClearPosition == 1) {
+            mClearRecentsTopRight.setVisibility(mNoApps ? View.GONE : View.VISIBLE);
+            mClearRecentsTopLeft.setVisibility(View.GONE);
+            mClearRecentsBottomLeft.setVisibility(View.GONE);
+            mClearRecentsBottomRight.setVisibility(View.GONE);
+        } else if (mClearPosition == 2) {
+            mClearRecentsBottomLeft.setVisibility(mNoApps ? View.GONE : View.VISIBLE);
+            mClearRecentsTopLeft.setVisibility(View.GONE);
+            mClearRecentsTopRight.setVisibility(View.GONE);
+            mClearRecentsBottomRight.setVisibility(View.GONE);
+        } else if (mClearPosition == 3) {
+            mClearRecentsBottomRight.setVisibility(mNoApps ? View.GONE : View.VISIBLE);
+            mClearRecentsTopLeft.setVisibility(View.GONE);
+            mClearRecentsTopRight.setVisibility(View.GONE);
+            mClearRecentsBottomLeft.setVisibility(View.GONE);
+        }
+    }
+
+    private void setClearRecentsListeners() {
+        if (mClearRecentsTopLeft != null){
+            mClearRecentsTopLeft.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                }
+            });
+            mClearRecentsTopLeft.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
+                        OutputStreamWriter osw = new OutputStreamWriter(pb.start().getOutputStream());
+                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
+                        osw.write("\nexit\n");
+                        osw.flush();
+                        osw.close();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Flush caches failed!");
+                    }
+                    return true;
+                }
+            });
+        }
+
+        if (mClearRecentsTopRight != null){
+            mClearRecentsTopRight.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                }
+            });
+            mClearRecentsTopRight.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
+                        OutputStreamWriter osw = new OutputStreamWriter(pb.start().getOutputStream());
+                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
+                        osw.write("\nexit\n");
+                        osw.flush();
+                        osw.close();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Flush caches failed!");
+                    }
+                    return true;
+                }
+            });
+        }
+
+        if (mClearRecentsBottomLeft != null){
+            mClearRecentsBottomLeft.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                }
+            });
+            mClearRecentsBottomLeft.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
+                        OutputStreamWriter osw = new OutputStreamWriter(pb.start().getOutputStream());
+                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
+                        osw.write("\nexit\n");
+                        osw.flush();
+                        osw.close();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Flush caches failed!");
+                    }
+                    return true;
+                }
+            });
+        }
+
+        if (mClearRecentsBottomRight != null){
+            mClearRecentsBottomRight.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                }
+            });
+            mClearRecentsBottomRight.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
+                        OutputStreamWriter osw = new OutputStreamWriter(pb.start().getOutputStream());
+                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
+                        osw.write("\nexit\n");
+                        osw.flush();
+                        osw.close();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Flush caches failed!");
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
     private static String readLine(String filename, int line) throws IOException {
