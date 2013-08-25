@@ -3236,6 +3236,8 @@ public class PhoneStatusBar extends BaseStatusBar {
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QUICK_SETTINGS_RIBBON_TILES),
                     false, this, UserHandle.USER_ALL);
+
+            cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND),
                     false, this); 
 
