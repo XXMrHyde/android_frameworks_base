@@ -573,6 +573,11 @@ public class ActivityManager {
     public static final int RECENT_DO_NOT_COUNT_EXCLUDED = 0x0004;
 
     /**
+     * @hide
+     */
+    public static final int RECENT_DO_NOT_COUNT_EXCLUDED = 0x0004;
+
+    /**
      * Return a list of the tasks that the user has recently launched, with
      * the most recent being first and older ones after in order.
      *
