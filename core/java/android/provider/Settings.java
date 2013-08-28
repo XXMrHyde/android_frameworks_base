@@ -3044,6 +3044,24 @@ public final class Settings {
          */
         public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
 
+        /**
+         * Whether to load default Quick Access ribbon background tile drawable
+         * @hide
+         */
+        public static final String QAS_ENABLE_THEME_DEFAULT = "qas_enable_theme_default";
+
+        /**
+         * Color of the Quick settings and Quick Access ribbon background tile
+         * @hide
+         */
+        public static final String QAS_TILE_BACKGROUND_COLOR = "qas_tile_background_color";
+
+        /**
+         * Transparency of the Quick settings and Quick Access ribbon background tile
+         * @hide
+         */
+        public static final String QAS_TILE_BACKGROUND_ALPHA = "qas_tile_background_alpha";
+
         /** 
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none, 1 = only app use, 2 = app and cache use, 3 = app, cache and system use

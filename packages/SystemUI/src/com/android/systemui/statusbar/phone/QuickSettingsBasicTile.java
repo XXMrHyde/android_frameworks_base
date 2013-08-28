@@ -41,7 +41,6 @@ class QuickSettingsBasicTile extends QuickSettingsTileView {
             FrameLayout.LayoutParams.MATCH_PARENT,
             context.getResources().getDimensionPixelSize(R.dimen.quick_settings_cell_height)
         ));
-        setBackgroundResource(R.drawable.qs_tile_background);
         addView(LayoutInflater.from(context).inflate(
                 R.layout.quick_settings_tile_basic, null),
                 new FrameLayout.LayoutParams(

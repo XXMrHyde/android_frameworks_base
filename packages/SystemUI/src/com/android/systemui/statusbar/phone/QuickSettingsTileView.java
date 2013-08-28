@@ -16,7 +16,15 @@
 
 package com.android.systemui.statusbar.phone;
 
+import com.android.systemui.R;
+
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.ContentObserver;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
+import android.os.Handler;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +43,9 @@ public class QuickSettingsTileView extends FrameLayout {
 
         mColSpan = 1;
         mRowSpan = 1;
+        SettingsObserver settingsObserver = new SettingsObserver(new Handler());
+        settingsObserver.observe();
+        setTilebackground();
     }
 
     void setColumnSpan(int span) {
@@ -62,5 +73,62 @@ public class QuickSettingsTileView extends FrameLayout {
             }
         }
         super.setVisibility(vis);
+    }
+
+    class SettingsObserver extends ContentObserver {
+
+        public SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.QAS_ENABLE_THEME_DEFAULT), false, this);
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.QAS_TILE_BACKGROUND_COLOR), false, this);
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.QAS_TILE_BACKGROUND_ALPHA), false, this);
+            setTilebackground();
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            setTilebackground();
+        }
+    }
+
+    public void setTilebackground() {
+        boolean themeDefault = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QAS_ENABLE_THEME_DEFAULT, 0) == 0;
+        boolean systemDefault = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QAS_ENABLE_THEME_DEFAULT, 0) == 1;
+        boolean customColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QAS_ENABLE_THEME_DEFAULT, 0) == 2;
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QAS_TILE_BACKGROUND_COLOR, 0xff202020);
+        float alpha = Settings.System.getFloat(mContext.getContentResolver(),
+                Settings.System.QAS_TILE_BACKGROUND_ALPHA, 0.0f);
+
+        setBackgroundResource(0);
+        setBackgroundResource(R.drawable.qs_tile_background_system);
+
+        if (themeDefault) {
+            setBackgroundResource(0);
+            setBackgroundResource(R.drawable.qs_tile_background);
+        } else if (systemDefault) {
+            setBackgroundResource(0);
+            setBackgroundResource(R.drawable.qs_tile_background_system);
+        } else if (customColor) {
+            setBackgroundResource(0);
+            setBackgroundResource(R.drawable.qs_tile_background);
+            Drawable background = getBackground();
+            background.setColorFilter(color, Mode.SRC_ATOP);
+            setBackground(background);
+        }
+        Drawable background = getBackground();
+        background.setAlpha(0);
+        background.setAlpha((int) ((1-alpha) * 255));
+        setBackground(background);
     }
 }
