@@ -2845,6 +2845,12 @@ public final class Settings {
         public static final String STATUS_BAR_SHOW_CLOCK = "status_bar_show_clock";
 
         /**
+         * Show/hide date
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_DATE = "status_bar_show_date";
+
+        /**
          * Show/hide battery status
          * @hide
          */
@@ -2894,7 +2900,32 @@ public final class Settings {
          * Color of the clock in status bar
          * @hide
          */
-        public static final String STATUS_BAR_CLOCK_COLOR = "statusbar_clock_color";
+        public static final String STATUS_BAR_CLOCK_COLOR = "status_bar_clock_color";
+
+        /**
+         * Whether to show the date small in status bar
+         * 0: Normal
+         * 1: Small
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_SIZE = "status_bar_date_size";
+
+        /**
+         * Sets the date string style
+         * 0 - Regular style
+         * 1 - Lowercase
+         * 2 - Uppercase
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_STYLE = "status_bar_date_style";
+
+        /**
+         * Stores the java DateFormat string for the date
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
 
         /**
          * Display style of the status bar battery status
