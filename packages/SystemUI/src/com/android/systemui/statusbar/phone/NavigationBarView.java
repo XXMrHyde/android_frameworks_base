@@ -104,6 +104,7 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
 
+    boolean mIsThemeDefaultEnabled;
     private int mNavBarColor;
 
     // workaround for LayoutTransitions leaving the nav buttons in a weird state (bug 5549288)
@@ -141,6 +142,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_COLOR), false, this);
             updateSettings();
@@ -242,15 +245,18 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         mShowMenu = false;
         mDelegateHelper = new DelegateViewHelper(this);
         updateResources();
-
+        updateThemeDefault();
         mNavBarReceiver = new NavBarReceiver();
         mContext.registerReceiverAsUser(mNavBarReceiver, UserHandle.ALL,
                 new IntentFilter(NAVBAR_EDIT), null, null);
         Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
-        if(bg instanceof ColorDrawable) {
-            ColorDrawable navbarbg = new ColorDrawable(
-                    mNavBarColor != -1 ? mNavBarColor : ((ColorDrawable) bg).getColor());
-            setBackground(navbarbg);
+        if(mIsThemeDefaultEnabled) {
+            setBackgroundDrawable(bg);
+        } else {
+            if(bg instanceof ColorDrawable) {
+                ColorDrawable navbarbg = new ColorDrawable(mNavBarColor);
+                setBackground(navbarbg);
+            }
         }
     }
 
@@ -666,17 +672,28 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     protected void setBackground() {
         Drawable bg = getBackground();
-        if (bg == null)
-            return;
-        
-        if(bg instanceof ColorDrawable) {
-            ((ColorDrawable) bg).setColor(mNavBarColor);
+        Drawable background = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
+        if(mIsThemeDefaultEnabled) {
+            setBackgroundDrawable(background);
+        } else {
+            if (bg == null)
+                return;
+            if(bg instanceof ColorDrawable) {
+                ((ColorDrawable) bg).setColor(mNavBarColor);
+            }
         }
+    }
+
+    protected void updateThemeDefault() {
+        ContentResolver resolver = getContext().getContentResolver();
+
+        mIsThemeDefaultEnabled = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_ENABLE_THEME_DEFAULT, 1) == 1;
     }
 
     protected void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
 
+        mIsThemeDefaultEnabled = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_ENABLE_THEME_DEFAULT, 1) == 1;
         mNavBarColor = Settings.System.getInt(resolver, Settings.System.NAVIGATION_BAR_COLOR, 0xFF000000);
 
         mEditBar.updateKeys();

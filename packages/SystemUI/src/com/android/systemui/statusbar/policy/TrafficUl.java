@@ -28,6 +28,8 @@ public class TrafficUl extends TextView {
     float mSpeedUl;
     float mTotalTxBytes;
     boolean mIsBit;
+    boolean mEnableThemeDefault;
+    int mDefaultColor;
     int mTrafficUlColor;
 
     class SettingsObserver extends ContentObserver {
@@ -45,6 +47,8 @@ public class TrafficUl extends TextView {
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD), false, this);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE), false, this);
+            resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR), false, this);
         }
@@ -140,7 +144,7 @@ public class TrafficUl extends TextView {
                 } else {
                      setVisibility(View.GONE);
                 }
-                setTextColor(mTrafficUlColor);
+                setTextColor(mEnableThemeDefault ? mDefaultColor : mTrafficUlColor);
                 update();
                 super.handleMessage(msg);
             }
@@ -176,16 +180,20 @@ public class TrafficUl extends TextView {
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
-        mIsTrafficEnabled = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0) == 1);
-        mTrafficHide = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1) == 1);
-        mShowUl = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD, 1) == 1);
-        mIsBit = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0) == 1);
+        mIsTrafficEnabled = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0) == 1;
+        mTrafficHide = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1) == 1;
+        mShowUl = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD, 1) == 1;
+        mIsBit = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0) == 1;
+        mEnableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT, 1) == 1;
+        mDefaultColor = getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
         mTrafficUlColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR, 0xff33b5e5);
+                Settings.System.STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR, mDefaultColor);
 
         if (mAttached) {
             updateTraffic();

@@ -47,6 +47,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener; 
 import android.widget.TextView;
 
+import com.android.systemui.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -85,6 +87,8 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
         }
@@ -283,18 +287,17 @@ public class ClockExpanded extends TextView implements OnClickListener, OnLongCl
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
+        boolean enableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(R.color.clock_view_color);
         mHeaderClockDateColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff);
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, defaultColor);
 
         if (mAttached) {
             updateClock();
         }
 
-        if (mHeaderClockDateColor == Integer.MIN_VALUE) {
-            // flag to reset the color
-            mHeaderClockDateColor = 0xffffffff;
-        }
-        setTextColor(mHeaderClockDateColor);
+        setTextColor(enableThemeDefault ? defaultColor : mHeaderClockDateColor);
     }
 }
 

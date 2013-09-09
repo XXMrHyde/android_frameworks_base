@@ -65,6 +65,8 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_ENABLE_THEME_DEFAULT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
         }
 
@@ -228,6 +230,9 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
+        boolean enableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(R.color.clock_view_color);
         mHeaderClockDateColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff);
 
@@ -235,10 +240,6 @@ public class DateView extends TextView implements OnClickListener, OnLongClickLi
             updateClock();
         }
 
-        if (mHeaderClockDateColor == Integer.MIN_VALUE) {
-            // flag to reset the color
-            mHeaderClockDateColor = 0xffffffff;
-        }
-        setTextColor(mHeaderClockDateColor);
+        setTextColor(enableThemeDefault ? defaultColor : mHeaderClockDateColor);
     }
 }

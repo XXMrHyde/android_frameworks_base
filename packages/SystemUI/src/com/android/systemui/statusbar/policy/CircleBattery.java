@@ -75,6 +75,8 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
     private boolean mIsCharging = false;
     private boolean mIsCircleDotted = false;
     private int mBatteryStyle;
+    private boolean mEnableThemeDefault;
+    private int mDefaultColor;
     private int mCircleColor;
     private int mCircleTextColor;
     private int mCircleTextChargingColor;
@@ -101,6 +103,8 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
                     Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CIRCLE_DOTTED), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -244,7 +248,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
             canvas.drawText("?", textX, mTextY, mPaintFont);
         } else if (level < 100 && mPercentage) {
             if (level < mWarningLevel) {
-                mPaintFont.setColor(usePaint.getColor());
+                mPaintFont.setColor(Color.RED);
             } else if (mIsCharging) {
                 mPaintFont.setColor(mCircleTextChargingColor);
             } else {
@@ -272,20 +276,28 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         Resources res = getResources();
         ContentResolver resolver = mContext.getContentResolver();
 
-        mShowBatteryStatus = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
-        mBatteryStyle = (Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 4, UserHandle.USER_CURRENT));
-        mIsCircleDotted = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1);
-        mCircleColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_BATTERY_COLOR, 0xff33b5ef);
-        mCircleTextColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xffffffff);
-        mCircleTextChargingColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, 0xff00ff00);
+        mShowBatteryStatus = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1;
+        mBatteryStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 4, UserHandle.USER_CURRENT);
+        mIsCircleDotted = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1;
+        boolean mEnableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT, 1) == 1;
+        int mDefaultColor = mContext.getResources().getColor(
+                com.android.internal.R.color.holo_blue_dark);
+        int circleColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_BATTERY_COLOR, 0xff0099cc);
+        int circleTextColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xff0099cc);
+        int circleTextChargingColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, 0xff0099cc);
         mCircleAnimSpeed = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED, 3);
+
+        mCircleColor = mEnableThemeDefault ? mDefaultColor : circleColor;
+        mCircleTextColor = mEnableThemeDefault ? mDefaultColor : circleTextColor;
+        mCircleTextChargingColor = mEnableThemeDefault ? mDefaultColor : circleTextChargingColor;
 
         mWarningLevel = mContext.getResources().getInteger(R.integer.config_lowBatteryWarningLevel);
 

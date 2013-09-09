@@ -69,6 +69,8 @@ public class BatteryBar extends RelativeLayout implements Animatable {
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_POSITION), false, this);
             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_ENABLE_THEME_DEFAULT), false, this);
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_COLOR), false, this);
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE), false, this);
@@ -187,8 +189,12 @@ public class BatteryBar extends RelativeLayout implements Animatable {
 
     private void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
-
-        int color = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xFF33B5E5);
+        boolean enableThemeDefault = Settings.System.getInt(
+                resolver, Settings.System.STATUS_BAR_BATTERY_BAR_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
+        int color = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, defaultColor);
 
         shouldAnimateCharging = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE, 0) == 1;
@@ -200,8 +206,8 @@ public class BatteryBar extends RelativeLayout implements Animatable {
         }
         setProgress(mBatteryLevel);
 
-        mBatteryBar.setBackgroundColor(color);
-        mCharger.setBackgroundColor(color);
+        mBatteryBar.setBackgroundColor(enableThemeDefault ? defaultColor : color);
+        mCharger.setBackgroundColor(enableThemeDefault ? defaultColor : color);
     }
 
     private void setProgress(int n) {

@@ -68,6 +68,7 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
 
+    boolean mIsThemeDefaultEnabled;
     int mStatusBarColor;
     float mAlpha;
     int mAlphaMode; 
@@ -117,6 +118,8 @@ public class PhoneStatusBarView extends PanelBar {
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(
+                   Settings.System.getUriFor(Settings.System.STATUS_BAR_ENABLE_THEME_DEFAULT), false, this);
+            resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.STATUS_BAR_COLOR), false, this);
             resolver.registerContentObserver(
                    Settings.System.getUriFor(Settings.System.STATUS_BAR_ALPHA), false, this);
@@ -149,10 +152,13 @@ public class PhoneStatusBarView extends PanelBar {
         settingsObserver.observe();
         updateSettings();
         Drawable bg = mContext.getResources().getDrawable(R.drawable.status_bar_background);
-        if(bg instanceof ColorDrawable) {
-            ColorDrawable statusbarbg = new ColorDrawable(
-                    mStatusBarColor != -1 ? mStatusBarColor : ((ColorDrawable) bg).getColor());
-            setBackground(statusbarbg);
+        if(mIsThemeDefaultEnabled) {
+            setBackgroundDrawable(bg);
+        } else {
+            if(bg instanceof ColorDrawable) {
+                ColorDrawable statusbarbg = new ColorDrawable(mStatusBarColor);
+                setBackground(statusbarbg);
+            }
         }
     }
 
@@ -365,14 +371,20 @@ public class PhoneStatusBarView extends PanelBar {
 
     protected void setBackgroundAlpha(float alpha) {
         Drawable bg = getBackground();
-        if (bg == null)
-            return;
-        
-        if(bg instanceof ColorDrawable) {
-            ((ColorDrawable) bg).setColor(mStatusBarColor);
-        }
+        Drawable background = mContext.getResources().getDrawable(R.drawable.status_bar_background);
         int a = Math.round(alpha * 255);
-        bg.setAlpha(a);
+
+        if(mIsThemeDefaultEnabled) {
+            setBackgroundDrawable(background);
+            background.setAlpha(a);
+        } else {
+            if (bg == null)
+                return;
+            if(bg instanceof ColorDrawable) {
+                ((ColorDrawable) bg).setColor(mStatusBarColor);
+                bg.setAlpha(a);
+            }
+        }
     }
 
     public void updateBackgroundAlpha() {
@@ -400,6 +412,7 @@ public class PhoneStatusBarView extends PanelBar {
     protected void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
 
+        mIsThemeDefaultEnabled = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_ENABLE_THEME_DEFAULT, 1) == 1;
         mStatusBarColor = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_COLOR, 0xFF000000);
         mAlpha = 1.0f - Settings.System.getFloat(resolver, Settings.System.STATUS_BAR_ALPHA, 0.0f);
         mAlphaMode = Settings.System.getInt(resolver, Settings.System.STATUS_BAR_ALPHA_MODE, 1);

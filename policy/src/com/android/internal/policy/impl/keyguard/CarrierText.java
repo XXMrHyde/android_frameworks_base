@@ -79,6 +79,10 @@ public class CarrierText extends TextView {
                     Settings.System.LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL, 1) == 1;
         String customLabel = Settings.System.getString(getContext().getContentResolver(),
                 Settings.System.CUSTOM_CARRIER_LABEL);
+        boolean enableThemeDefault = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(
+                com.android.internal.R.color.secondary_text_dark);
         int labelColor = Settings.System.getInt(getContext().getContentResolver(),
                     Settings.System.LOCKSCREEN_CARRIER_LABEL_COLOR, 0xffbebebe);
         if (customLabel == null || customLabel.length() == 0) {
@@ -94,7 +98,7 @@ public class CarrierText extends TextView {
                 setText(text);
             }
         }
-        setTextColor(labelColor);
+        setTextColor(enableThemeDefault ? defaultColor : labelColor);
     }
 
     @Override

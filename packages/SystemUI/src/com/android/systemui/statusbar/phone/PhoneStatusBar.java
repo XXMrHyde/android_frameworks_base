@@ -3240,8 +3240,12 @@ public class PhoneStatusBar extends BaseStatusBar {
                     false, this, UserHandle.USER_ALL);
 
             cr.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_ENABLE_THEME_DEFAULT),
+                    false, this);
+
+            cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND),
-                    false, this); 
+                    false, this);
 
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_BACKGROUND_ALPHA),
@@ -3250,20 +3254,24 @@ public class PhoneStatusBar extends BaseStatusBar {
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA),
                     false, this); 
-            setNotificationbackground(); 
+            setNotificationbackground();
         }
     }
 
     private void setNotificationbackground() {
+        boolean enableThemeDefault = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_ENABLE_THEME_DEFAULT, 1) == 1;
         int notifBgColor = Settings.System.getInt(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_BACKGROUND, 0xe60e0e0e); 
         float notifBgAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_BACKGROUND_ALPHA, 0.0f);
         float notifRowAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA, 0.0f);
 
-        mNotificationPanel.setBackgroundResource(0); 
+        mNotificationPanel.setBackgroundResource(0);
         mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
         Drawable background = mNotificationPanel.getBackground();
+        if (!enableThemeDefault) {
+            background.setColorFilter(notifBgColor, Mode.SRC_ATOP);
+        }
         background.setAlpha(0);
-        background.setColorFilter(notifBgColor, Mode.SRC_ATOP);
         background.setAlpha((int) ((1-notifBgAlpha) * 255));
         if (mPile != null) {
             int N = mNotificationData.size();

@@ -2808,6 +2808,12 @@ public final class Settings {
         public static final String LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL = "lockscreen_show_custom_carrier_label";
 
         /**
+         * Whether to customize the carrier label color on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_ENABLE_THEME_DEFAULT = "lockscreen_enable_theme_default";
+
+        /**
          * Color of the carrier and wifi network name on lockscreen
          * @hide
          */
@@ -2869,6 +2875,12 @@ public final class Settings {
         public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
 
         /**
+         * Whether to customize the status bar background color
+         * @hide
+         */
+        public static final String STATUS_BAR_ENABLE_THEME_DEFAULT = "status_bar_enable_theme_default";
+
+        /**
          * Color of the status bar background
          * @hide
          */
@@ -2886,6 +2898,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_ALPHA_MODE = "status_bar_alpha_mode";
+
+        /**
+         * Whether to customize the status bar clock and date color
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_DATE_ENABLE_THEME_DEFAULT = "status_bar_clock_date_enable_theme_default";
 
         /**
          * Whether to show the clock centered in status bar
@@ -2926,6 +2944,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
+
+        /**
+         * Whether to customize the status bar battery status colors
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT = "status_bar_battery_status_enable_theme_default";
 
         /**
          * Display style of the status bar battery status
@@ -2974,6 +2998,12 @@ public final class Settings {
         public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
 
         /**
+         * Whether to customize the status bar battery bar color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_ENABLE_THEME_DEFAULT = "status_bar_battery_bar_enable_theme_default";
+
+        /**
          * Whether to show the additional battery bar
          * 0: Don't show the additional battery bar
          * 1: On statusbar
@@ -3014,6 +3044,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
 
         /**
+         * Whether to customize the status bar network speed indicator color
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT = "status_bar_network_speed_enable_theme_default";
+
+        /**
          * Show/hide network speed upload indicator
          * @hide
          */
@@ -3050,6 +3086,12 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
 
         /**
+         * Whether to customize the clock and date color on status bar expanded
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_ENABLE_THEME_DEFAULT = "status_bar_expanded_header_enable_theme_default";
+
+        /**
          * Color of the status bar expanded clock
          * @hide
          */
@@ -3060,6 +3102,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+
+        /**
+         * Whether to customize the background color on status bar expanded
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BACKGROUND_ENABLE_THEME_DEFAULT = "status_bar_expanded_background_enable_theme_default";
 
         /**
          * Sets the background of the expanded statusbar, (notification drawer and quicksettings)
@@ -3078,6 +3126,12 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIFICATION_DRAWER_ROW_ALPHA = "notification_drawer_row_alpha";
+
+        /**
+         * Whether to customize the carrier and wifi label color on notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_CARRIER_WIFI_ENABLE_THEME_DEFAULT = "notification_drawer_carrier_wifi_enable_theme_default";
 
         /**
          * Whether to show custom carrier label on notification drawer
@@ -3164,7 +3218,7 @@ public final class Settings {
          * Whether to customize pie colors
          * @hide
          */
-        public static final String PIE_ENABLE_THEME_DEFAULT = "enable_theme_default";
+        public static final String PIE_ENABLE_THEME_DEFAULT = "pie_enable_theme_default";
 
         /**
          * Whether to show a customized pie icon color
@@ -3268,6 +3322,12 @@ public final class Settings {
          * @hide
          */
         public static final String PIE_BUTTON_ICON_COLOR_B = "button_icon_color_b";
+
+        /**
+         * Whether to customize the navigation bar background color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ENABLE_THEME_DEFAULT = "navigation_bar_enable_theme_default";
 
         /**
          * Color of the navigation bar background

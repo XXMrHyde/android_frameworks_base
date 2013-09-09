@@ -69,6 +69,8 @@ public class BatteryController extends BroadcastReceiver {
     private int mBatteryStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
     private int mBatteryLevel = 0;
     private int mBatteryStyle;
+    private boolean mEnableThemeDefault;
+    private int mDefaultColor;
     private int mTextColor = 0xff33b5e5;
     private int mTextChargingColor = 0xff33b5e5;
 
@@ -87,6 +89,8 @@ public class BatteryController extends BroadcastReceiver {
                     Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -323,9 +327,9 @@ public class BatteryController extends BroadcastReceiver {
             if (mBatteryLevel <= 14 && !mBatteryPlugged) {
                 v.setTextColor(Color.RED);
             } else if (mBatteryPlugged) {
-                v.setTextColor(mTextChargingColor);
+                v.setTextColor(mEnableThemeDefault ? mDefaultColor : mTextChargingColor);
             } else {
-                v.setTextColor(mTextColor);
+                v.setTextColor(mEnableThemeDefault ? mDefaultColor : mTextColor);
             }
         }
     }
@@ -333,17 +337,22 @@ public class BatteryController extends BroadcastReceiver {
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mShowBatteryStatus = (Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1);
+        mShowBatteryStatus = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1) == 1;
+        mBatteryStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_CIRCLE_PERCENT, UserHandle.USER_CURRENT);
+        boolean mEnableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT, 1) == 1;
+        int mDefaultColor = mContext.getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
+        int textColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xff33b5e5);
+        int textChargingColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, 0xff33b5e5);
 
-        mBatteryStyle = (Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, BATTERY_STYLE_CIRCLE_PERCENT, UserHandle.USER_CURRENT));
+        mTextColor = mEnableThemeDefault ? mDefaultColor : textColor;
+        mTextChargingColor = mEnableThemeDefault ? mDefaultColor : textChargingColor;
 
-        mTextColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, 0xffffffff);
-
-        mTextChargingColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, 0xff00ff00);
         updateBattery();
     }
 }

@@ -87,6 +87,8 @@ public class Clock extends TextView {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_CLOCK), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_DATE_ENABLE_THEME_DEFAULT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_COLOR), false, this);
@@ -303,18 +305,23 @@ public class Clock extends TextView {
 
         int amPmStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AM_PM, 2, UserHandle.USER_CURRENT);
-        mShowClock = (Settings.System.getInt(resolver,
-			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1);
-        mShowDate = (Settings.System.getInt(resolver,
-			    Settings.System.STATUS_BAR_SHOW_DATE, 0) == 1);
-        mCenterClock = (Settings.System.getInt(resolver,
-			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1);
+        mShowClock = Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1) == 1;
+        mShowDate = Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_SHOW_DATE, 0) == 1;
+        mCenterClock = Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0) == 1;
         mDateStyle = Settings.System.getInt(resolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE, DATE_STYLE_UPPERCASE);
-        mDateSizeSmall = (Settings.System.getInt(resolver,
-			    Settings.System.STATUS_BAR_DATE_SIZE, 0) == 1);
+        mDateSizeSmall = Settings.System.getInt(resolver,
+			    Settings.System.STATUS_BAR_DATE_SIZE, 0) == 1;
+        boolean enableThemeDefault = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
         mClockColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_CLOCK_COLOR, 0xff33b5e5);
+                Settings.System.STATUS_BAR_CLOCK_COLOR, defaultColor);
+
 
         if (mAmPmStyle != amPmStyle) {
             mAmPmStyle = amPmStyle;
@@ -325,11 +332,7 @@ public class Clock extends TextView {
             }
         }
 
-        if (mClockColor == Integer.MIN_VALUE) {
-            // flag to reset the color
-            mClockColor = 0xff33b5e5;
-        }
-        setTextColor(mClockColor);
+        setTextColor(enableThemeDefault ? defaultColor : mClockColor);
         updateVisibility();
         updateClock();
     }
