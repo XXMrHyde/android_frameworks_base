@@ -2969,6 +2969,14 @@ public class PhoneStatusBar extends BaseStatusBar {
         mStatusBarContainer.addView(mStatusBarWindow);
 
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
+
+        if (mClock != null) {
+            mClock.updateSettings();
+        }
+        if (mCclock != null) {
+            mCclock.updateSettings();
+        }
+
         mRecreating = false;
     }
 
