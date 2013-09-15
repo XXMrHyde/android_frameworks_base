@@ -3325,6 +3325,12 @@ public final class Settings {
         public static final String PIE_BUTTON_ICON_COLOR_B = "button_icon_color_b";
 
         /**
+         * Whether to to show the navigation bar
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW = "show_navigation_bar";
+
+        /**
          * Whether to customize the navigation bar background color
          * @hide
          */
