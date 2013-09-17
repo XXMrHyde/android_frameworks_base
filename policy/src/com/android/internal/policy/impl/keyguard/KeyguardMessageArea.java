@@ -218,7 +218,14 @@ class KeyguardMessageArea extends TextView {
         MutableInt icon = new MutableInt(0);
         CharSequence status = concat(getChargeInfo(icon), getOwnerInfo(), getCurrentMessage());
         setCompoundDrawablesWithIntrinsicBounds(icon.value, 0, 0, 0);
+        boolean enableThemeDefault = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_STATUS_ENABLE_THEME_DEFAULT, 1) == 1;
+        int defaultColor = getResources().getColor(
+                com.android.internal.R.color.secondary_text_dark);
+        int statusColor = Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_STATUS_COLOR, 0xffbebebe);
         setText(status);
+        setTextColor(enableThemeDefault ? defaultColor : statusColor);
     }
 
     private CharSequence concat(CharSequence... args) {

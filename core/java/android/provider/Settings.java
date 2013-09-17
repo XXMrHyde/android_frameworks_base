@@ -2820,6 +2820,18 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_CARRIER_LABEL_COLOR = "lockscreen_carrier_wifi_label_color";
 
+        /**
+         * Whether to customize the status color on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_STATUS_ENABLE_THEME_DEFAULT = "lockscreen_status_enable_theme_default";
+
+        /**
+         * Color of the status on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_STATUS_COLOR = "lockscreen_status_color";
+
 	    /**
          * Holds the text for the Carrier label. An empty string
          * will bring the default text back.
