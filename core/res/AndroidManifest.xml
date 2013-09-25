@@ -153,6 +153,7 @@
     <protected-broadcast android:name="android.intent.action.DREAMING_STARTED" />
     <protected-broadcast android:name="android.intent.action.DREAMING_STOPPED" />
     <protected-broadcast android:name="android.intent.action.ANY_DATA_STATE" />
+    <protected-broadcast android:name="android.intent.action.DATA_CONNECTION_CONNECTED_TO_PROVISIONING_APN" />
 
     <protected-broadcast android:name="com.android.server.WifiManager.action.START_SCAN" />
     <protected-broadcast android:name="com.android.server.WifiManager.action.DELAYED_DRIVER_STOP" />
@@ -182,6 +183,9 @@
 
     <protected-broadcast android:name="android.intent.action.ACTION_IDLE_MAINTENANCE_START" />
     <protected-broadcast android:name="android.intent.action.ACTION_IDLE_MAINTENANCE_END" />
+
+    <protected-broadcast
+        android:name="com.android.server.connectivityservice.CONNECTED_TO_PROVISIONING_NETWORK_ACTION" />
 
     <!-- ====================================== -->
     <!-- Permissions for things that cost money -->
@@ -1924,12 +1928,6 @@
         android:label="@string/permlab_movePackage"
         android:description="@string/permdesc_movePackage"
         android:protectionLevel="signature|system" />
-
-    <!-- @hide Allows an application to change privacy guard state -->
-    <permission android:name="android.permission.CHANGE_PRIVACY_GUARD_STATE"
-        android:label="@string/permlab_changePrivacyGuardState"
-        android:description="@string/permdesc_changePrivacyGuardState"
-        android:protectionLevel="signature" />
 
     <!-- Allows an application to change whether an application component (other than its own) is
          enabled or not.
