@@ -48,4 +48,8 @@
     <color name="pie_selected_color">@android:color/holo_blue_light</color>
     <color name="pie_long_pressed_color">#ff8ad5f0</color>
     <color name="pie_outline_color">#dd0099cc</color>
+
+    <!-- ==================== battery status only ==================== -->
+    <!-- this color is used for the default empty color of symbol (normal and mini) and circle battery style -->
+    <color name="battery_empty_color">#ff404040</color>
 </resources>

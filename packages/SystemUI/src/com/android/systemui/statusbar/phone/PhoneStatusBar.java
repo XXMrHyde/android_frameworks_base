@@ -655,8 +655,10 @@ public class PhoneStatusBar extends BaseStatusBar {
         // Other icons
         mLocationController = new LocationController(mContext); // will post a notification
         mBatteryController = new BatteryController(mContext);
+        mBatteryController.addIconEmptyView((ImageView)mStatusBarView.findViewById(R.id.battery_empty));
         mBatteryController.addIconView((ImageView)mStatusBarView.findViewById(R.id.battery));
         mBatteryController.addLabelView((TextView)mStatusBarView.findViewById(R.id.battery_text));
+        mBatteryController.addIconLabelView((TextView)mStatusBarView.findViewById(R.id.battery_icon_text));
 
         mCircleBattery = (CircleBattery) mStatusBarView.findViewById(R.id.circle_battery);
         mBatteryController.addStateChangedCallback(mCircleBattery);
@@ -2330,9 +2332,11 @@ public class PhoneStatusBar extends BaseStatusBar {
             final View systemIcons = mStatusBarView.findViewById(R.id.statusIcons);
             final View signal = mStatusBarView.findViewById(R.id.signal_cluster);
             final View signal2 = mStatusBarView.findViewById(R.id.signal_cluster_text);
+            final View batteryEmpty = mStatusBarView.findViewById(R.id.battery_empty);
             final View battery = mStatusBarView.findViewById(R.id.battery);
-            final View battery2 = mStatusBarView.findViewById(R.id.battery_text);
-            final View battery3 = mStatusBarView.findViewById(R.id.circle_battery);
+            final View batteryText = mStatusBarView.findViewById(R.id.battery_icon_text);
+            final View batteryText2 = mStatusBarView.findViewById(R.id.battery_text);
+            final View batteryCircle = mStatusBarView.findViewById(R.id.circle_battery);
             final View dockBattery = mStatusBarView.findViewById(R.id.dock_battery);
             final View dockBattery2 = mStatusBarView.findViewById(R.id.dock_battery_text);
             final View dockBattery3 = mStatusBarView.findViewById(R.id.circle_dock_battery);
@@ -2345,9 +2349,11 @@ public class PhoneStatusBar extends BaseStatusBar {
             lightsOutObjs.add(ObjectAnimator.ofFloat(systemIcons, View.ALPHA, 0));
             lightsOutObjs.add(ObjectAnimator.ofFloat(signal, View.ALPHA, 0));
             lightsOutObjs.add(ObjectAnimator.ofFloat(signal2, View.ALPHA, 0));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(batteryEmpty, View.ALPHA, 0.5f));
             lightsOutObjs.add(ObjectAnimator.ofFloat(battery, View.ALPHA, 0.5f));
-            lightsOutObjs.add(ObjectAnimator.ofFloat(battery2, View.ALPHA, 0.5f));
-            lightsOutObjs.add(ObjectAnimator.ofFloat(battery3, View.ALPHA, 0.5f));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(batteryText, View.ALPHA, 0.5f));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(batteryText2, View.ALPHA, 0.5f));
+            lightsOutObjs.add(ObjectAnimator.ofFloat(batteryCircle, View.ALPHA, 0.5f));
             if (dockBattery != null) {
                 lightsOutObjs.add(ObjectAnimator.ofFloat(dockBattery, View.ALPHA, 0.5f));
             }
@@ -2366,9 +2372,11 @@ public class PhoneStatusBar extends BaseStatusBar {
             lightsOnObjs.add(ObjectAnimator.ofFloat(systemIcons, View.ALPHA, 1));
             lightsOnObjs.add(ObjectAnimator.ofFloat(signal, View.ALPHA, 1));
             lightsOnObjs.add(ObjectAnimator.ofFloat(signal2, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(batteryEmpty, View.ALPHA, 1));
             lightsOnObjs.add(ObjectAnimator.ofFloat(battery, View.ALPHA, 1));
-            lightsOnObjs.add(ObjectAnimator.ofFloat(battery2, View.ALPHA, 1));
-            lightsOnObjs.add(ObjectAnimator.ofFloat(battery3, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(batteryText, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(batteryText2, View.ALPHA, 1));
+            lightsOnObjs.add(ObjectAnimator.ofFloat(batteryCircle, View.ALPHA, 1));
             if (dockBattery != null) {
                 lightsOnObjs.add(ObjectAnimator.ofFloat(dockBattery, View.ALPHA, 1));
             }

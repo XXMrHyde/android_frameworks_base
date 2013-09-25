@@ -152,7 +152,7 @@ public class CenterClock extends TextView {
             mSettingsObserver = new SettingsObserver(new Handler());
         }
         mSettingsObserver.observe();
-        updateClock();
+        updateSettings();
     }
 
     @Override

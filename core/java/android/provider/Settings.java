@@ -2981,16 +2981,28 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "battery_status_style";
 
         /**
-         * Circle battery icon color in statusbar
+         * Whether to show a battery status text
          * @hide
          */
-        public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "battery_status_show_text";
 
         /**
          * Whether to show the Circle battery status dotted in statusbar
          * @hide
          */
-        public static final String STATUS_BAR_CIRCLE_BATTERY_COLOR = "circle_battery_color";
+        public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+
+        /**
+         *Battery fill icon color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_FILL_COLOR = "battery_fill_color";
+
+        /**
+         * Battery empty icon color in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_EMPTY_COLOR = "battery_empty_color";
 
         /**
          * Battery icon text color in statusbar

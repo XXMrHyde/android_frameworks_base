@@ -152,7 +152,7 @@ public class Clock extends TextView {
             mSettingsObserver = new SettingsObserver(new Handler());
         }
         mSettingsObserver.observe();
-        updateClock();
+        updateSettings();
     }
 
     @Override
