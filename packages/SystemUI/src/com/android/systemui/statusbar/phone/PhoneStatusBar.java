@@ -1386,6 +1386,14 @@ public class PhoneStatusBar extends BaseStatusBar {
         }
     }
 
+    boolean hasClearableNotifications() {
+        return mNotificationData.hasClearableItems();
+    }
+
+    boolean hasVisibleNotifications() {
+        return mNotificationData.hasVisibleItems();
+    }
+
     @Override
     protected void setAreThereNotifications() {
         final boolean any = mNotificationData.size() > 0;
