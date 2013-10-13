@@ -230,6 +230,7 @@ public class TrafficDl extends TextView {
                     }
                 }
             } else {
+                setText("");
                 setVisibility(View.GONE);
             }
 
