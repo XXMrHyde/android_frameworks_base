@@ -1,7 +1,5 @@
 package com.android.systemui.statusbar.policy;
 
-import java.text.DecimalFormat;
-
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -11,26 +9,30 @@ import android.database.ContentObserver;
 import android.net.ConnectivityManager;
 import android.net.TrafficStats;
 import android.os.Handler;
-import android.os.Message;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class TrafficDl extends TextView {
+    public static final String TAG = "TrafficDl";
     private boolean mAttached;
-    TrafficStats mTrafficStats;
-    Handler mHandler;
-    Handler mTrafficHandler;
-    boolean mIsTrafficEnabled;
+    boolean mTrafficMeterEnable;
+    boolean mTrafficMeterHide;
     boolean mShowDl;
-    boolean mTrafficHide;
-    float mSpeedDl;
-    float mTotalRxBytes;
     boolean mIsBit;
-    boolean mEnableThemeDefault;
-    int mDefaultColor;
-    int mTrafficDlColor;
+    int mTrafficMeterSummaryTime;
+    long totalRxBytes;
+    long lastUpdateTime;
+    long trafficBurstStartTime;
+    long trafficBurstStartBytes;
+    long keepOnUntil = Long.MIN_VALUE;
+    NumberFormat decimalFormat = new DecimalFormat("##0.0");
+    NumberFormat integerFormat = NumberFormat.getIntegerInstance();
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -39,6 +41,7 @@ public class TrafficDl extends TextView {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
+
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR), false, this);
             resolver.registerContentObserver(Settings.System
@@ -46,17 +49,22 @@ public class TrafficDl extends TextView {
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD), false, this);
             resolver.registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), false, this);
+            resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE), false, this);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR), false, this);
+
+            updateSettings();
         }
 
         @Override
         public void onChange(boolean selfChange) {
             updateSettings();
         }
+
     }
 
     public TrafficDl(Context context) {
@@ -69,25 +77,22 @@ public class TrafficDl extends TextView {
 
     public TrafficDl(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mHandler = new Handler();
-        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
-        mTrafficStats = new TrafficStats();
-        settingsObserver.observe();
         updateSettings();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
         if (!mAttached) {
             mAttached = true;
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             getContext().registerReceiver(mIntentReceiver, filter, null,
                     getHandler());
+
+            SettingsObserver settingsObserver = new SettingsObserver(getHandler());
+            settingsObserver.observe();
         }
-        updateSettings();
     }
 
     @Override
@@ -109,94 +114,163 @@ public class TrafficDl extends TextView {
         }
     };
 
-    public void updateTraffic() {
-        mTrafficHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                ContentResolver resolver = mContext.getContentResolver();
-                mSpeedDl = (mTrafficStats.getTotalRxBytes() - mTotalRxBytes) / 1024 / 3;
-                mTotalRxBytes = mTrafficStats.getTotalRxBytes();
-                DecimalFormat DecimalFormatfnum = new DecimalFormat("###0");
+    @Override
+    public void onScreenStateChanged(int screenState) {
+        if (screenState == SCREEN_STATE_OFF) {
+            stopTrafficUpdates();
+        } else {
+            startTrafficUpdates();
+        }
+        super.onScreenStateChanged(screenState);
+    }
 
-                if (mIsBit) {
-                    if (mSpeedDl / 1024 >= 1) {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl / 128) + "Mb/s");
-                    } else if (mSpeedDl <= 0.01) {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl * 8192) + "b/s");
-                    } else {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl * 8) + "Kb/s");
-                    }
-                } else {
-                    if (mSpeedDl / 1024 >= 1) {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl / 1024) + "MB/s");
-                    } else if (mSpeedDl <= 0.01) {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl * 1024) + "B/s");
-                    } else {
-                        setText("D: " + DecimalFormatfnum.format(mSpeedDl) + "KB/s");
-                    }
-                }
-                if (mIsTrafficEnabled && mShowDl && getConnectAvailable()) {
-                    if ((mTrafficHide) && (mSpeedDl == 0)) {
-                        setVisibility(View.GONE);
-                    } else {
-                        setVisibility(View.VISIBLE);
-                    }
-                } else {
-                     setVisibility(View.GONE);
-                }
-                setTextColor(mEnableThemeDefault ? mDefaultColor : mTrafficDlColor);
-                update();
-                super.handleMessage(msg);
-            }
-        };
-        mTotalRxBytes = mTrafficStats.getTotalRxBytes(); 
-        mTrafficHandler.sendEmptyMessage(0);
+    private void stopTrafficUpdates() {
+        getHandler().removeCallbacks(mRunnable);
+        setText("");
+    }
+
+    public void startTrafficUpdates() {
+
+        if (getConnectAvailable()) {
+            totalRxBytes = TrafficStats.getTotalRxBytes();
+            lastUpdateTime = SystemClock.elapsedRealtime();
+            trafficBurstStartTime = Long.MIN_VALUE;
+
+            getHandler().removeCallbacks(mRunnable);
+            getHandler().post(mRunnable);
+        }
+    }
+
+    private String formatTraffic(long trafffic, boolean speed) {
+        if (trafffic > 10485760) { // 1024 * 1024 * 10
+            return ("D: ")
+                    + (speed ? "" : "(")
+                    + integerFormat.format(trafffic / 1048576)
+                    + (speed ? (mIsBit ? "Mbit/s" : "MB/s") : "MB)");
+        } else if (trafffic > 1048576) { // 1024 * 1024
+            return ("D: ")
+                    + (speed ? "" : "(")
+                    + decimalFormat.format(((float) trafffic) / 1048576f)
+                    + (speed ? (mIsBit ? "Mbit/s" : "MB/s") : "MB)");
+        } else if (trafffic > 10240) { // 1024 * 10
+            return ("D: ")
+                    + (speed ? "" : "(")
+                    + integerFormat.format(trafffic / 1024)
+                    + (speed ? (mIsBit ? "Kbit/s" : "KB/s") : "KB)");
+        } else if (trafffic > 1024) { // 1024
+            return ("D: ")
+                    + (speed ? "" : "(")
+                    + decimalFormat.format(((float) trafffic) / 1024f)
+                    + (speed ? (mIsBit ? "Kbit/s" : "KB/s") : "KB)");
+        } else {
+            return ("D: ")
+                    + (speed ? "" : "(")
+                    + integerFormat.format(trafffic)
+                    + (speed ? (mIsBit ? "bit/s" : "B/s") : "B)");
+        }
     }
 
     private boolean getConnectAvailable() {
         try {
             ConnectivityManager connectivityManager = (ConnectivityManager) mContext
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (connectivityManager.getActiveNetworkInfo().isConnected())
-                return true;
-            else
-                return false;
-        } catch (Exception ex) {
+
+            return connectivityManager.getActiveNetworkInfo().isConnected();
+        } catch (Exception ignored) {
         }
         return false;
-    }
-
-    public void update() {
-        mTrafficHandler.removeCallbacks(mRunnable);
-        mTrafficHandler.postDelayed(mRunnable, 2000);
     }
 
     Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            mTrafficHandler.sendEmptyMessage(0);
+            long td = SystemClock.elapsedRealtime() - lastUpdateTime;
+
+            if (td == 0 || !mTrafficMeterEnable) {
+                // we just updated the view, nothing further to do
+                return;
+            }
+
+            long currentRxBytes = TrafficStats.getTotalRxBytes();
+            long newBytes = currentRxBytes - totalRxBytes;
+
+            if (mTrafficMeterHide && newBytes == 0) {
+                long trafficBurstBytes = currentRxBytes - trafficBurstStartBytes;
+
+                if (trafficBurstBytes != 0 && mTrafficMeterSummaryTime != 0) {
+                    setText(formatTraffic(trafficBurstBytes, false));
+
+                    Log.i(TAG,
+                            "Traffic burst ended: " + trafficBurstBytes + "B in "
+                                    + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
+                                    / 1000 + "s");
+                    keepOnUntil = SystemClock.elapsedRealtime() + mTrafficMeterSummaryTime;
+                    trafficBurstStartTime = Long.MIN_VALUE;
+                    trafficBurstStartBytes = currentRxBytes;
+                }
+            } else {
+                if (mTrafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
+                    trafficBurstStartTime = lastUpdateTime;
+                    trafficBurstStartBytes = totalRxBytes;
+                }
+                setText(formatTraffic(mIsBit ? newBytes * 8000 / td : newBytes * 1000 / td, true));
+            }
+
+            // Hide if there is no traffic
+            if (mShowDl) {
+                if (mTrafficMeterHide && newBytes == 0) {
+                    if (getVisibility() != GONE
+                            && keepOnUntil < SystemClock.elapsedRealtime()) {
+                        setText("");
+                        setVisibility(View.GONE);
+                    }
+                } else {
+                    if (getVisibility() != VISIBLE) {
+                        setVisibility(View.VISIBLE);
+                    }
+                }
+            } else {
+                setVisibility(View.GONE);
+            }
+
+            totalRxBytes = currentRxBytes;
+            lastUpdateTime = SystemClock.elapsedRealtime();
+            getHandler().postDelayed(mRunnable, 500);
         }
     };
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
-        mIsTrafficEnabled = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0) == 1;
-        mTrafficHide = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1) == 1;
+
+        mTrafficMeterEnable = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0) == 1);
+        mTrafficMeterHide = (Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1) == 1);
+        mTrafficMeterSummaryTime = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_TRAFFIC_SUMMARY, 3000);
         mShowDl = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD, 1) == 1;
         mIsBit = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0) == 1;
-        mEnableThemeDefault = Settings.System.getInt(resolver,
+        boolean enableThemeDefault = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT, 1) == 1;
-        mDefaultColor = getResources().getColor(
+        int defaultColor = getResources().getColor(
                 com.android.internal.R.color.holo_blue_light);
-        mTrafficDlColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR, mDefaultColor);
 
-        if (mAttached) {
-            updateTraffic();
+        int trafficDLColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR, defaultColor);
+
+
+        if (mTrafficMeterEnable && mShowDl && getConnectAvailable()) {
+            setVisibility(View.VISIBLE);
+            if (mAttached) {
+                startTrafficUpdates();
+            }
+        } else {
+            setVisibility(View.GONE);
+            setText("");
         }
+
+        setTextColor(enableThemeDefault ? defaultColor : trafficDLColor);
     }
 }

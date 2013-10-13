@@ -3092,6 +3092,12 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD = "status_bar_network_speed_show_upload";
 
         /**
+         * Show summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
+
+        /**
          * Display network speed indicator value as bit/byte
          * @hide
          */
