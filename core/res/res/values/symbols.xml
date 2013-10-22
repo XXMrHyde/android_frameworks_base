@@ -2038,6 +2038,9 @@
   <java-symbol type="dimen" name="pie_trigger_distance" />
   <java-symbol type="dimen" name="pie_perpendicular_distance" />
 
+  <!-- Gesture Sensor -->
+  <java-symbol type="bool" name="config_enableGestureService" />
+
   <!-- Electron Beam -->
   <java-symbol type="bool" name="config_screenOffAnimation" />
 
@@ -2052,4 +2055,6 @@
   <!-- Package Manager -->
   <java-symbol type="array" name="config_disabledComponents" />
 
+  <!-- LED flashlight -->
+  <java-symbol type="bool" name="config_enableTorch" />
 </resources>
