@@ -75,6 +75,9 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
     private boolean mShowBatteryStatus = true;
     private boolean mIsCharging = false;
     private boolean mIsCircleDotted = false;
+    private int mDotLength;
+    private int mDotInterval;
+    private int mDotOffset;
     private int mBatteryStyle;
     private boolean mShowIconText;
     private boolean mEnableThemeDefault;
@@ -112,6 +115,12 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
                     Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CIRCLE_DOTTED), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_EMPTY_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -231,7 +240,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
         usePaint.setAntiAlias(true);
         if (mIsCircleDotted) {
             // change usePaint from solid to dashed
-            usePaint.setPathEffect(new DashPathEffect(new float[]{3,2},0));
+            usePaint.setPathEffect(new DashPathEffect(new float[]{mDotLength,mDotInterval},mDotOffset));
         }else {
             usePaint.setPathEffect(null);
         }
@@ -282,6 +291,12 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
                 Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1) == 1;
         mIsCircleDotted = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0) == 1;
+        mDotLength = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH, 3);
+        mDotInterval = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL, 2);
+        mDotOffset = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET, 0);
         boolean mEnableThemeDefault = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_ENABLE_THEME_DEFAULT, 1) == 1;
         mDefaultThinRingColor = mContext.getResources().getColor(

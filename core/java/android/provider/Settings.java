@@ -2858,7 +2858,6 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_BATTERY_STATUS_RING_DOTTED = "lockscreen_battery_status_ring_dotted";
 
-
         /**
          * Length of the battery status ring dots on lockscreen, (if enabled "dotted")
          *
@@ -3061,6 +3060,36 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+
+        /**
+         * Length of the Circle battery status dots in statusbar, (if enabled "dotted")
+         *
+         * Values 0 - 10
+         * default : 3
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOT_LENGTH = "battery_circle_dot_length";
+
+        /**
+         * Interval of the Circle battery status dots in statusbar, (if enabled "dotted")
+         *
+         * Values 0 - 10
+         * default : 2
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOT_INTERVAL = "battery_circle_dot_interval";
+
+        /**
+         * Offset of the Circle battery status dots in statusbar, (if enabled "dotted")
+         *
+         * Values 0 - 10
+         * default : 0
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOT_OFFSET = "battery_circle_dot_offset";
 
         /**
          *Battery fill icon color in statusbar
