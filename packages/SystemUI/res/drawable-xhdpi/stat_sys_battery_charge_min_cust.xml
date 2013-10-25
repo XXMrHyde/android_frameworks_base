@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** Copyright 2011, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+**
+**     http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
+*/
+-->
+
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:maxLevel="2">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_0" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_7" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_13" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_16" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_19" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="7">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_7" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_13" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_16" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_19" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="13">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_13" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_16" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_19" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="16">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_16" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_19" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="19">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_19" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="22">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_22" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="25">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_25" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="28">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_28" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="31">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_31" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="34">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_34" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="37">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_37" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="40">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_40" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="43">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_43" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="46">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_46" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="49">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_49" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="52">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_52" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="55">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_55" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="58">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_58" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="61">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_61" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="64">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_64" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="67">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_67" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="70">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_70" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="73">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_73" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="76">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_76" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="79">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_79" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="82">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_82" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="85">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_85" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="88">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_88" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="91">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_91" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="94">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_94" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="97">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_97" />
+            <item android:duration="80" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="100">
+        <animation-list android:oneshot="false"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:duration="1000" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+        </animation-list>
+    </item>
+    <item android:maxLevel="101" android:drawable="@drawable/stat_sys_battery_min_cust_100" />
+</level-list>

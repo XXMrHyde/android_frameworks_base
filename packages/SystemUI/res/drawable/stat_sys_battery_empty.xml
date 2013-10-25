@@ -18,6 +18,6 @@
 -->
 
 <level-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/stat_sys_battery_100" android:maxLevel="100" />
+    <item android:drawable="@drawable/stat_sys_battery_cust_100" android:maxLevel="100" />
 </level-list>
 

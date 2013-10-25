@@ -51,7 +51,7 @@ public class CircleBattery extends ImageView implements BatteryController.Batter
     // state variables
     private boolean mAttached;      // whether or not attached to a window
     private boolean mActivated;     // whether or not activated due to system settings
-    private boolean mShowText;    // whether or not to show percentage number
+    private boolean mShowText;      // whether or not to show percentage number
     private int     mBatteryStatus; // current battery status
     private int     mLevel;         // current battery level
     private int     mWarningLevel;  // battery level under which circle should become red

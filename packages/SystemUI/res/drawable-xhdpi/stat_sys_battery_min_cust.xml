@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* 
+** Copyright 2011, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+**
+**     http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
+*/
+*/
+-->
+
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_0" android:maxLevel="2" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_7" android:maxLevel="7" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_13" android:maxLevel="13" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_16" android:maxLevel="16" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_19" android:maxLevel="19" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_22" android:maxLevel="22" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_25" android:maxLevel="25" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_28" android:maxLevel="28" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_31" android:maxLevel="31" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_34" android:maxLevel="34" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_37" android:maxLevel="37" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_40" android:maxLevel="40" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_43" android:maxLevel="43" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_46" android:maxLevel="46" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_49" android:maxLevel="49" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_52" android:maxLevel="52" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_55" android:maxLevel="55" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_58" android:maxLevel="58" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_61" android:maxLevel="61" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_64" android:maxLevel="64" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_67" android:maxLevel="67" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_70" android:maxLevel="70" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_73" android:maxLevel="73" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_76" android:maxLevel="76" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_79" android:maxLevel="79" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_82" android:maxLevel="82" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_85" android:maxLevel="85" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_88" android:maxLevel="88" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_91" android:maxLevel="91" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_94" android:maxLevel="94" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_97" android:maxLevel="97" />
+    <item android:drawable="@drawable/stat_sys_battery_min_cust_100" android:maxLevel="100" />
+</level-list>
+
