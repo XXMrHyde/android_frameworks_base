@@ -48,14 +48,12 @@ public class BatteryController extends BroadcastReceiver {
     private ArrayList<TextView> mLabelViews = new ArrayList<TextView>();
     private ArrayList<TextView> mIconLabelViews = new ArrayList<TextView>();
 
-    public static final int BATTERY_STYLE_NORMAL         = 0;
-    public static final int BATTERY_STYLE_NORMAL_CUST    = 1;
-    public static final int BATTERY_STYLE_PERCENT        = 2;
-    public static final int BATTERY_STYLE_ICON_MINI      = 3;
-    public static final int BATTERY_STYLE_ICON_MINI_CUST = 4;
+    public static final int BATTERY_STYLE_NORMAL_CUST    = 0;
+    public static final int BATTERY_STYLE_PERCENT        = 1;
+    public static final int BATTERY_STYLE_ICON_MINI_CUST = 2;
 
-    public static final int BATTERY_STYLE_ABM            = 6;
-    public static final int BATTERY_STYLE_HCOMB          = 7;
+    public static final int BATTERY_STYLE_ABM            = 4;
+    public static final int BATTERY_STYLE_HCOMB          = 5;
     /***
      * BATTERY_STYLE_CIRCLE* cannot be handled in this controller, since we cannot get views from
      * statusbar here. Yet it is listed for completion and not to confuse at future updates
@@ -63,7 +61,7 @@ public class BatteryController extends BroadcastReceiver {
      *
      * set to public to be reused by CircleBattery
      */
-    public static final int BATTERY_STYLE_CIRCLE        = 5;
+    public static final int BATTERY_STYLE_CIRCLE        = 3;
 
     private static final int BATTERY_TEXT_STYLE_NORMAL  = R.string.status_bar_settings_battery_meter_format;
     private static final int BATTERY_TEXT_STYLE_MIN     = R.string.status_bar_settings_battery_meter_min_format;
@@ -318,10 +316,8 @@ public class BatteryController extends BroadcastReceiver {
 
         if (isBatteryPresent() && mShowBatteryStatus) {
             if (isBatteryStatusUnknown() &&
-                (mBatteryStyle == BATTERY_STYLE_NORMAL ||
-                 mBatteryStyle == BATTERY_STYLE_NORMAL_CUST ||
+                (mBatteryStyle == BATTERY_STYLE_NORMAL_CUST ||
                  mBatteryStyle == BATTERY_STYLE_PERCENT ||
-                 mBatteryStyle == BATTERY_STYLE_ICON_MINI ||
                  mBatteryStyle == BATTERY_STYLE_ICON_MINI_CUST ||
 				 mBatteryStyle == BATTERY_STYLE_ABM ||
 				 mBatteryStyle == BATTERY_STYLE_HCOMB)) {
@@ -329,34 +325,34 @@ public class BatteryController extends BroadcastReceiver {
                 // Unknown status doesn't relies on any style
                 showIcon = (View.VISIBLE);
                 iconStyle = getIconStyleUnknown();
-            } else if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
-                showIcon = (View.VISIBLE);
-                iconStyle = isBatteryStatusCharging() ?
-                                getIconStyleCharge() : getIconStyleNormal();
             } else if (mBatteryStyle == BATTERY_STYLE_NORMAL_CUST) {
-                showEmptyIcon = View.VISIBLE;
-                iconEmptyStyle = getIconEmptyStyleNormal();
+                showEmptyIcon = mEnableThemeDefault ? View.GONE : View.VISIBLE;
                 showIcon = (View.VISIBLE);
-                iconStyle = isBatteryStatusCharging() ?
-                                getIconStyleChargeCust() : getIconStyleNormalCust();
-                showIconText = (mEnableIconText ? View.VISIBLE : View.GONE);
-                textStyle = BATTERY_TEXT_STYLE_MIN;
-                textSize = mBatteryLevel == 100 ? 6.0f : 9.0f;
+                if (mEnableThemeDefault) {
+                    iconStyle = isBatteryStatusCharging() ?
+                                    getIconStyleCharge() : getIconStyleNormal();
+                } else {
+                    iconStyle = isBatteryStatusCharging() ?
+                                    getIconStyleChargeCust() : getIconStyleNormalCust();
+                    showIconText = (mEnableIconText ? View.VISIBLE : View.GONE);
+                    textStyle = BATTERY_TEXT_STYLE_MIN;
+                    textSize = mBatteryLevel == 100 ? 6.0f : 9.0f;
+                }
             } else if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
                 showText = (View.VISIBLE);
                 textStyle = BATTERY_TEXT_STYLE_NORMAL;
                 pxTextPadding = (int) (4 * logicalDensity + 0.5);
-            } else if (mBatteryStyle == BATTERY_STYLE_ICON_MINI) {
-                showIcon = (View.VISIBLE);
-                iconStyle = isBatteryStatusCharging() ?
-                                getIconStyleChargeMin() : getIconStyleNormalMin();
-                showText = (mEnableIconText ? View.VISIBLE : View.GONE);
             } else if (mBatteryStyle == BATTERY_STYLE_ICON_MINI_CUST) {
-                showEmptyIcon = View.VISIBLE;
+                showEmptyIcon = mEnableThemeDefault ? View.GONE : View.VISIBLE;
                 iconEmptyStyle = getIconEmptyStyleNormalMin();
                 showIcon = (View.VISIBLE);
-                iconStyle = isBatteryStatusCharging() ?
-                                getIconStyleChargeMinCust() : getIconStyleNormalMinCust();
+                if (mEnableThemeDefault) {
+                    iconStyle = isBatteryStatusCharging() ?
+                                    getIconStyleChargeMin() : getIconStyleNormalMin();
+                } else {
+                    iconStyle = isBatteryStatusCharging() ?
+                                    getIconStyleChargeMinCust() : getIconStyleNormalMinCust();
+                }
                 showText = (mEnableIconText ? View.VISIBLE : View.GONE);
             } else if (mBatteryStyle == BATTERY_STYLE_ABM) {
                 showIcon = (View.VISIBLE);
@@ -391,13 +387,17 @@ public class BatteryController extends BroadcastReceiver {
             v.setVisibility(showIcon);
             if (mBatteryStyle == BATTERY_STYLE_NORMAL_CUST ||
                 mBatteryStyle == BATTERY_STYLE_ICON_MINI_CUST) {
-                // turn text red at 14% when not on charger - same level android battery warning appears
-                // if no custom color is defined && over 14% use default color
-                // else use custom user color
-                if (mBatteryLevel <= 7 && !mBatteryPlugged) {
-                    v.setColorFilter(batteryWarningColor, Mode.SRC_ATOP);
+                if (!mEnableThemeDefault) {
+                    // turn battery fill color red at 14% when not on charger - same level android battery warning appears
+                    // if no custom color is defined or theme default is enabled && over 14% use default color
+                    // else use custom user color
+                    if (mBatteryLevel <= 14 && !mBatteryPlugged) {
+                        v.setColorFilter(batteryWarningColor, Mode.SRC_ATOP);
+                    } else {
+                        v.setColorFilter(mFillColor, Mode.SRC_ATOP);
+                    }
                 } else {
-                    v.setColorFilter(mFillColor, Mode.SRC_ATOP);
+                    v.setColorFilter(null);
                 }
             } else {
                 v.setColorFilter(null);
@@ -412,7 +412,7 @@ public class BatteryController extends BroadcastReceiver {
             v.setPadding(v.getPaddingLeft(),v.getPaddingTop(),pxTextPadding,v.getPaddingBottom());
 
             // turn text red at 14% when not on charger - same level android battery warning appears
-            // if no custom color is defined && over 14% use default color
+            // if no custom color is defined or theme default is enabled && over 14% use default color
             // else use custom user color
             if (mBatteryLevel <= 14 && !mBatteryPlugged) {
                 v.setTextColor(batteryWarningColor);
@@ -430,7 +430,7 @@ public class BatteryController extends BroadcastReceiver {
             v.setTextSize(textSize);
 
             // turn text red at 14% when not on charger - same level android battery warning appears
-            // if no custom color is defined && over 14% use default color
+            // if no custom color is defined or theme default is enabled && over 14% use default color
             // else use custom user color
             if (mBatteryLevel <= 14 && !mBatteryPlugged) {
                 v.setTextColor(batteryWarningColor);
