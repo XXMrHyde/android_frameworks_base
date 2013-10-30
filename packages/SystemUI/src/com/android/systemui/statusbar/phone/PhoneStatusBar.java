@@ -3412,7 +3412,11 @@ public class PhoneStatusBar extends BaseStatusBar {
         float notifRowAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIFICATION_DRAWER_ROW_ALPHA, 0.0f);
 
         mNotificationPanel.setBackgroundResource(0);
-        mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
+        if (enableThemeDefault) {
+            mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
+        } else {
+            mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg_cust);
+        }
         Drawable background = mNotificationPanel.getBackground();
         if (!enableThemeDefault) {
             background.setColorFilter(notifBgColor, Mode.SRC_ATOP);
