@@ -33,4 +33,18 @@
     <string name="quick_settings_battery_charging">Wird geladen</string>
     <string name="quick_settings_battery_discharging">Entlädt</string>
 
+    <!-- Screenrecord Notification Ticker -->
+    <string name="screenrecord_notif_ticker">Bildschirm wird aufgenommen</string>
+
+    <!-- Screenrecord notification title -->
+    <string name="screenrecord_notif_title">Bildschirm Aufnahme</string>
+
+    <!-- Screenrecord notification action: Stop -->
+    <string name="screenrecord_notif_stop">Stop</string>
+
+    <!-- Screenrecord notification action: Toggle pointer -->
+    <string name="screenrecord_notif_pointer">Zeiger ein/aus</string>
+
+    <!-- Screen record notification error title -->
+    <string name="screenrecord_notif_error">Bildschirm kann nicht aufgenommen werden</string>
 </resources>
