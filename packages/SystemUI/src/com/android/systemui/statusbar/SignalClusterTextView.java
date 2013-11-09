@@ -20,7 +20,11 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff.Mode;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -51,15 +55,23 @@ public class SignalClusterTextView
     private static final int SIGNAL_CLUSTER_STYLE_TEXT     = 1;
     private static final int SIGNAL_CLUSTER_STYLE_HIDDEN   = 2;
 
+    private static final int INET_CONDITION_THRESHOLD = 50;
+
     private boolean mAttached;
     private boolean mAirplaneMode;
     private int mSignalClusterStyle;
     private int mPhoneState;
-
+    private int mInetCondition = 0;
+    private boolean mIsThemeDefaultEnabled = true;
+    private boolean mIsSystemDefaultEnabled = false;
+    private int mSystemDefaultColor;
+    private int mMobileNormalColor = 0xffaaaaaa;
+    private int mMobileConnectedColor = 0xff35b5e5;
     private SignalStrength signalStrength;
 
     ViewGroup mMobileGroup;
     TextView mMobileSignalText;
+    ImageView mMobileSignalTextIcon;
 
     Handler mHandler;
     SettingsObserver mObserver;
@@ -76,6 +88,12 @@ public class SignalClusterTextView
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SIGNAL_TEXT), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this);
         }
 
         void unobserve() {
@@ -102,18 +120,34 @@ public class SignalClusterTextView
         mObserver = new SettingsObserver(mHandler);
     }
 
+    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(ConnectivityManager.INET_CONDITION_ACTION)) {
+                updateConnectivity(intent);
+            }
+        }
+    };
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
         mMobileGroup      = (ViewGroup) findViewById(R.id.mobile_signal_text_combo);
         mMobileSignalText = (TextView) findViewById(R.id.mobile_signal_text);
+        mMobileSignalTextIcon = (ImageView) findViewById(R.id.mobile_signal_text_icon);
 
         if (!mAttached) {
             mAttached = true;
             ((TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE)).listen(
                 mPhoneStateListener, PhoneStateListener.LISTEN_SERVICE_STATE
                 | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
+            getContext().registerReceiver(mIntentReceiver, filter, null,
+                    getHandler());
 
             mObserver.observe();
             updateSettings();
@@ -125,6 +159,7 @@ public class SignalClusterTextView
         if (mAttached) {
             mObserver.unobserve();
             mAttached = false;
+            getContext().unregisterReceiver(mIntentReceiver);
         }
         super.onDetachedFromWindow();
     }
@@ -143,7 +178,20 @@ public class SignalClusterTextView
             return;
         } else if (mSignalClusterStyle == SIGNAL_CLUSTER_STYLE_TEXT) {
             mMobileGroup.setVisibility(View.VISIBLE);
+            if (mIsThemeDefaultEnabled) {
+                mMobileSignalText.setTextColor(mSystemDefaultColor);
+                mMobileSignalTextIcon.setColorFilter(null);
+            } else if (mIsSystemDefaultEnabled) {
+                mMobileSignalText.setTextColor(mSystemDefaultColor);
+                mMobileSignalTextIcon.setColorFilter(mSystemDefaultColor, Mode.MULTIPLY);
+            } else {
+                mMobileSignalText.setTextColor((mInetCondition == 1 ?
+                        mMobileConnectedColor : mMobileNormalColor));
+                mMobileSignalTextIcon.setColorFilter((mInetCondition == 1 ?
+                        mMobileConnectedColor : mMobileNormalColor), Mode.MULTIPLY);
+            }
             mMobileSignalText.setText(getSignalLevelString(dBm));
+            mMobileSignalTextIcon.setImageResource(R.drawable.stat_sys_signal_min);
         } else {
             mMobileGroup.setVisibility(View.GONE);
         }
@@ -173,10 +221,32 @@ public class SignalClusterTextView
         }
     };
 
+    private void updateConnectivity(Intent intent) {
+        final ConnectivityManager connManager = (ConnectivityManager) mContext
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        int connectionStatus = intent.getIntExtra(ConnectivityManager.EXTRA_INET_CONDITION, 0);
+
+        mInetCondition = (connectionStatus > INET_CONDITION_THRESHOLD ? 1 : 0);
+
+        updateSettings();
+    }
+
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+
         mSignalClusterStyle = (Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SIGNAL_TEXT, SIGNAL_CLUSTER_STYLE_NORMAL, UserHandle.USER_CURRENT));
+        mIsThemeDefaultEnabled = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS, 0) == 0;
+        mIsSystemDefaultEnabled = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS, 0) == 1;
+        mSystemDefaultColor = getResources().getColor(
+                com.android.internal.R.color.holo_blue_light);
+        int mMobileConnectedColor = Settings.System.getInt(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xff33b5e5);
+        int mMobileNormalColor = Settings.System.getInt(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffaaaaaa);
+
         updateSignalText();
     }
 }

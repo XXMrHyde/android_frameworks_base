@@ -21,7 +21,10 @@ package com.android.systemui.statusbar;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -53,6 +56,19 @@ public class SignalClusterView
     private int mSignalClusterStyle;
     private boolean mWifiVisible = false;
     private int mWifiStrengthId = 0, mWifiActivityId = 0;
+    private boolean mIsThemeDefaultEnabled = true;
+    private boolean mIsSystemDefaultEnabled = false;
+    private int mWifiIconNormalColor = 0xffaaaaaa;
+    private int mWifiIconConnectedColor = 0xff33b5e5;
+    private int mWifiActivityNormalColor = 0xffaaaaaa;
+    private int mWifiActivityConnectedColor = 0xff33b5e5;
+    private int mMobileNormalColor = 0xffaaaaaa;
+    private int mMobileConnectedColor = 0xff33b5e5;
+    private int mMobileNetworkTypeNormalColor = 0xffaaaaaa;
+    private int mMobileNetworkTypeConnectedColor = 0xff33b5e5;
+    private int mMobileActivityNormalColor = 0xffaaaaaa;
+    private int mMobileActivityConnectedColor = 0xff33b5e5;
+
     private boolean mMobileVisible = false;
     private int mMobileStrengthId = 0, mMobileActivityId = 0;
     private int mMobileTypeId = 0, mNoSimIconId = 0;
@@ -77,6 +93,28 @@ public class SignalClusterView
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SIGNAL_TEXT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR), false, this);
         }
 
         void unobserve() {
@@ -128,7 +166,7 @@ public class SignalClusterView
         mAirplane       = (ImageView) findViewById(R.id.airplane);
         mEther          = (ImageView) findViewById(R.id.ethernet);
 
-        apply();
+        updateSettings();
     }
 
     @Override
@@ -237,6 +275,22 @@ public class SignalClusterView
         if (mWifiGroup == null) return;
 
         if (mWifiVisible) {
+            if (mIsThemeDefaultEnabled) {
+                mWifi.setColorFilter(null);
+                mWifiActivity.setColorFilter(null);
+            } else if (mIsSystemDefaultEnabled) {
+                mWifi.setColorFilter(getConnectedStatus(mWifiStrengthId) ?
+                                         0xff33b5e5 : 0xffaaaaaa,
+                                     Mode.MULTIPLY);
+                mWifiActivity.setColorFilter(0xff000000, Mode.MULTIPLY);
+            } else {
+                mWifi.setColorFilter(getConnectedStatus(mWifiStrengthId) ?
+                                         mWifiIconConnectedColor : mWifiIconNormalColor,
+                                     Mode.MULTIPLY);
+                mWifiActivity.setColorFilter(getConnectedStatus(mWifiStrengthId) ?
+                                         mWifiActivityConnectedColor : mWifiActivityNormalColor,
+                                     Mode.MULTIPLY);
+            }
             mWifi.setImageResource(mWifiStrengthId);
             mWifiActivity.setImageResource(mWifiActivityId);
 
@@ -252,6 +306,27 @@ public class SignalClusterView
                     mWifiStrengthId, mWifiActivityId));
 
         if (mMobileVisible && !mIsAirplaneMode) {
+            if (mIsThemeDefaultEnabled) {
+                mMobile.setColorFilter(null);
+                mMobileActivity.setColorFilter(null);
+                mMobileType.setColorFilter(null);
+            } else if (mIsSystemDefaultEnabled) {
+                mMobile.setColorFilter(getConnectedStatus(mMobileStrengthId) ?
+                                         0xff33b5e5 : 0xffaaaaaa,
+                                     Mode.MULTIPLY);
+                mMobileActivity.setColorFilter(0xff000000, Mode.MULTIPLY);
+                mMobileType.setColorFilter(0xff808080, Mode.MULTIPLY);
+            } else {
+                mMobile.setColorFilter(getConnectedStatus(mMobileStrengthId) ?
+                                         mMobileConnectedColor : mMobileNormalColor,
+                                     Mode.MULTIPLY);
+                mMobileActivity.setColorFilter(getConnectedStatus(mMobileStrengthId) ?
+                                         mMobileActivityConnectedColor : mMobileActivityNormalColor,
+                                     Mode.MULTIPLY);
+                mMobileType.setColorFilter(getConnectedStatus(mMobileStrengthId) ?
+                                         mMobileNetworkTypeConnectedColor : mMobileNetworkTypeNormalColor,
+                                     Mode.MULTIPLY);
+            }
             mMobile.setImageResource(mMobileStrengthId);
             mMobileActivity.setImageResource(mMobileActivityId);
             mMobileType.setImageResource(mMobileTypeId);
@@ -293,7 +368,7 @@ public class SignalClusterView
         mMobileType.setVisibility(
                 !mWifiVisible ? View.VISIBLE : View.GONE);
 
-        updateSettings();
+        updateSignalClusterStyle();
     }
 
     private void updateSignalClusterStyle() {
@@ -303,12 +378,64 @@ public class SignalClusterView
         }
     }
 
+    private boolean getConnectedStatus(int strengthId) {
+        String strengthValue = getResourceName(strengthId);
+        boolean isConnected;
+        if (strengthValue.contains("fully")) {
+            isConnected = true;
+        } else {
+            isConnected = false;
+        }
+        return isConnected;
+    }
+
+    private String getResourceName(int resId) {
+        if (resId != 0) {
+            final Resources res = mContext.getResources();
+            try {
+                return res.getResourceName(resId);
+            } catch (android.content.res.Resources.NotFoundException ex) {
+                return "unknown";
+            }
+        } else {
+            return "unknown";
+        }
+    }
+
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
+
         mSignalClusterStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SIGNAL_TEXT, SIGNAL_CLUSTER_STYLE_NORMAL,
                 UserHandle.USER_CURRENT);
-        updateSignalClusterStyle();
+        mIsThemeDefaultEnabled = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS, 0) == 0;
+        mIsSystemDefaultEnabled = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS, 0) == 1;
+        mWifiIconNormalColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR, 0xffaaaaaa);
+        mWifiIconConnectedColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR, 0xff33b5e5);
+        mWifiActivityNormalColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR, 0xffaaaaaa);
+        mWifiActivityConnectedColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR, 0xff33b5e5);
+        mMobileNormalColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffaaaaaa);
+        mMobileConnectedColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xff33b5e5);
+
+        mMobileNetworkTypeNormalColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR, 0xffaaaaaa);
+        mMobileNetworkTypeConnectedColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR, 0xff33b5e5);
+
+        mMobileActivityNormalColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR, 0xffaaaaaa);
+        mMobileActivityConnectedColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR, 0xff33b5e5);
+
+        apply();
     }
 }
 
