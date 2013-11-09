@@ -3222,12 +3222,6 @@ public final class Settings {
         public static final String STATUS_BAR_SIGNAL_WIFI_STYLE_ENABLE_DEFAULTS = "status_bar_signal_wifi_defaults";
 
         /**
-         * Whether to customize signal and Wifi data activity icons color in statusbar
-         * @hide
-         */
-        public static final String STATUS_BAR_SIGNAL_WIFI_CUSTOM_ACTIVITY_COLOR = "status_bar_custom_activity_color";
-
-        /**
          * Color of the signal icon/text in statusbar
          * @hide
          */
