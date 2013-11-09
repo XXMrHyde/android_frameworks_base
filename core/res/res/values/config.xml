@@ -782,19 +782,6 @@
     <!-- IP address of the dns server to use if nobody else suggests one -->
     <string name="config_default_dns_server" translatable="false">8.8.8.8</string>
 
-    <!-- The default mobile provisioning apn. Empty by default, maybe overridden by
-         an mcc/mnc specific config.xml -->
-    <string name="mobile_provisioning_apn" translatable="false"></string>
-
-    <!-- The default mobile provisioning url. Empty by default, maybe overridden by
-         an mcc/mnc specific config.xml -->
-    <string name="mobile_provisioning_url" translatable="false"></string>
-
-    <!-- This url is used as the default url when redirection is detected. Any
-         should work as all url's get redirected. But maybe overridden by
-         if needed. -->
-    <string name="mobile_redirected_provisioning_url" translatable="false">http://google.com</string>
-
     <!-- The default character set for GsmAlphabet -->
     <!-- Empty string means MBCS is not considered -->
     <string name="gsm_alphabet_default_charset" translatable="false"></string>
@@ -1160,6 +1147,21 @@
         <item>com.android.inputmethod.latin</item>
     </string-array>
 
+    <!-- ********** android-4.3_r3.1 specific config options ********** -->
+
+    <!-- The default mobile provisioning apn. Empty by default, maybe overridden by
+         an mcc/mnc specific config.xml -->
+    <string name="mobile_provisioning_apn" translatable="false"></string>
+
+    <!-- The default mobile provisioning url. Empty by default, maybe overridden by
+         an mcc/mnc specific config.xml -->
+    <string name="mobile_provisioning_url" translatable="false"></string>
+
+    <!-- This url is used as the default url when redirection is detected. Any
+         should work as all url's get redirected. But maybe overridden by
+         if needed. -->
+    <string name="mobile_redirected_provisioning_url" translatable="false">http://google.com</string>
+
     <!-- ********** PUT CM CONFIG OPTIONS AFTER THIS LINE ********** -->
 
     <!-- Boolean indicating whether Softap requires reloading AP firmware -->
@@ -1249,6 +1251,10 @@
          config to 7. -->
     <integer name="config_deviceHardwareKeys">15</integer>
 
+    <!-- Indicates that the device has Single-stage Camera key
+         (without "Focus" state) instead of Dual-stage. -->
+    <bool name="config_singleStageCameraKey">false</bool>
+
     <!-- Maximum wallpaper width for devices with very high-res screen (1920x1200)
          the wallpaper width suggestion by the launcher may be too large for
          the GPU to handle. -->
@@ -1318,4 +1324,15 @@
 
          The default value is false which represents AOSP behavior. -->
     <bool name="config_smsUseExpectMore">false</bool>
+
+    <!-- Defines the system property to set for performance profile xe: sys.cpu.modes. Leave it
+         blank if the device do not support performance profiles -->
+    <string name="config_perf_profile_prop" translatable="false"></string>
+
+    <!-- When config_perf_profile_prop is defined, this value MUST be the index of
+         one of the listes values in frameworks/base/core/res/res/values/cm_arrays.xml
+         for "perf_profile_values" array. Leave it blank if the device do not support
+         performance profiles  -->
+    <string name="config_perf_profile_default_entry" translatable="false"></string>
+
 </resources>
