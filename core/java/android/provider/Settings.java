@@ -2546,6 +2546,12 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR = "lockscreen_battery_status_ring_charging_color";
 
+        /**
+         * Show the pending notification counts as overlays on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
+
         // Settings moved to Settings.Secure
 
         /**
