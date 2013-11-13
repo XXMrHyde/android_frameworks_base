@@ -147,7 +147,7 @@
     <string name="silent_mode_ring" msgid="8592241816194074353">"Klingelton ein"</string>
     <string name="shutdown_progress" msgid="2281079257329981203">"Wird heruntergefahren..."</string>
     <string name="shutdown_confirm" product="tablet" msgid="3385745179555731470">"Ihr Tablet wird heruntergefahren."</string>
-    <string name="shutdown_confirm" product="default" msgid="649792175242821353">"Telefon wird heruntergefahren."</string>
+    <string name="shutdown_confirm" product="default" msgid="649792175242821353">"Ihr Telefon wird heruntergefahren."</string>
     <string name="shutdown_confirm_question" msgid="2906544768881136183">"Möchten Sie das Gerät herunterfahren?"</string>
     <string name="reboot_safemode_title" msgid="7054509914500140361">"Im abgesicherten Modus starten"</string>
     <string name="reboot_safemode_confirm" msgid="55293944502784668">"Möchten Sie im abgesicherten Modus neu starten? Dadurch werden alle Apps von Drittanbietern deaktiviert, die Sie installiert haben. Sie werden jedoch nach einem weiteren Neustart wiederhergestellt."</string>
