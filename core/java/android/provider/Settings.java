@@ -2483,6 +2483,69 @@ public final class Settings {
             NOTIFICATION_SOUND
         };
 
+        // DarkKat additions start
+
+        /**
+         * Whether to customize the battery status ring on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_ENABLE_THEME_DEFAULT = "lockscreen_battery_status_ring_theme_default";
+
+        /**
+         * Whether to show the battery status ring on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHOW_BATTERY_STATUS_RING = "lockscreen_show_battery_status_ring";
+
+        /**
+         * Whether to show the battery status ring dotted on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_DOTTED = "lockscreen_battery_status_ring_dotted";
+
+        /**
+         * Length of the battery status ring dots on lockscreen, (if enabled "dotted")
+         *
+         * Values 0 - 30, (10 - 30 in steps of 4)
+         * default : 5
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_DOT_LENGTH = "lockscreen_battery_status_ring_dot_length";
+
+        /**
+         * Interval of the battery status ring dots on lockscreen, (if enabled "dotted")
+         *
+         * Values 0 - 30, (10 - 30 in steps of 4)
+         * default : 4
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_DOT_INTERVAL = "lockscreen_battery_status_ring_dot_interval";
+
+        /**
+         * Offset of the battery status ring dots on lockscreen, (if enabled "dotted")
+         *
+         * Values 0 - 30, (10 - 30 in steps of 4)
+         * default : 0
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_DOT_OFFSET = "lockscreen_battery_status_ring_dot_offset";
+
+
+        /**
+         * Color of the battery status ring on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_COLOR = "lockscreen_battery_status_ring_color";
+
+        /**
+         * Charging color of the battery status ring on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR = "lockscreen_battery_status_ring_charging_color";
+
         // Settings moved to Settings.Secure
 
         /**

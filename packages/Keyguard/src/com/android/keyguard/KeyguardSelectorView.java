@@ -21,9 +21,13 @@ import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.UserHandle;
@@ -56,6 +60,10 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     private LockPatternUtils mLockPatternUtils;
     private SecurityMessageDisplay mSecurityMessageDisplay;
     private Drawable mBouncerFrame;
+    private int mBatteryLevel;
+    private boolean mIsCharging;
+
+    KeyguardUpdateMonitor mUpdateMonitor;
 
     OnTriggerListener mOnTriggerListener = new OnTriggerListener() {
 
@@ -109,6 +117,17 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
 
     };
 
+    KeyguardUpdateMonitorCallback mBatteryStatusCallback = new KeyguardUpdateMonitorCallback() {
+
+        @Override
+        public void onRefreshBatteryInfo(KeyguardUpdateMonitor.BatteryStatus status) {
+            mBatteryLevel = status.level;
+            mIsCharging = status.status == BatteryManager.BATTERY_STATUS_CHARGING
+                       || status.status == BatteryManager.BATTERY_STATUS_FULL;
+            updateLockscreenBattery();
+        }
+    };
+
     KeyguardUpdateMonitorCallback mUpdateCallback = new KeyguardUpdateMonitorCallback() {
 
         @Override
@@ -158,6 +177,8 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         mSecurityMessageDisplay = new KeyguardMessageArea.Helper(this);
         View bouncerFrameView = findViewById(R.id.keyguard_selector_view_frame);
         mBouncerFrame = bouncerFrameView.getBackground();
+        mUpdateMonitor = KeyguardUpdateMonitor.getInstance(getContext());
+        mUpdateMonitor.registerCallback(mBatteryStatusCallback);
     }
 
     public void setCarrierArea(View carrierArea) {
@@ -286,4 +307,36 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         KeyguardSecurityViewHelper.
                 hideBouncer(mSecurityMessageDisplay, mFadeView, mBouncerFrame, duration);
     }
+
+    public void updateLockscreenBattery() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        boolean showBatteryStatusRing = Settings.System.getInt(resolver,
+                        Settings.System.LOCKSCREEN_SHOW_BATTERY_STATUS_RING, 0) == 1;
+        boolean enableThemeDefault = Settings.System.getInt(resolver,
+                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_ENABLE_THEME_DEFAULT, 1) == 1;
+
+        int color;
+        int defaultRingColor = mContext.getResources().getColor(com.android.internal.R.color.holo_blue_dark);
+        int defaultRingChargingColor = Color.GREEN;
+        int ringColor = Settings.System.getInt(resolver,
+                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_COLOR, defaultRingColor);
+        int ringChargingColor = Settings.System.getInt(resolver,
+                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR, defaultRingChargingColor);
+        int warningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
+
+        if (mIsCharging) {
+            color = enableThemeDefault ? defaultRingChargingColor : ringChargingColor;
+        } else if (mBatteryLevel < warningLevel) {
+            color = Color.RED;
+        } else {
+            color = enableThemeDefault ? defaultRingColor : ringColor;
+        }
+
+        if (showBatteryStatusRing) {
+            mGlowPadView.setArc(mBatteryLevel * 3.6f, color);
+        } else {
+            mGlowPadView.setArc(0, 0);
+        }
+    } 
 }
