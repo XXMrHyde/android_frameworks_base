@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2006 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (C) 2006 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package com.android.systemui.statusbar.policy;
 
@@ -48,7 +48,7 @@ import libcore.icu.LocaleData;
 /**
  * Digital clock for the status bar.
  */
-public class Clock extends TextView implements DemoMode {
+public class CenterClock extends TextView  implements DemoMode {
     private static final int AM_PM_STYLE_NORMAL  = 0;
     private static final int AM_PM_STYLE_SMALL   = 1;
     private static final int AM_PM_STYLE_GONE    = 2;
@@ -106,17 +106,17 @@ public class Clock extends TextView implements DemoMode {
             updateSettings();
         }
     }
-
-    public Clock(Context context) {
-        this(context, null);
+	
+    public CenterClock(Context context) {
+	    this(context, null);
     }
-
-    public Clock(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+	
+    public CenterClock(Context context, AttributeSet attrs) {
+	    this(context, attrs, 0);
     }
-
-    public Clock(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+	
+    public CenterClock(Context context, AttributeSet attrs, int defStyle) {
+	    super(context, attrs, defStyle);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class Clock extends TextView implements DemoMode {
         }
     }
 
-    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+    protected final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -259,7 +259,7 @@ public class Clock extends TextView implements DemoMode {
             }
         }
 
-        SpannableStringBuilder formatted = new SpannableStringBuilder(result);
+        SpannableStringBuilder formatted = new SpannableStringBuilder(result); 
 
         if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
             int magic1 = result.indexOf(MAGIC1);
@@ -320,7 +320,7 @@ public class Clock extends TextView implements DemoMode {
     }
 
     public void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
+	    ContentResolver resolver = mContext.getContentResolver();
         Context context = getContext();
 
         mIs24 = DateFormat.is24HourFormat(context);
@@ -334,7 +334,7 @@ public class Clock extends TextView implements DemoMode {
         mClockColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
         int amPmStyle = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_AM_PM, 2, UserHandle.USER_CURRENT);
         mDateStyle = Settings.System.getIntForUser(resolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE, DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
         mDateSizeSmall = Settings.System.getIntForUser(resolver,
@@ -354,13 +354,17 @@ public class Clock extends TextView implements DemoMode {
             updateClockVisibility(true);
             updateClock();
         }
+
+        setTextColor(mClockColor);
+        updateClockVisibility(true);
+        updateClock();
     }
 
     public void updateClockVisibility(boolean show) {
-        if (mShowClock && !mCenterClock) {
-            setVisibility(show ? View.VISIBLE : View.GONE);
-        } else {
-            setVisibility(View.GONE);
+	    if (mShowClock && mCenterClock) {
+	        setVisibility(show ? View.VISIBLE : View.GONE);
+	    } else {
+	        setVisibility(View.GONE);
         }
     }
 }
