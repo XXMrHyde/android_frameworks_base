@@ -240,8 +240,8 @@ public class Clock extends TextView implements DemoMode {
         if (mShowDate) {
             Date now = new Date();
 
-            String dateFormat = Settings.System.getString(getContext().getContentResolver(),
-                    Settings.System.STATUS_BAR_DATE_FORMAT);
+            String dateFormat = Settings.System.getStringForUser(getContext().getContentResolver(),
+                    Settings.System.STATUS_BAR_DATE_FORMAT, UserHandle.USER_CURRENT);
 
             if (dateFormat == null || dateFormat.isEmpty()) {
                 // Set dateString to short uppercase Weekday (Default for AOKP) if empty

@@ -311,16 +311,16 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
     public void updateLockscreenBattery() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        boolean showBatteryStatusRing = Settings.System.getInt(resolver,
-                        Settings.System.LOCKSCREEN_SHOW_BATTERY_STATUS_RING, 0) == 1;
+        boolean showBatteryStatusRing = Settings.System.getIntForUser(resolver,
+                        Settings.System.LOCKSCREEN_SHOW_BATTERY_STATUS_RING, 0, UserHandle.USER_CURRENT) == 1;
 
         int color;
         int defaultRingColor = mContext.getResources().getColor(com.android.internal.R.color.holo_blue_dark);
         int defaultRingChargingColor = Color.GREEN;
-        int ringColor = Settings.System.getInt(resolver,
-                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_COLOR, defaultRingColor);
-        int ringChargingColor = Settings.System.getInt(resolver,
-                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR, defaultRingChargingColor);
+        int ringColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_COLOR, defaultRingColor, UserHandle.USER_CURRENT);
+        int ringChargingColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR, defaultRingChargingColor, UserHandle.USER_CURRENT);
         int warningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
 
         if (mIsCharging) {
