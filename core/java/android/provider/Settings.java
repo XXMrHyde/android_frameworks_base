@@ -2486,12 +2486,6 @@ public final class Settings {
         // DarkKat additions start
 
         /**
-         * Whether to customize the battery status ring on lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_BATTERY_STATUS_RING_ENABLE_THEME_DEFAULT = "lockscreen_battery_status_ring_theme_default";
-
-        /**
          * Whether to show the battery status ring on lockscreen
          * @hide
          */

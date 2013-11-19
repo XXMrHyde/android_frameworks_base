@@ -313,8 +313,6 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
 
         boolean showBatteryStatusRing = Settings.System.getInt(resolver,
                         Settings.System.LOCKSCREEN_SHOW_BATTERY_STATUS_RING, 0) == 1;
-        boolean enableThemeDefault = Settings.System.getInt(resolver,
-                        Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_ENABLE_THEME_DEFAULT, 1) == 1;
 
         int color;
         int defaultRingColor = mContext.getResources().getColor(com.android.internal.R.color.holo_blue_dark);
@@ -326,11 +324,11 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         int warningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
 
         if (mIsCharging) {
-            color = enableThemeDefault ? defaultRingChargingColor : ringChargingColor;
+            color = ringChargingColor;
         } else if (mBatteryLevel < warningLevel) {
             color = Color.RED;
         } else {
-            color = enableThemeDefault ? defaultRingColor : ringColor;
+            color = ringColor;
         }
 
         if (showBatteryStatusRing) {
