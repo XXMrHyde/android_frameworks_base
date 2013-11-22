@@ -2621,6 +2621,52 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_DATE_COLOR = "status_bar_clock_date_color";
 
         /**
+         * Show/hide battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
+
+        /**
+         * Whether to show the additional battery bar
+         * 0: Don't show the additional battery bar
+         * 1: On statusbar
+         * 2: Top of navigation bar
+         * 3: Buttom of navigation bar
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_POSITION = "status_bar_battery_bar_position";
+
+        /**
+         * Whether to show the additional battery bar center-mirrored
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_STYLE = "statusbar_battery_bar_style";
+
+        /**
+         * Whether to show the charging animation of the additional battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
+
+        /**
+         * Color of the additional battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
+
+        /**
+         * Thickness of the additional battery bar
+         * 0: 1dp
+         * 1: 2dp
+         * 2: 3dp
+         * 2: 4dp
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
+
+        /**
          * Show/hide network speed indicator
          * @hide
          */
