@@ -2620,6 +2620,60 @@ public final class Settings {
          */
         public static final String STATUS_BAR_CLOCK_DATE_COLOR = "status_bar_clock_date_color";
 
+        /**
+         * Show/hide network speed indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
+
+        /**
+         * Whether to customize the status bar network speed indicator color
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT = "status_bar_network_speed_enable_theme_default";
+
+        /**
+         * Show/hide network speed download indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD = "status_bar_network_speed_show_download";
+
+        /**
+         * Show/hide network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD = "status_bar_network_speed_show_upload";
+
+        /**
+         * Show summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
+
+        /**
+         * Display network speed indicator value as bit/byte
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
+
+        /**
+         * Show/hide network speed indicator on no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
+
+        /**
+         * Color of the network speed download indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR = "status_bar_network_speed_download_color";
+
+        /**
+         * Color of the network speed upload indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
+
         // Settings moved to Settings.Secure
 
         /**
