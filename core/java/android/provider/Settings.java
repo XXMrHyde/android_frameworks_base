@@ -2673,6 +2673,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
 
         /**
+         * Show when WiFi or data mobile is sending/receiving data
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ACTIVITY = "status_bar_network_activity";
+
+        /**
          * Show/hide network speed indicator
          * @hide
          */
