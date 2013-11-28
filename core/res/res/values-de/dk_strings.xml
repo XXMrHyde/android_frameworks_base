@@ -15,6 +15,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- label for item that takes screenshot in the power menu options dialog -->
+    <string name="global_action_screenshot">Bildschirmfoto</string>
+
     <string name="global_action_reboot">Neu starten</string>
     <!-- Button to reboot the phone, within the Phone Options dialog -->
     <string name="reboot_system" product="tablet">Tablet neu starten</string>

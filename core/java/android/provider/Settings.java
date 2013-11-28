@@ -2553,6 +2553,12 @@ public final class Settings {
         public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
 
         /**
+         * Show Screenshot in Power Menu
+         * @hide
+         */
+        public static final String SCREENSHOT_IN_POWER_MENU = "screenshot_in_power_menu";
+
+        /**
          * Show/hide clock
          * 0: Hide
          * 1: Show
