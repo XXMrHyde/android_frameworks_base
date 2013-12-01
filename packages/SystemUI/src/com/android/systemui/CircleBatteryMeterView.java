@@ -86,8 +86,7 @@ public class CircleBatteryMeterView extends ImageView {
     // quite a lot of paint variables. helps to move cpu-usage from actual drawing to initialization
     private Paint   mPaintFont;
     private Paint   mPaintThinRing;
-    private Paint   mPaintSystem;
-    private Paint   mPaintRed;
+    private Paint   mPaintStatus;
 
     private boolean mIsCharging = false;
     private boolean mIsCircleDotted = false;
@@ -132,7 +131,7 @@ public class CircleBatteryMeterView extends ImageView {
                             + (mIsDocked ? mCircleSize + getPaddingLeft() : 0);
                     setLayoutParams(l);
 
-                    invalidate();
+                    updateSettings();
                 }
             }
         }
@@ -227,34 +226,21 @@ public class CircleBatteryMeterView extends ImageView {
     }
 
     protected void drawCircle(Canvas canvas, int level, int animOffset, float textX, RectF drawRect) {
-        Paint usePaint = mPaintSystem;
 
-        if (level < mWarningLevel) {
-            usePaint = mPaintRed;
-        }
-
-        usePaint.setAntiAlias(true);
         if (mIsCircleDotted) {
-            // change usePaint from solid to dashed
-            usePaint.setPathEffect(new DashPathEffect(new float[]{mDotLength,mDotInterval},mDotOffset));
+            // change mPaintStatus from solid to dashed
+            mPaintStatus.setPathEffect(new DashPathEffect(new float[]{mDotLength,mDotInterval},mDotOffset));
         }else {
-            usePaint.setPathEffect(null);
+            mPaintStatus.setPathEffect(null);
         }
 
         // draw thin ring first
         canvas.drawArc(drawRect, 270, 360, false, mPaintThinRing);
         // draw colored arc representing charge level
-        canvas.drawArc(drawRect, 270 + animOffset, 3.6f * level, false, usePaint);
+        canvas.drawArc(drawRect, 270 + animOffset, 3.6f * level, false, mPaintStatus);
         // if chosen by options, draw percentage text in the middle
         // always skip percentage when 100, so layout doesnt break
         if (level < 100 && mShowText) {
-            if (level < mWarningLevel) {
-                mPaintFont.setColor(usePaint.getColor());
-            } else if (mIsCharging) {
-                mPaintFont.setColor(mCircleTextChargingColor);
-            } else {
-                mPaintFont.setColor(mCircleTextColor);
-            }
             canvas.drawText(Integer.toString(level), textX, mTextY, mPaintFont);
         }
     }
@@ -268,8 +254,7 @@ public class CircleBatteryMeterView extends ImageView {
         updateChargeAnim();
 
         if (mIsDocked) {
-            drawCircle(canvas, mDockLevel, (mDockIsCharging ? mAnimOffset : 0),
-                    mTextLeftX, mRectLeft);
+            drawCircle(canvas, mDockLevel, (mDockIsCharging ? mAnimOffset : 0), mTextLeftX, mRectLeft);
             drawCircle(canvas, mLevel, (mIsCharging ? mAnimOffset : 0), mTextRightX, mRectRight);
         } else {
             drawCircle(canvas, mLevel, (mIsCharging ? mAnimOffset : 0), mTextLeftX, mRectLeft);
@@ -346,25 +331,38 @@ public class CircleBatteryMeterView extends ImageView {
         mPaintFont.setStyle(Paint.Style.STROKE);
 
         mPaintThinRing = new Paint(mPaintFont);
-        mPaintSystem = new Paint(mPaintFont);
-        mPaintRed = new Paint(mPaintFont);
+        mPaintStatus = new Paint(mPaintFont);
 
         mPaintThinRing.setStrokeCap(Paint.Cap.BUTT);
-        mPaintSystem.setStrokeCap(Paint.Cap.BUTT);
-        mPaintRed.setStrokeCap(Paint.Cap.BUTT);
-
-        mPaintFont.setColor(mCircleTextColor);
-        mPaintSystem.setColor(mCircleColor);
-        if (!mCustomThinRingColor) {
-            mPaintThinRing.setColor(mPaintSystem.getColor());
-            mPaintThinRing.setAlpha(51);
-        } else {
-            mPaintThinRing.setColor(mThinRingColor);
-        }
+        mPaintStatus.setStrokeCap(Paint.Cap.BUTT);
 
         // font needs some extra settings
         mPaintFont.setTextAlign(Align.CENTER);
         mPaintFont.setFakeBoldText(true);
+
+        updateColors();
+    }
+
+    private void updateColors() {
+
+        int statusColor = mCircleColor;
+        int textColor = mCircleTextColor;
+
+        if (mLevel <= mWarningLevel && !mIsCharging) {
+            statusColor = Color.RED;
+            textColor = Color.RED;
+        } else if (mIsCharging) {
+            textColor = mCircleTextChargingColor;
+        }
+
+        mPaintFont.setColor(textColor);
+        mPaintStatus.setColor(statusColor);
+        if (!mCustomThinRingColor) {
+            mPaintThinRing.setColor(mPaintStatus.getColor());
+            mPaintThinRing.setAlpha(51);
+        } else {
+            mPaintThinRing.setColor(mThinRingColor);
+        }
     }
 
     /**
@@ -407,8 +405,7 @@ public class CircleBatteryMeterView extends ImageView {
         mPaintFont.setTextSize(mCircleSize / 2f);
 
         float strokeWidth = mCircleSize / 7f;
-        mPaintRed.setStrokeWidth(strokeWidth);
-        mPaintSystem.setStrokeWidth(strokeWidth);
+        mPaintStatus.setStrokeWidth(strokeWidth);
         mPaintThinRing.setStrokeWidth(strokeWidth / 3.5f);
 
         // calculate rectangle for drawArc calls

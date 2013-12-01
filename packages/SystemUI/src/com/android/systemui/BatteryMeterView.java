@@ -511,7 +511,7 @@ public class BatteryMeterView extends View implements DemoMode {
 
         BatteryTracker tracker = mDemoMode ? mDemoTracker : mTracker;
 
-        if (tracker.level < mWarningLevel && !tracker.plugged) {
+        if (tracker.level <= mWarningLevel && !tracker.plugged) {
             mBatteryPaint.setColor(Color.RED);
             mTextPaint.setColor(Color.RED);
         } else {

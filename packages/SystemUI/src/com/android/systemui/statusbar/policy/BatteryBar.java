@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.BatteryManager;
 import android.os.Handler;
@@ -174,7 +175,7 @@ public class BatteryBar extends RelativeLayout implements Animatable {
                 } else {
                     stop();
                 }
-                setProgress(mBatteryLevel);
+                updateSettings();
             } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 stop();
             } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
@@ -200,14 +201,14 @@ public class BatteryBar extends RelativeLayout implements Animatable {
         } else {
             stop();
         }
-        setProgress(mBatteryLevel);
 
         if (!mBatteryCharging && mBatteryLevel <= warningLevel) {
-            mBatteryBar.setBackgroundColor(0xffff3300);
+            mBatteryBar.setBackgroundColor(Color.RED);
         } else {
             mBatteryBar.setBackgroundColor(color);
         }
         mCharger.setBackgroundColor(color);
+        setProgress(mBatteryLevel);
     }
 
     private void setProgress(int n) {
