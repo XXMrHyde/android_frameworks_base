@@ -29,4 +29,8 @@
     <!-- Quick Settings Bluetooth Number of Paired Devices -->
     <string name="quick_settings_bluetooth_number_paired"><xliff:g id="number">%d</xliff:g> gekoppelte Geräte</string>
 
+   <!-- Quick Settings Battery Tile -->
+    <string name="quick_settings_battery_charging">Wird geladen</string>
+    <string name="quick_settings_battery_discharging">Entlädt</string>
+
 </resources>
