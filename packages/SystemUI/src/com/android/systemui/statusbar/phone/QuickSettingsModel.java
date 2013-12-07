@@ -81,11 +81,15 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     }
     static class RSSIState extends ActivityState {
         int signalIconId;
+        int iconColor;
+        int iconNetworkTypeColor;
+        int iconActivityColor;
         String signalContentDescription;
         int dataTypeIconId;
         String dataContentDescription;
     }
     static class WifiState extends ActivityState {
+        int iconColor;
         String signalContentDescription;
         boolean connected;
     }
@@ -163,6 +167,54 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         }
     }
 
+
+    /** ContentObserver to watch color changes */
+    private class WifiIconColorObserver extends ContentObserver {
+        public WifiIconColorObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override public void onChange(boolean selfChange) {
+            updateWifiIconColors();
+        }
+
+        public void startObserving() {
+            final ContentResolver cr = mContext.getContentResolver();
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR), false, this);
+        }
+    }
+
+    /** ContentObserver to watch color changes */
+    private class MobileIconColorObserver extends ContentObserver {
+        public MobileIconColorObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override public void onChange(boolean selfChange) {
+            updateMobileIconColors();
+        }
+
+        public void startObserving() {
+            final ContentResolver cr = mContext.getContentResolver();
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR), false, this);
+            cr.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR), false, this);
+        }
+    }
+
+
     /** ContentObserver to watch adb */
     private class BugreportObserver extends ContentObserver {
         public BugreportObserver(Handler handler) {
@@ -207,6 +259,8 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private final Handler mHandler;
     private final CurrentUserTracker mUserTracker;
     private final NextAlarmObserver mNextAlarmObserver;
+    private final WifiIconColorObserver mWifiIconColorObserver;
+    private final MobileIconColorObserver mMobileIconColorObserver;
     private final BugreportObserver mBugreportObserver;
     private final BrightnessObserver mBrightnessObserver;
 
@@ -284,6 +338,8 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
 
     private RotationLockController mRotationLockController;
 
+    private int mInetCondition = 0;
+
     public QuickSettingsModel(Context context) {
         mContext = context;
         mHandler = new Handler();
@@ -299,6 +355,10 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
 
         mNextAlarmObserver = new NextAlarmObserver(mHandler);
         mNextAlarmObserver.startObserving();
+        mWifiIconColorObserver = new WifiIconColorObserver(mHandler);
+        mWifiIconColorObserver.startObserving();
+        mMobileIconColorObserver = new MobileIconColorObserver(mHandler);
+        mMobileIconColorObserver.startObserving();
         mBugreportObserver = new BugreportObserver(mHandler);
         mBugreportObserver.startObserving();
         mBrightnessObserver = new BrightnessObserver(mHandler);
@@ -452,7 +512,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     // NetworkSignalChanged callback
     @Override
     public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
-            boolean activityIn, boolean activityOut,
+            int inetCondition, boolean activityIn, boolean activityOut,
             String wifiSignalContentDescription, String enabledDesc) {
         // TODO: If view is in awaiting state, disable
         Resources r = mContext.getResources();
@@ -461,6 +521,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         boolean wifiNotConnected = (wifiSignalIconId > 0) && (enabledDesc == null);
         mWifiState.enabled = enabled;
         mWifiState.connected = wifiConnected;
+        mInetCondition = inetCondition;
         mWifiState.activityIn = enabled && activityIn;
         mWifiState.activityOut = enabled && activityOut;
         if (wifiConnected) {
@@ -488,6 +549,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             mWifiBackState.label = mWifiState.label;
             mWifiBackState.signalContentDescription = mWifiState.signalContentDescription;
         }
+        updateWifiIconColors();
         mWifiCallback.refreshView(mWifiTile, mWifiState);
         mWifiBackCallback.refreshView(mWifiBackTile, mWifiBackState);
     }
@@ -507,6 +569,23 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         return ipString;
     }
 
+    // ColorChanged callback
+    private void updateWifiIconColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int wifiIconNormalColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+        int wifiIconConnectedColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+
+        mWifiState.iconColor = mInetCondition == 1
+                                       ? wifiIconConnectedColor
+                                       : wifiIconNormalColor;
+
+        mWifiCallback.refreshView(mWifiTile, mWifiState);
+        mWifiBackCallback.refreshView(mWifiBackTile, mWifiBackState);
+    }
+
     boolean deviceHasMobileData() {
         return mHasMobileData;
     }
@@ -520,15 +599,16 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     // NetworkSignalChanged callback
     @Override
     public void onMobileDataSignalChanged(
-            boolean enabled, int mobileSignalIconId, String signalContentDescription,
-            int dataTypeIconId, boolean activityIn, boolean activityOut,
-            String dataContentDescription,String enabledDesc) {
+            boolean enabled, int mobileSignalIconId, int inetCondition,
+            String signalContentDescription, int dataTypeIconId, boolean activityIn,
+            boolean activityOut, String dataContentDescription,String enabledDesc) {
         if (deviceHasMobileData()) {
             // TODO: If view is in awaiting state, disable
             Resources r = mContext.getResources();
             mRSSIState.signalIconId = enabled && (mobileSignalIconId > 0)
                     ? mobileSignalIconId
                     : R.drawable.ic_qs_signal_no_signal;
+            mInetCondition = inetCondition;
             mRSSIState.signalContentDescription = enabled && (mobileSignalIconId > 0)
                     ? signalContentDescription
                     : r.getString(R.string.accessibility_no_signal);
@@ -543,6 +623,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             mRSSIState.label = enabled
                     ? removeTrailingPeriod(enabledDesc)
                     : r.getString(R.string.quick_settings_rssi_emergency_only);
+            updateMobileIconColors();
             mRSSICallback.refreshView(mRSSITile, mRSSIState);
         }
     }
@@ -552,6 +633,36 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             // We reinflate the original view due to potential styling changes that may have
             // taken place due to a configuration change.
             mRSSITile.reinflateContent(LayoutInflater.from(mContext));
+        }
+    }
+
+    private void updateMobileIconColors() {
+        if (deviceHasMobileData()) {
+            ContentResolver resolver = mContext.getContentResolver();
+            int mobileNormalColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+            int mobileConnectedColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+            int mobileNetworkTypeNormalColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+            int mobileNetworkTypeConnectedColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+            int mobileActivityNormalColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+            int mobileActivityConnectedColor = Settings.System.getIntForUser(resolver,
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+
+            mRSSIState.iconColor = mInetCondition == 1
+                                       ? mobileConnectedColor
+                                       : mobileNormalColor;
+            mRSSIState.iconActivityColor = mInetCondition == 1
+                                               ? mobileActivityConnectedColor
+                                               : mobileActivityNormalColor;
+            mRSSIState.iconNetworkTypeColor = mInetCondition == 1
+                                                  ? mobileNetworkTypeConnectedColor
+                                                  : mobileNetworkTypeNormalColor;
+
+            mRSSICallback.refreshView(mRSSITile, mRSSIState);
         }
     }
 

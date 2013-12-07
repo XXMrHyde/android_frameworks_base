@@ -38,6 +38,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
+import android.graphics.PorterDuff.Mode;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.WifiDisplayStatus;
 import android.net.ConnectivityManager;
@@ -474,6 +475,9 @@ class QuickSettings {
             public void refreshView(QuickSettingsTileView view, State state) {
                 WifiState wifiState = (WifiState) state;
                 wifiTileFront.setImageResource(wifiState.iconId);
+                wifiTileBack.setImageResource(wifiState.iconId);
+                wifiTileFront.setColorFilter(wifiState.iconColor, Mode.MULTIPLY);
+                wifiTileBack.setColorFilter(wifiState.iconColor, Mode.MULTIPLY);
                 wifiTileFront.setText(wifiState.label);
                 wifiTileFront.setContentDescription(mContext.getString(
                         R.string.accessibility_quick_settings_wifi,
@@ -503,9 +507,8 @@ class QuickSettings {
 
         mModel.addWifiBackTile(wifiTileBack, new QuickSettingsModel.RefreshCallback() {
             @Override
-            public void refreshView(QuickSettingsTileView unused, State state) {
+            public void refreshView(QuickSettingsTileView view, State state) {
                 WifiState wifiState = (WifiState) state;
-                wifiTileBack.setImageResource(wifiState.iconId);
                 wifiTileBack.setLabel(wifiState.label);
                 if (cm.getTetherableWifiRegexs().length != 0) {
                     wifiTileBack.setFunction(
@@ -538,16 +541,23 @@ class QuickSettings {
                     RSSIState rssiState = (RSSIState) state;
                     ImageView iv = (ImageView) view.findViewById(R.id.rssi_image);
                     ImageView iov = (ImageView) view.findViewById(R.id.rssi_overlay_image);
+                    ImageView ioaov = (ImageView) view.findViewById(R.id.activity_out);
+                    ImageView ioaiv = (ImageView) view.findViewById(R.id.activity_in);
                     TextView tv = (TextView) view.findViewById(R.id.rssi_textview);
                     // Force refresh
                     iv.setImageDrawable(null);
                     iv.setImageResource(rssiState.signalIconId);
+                    iv.setColorFilter(rssiState.iconColor, Mode.MULTIPLY);
 
                     if (rssiState.dataTypeIconId > 0) {
                         iov.setImageResource(rssiState.dataTypeIconId);
+                        iov.setColorFilter(rssiState.iconNetworkTypeColor, Mode.MULTIPLY);
                     } else {
                         iov.setImageDrawable(null);
+                        iov.setColorFilter(null);
                     }
+                    ioaov.setColorFilter(rssiState.iconActivityColor, Mode.MULTIPLY);
+                    ioaiv.setColorFilter(rssiState.iconActivityColor, Mode.MULTIPLY);
                     setActivity(view, rssiState);
 
                     tv.setText(state.label);

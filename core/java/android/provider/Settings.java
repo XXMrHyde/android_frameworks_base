@@ -2773,6 +2773,66 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_ACTIVITY = "status_bar_network_activity";
 
         /**
+         * Color of the signal icon in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_SIGNAL_NORMAL_COLOR = "status_bar_signal_normal_color";
+
+        /**
+         * Color of the signal icon in statusbar while connected to the Google sever
+         * @hide
+         */
+        public static final String STATUS_BAR_SIGNAL_CONNECTED_COLOR = "status_bar_signal_connected_color";
+
+        /**
+         * Color of the network type icon in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR = "status_bar_network_type_normal_color";
+
+        /**
+         * Color of the network type icon in statusbar while connected to the Google sever
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR = "status_bar_network_type_connected_color";
+
+        /**
+         * Color of the signal activity icon in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR = "status_bar_signal_activity_normal_color";
+
+        /**
+         * Color of the signal activity icon in statusbar while connected to the Google sever
+         * @hide
+         */
+        public static final String STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR = "status_bar_signal_activity_connected_color";
+
+        /**
+         * Color of the wifi icon in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_WIFI_ICON_NORMAL_COLOR = "status_bar_wifi_icon_normal_color";
+
+        /**
+         * Color of the wifi icon in statusbar while connected to the Google sever
+         * @hide
+         */
+        public static final String STATUS_BAR_WIFI_ICON_CONNECTED_COLOR = "status_bar_wifi_icon_connected_color";
+
+        /**
+         * Color of the wifi activity icon in statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR = "status_bar_wifi_activity_normal_color";
+
+        /**
+         * Color of the wifi activity icon in statusbar while connected to the Google sever
+         * @hide
+         */
+        public static final String STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR = "status_bar_wifi_activity_connected_color";
+
+        /**
          * Show/hide network speed indicator
          * @hide
          */

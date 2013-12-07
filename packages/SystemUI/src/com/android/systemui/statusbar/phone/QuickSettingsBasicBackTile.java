@@ -22,6 +22,7 @@ import com.android.systemui.R;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +82,10 @@ class QuickSettingsBasicBackTile extends QuickSettingsTileView {
 
     public void setImageResource(int resId) {
         mImageView.setImageResource(resId);
+    }
+
+    public final void setColorFilter(int color, PorterDuff.Mode mode) {
+        mImageView.setColorFilter(color, mode);
     }
 
     public void setLabel(CharSequence text) {

@@ -36,11 +36,11 @@ class TelephonyIcons {
     };
 
     static final int[][] QS_TELEPHONY_SIGNAL_STRENGTH = {
-        { R.drawable.ic_qs_signal_0,
-          R.drawable.ic_qs_signal_1,
-          R.drawable.ic_qs_signal_2,
-          R.drawable.ic_qs_signal_3,
-          R.drawable.ic_qs_signal_4 },
+        { R.drawable.ic_qs_signal_full_0,
+          R.drawable.ic_qs_signal_full_1,
+          R.drawable.ic_qs_signal_full_2,
+          R.drawable.ic_qs_signal_full_3,
+          R.drawable.ic_qs_signal_full_4 },
         { R.drawable.ic_qs_signal_full_0,
           R.drawable.ic_qs_signal_full_1,
           R.drawable.ic_qs_signal_full_2,
@@ -62,7 +62,7 @@ class TelephonyIcons {
     };
 
     static final int[] QS_DATA_R = {
-        R.drawable.ic_qs_signal_r,
+        R.drawable.ic_qs_signal_full_r,
         R.drawable.ic_qs_signal_full_r
     };
 
@@ -83,7 +83,7 @@ class TelephonyIcons {
         };
 
     static final int[] QS_DATA_G = {
-        R.drawable.ic_qs_signal_g,
+        R.drawable.ic_qs_signal_full_g,
         R.drawable.ic_qs_signal_full_g
     };
 
@@ -99,7 +99,7 @@ class TelephonyIcons {
         };
 
     static final int[] QS_DATA_3G = {
-        R.drawable.ic_qs_signal_3g,
+        R.drawable.ic_qs_signal_full_3g,
         R.drawable.ic_qs_signal_full_3g
     };
 
@@ -115,7 +115,7 @@ class TelephonyIcons {
         };
 
     static final int[] QS_DATA_E = {
-        R.drawable.ic_qs_signal_e,
+        R.drawable.ic_qs_signal_full_e,
         R.drawable.ic_qs_signal_full_e
     };
 
@@ -132,7 +132,7 @@ class TelephonyIcons {
     };
 
     static final int[] QS_DATA_H = {
-                R.drawable.ic_qs_signal_h,
+                R.drawable.ic_qs_signal_full_h,
                 R.drawable.ic_qs_signal_full_h
     };
 
@@ -150,7 +150,7 @@ class TelephonyIcons {
             };
 
     static final int[] QS_DATA_1X = {
-        R.drawable.ic_qs_signal_1x,
+        R.drawable.ic_qs_signal_full_1x,
         R.drawable.ic_qs_signal_full_1x
     };
 
@@ -167,7 +167,7 @@ class TelephonyIcons {
         };
 
     static final int[] QS_DATA_4G = {
-        R.drawable.ic_qs_signal_4g,
+        R.drawable.ic_qs_signal_full_4g,
         R.drawable.ic_qs_signal_full_4g
     };
 
@@ -184,7 +184,7 @@ class TelephonyIcons {
     };
 
     static final int[] QS_DATA_LTE = {
-        R.drawable.ic_qs_signal_lte,
+        R.drawable.ic_qs_signal_full_lte,
         R.drawable.ic_qs_signal_full_lte
     };
 
