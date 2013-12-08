@@ -581,6 +581,16 @@ class QuickSettings {
                 || DEBUG_GONE_TILES) {
             final QuickSettingsBasicTile rotationLockTile
                     = new QuickSettingsBasicTile(mContext);
+            if (LONG_PRESS_TOGGLES) {
+                rotationLockTile.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        startSettingsActivity(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        return true;
+                    }
+                });
+            }
+
             rotationLockTile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
