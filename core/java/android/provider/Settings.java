@@ -2570,10 +2570,28 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR = "lockscreen_battery_status_ring_charging_color";
 
         /**
-         * Show the pending notification counts as overlays on the status bar
+         * Whether to show custom carrier label on lockscreen
          * @hide
          */
-        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
+        public static final String LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL = "lockscreen_show_custom_carrier_label";
+
+        /**
+         * Color of the carrier label on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_CARRIER_LABEL_COLOR = "lockscreen_carrier_label_color";
+
+         /**
+          * Always show the battery status on the lockscreen
+          * @hide
+          */
+        public static final String LOCKSCREEN_ALWAYS_SHOW_BATTERY_STATUS = "lockscreen_always_show_battery";
+
+        /**
+         * Color of the status on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_STATUS_COLOR = "lockscreen_status_color";
 
         /**
          * Weather to minimize lockscreen challenge on screen turned on
@@ -2592,6 +2610,13 @@ public final class Settings {
          * @hide
          */
         public static final String SCREENRECORD_IN_POWER_MENU = "screenrecord_in_power_menu";
+
+         /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
 
         /**
          * Show/hide clock
@@ -2920,6 +2945,78 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
+
+        /**
+         * Show the pending notification counts as overlays on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
+
+        /**
+         * Sets the portrait background of notification drawer
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BG = "notification_background";
+
+        /**
+         * Sets the landscape background of notification drawer
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BG_LANDSCAPE = "notification_background_landscape";
+
+        /**
+         * Sets the alpha (transparency) of notification wallpaper
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BG_ALPHA = "notification_background_alpha";
+
+        /**
+         * Color of the status bar expanded clock and date
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR = "status_bar_expanded_clock_date_color";
+
+        /**
+         * Always show the settings button at the status bar expanded header
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+
+        /**
+         * Whether to show custom carrier label on notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL = "notification_show_custom_carrier_label";
+
+        /**
+         * Show Wifi network name in notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_SHOW_WIFI_SSID = "notification_show_wifi_ssid";
+
+        /**
+         * Color of the carrier and wifi network name in the notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_CARRIER_WIFI_LABEL_COLOR = "notification_carrier_wifi_label_color";
+
+        /**
+         * Sets the alpha (transparency) of the notification
+         * @hide
+         */
+
+        public static final String NOTIFICATION_ALPHA = "notification_alpha";
+
+        /**
+         * Whether to open Quick Settings directly by Pulling down on left or right side
+         *
+         * 0 = disabled
+         * 1 = right
+         * 2 = left
+         * default = 0
+         * @hide
+         */
+        public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
         // Settings moved to Settings.Secure
 

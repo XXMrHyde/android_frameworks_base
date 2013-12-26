@@ -17,10 +17,14 @@
 package com.android.systemui.statusbar.policy;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -48,6 +52,7 @@ public class ClockExpanded extends TextView implements DemoMode {
     private String mClockFormatString;
     private SimpleDateFormat mClockFormat;
     private Locale mLocale;
+    private SettingsObserver mObserver;
 
     private static final int AM_PM_STYLE_NORMAL  = 0;
     private static final int AM_PM_STYLE_SMALL   = 1;
@@ -55,8 +60,30 @@ public class ClockExpanded extends TextView implements DemoMode {
 
     private static final int AM_PM_STYLE = AM_PM_STYLE_GONE;
 
-    protected boolean mShowClock;
-    protected int mClockExpandedColor = 0xffffffff;
+    protected int mClockDateColor = 0xffffffff;
+
+    Handler mHandler;
+
+    protected class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
+        }
+
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
 
     public ClockExpanded(Context context) {
         this(context, null);
@@ -68,6 +95,10 @@ public class ClockExpanded extends TextView implements DemoMode {
 
     public ClockExpanded(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mHandler = new Handler();
+        mObserver = new SettingsObserver(mHandler);
+        updateSettings();
     }
 
     @Override
@@ -85,6 +116,7 @@ public class ClockExpanded extends TextView implements DemoMode {
             filter.addAction(Intent.ACTION_USER_SWITCHED);
 
             getContext().registerReceiver(mIntentReceiver, filter, null, getHandler());
+            mObserver.observe();
         }
 
         // NOTE: It's safe to do these after registering the receiver since the receiver always runs
@@ -94,7 +126,7 @@ public class ClockExpanded extends TextView implements DemoMode {
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         // Make sure we update to the current time
-        updateClock();
+        updateSettings();
     }
 
     @Override
@@ -103,6 +135,7 @@ public class ClockExpanded extends TextView implements DemoMode {
         if (mAttached) {
             getContext().unregisterReceiver(mIntentReceiver);
             mAttached = false;
+            mObserver.unobserve();
         }
     }
 
@@ -227,6 +260,19 @@ public class ClockExpanded extends TextView implements DemoMode {
             }
             setText(getSmallTime());
         }
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mClockDateColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mAttached) {
+            updateClock();
+        }
+
+        setTextColor(mClockDateColor);
     }
 }
 

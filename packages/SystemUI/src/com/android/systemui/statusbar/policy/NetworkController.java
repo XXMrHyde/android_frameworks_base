@@ -266,6 +266,8 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         filter.addAction(ConnectivityManager.INET_CONDITION_ACTION);
         filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter.addAction("com.android.settings.LABEL_VISIBILITY_CHANGED");
+        filter.addAction("com.android.settings.LABEL_CHANGED");
         mWimaxSupported = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_wimaxEnabled);
         if(mWimaxSupported) {
@@ -428,6 +430,10 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
                 action.equals(WimaxManagerConstants.SIGNAL_LEVEL_CHANGED_ACTION) ||
                 action.equals(WimaxManagerConstants.WIMAX_NETWORK_STATE_CHANGED_ACTION)) {
             updateWimaxState(intent);
+            refreshViews();
+        } else if (action.equals("com.android.settings.LABEL_CHANGED")) {
+            refreshViews();
+        } else if (action.equals("com.android.settings.LABEL_VISIBILITY_CHANGED")) {
             refreshViews();
         }
     }
@@ -1035,6 +1041,13 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         int N;
         final boolean emergencyOnly = isEmergencyOnly();
 
+        boolean showCustomLabel = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL, 1, UserHandle.USER_CURRENT) == 1;
+        final String customLabel = Settings.System.getStringForUser(mContext.getContentResolver(),
+                    Settings.System.CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
+        boolean showWifiLabel = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0, UserHandle.USER_CURRENT) == 1;
+
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;
             mQSPhoneSignalIconId = 0;
@@ -1194,6 +1207,14 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
             } else if (mPhone.isNetworkRoaming()) {
                 mDataTypeIconId = R.drawable.stat_sys_data_fully_connected_roam;
                 mQSDataTypeIconId = TelephonyIcons.QS_DATA_R[mInetCondition];
+            }
+        }
+
+        if (showCustomLabel && customLabel != null && customLabel.trim().length() > 0) {
+            combinedLabel = customLabel;
+            mobileLabel = customLabel;
+            if (!showWifiLabel) {
+                wifiLabel = customLabel;
             }
         }
 

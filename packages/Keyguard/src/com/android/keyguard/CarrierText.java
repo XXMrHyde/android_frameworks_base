@@ -17,6 +17,8 @@
 package com.android.keyguard;
 
 import android.content.Context;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.method.SingleLineTransformationMethod;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -86,7 +88,19 @@ public class CarrierText extends TextView {
     }
 
     protected void updateCarrierText(State simState, CharSequence plmn, CharSequence spn) {
-        setText(getCarrierTextForSimState(simState, plmn, spn));
+        CharSequence text = getCarrierTextForSimState(simState, plmn, spn);
+        boolean showCustomLabel = Settings.System.getIntForUser(getContext().getContentResolver(),
+                    Settings.System.LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL, 1, UserHandle.USER_CURRENT) == 1;
+        String customLabel = Settings.System.getStringForUser(getContext().getContentResolver(),
+                Settings.System.CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
+        int labelColor = Settings.System.getIntForUser(getContext().getContentResolver(),
+                    Settings.System.LOCKSCREEN_CARRIER_LABEL_COLOR, 0xffbebebe, UserHandle.USER_CURRENT);
+        if (!showCustomLabel || customLabel == null || customLabel.length() == 0) {
+            setText(text);
+        } else {
+            setText(customLabel);
+        }
+        setTextColor(labelColor);
     }
 
     @Override

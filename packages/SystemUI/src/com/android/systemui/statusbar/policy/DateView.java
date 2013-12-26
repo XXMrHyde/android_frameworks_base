@@ -17,9 +17,14 @@
 package com.android.systemui.statusbar.policy;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +47,33 @@ public class DateView extends TextView {
     private SimpleDateFormat mWeekdayFormat;
     private SimpleDateFormat mDateFormat;
     private String mLastText;
+    private SettingsObserver mObserver;
+    private boolean mAttachedToWindow;
+
+    protected int mClockDateColor = 0xffffffff;
+
+    Handler mHandler;
+
+    protected class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
+        }
+
+        void unobserve() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -63,28 +95,32 @@ public class DateView extends TextView {
 
     public DateView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mHandler = new Handler();
+        mObserver = new SettingsObserver(mHandler);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
+        mAttachedToWindow = true;
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_TIME_TICK);
         filter.addAction(Intent.ACTION_TIME_CHANGED);
         filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         filter.addAction(Intent.ACTION_LOCALE_CHANGED);
         mContext.registerReceiver(mIntentReceiver, filter, null, null);
-
+        mObserver.observe();
         updateClock();
+        updateSettings();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
+        mAttachedToWindow = false;
         mDateFormat = null; // reload the locale next time
         mContext.unregisterReceiver(mIntentReceiver);
+        mObserver.unobserve();
     }
 
     protected void updateClock() {
@@ -111,5 +147,18 @@ public class DateView extends TextView {
             setText(text);
             mLastText = text;
         }
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mClockDateColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mAttachedToWindow) {
+            updateClock();
+        }
+
+        setTextColor(mClockDateColor);
     }
 }

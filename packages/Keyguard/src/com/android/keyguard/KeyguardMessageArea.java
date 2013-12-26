@@ -23,6 +23,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
@@ -57,11 +58,15 @@ class KeyguardMessageArea extends TextView {
 
     static final int CHARGING_ICON = 0; //R.drawable.ic_lock_idle_charging;
     static final int BATTERY_LOW_ICON = 0; //R.drawable.ic_lock_idle_low_battery;
+    static final int DISCHARGING_ICON = 0; // no icon used in ics+ currently
 
     static final int SECURITY_MESSAGE_DURATION = 5000;
     protected static final int FADE_DURATION = 750;
 
     private static final String TAG = "KeyguardMessageArea";
+
+    // always show battery status?
+    boolean mAlwaysShowBattery = false;
 
     // are we showing battery information?
     boolean mShowingBatteryInfo = false;
@@ -155,7 +160,8 @@ class KeyguardMessageArea extends TextView {
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onRefreshBatteryInfo(KeyguardUpdateMonitor.BatteryStatus status) {
-            mShowingBatteryInfo = status.isPluggedIn() || status.isBatteryLow();
+            mAlwaysShowBattery = KeyguardUpdateMonitor.shouldAlwaysShowBatteryInfo(getContext());
+            mShowingBatteryInfo = status.isPluggedIn() || status.isBatteryLow() || mAlwaysShowBattery;
             mCharging = status.status == BatteryManager.BATTERY_STATUS_CHARGING
                      || status.status == BatteryManager.BATTERY_STATUS_FULL;
             mBatteryLevel = status.level;
@@ -221,7 +227,10 @@ class KeyguardMessageArea extends TextView {
         MutableInt icon = new MutableInt(0);
         CharSequence status = concat(getChargeInfo(icon), getOwnerInfo(), getCurrentMessage());
         setCompoundDrawablesWithIntrinsicBounds(icon.value, 0, 0, 0);
+        int statusColor = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_STATUS_COLOR, 0xffbebebe, UserHandle.USER_CURRENT);
         setText(status);
+        setTextColor(statusColor);
     }
 
     private CharSequence concat(CharSequence... args) {
@@ -267,9 +276,13 @@ class KeyguardMessageArea extends TextView {
                 icon.value = CHARGING_ICON;
             } else if (mBatteryIsLow) {
                 // Battery is low
-                string = getContext().getString(R.string.keyguard_low_battery);
+                string = getContext().getString(R.string.keyguard_low_battery, mBatteryLevel);
                 icon.value = BATTERY_LOW_ICON;
-            }
+            } else if (mAlwaysShowBattery) {
+                // Discharging
+                string = getContext().getString(R.string.keyguard_discharging, mBatteryLevel);
+                icon.value = DISCHARGING_ICON;
+             }
         }
         return string;
     }
