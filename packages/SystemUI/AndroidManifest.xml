@@ -37,6 +37,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.MANAGE_NETWORK_POLICY" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="com.android.phone.CHANGE_NETWORK_MODE" />
 
     <!-- Physical hardware -->
     <uses-permission android:name="android.permission.MANAGE_USB" />
@@ -44,6 +46,16 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.MASTER_CLEAR" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Sync -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
+    <!-- Reboot -->
+    <uses-permission android:name="android.permission.REBOOT" />
+
+    <!-- Record Audio QuickRecord -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- ActivityManager -->
     <uses-permission android:name="android.permission.GET_TASKS" />

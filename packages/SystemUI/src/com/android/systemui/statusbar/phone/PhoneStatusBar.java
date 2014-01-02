@@ -74,6 +74,7 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -217,8 +218,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     TextView mNotificationPanelDebugText;
 
     // settings
-    QuickSettings mQS;
-    boolean mHasSettingsPanel, mHasFlipSettings;
+    QuickSettingsController mQS;
+    boolean mHasSettingsPanel, mHideSettingsPanel, mHasFlipSettings;
     SettingsPanelView mSettingsPanel;
     View mFlipSettingsView;
     QuickSettingsContainerView mSettingsContainer;
@@ -245,6 +246,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private int mNotificationHeaderHeight;
 
     private boolean mShowCarrierInPanel = false;
+
+    private boolean mRecreating = false;
 
     // clock
     private Clock mClock;
@@ -358,22 +361,54 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.NOTIFICATION_SHOW_WIFI_SSID), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_ALPHA), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_TILES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_DYNAMIC_TILES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_PER_ROW), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_TEXT_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_PRESSED_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_ALPHA), false, this);
 
+            updateQuickSettings();
             updateSettings();
         }
 
         @Override
         public void onChange(boolean selfChange) {
+
+            updateQuickSettings();
             updateSettings();
+        }
+    }
+
+    private void updateQuickSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        String qsConfig = Settings.System.getStringForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
+        boolean hideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
+        if (hideSettingsPanel != mHideSettingsPanel) {
+            recreateStatusBar();
+            return;
+        }
+
+        if (mQS != null) {
+            mQS.setupQuickSettings();
         }
     }
 
     private void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        if (mQS != null) {
-            mQS.updateBattery();
-        }
         if (mBattery != null) {
             mBattery.updateSettings();
         }
@@ -609,8 +644,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mClearButton.setEnabled(false);
         mDateView = (DateView)mStatusBarWindow.findViewById(R.id.date);
 
-        mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel);
-        mHasFlipSettings = res.getBoolean(R.bool.config_hasFlipSettingsPanel);
+        String qsConfig = Settings.System.getStringForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
+        mHideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
+
+        mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel) && !mHideSettingsPanel;
+        mHasFlipSettings = res.getBoolean(R.bool.config_hasFlipSettingsPanel) && !mHideSettingsPanel;
 
         mDateTimeView = mNotificationPanelHeader.findViewById(R.id.datetime);
         if (mDateTimeView != null) {
@@ -760,6 +799,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             });
         }
 
+        // when we recreate statusbar shutdown quick settings before
+        // we eventually recreate them
+        if (mQS != null) {
+            mQS.shutdown();
+            mQS = null;
+            if (mSettingsPanel != null) {
+                mSettingsPanel.setQuickSettings(mQS);
+            }
+        }
+
         // Quick Settings (where available, some restrictions apply)
         if (mHasSettingsPanel) {
             // first, figure out where quick settings should be inflated
@@ -793,7 +842,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mSettingsContainer = (QuickSettingsContainerView)
                     mStatusBarWindow.findViewById(R.id.quick_settings_container);
             if (mSettingsContainer != null) {
-                mQS = new QuickSettings(mContext, mSettingsContainer);
+                mQS = new QuickSettingsController(mContext, mSettingsContainer, this,
+                        Settings.System.QUICK_SETTINGS_TILES);
                 if (!mNotificationPanelIsFullScreenWidth) {
                     mSettingsContainer.setSystemUiVisibility(
                             View.STATUS_BAR_DISABLE_NOTIFICATION_TICKER
@@ -804,8 +854,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 }
                 mQS.setService(this);
                 mQS.setBar(mStatusBarView);
-                mQS.setup(mNetworkController, mBluetoothController, mBatteryController,
-                        mLocationController, mRotationLockController);
+                mQS.setupQuickSettings();
             } else {
                 mQS = null; // fly away, be free
             }
@@ -1117,7 +1166,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 notification.getNotification().fullScreenIntent.send();
             } catch (PendingIntent.CanceledException e) {
             }
-        } else {
+        } else if (!mRecreating) {
             // usual case: status bar visible & not immersive
 
             // show the ticker if there isn't already a heads up
@@ -1616,11 +1665,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
         // Expand the window to encompass the full screen in anticipation of the drag.
         // This is only possible to do atomically because the status bar is at the top of the screen!
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarWindow.getLayoutParams();
+        WindowManager.LayoutParams lp = (WindowManager.LayoutParams)
+                mStatusBarContainer.getLayoutParams();
         lp.flags &= ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        mWindowManager.updateViewLayout(mStatusBarWindow, lp);
+        mWindowManager.updateViewLayout(mStatusBarContainer, lp);
 
         visibilityChanged(true);
 
@@ -1629,10 +1679,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
     private void releaseFocus() {
         WindowManager.LayoutParams lp =
-                (WindowManager.LayoutParams) mStatusBarWindow.getLayoutParams();
+                (WindowManager.LayoutParams) mStatusBarContainer.getLayoutParams();
         lp.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         lp.flags &= ~WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-        mWindowManager.updateViewLayout(mStatusBarWindow, lp);
+        mWindowManager.updateViewLayout(mStatusBarContainer, lp);
     }
 
     public void animateCollapsePanels() {
@@ -1946,11 +1996,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         visibilityChanged(false);
 
         // Shrink the window to the size of the status bar only
-        WindowManager.LayoutParams lp = (WindowManager.LayoutParams) mStatusBarWindow.getLayoutParams();
+        WindowManager.LayoutParams lp = (WindowManager.LayoutParams)
+                mStatusBarContainer.getLayoutParams();
         lp.height = getStatusBarHeight();
         lp.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         lp.flags &= ~WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-        mWindowManager.updateViewLayout(mStatusBarWindow, lp);
+        mWindowManager.updateViewLayout(mStatusBarContainer, lp);
 
         if ((mDisabled & StatusBarManager.DISABLE_NOTIFICATION_ICONS) == 0) {
             setNotificationIconVisibility(true, com.android.internal.R.anim.fade_in);
@@ -2516,7 +2567,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         lp.packageName = mContext.getPackageName();
 
         makeStatusBarView();
-        mWindowManager.addView(mStatusBarWindow, lp);
+        mStatusBarContainer.addView(mStatusBarWindow);
+        mWindowManager.addView(mStatusBarContainer, lp);
     }
 
     void setNotificationIconVisibility(boolean visible, int anim) {
@@ -2853,6 +2905,60 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 // oh well
             }
         }
+    }
+
+    private static void copyNotifications(ArrayList<Pair<IBinder, StatusBarNotification>> dest,
+            NotificationData source) {
+        int N = source.size();
+        for (int i = 0; i < N; i++) {
+            NotificationData.Entry entry = source.get(i);
+            dest.add(Pair.create(entry.key, entry.notification));
+        }
+    }
+
+    private void recreateStatusBar() {
+        mRecreating = true;
+        mStatusBarContainer.removeAllViews();
+
+        // extract icons from the soon-to-be recreated viewgroup.
+        int nIcons = mStatusIcons.getChildCount();
+        ArrayList<StatusBarIcon> icons = new ArrayList<StatusBarIcon>(nIcons);
+        ArrayList<String> iconSlots = new ArrayList<String>(nIcons);
+        for (int i = 0; i < nIcons; i++) {
+            StatusBarIconView iconView = (StatusBarIconView)mStatusIcons.getChildAt(i);
+            icons.add(iconView.getStatusBarIcon());
+            iconSlots.add(iconView.getStatusBarSlot());
+        }
+
+        // extract notifications.
+        int nNotifs = mNotificationData.size();
+        ArrayList<Pair<IBinder, StatusBarNotification>> notifications =
+                new ArrayList<Pair<IBinder, StatusBarNotification>>(nNotifs);
+        copyNotifications(notifications, mNotificationData);
+        mNotificationData.clear();
+
+        makeStatusBarView();
+
+        // recreate StatusBarIconViews.
+        for (int i = 0; i < nIcons; i++) {
+            StatusBarIcon icon = icons.get(i);
+            String slot = iconSlots.get(i);
+            addIcon(slot, i, i, icon);
+        }
+
+        // recreate notifications.
+        for (int i = 0; i < nNotifs; i++) {
+            Pair<IBinder, StatusBarNotification> notifData = notifications.get(i);
+            addNotificationViews(createNotificationViews(notifData.first, notifData.second));
+        }
+
+        setAreThereNotifications();
+
+        mStatusBarContainer.addView(mStatusBarWindow);
+
+        updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
+
+        mRecreating = false;
     }
 
     /**

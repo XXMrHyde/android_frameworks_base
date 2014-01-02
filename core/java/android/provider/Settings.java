@@ -3018,6 +3018,112 @@ public final class Settings {
          */
         public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
+        /**
+         * Color of QuickSettings tiles text
+         * @hide
+         */
+        public static final String QUICK_TILES_TEXT_COLOR = "quick_tiles_text_color";
+
+
+        /**
+         * QuickSettings tiles background color
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_BG_COLOR = "quick_tiles_bg_color";
+
+        /**
+         * QuickSettings tiles background color on pressed
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_BG_PRESSED_COLOR = "quick_tiles_bg_pressed_color";
+
+        /**
+         * QuickSettings tiles background alpha
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_BG_ALPHA = "quick_tiles_bg_alpha";
+
+        /**
+         * Whether to use own network activity icon colors for mobile and wifi tiles
+         * @hide
+         */
+        public static final String QUICK_TILES_USE_DIFFERENT_ACTIVITY_COLOR = "quick_tiles_use_different_activity_color";
+
+        /**
+         * Color of the signal activity icon in quicksettings tile
+         * @hide
+         */
+        public static final String QUICK_TILES_SIGNAL_ACTIVITY_NORMAL_COLOR = "quick_tiles_signal_activity_normal_color";
+
+        /**
+         * Color of the signal activity icon in quicksettings tile while connected to the Google sever
+         * @hide
+         */
+        public static final String QUICK_TILES_SIGNAL_ACTIVITY_CONNECTED_COLOR = "quick_tiles_signal_activity_connected_color";
+
+        /**
+         * Color of the wifi activity icon in quicksettings tile
+         * @hide
+         */
+        public static final String QUICK_TILES_WIFI_ACTIVITY_NORMAL_COLOR = "quick_tiles_wifi_activity_normal_color";
+
+        /**
+         * Color of the wifi activity icon in quicksettings tile while connected to the Google sever
+         * @hide
+         */
+        public static final String QUICK_TILES_WIFI_ACTIVITY_CONNECTED_COLOR = "quick_tiles_wifi_activity_connected_color";
+
+        /**
+         * Number of QuickSettings tiles per row
+         * @hide
+         */
+        public static final String QUICK_TILES_PER_ROW = "quick_tiles_per_row";
+
+        /**
+         * Whether on landscape tiles quantity per row are duplicated
+         * @hide
+         */
+        public static final String QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE = "quick_tiles_per_row_duplicate_landscape";
+
+        /**
+         * QuickSettings normal tiles configuration
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES = "quick_settings_tiles";
+
+        /**
+         * QuickSettings dynamic tiles configuration
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_DYNAMIC_TILES = "quick_settings_dynamic_tiles";
+
+        /**
+         * QuickSettings music tile mode
+         * @hide
+         */
+        public static final String MUSIC_TILE_MODE = "music_tile_mode";
+
+        /**
+         * QuickSettings network modes to switch
+         * @hide
+         */
+        public static final String EXPANDED_NETWORK_MODE = "expanded_network_mode";
+
+        /**
+         * QuickSettings screen timeout modes to switch
+         * @hide
+         */
+        public static final String EXPANDED_SCREENTIMEOUT_MODE = "expanded_screentimeout_mode";
+
+        /**
+         * QuickSettings ring modes to switch
+         * @hide
+         */
+        public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
+
         // Settings moved to Settings.Secure
 
         /**

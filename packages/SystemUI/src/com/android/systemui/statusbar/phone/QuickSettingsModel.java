@@ -314,7 +314,6 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private RefreshCallback mWifiCallback;
     private RefreshCallback mWifiBackCallback;
     private WifiState mWifiState = new WifiState();
-    private WifiState mWifiBackState = new WifiState();
 
     private QuickSettingsTileView mRemoteDisplayTile;
     private RefreshCallback mRemoteDisplayCallback;
@@ -329,7 +328,6 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     private RefreshCallback mBluetoothCallback;
     private RefreshCallback mBluetoothBackCallback;
     private BluetoothState mBluetoothState = new BluetoothState();
-    private BluetoothState mBluetoothBackState = new BluetoothState();
 
     private QuickSettingsTileView mBatteryTile;
     private RefreshCallback mBatteryCallback;
@@ -520,11 +518,6 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         mWifiCallback = cb;
         mWifiCallback.refreshView(mWifiTile, mWifiState);
     }
-    void addWifiBackTile(QuickSettingsTileView view, RefreshCallback cb) {
-        mWifiBackTile = view;
-        mWifiBackCallback = cb;
-        mWifiCallback.refreshView(mWifiBackTile, mWifiBackState);
-    }
     // Remove the double quotes that the SSID may contain
     public static String removeDoubleQuotes(String string) {
         if (string == null) return null;
@@ -562,30 +555,17 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             mWifiState.iconId = wifiSignalIconId;
             mWifiState.label = removeDoubleQuotes(enabledDesc);
             mWifiState.signalContentDescription = wifiSignalContentDescription;
-
-            mWifiBackState.iconId = wifiSignalIconId;
-            mWifiBackState.label = getWifiIpAddr();
-            mWifiBackState.signalContentDescription = wifiSignalContentDescription;
         } else if (wifiNotConnected) {
             mWifiState.iconId = R.drawable.ic_qs_wifi_0;
             mWifiState.label = r.getString(R.string.quick_settings_wifi_label);
             mWifiState.signalContentDescription = r.getString(R.string.accessibility_no_wifi);
-
-            mWifiBackState.iconId = mWifiState.iconId;
-            mWifiBackState.label = mWifiState.label;
-            mWifiBackState.signalContentDescription = mWifiState.signalContentDescription;
         } else {
             mWifiState.iconId = R.drawable.ic_qs_wifi_no_network;
             mWifiState.label = r.getString(R.string.quick_settings_wifi_off_label);
             mWifiState.signalContentDescription = r.getString(R.string.accessibility_wifi_off);
-
-            mWifiBackState.iconId = mWifiState.iconId;
-            mWifiBackState.label = mWifiState.label;
-            mWifiBackState.signalContentDescription = mWifiState.signalContentDescription;
         }
         updateWifiIconColors();
         mWifiCallback.refreshView(mWifiTile, mWifiState);
-        mWifiBackCallback.refreshView(mWifiBackTile, mWifiBackState);
     }
 
     String getWifiIpAddr() {
@@ -617,7 +597,6 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
                                        : wifiIconNormalColor;
 
         mWifiCallback.refreshView(mWifiTile, mWifiState);
-        mWifiBackCallback.refreshView(mWifiBackTile, mWifiBackState);
     }
 
     boolean deviceHasMobileData() {
@@ -711,16 +690,6 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
                 (adapter.getConnectionState() == BluetoothAdapter.STATE_CONNECTED);
         onBluetoothStateChange(mBluetoothState);
     }
-    void addBluetoothBackTile(QuickSettingsTileView view, RefreshCallback cb) {
-        mBluetoothBackTile = view;
-        mBluetoothBackCallback = cb;
-
-        final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothBackState.enabled = adapter.isEnabled();
-        mBluetoothBackState.connected =
-                (adapter.getConnectionState() == BluetoothAdapter.STATE_CONNECTED);
-        onBluetoothStateChange(mBluetoothBackState);
-    }
     boolean deviceSupportsBluetooth() {
         return (BluetoothAdapter.getDefaultAdapter() != null);
     }
@@ -749,27 +718,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
             mBluetoothState.label = r.getString(R.string.quick_settings_bluetooth_off_label);
             mBluetoothState.stateContentDescription = r.getString(R.string.accessibility_desc_off);
         }
-
-        // Back tile: Show paired devices
-        if (mBluetoothBackTile != null) {
-            mBluetoothBackState.iconId = mBluetoothState.iconId;
-
-            final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-            Set<BluetoothDevice> btDevices = adapter.getBondedDevices();
-            if (btDevices.size() == 1) {
-                // Show a generic label about the number of paired bluetooth devices
-                mBluetoothBackState.label =
-                    r.getString(R.string.quick_settings_bluetooth_number_paired, btDevices.size());
-            } else {
-                mBluetoothBackState.label = r.getString(R.string.quick_settings_bluetooth_disabled);
-            }
-        }
-
         mBluetoothCallback.refreshView(mBluetoothTile, mBluetoothState);
-
-        if (mBluetoothBackTile != null) {
-            mBluetoothBackCallback.refreshView(mBluetoothBackTile, mBluetoothBackState);
-        }
     }
     void refreshBluetoothTile() {
         if (mBluetoothTile != null) {
@@ -791,10 +740,9 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         mBatteryCallback.refreshView(mBatteryTile, mBatteryState);
     }
     void refreshBatteryTile() {
-       if (mBatteryCallback == null) {
-            return;
+       if (mBatteryCallback != null) {
+            mBatteryCallback.refreshView(mBatteryTile, mBatteryState);
         }
-        mBatteryCallback.refreshView(mBatteryTile, mBatteryState);
     }
 
     // Location
