@@ -19,6 +19,7 @@
 package com.android.internal.util.darkkat;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -26,6 +27,8 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.nfc.NfcAdapter;
 import android.os.Vibrator;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.DisplayInfo;
@@ -60,6 +63,11 @@ public class DeviceUtils {
 
     public static boolean deviceSupportsBluetooth() {
         return (BluetoothAdapter.getDefaultAdapter() != null);
+    }
+
+    public static boolean expandedDesktopEnabled(ContentResolver resolver) {
+        return Settings.System.getIntForUser(resolver, Settings.System.EXPANDED_DESKTOP_STYLE,
+                0, UserHandle.USER_CURRENT_OR_SELF) != 0;
     }
 
     public static boolean deviceSupportsNfc(Context context) {

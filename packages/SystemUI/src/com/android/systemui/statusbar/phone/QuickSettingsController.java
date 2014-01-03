@@ -26,6 +26,7 @@ import static com.android.internal.util.darkkat.QSConstants.TILE_BLUETOOTH;
 import static com.android.internal.util.darkkat.QSConstants.TILE_BRIGHTNESS;
 import static com.android.internal.util.darkkat.QSConstants.TILE_BUGREPORT;
 import static com.android.internal.util.darkkat.QSConstants.TILE_DELIMITER;
+import static com.android.internal.util.darkkat.QSConstants.TILE_EXPANDEDDESKTOP;
 import static com.android.internal.util.darkkat.QSConstants.TILE_IMESWITCHER;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCATION;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCKSCREEN;
@@ -71,6 +72,7 @@ import com.android.systemui.quicksettings.BatteryTile;
 import com.android.systemui.quicksettings.BluetoothTile;
 import com.android.systemui.quicksettings.BrightnessTile;
 import com.android.systemui.quicksettings.BugReportTile;
+import com.android.systemui.quicksettings.ExpandedDesktopTile;
 import com.android.systemui.quicksettings.LocationTile;
 import com.android.systemui.quicksettings.InputMethodTile;
 import com.android.systemui.quicksettings.MobileNetworkTile;
@@ -218,6 +220,11 @@ public class QuickSettingsController {
                 qs = new TorchTile(mContext, this, mHandler);
             } else if (tile.equals(TILE_SLEEP)) {
                 qs = new SleepScreenTile(mContext, this);
+            } else if (tile.equals(TILE_EXPANDEDDESKTOP)) {
+                mTileStatusUris.add(Settings.System.getUriFor(Settings.System.EXPANDED_DESKTOP_STYLE));
+                if (DeviceUtils.expandedDesktopEnabled(resolver)) {
+                    qs = new ExpandedDesktopTile(mContext, this, mHandler);
+                }
             } else if (tile.equals(TILE_NFC)) {
                 qs = new NfcTile(mContext, this);
             } else if (tile.equals(TILE_VOLUME)) {

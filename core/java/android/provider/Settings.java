@@ -2599,6 +2599,25 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
 
+         /**
+         * Holds the text for the Carrier label. An empty string
+         * will bring the default text back.
+         * @hide
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+        /**
+         * Expanded desktop on/off state
+         * @hide
+         */
+        public static final String EXPANDED_DESKTOP_STATE = "expanded_desktop_state";
+
+        /**
+         * Expanded desktop style (with status bar or without status bar)
+         * @hide
+         */
+        public static final String EXPANDED_DESKTOP_STYLE = "expanded_desktop_style";
+
         /**
          * Show Screenshot in Power Menu
          * @hide
@@ -2611,12 +2630,11 @@ public final class Settings {
          */
         public static final String SCREENRECORD_IN_POWER_MENU = "screenrecord_in_power_menu";
 
-         /**
-         * Holds the text for the Carrier label. An empty string
-         * will bring the default text back.
+        /**
+         * Show Expanded desktop in Power Menu
          * @hide
          */
-        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+        public static final String EXPANDED_DESKTOP_IN_POWER_MENU = "expanded_desktop_in_power_menu";
 
         /**
          * Show/hide clock

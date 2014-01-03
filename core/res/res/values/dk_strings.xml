@@ -38,5 +38,15 @@
 
     <!-- label for item that takes screenrecord in the power menu options dialog -->
     <string name="global_action_screenrecord">Screen Record</string>
+
+    <!-- Cling help message when hiding the navigation bar entering immersive mode [CHAR LIMIT=none] -->
+    <string name="immersive_mode_confirmation_bottom">Swipe up from the bottom to exit full screen.</string>
+
+    <!-- label for item that toggles expand desktop mode -->
+    <string name="global_actions_toggle_expanded_desktop_mode">Expanded desktop</string>
+    <!-- status message in phone options dialog for when expanded desktop is on -->
+    <string name="global_actions_expanded_desktop_mode_on_status">Expanded desktop is ON</string>
+    <!-- status message in phone options dialog for when expanded desktop is off -->
+    <string name="global_actions_expanded_desktop_mode_off_status">Expanded desktop is Off</string>
 </resources>
 
