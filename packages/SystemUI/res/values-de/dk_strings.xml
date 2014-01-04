@@ -29,6 +29,9 @@
     <!-- Screen record notification error title -->
     <string name="screenrecord_notif_error">Bildschirm kann nicht aufgenommen werden</string>
 
+    <!--ScreenShot Trash-->
+    <string name="screenshot_notification_delete">Löschen</string>
+
     <!-- Quick Settings Battery Tile -->
     <string name="quick_settings_battery_charging">Wird geladen</string>
     <string name="quick_settings_battery_discharging">Entlädt</string>

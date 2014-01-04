@@ -30,6 +30,9 @@
     <!-- Screen record notification error title -->
     <string name="screenrecord_notif_error">Unable to record screen</string>
 
+    <!--ScreenShot Trash-->
+    <string name="screenshot_notification_delete">Delete</string>
+
     <!-- Quick Settings Battery Tile -->
     <string name="quick_settings_battery_charging">Charging</string>
     <string name="quick_settings_battery_discharging">Discharging</string>
