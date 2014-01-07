@@ -133,6 +133,10 @@
         <item name="android:fadingEdge">horizontal</item>
     </style>
 
+    <style name="TextAppearance.QuickSettings.Traffic" parent="@style/TextAppearance.QuickSettings.TileView">
+        <item name="android:textAllCaps">false</item>
+    </style>
+
     <style name="BaseBrightnessDialogContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.net.ConnectivityManager;
 import android.net.TrafficStats;
@@ -34,6 +35,8 @@ public class TrafficDl extends TextView {
     long keepOnUntil = Long.MIN_VALUE;
     NumberFormat decimalFormat = new DecimalFormat("##0.0");
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+    private String mTrafficTypeView;
+    private boolean mIsQuicksettings;
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -76,6 +79,18 @@ public class TrafficDl extends TextView {
 
     public TrafficDl(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        TypedArray trafficType = context.obtainStyledAttributes(attrs,
+            com.android.systemui.R.styleable.TrafficText, 0, 0);
+        mTrafficTypeView = trafficType.getString(
+            com.android.systemui.R.styleable.TrafficText_trafficView);
+
+        if (mTrafficTypeView == null) {
+            mTrafficTypeView = "statusbar";
+        }
+
+        mIsQuicksettings = mTrafficTypeView.equals("quicksettings");
+
         updateSettings();
     }
 
@@ -193,6 +208,10 @@ public class TrafficDl extends TextView {
             long currentRxBytes = TrafficStats.getTotalRxBytes();
             long newBytes = currentRxBytes - totalRxBytes;
 
+            if (!mTrafficTypeView.equals("statusbar")) {
+                mTrafficMeterHide = false;
+            }
+
             if (mTrafficMeterHide && newBytes == 0) {
                 long trafficBurstBytes = currentRxBytes - trafficBurstStartBytes;
 
@@ -221,7 +240,7 @@ public class TrafficDl extends TextView {
                     if (getVisibility() != GONE
                             && keepOnUntil < SystemClock.elapsedRealtime()) {
                         setText("");
-                        setVisibility(View.GONE);
+                        setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
                     }
                 } else {
                     if (getVisibility() != VISIBLE) {
@@ -230,16 +249,18 @@ public class TrafficDl extends TextView {
                 }
             } else {
                 setText("");
-                setVisibility(View.GONE);
+                setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
             }
 
             totalRxBytes = currentRxBytes;
             lastUpdateTime = SystemClock.elapsedRealtime();
-            getHandler().postDelayed(mRunnable, 500);
+            if (getHandler() != null) {
+                getHandler().postDelayed(mRunnable, 500);
+            }
         }
     };
 
-    private void updateSettings() {
+    public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
         mTrafficMeterEnable = Settings.System.getIntForUser(resolver,
@@ -261,7 +282,7 @@ public class TrafficDl extends TextView {
                 startTrafficUpdates();
             }
         } else {
-            setVisibility(View.GONE);
+            setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
             setText("");
         }
 

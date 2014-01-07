@@ -33,6 +33,7 @@ import static com.android.internal.util.darkkat.QSConstants.TILE_LOCKSCREEN;
 import static com.android.internal.util.darkkat.QSConstants.TILE_MOBILEDATA;
 import static com.android.internal.util.darkkat.QSConstants.TILE_MUSIC;
 import static com.android.internal.util.darkkat.QSConstants.TILE_NETWORKMODE;
+import static com.android.internal.util.darkkat.QSConstants.TILE_NETWORKSPEED;
 import static com.android.internal.util.darkkat.QSConstants.TILE_NFC;
 import static com.android.internal.util.darkkat.QSConstants.TILE_QUICKRECORD;
 import static com.android.internal.util.darkkat.QSConstants.TILE_RINGER;
@@ -78,6 +79,7 @@ import com.android.systemui.quicksettings.InputMethodTile;
 import com.android.systemui.quicksettings.MobileNetworkTile;
 import com.android.systemui.quicksettings.MobileNetworkTypeTile;
 import com.android.systemui.quicksettings.MusicTile;
+import com.android.systemui.quicksettings.NetworkSpeedTile;
 import com.android.systemui.quicksettings.NfcTile;
 import com.android.systemui.quicksettings.PreferencesTile;
 import com.android.systemui.quicksettings.QuickSettingsTile;
@@ -225,6 +227,8 @@ public class QuickSettingsController {
                 if (DeviceUtils.expandedDesktopEnabled(resolver)) {
                     qs = new ExpandedDesktopTile(mContext, this, mHandler);
                 }
+            } else if (tile.equals(TILE_NETWORKSPEED)) {
+                qs = new NetworkSpeedTile(mContext, this);
             } else if (tile.equals(TILE_NFC)) {
                 qs = new NfcTile(mContext, this);
             } else if (tile.equals(TILE_VOLUME)) {

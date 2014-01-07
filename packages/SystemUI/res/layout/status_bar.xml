@@ -95,6 +95,7 @@
                    android:singleLine="true"
                    android:layout_marginRight="4dp"
                    android:gravity="center"
+                   systemui:trafficView="statusbar"
                />
 
                <com.android.systemui.statusbar.policy.TrafficDl
@@ -105,6 +106,7 @@
                    android:singleLine="true"
                    android:layout_marginRight="4dp"
                    android:gravity="center"
+                   systemui:trafficView="statusbar"
                />
             </LinearLayout>
     

@@ -18,4 +18,7 @@ limitations under the License.
     <declare-styleable name="BatteryIcon">
         <attr name="batteryView" format="string" />
     </declare-styleable>
+    <declare-styleable name="TrafficText">
+        <attr name="trafficView" format="string" />
+    </declare-styleable>
 </resources>
