@@ -79,4 +79,6 @@
     <string name="quick_settings_quick_record_rec">Recording...</string>
     <string name="quick_settings_quick_record_save">Saved</string>
     <string name="quick_settings_quick_record_play">Playing...</string>
+    <string name="quick_settings_quiethours">Quiet hours</string>
+    <string name="quick_settings_quiethours_off">Quiet hours off</string>
 </resources>

@@ -36,6 +36,7 @@ import static com.android.internal.util.darkkat.QSConstants.TILE_NETWORKMODE;
 import static com.android.internal.util.darkkat.QSConstants.TILE_NETWORKSPEED;
 import static com.android.internal.util.darkkat.QSConstants.TILE_NFC;
 import static com.android.internal.util.darkkat.QSConstants.TILE_QUICKRECORD;
+import static com.android.internal.util.darkkat.QSConstants.TILE_QUIETHOURS;
 import static com.android.internal.util.darkkat.QSConstants.TILE_RINGER;
 import static com.android.internal.util.darkkat.QSConstants.TILE_SCREENTIMEOUT;
 import static com.android.internal.util.darkkat.QSConstants.TILE_SETTINGS;
@@ -84,6 +85,7 @@ import com.android.systemui.quicksettings.NfcTile;
 import com.android.systemui.quicksettings.PreferencesTile;
 import com.android.systemui.quicksettings.QuickSettingsTile;
 import com.android.systemui.quicksettings.QuickRecordTile;
+import com.android.systemui.quicksettings.QuietHoursTile;
 import com.android.systemui.quicksettings.RingerModeTile;
 import com.android.systemui.quicksettings.ScreenTimeoutTile;
 import com.android.systemui.quicksettings.SleepScreenTile;
@@ -227,6 +229,8 @@ public class QuickSettingsController {
                 if (DeviceUtils.expandedDesktopEnabled(resolver)) {
                     qs = new ExpandedDesktopTile(mContext, this, mHandler);
                 }
+            } else if (tile.equals(TILE_QUIETHOURS)) {
+                qs = new QuietHoursTile(mContext, this);
             } else if (tile.equals(TILE_NETWORKSPEED)) {
                 qs = new NetworkSpeedTile(mContext, this);
             } else if (tile.equals(TILE_NFC)) {

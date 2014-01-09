@@ -77,4 +77,6 @@
     <string name="quick_settings_quick_record_rec">Aufnahme...</string>
     <string name="quick_settings_quick_record_save">Gespeichert</string>
     <string name="quick_settings_quick_record_play">Spielt ab...</string>
+    <string name="quick_settings_quiethours">Ruhige Stunden</string>
+    <string name="quick_settings_quiethours_off">Ruhige Stunden aus</string>
 </resources>

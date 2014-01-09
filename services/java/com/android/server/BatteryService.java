@@ -18,6 +18,7 @@ package com.android.server;
 
 import android.os.BatteryStats;
 import com.android.internal.app.IBatteryStats;
+import com.android.internal.util.darkkat.QuietHoursHelper;
 import com.android.server.am.BatteryStatsService;
 
 import android.app.ActivityManagerNative;
@@ -42,6 +43,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.EventLog;
 import android.util.Slog;
+
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -725,6 +727,16 @@ public final class BatteryService extends Binder {
                     // Flash red when battery is low and not charging
                     mBatteryLight.setFlashing(mBatteryLowARGB, LightsService.LIGHT_FLASH_TIMED,
                             mBatteryLedOn, mBatteryLedOff);
+                }
+            } else if (QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM)) {
+                if (level < mLowBatteryWarningLevel &&
+                        status != BatteryManager.BATTERY_STATUS_CHARGING) {
+                    // The battery is low, the device is not charging - ignore Quiet Hours
+                    mBatteryLight.setFlashing(mBatteryLowARGB, LightsService.LIGHT_FLASH_TIMED,
+                            mBatteryLedOn, mBatteryLedOff);
+                } else {
+                    // No lights if in Quiet Hours and battery not low
+                    mBatteryLight.turnOff();
                 }
             } else if (status == BatteryManager.BATTERY_STATUS_CHARGING
                     || status == BatteryManager.BATTERY_STATUS_FULL) {
