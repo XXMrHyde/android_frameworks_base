@@ -142,8 +142,9 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
     }
 
     private synchronized void updateTile() {
-        boolean batteryHasPercent = Settings.System.getIntForUser(mContext.getContentResolver(),
-            Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1, UserHandle.USER_CURRENT) == 1;
+        boolean batteryHasPercent = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT,
+                1, UserHandle.USER_CURRENT) == 1;
 
         if (mBatteryLevel == 100) {
             mLabel = mContext.getString(R.string.quick_settings_battery_charged_label);

@@ -58,8 +58,9 @@ public class ExpandedDesktopTile extends QuickSettingsTile {
     }
 
     private synchronized void updateTile() {
-        mEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.EXPANDED_DESKTOP_STATE, 0, UserHandle.USER_CURRENT) == 1;
+        mEnabled = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.EXPANDED_DESKTOP_STATE,
+                0, UserHandle.USER_CURRENT) == 1;
         if (mEnabled) {
             mDrawable = R.drawable.ic_qs_expanded_desktop_on;
             mLabel = mContext.getString(R.string.quick_settings_expanded_desktop);

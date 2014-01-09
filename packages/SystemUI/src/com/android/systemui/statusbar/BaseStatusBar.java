@@ -183,9 +183,11 @@ public abstract class BaseStatusBar extends SystemUI implements
         public void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.EXPANDED_DESKTOP_STATE), false, this);
+                    Settings.System.EXPANDED_DESKTOP_STATE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.EXPANDED_DESKTOP_STYLE), false, this);
+                    Settings.System.EXPANDED_DESKTOP_STYLE),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -198,9 +200,11 @@ public abstract class BaseStatusBar extends SystemUI implements
             ContentResolver resolver = mContext.getContentResolver();
             mExpandedDesktopStyle = 0;
             if (Settings.System.getIntForUser(resolver,
-                    Settings.System.EXPANDED_DESKTOP_STATE, 0, UserHandle.USER_CURRENT) != 0) {
-                mExpandedDesktopStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.EXPANDED_DESKTOP_STYLE, 0, UserHandle.USER_CURRENT);
+                    Settings.System.EXPANDED_DESKTOP_STATE, 0,
+                    UserHandle.USER_CURRENT) != 0) {
+                mExpandedDesktopStyle = Settings.System.getIntForUser(resolver,
+                        Settings.System.EXPANDED_DESKTOP_STYLE, 0,
+                        UserHandle.USER_CURRENT);
             }
         }
     };

@@ -101,7 +101,8 @@ public class NetworkSpeedTile extends QuickSettingsTile {
 
     private synchronized void updateTile() {
         mEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0, UserHandle.USER_CURRENT) == 1;
+            Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0,
+            UserHandle.USER_CURRENT) == 1;
         if (mEnabled) {
             mLabel = mContext.getString(R.string.quick_settings_network_speed);
         } else {

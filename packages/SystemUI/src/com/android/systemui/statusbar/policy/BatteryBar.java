@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -67,12 +68,15 @@ public class BatteryBar extends RelativeLayout implements Animatable {
 
         void observer() {
             ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_POSITION), false, this);
-            resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_COLOR), false, this);
-            resolver.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_POSITION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -188,11 +192,13 @@ public class BatteryBar extends RelativeLayout implements Animatable {
 
     private void updateSettings() {
         ContentResolver resolver = getContext().getContentResolver();
-        int color = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xffffffff);
+        int color = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
 
-        shouldAnimateCharging = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE, 0) == 1;
+        shouldAnimateCharging = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE, 0,
+                UserHandle.USER_CURRENT) == 1;
 
         int warningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
 

@@ -322,61 +322,89 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             ContentResolver resolver = mContext.getContentResolver();
 
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS), false, this);
+                    Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CIRCLE_DOTTED), false, this);
+                    Settings.System.STATUS_BAR_CIRCLE_DOTTED),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH), false, this);
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL) ,false, this);
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET), false, this);
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), false, this);
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED), false, this);
+                    Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_BG), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_BG),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_BG_LANDSCAPE), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_BG_LANDSCAPE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_BG_ALPHA), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_BG_ALPHA),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR), false, this);
+                    Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID), false, this);
+                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_ALPHA), false, this);
+                    Settings.System.NOTIFICATION_ALPHA),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_SETTINGS_TILES), false, this);
+                    Settings.System.QUICK_SETTINGS_TILES),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_SETTINGS_DYNAMIC_TILES), false, this);
+                    Settings.System.QUICK_SETTINGS_DYNAMIC_TILES),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_PER_ROW), false, this);
+                    Settings.System.QUICK_TILES_PER_ROW),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE), false, this);
+                    Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_TEXT_COLOR), false, this);
+                    Settings.System.QUICK_TILES_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_BG_COLOR), false, this);
+                    Settings.System.QUICK_TILES_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_BG_PRESSED_COLOR), false, this);
+                    Settings.System.QUICK_TILES_BG_PRESSED_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.QUICK_TILES_BG_ALPHA), false, this);
+                    Settings.System.QUICK_TILES_BG_ALPHA),
+                    false, this, UserHandle.USER_ALL);
 
             updateQuickSettings();
             updateSettings();
@@ -393,7 +421,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private void updateQuickSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        String qsConfig = Settings.System.getStringForUser(mContext.getContentResolver(),
+        String qsConfig = Settings.System.getStringForUser(resolver,
                 Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
         boolean hideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
         if (hideSettingsPanel != mHideSettingsPanel) {
@@ -417,11 +445,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }
 
         mShowSettingsButton = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON, 0,
+                UserHandle.USER_CURRENT) == 1;
         mWifiViewVisible = Settings.System.getIntForUser(resolver,
-                Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0,
+                UserHandle.USER_CURRENT) == 1;
         int labelColor = Settings.System.getIntForUser(resolver,
-                Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR, 0xff999999, UserHandle.USER_CURRENT);
+                Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR,
+                0xff999999, UserHandle.USER_CURRENT);
 
         if (mHasSettingsPanel) {
             mSettingsButton.setVisibility(mShowSettingsButton ? View.VISIBLE : View.GONE);
@@ -654,8 +685,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mClearButton.setEnabled(false);
         mDateView = (DateView)mStatusBarWindow.findViewById(R.id.date);
 
-        String qsConfig = Settings.System.getStringForUser(mContext.getContentResolver(),
-                Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
+        String qsConfig = Settings.System.getStringForUser(
+                mContext.getContentResolver(), Settings.System.QUICK_SETTINGS_TILES,
+                UserHandle.USER_CURRENT);
         mHideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
 
         mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel) && !mHideSettingsPanel;
@@ -681,8 +713,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mSettingsButton = (ImageView) mStatusBarWindow.findViewById(R.id.settings_button);
         mSettingsButton.setOnClickListener(mSettingsButtonListener);
 
-        mShowSettingsButton = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON, 0, UserHandle.USER_CURRENT) == 1;
+        mShowSettingsButton = Settings.System.getIntForUser(
+                mContext.getContentResolver(),Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON,
+                0, UserHandle.USER_CURRENT) == 1;
 
         mQuickSettingsButton = (ImageView) mStatusBarWindow.findViewById(R.id.quicksettings_button);
         if (mQuickSettingsButton != null) {
@@ -1469,7 +1502,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
         ContentResolver resolver = mContext.getContentResolver();
         boolean centerClock = Settings.System.getIntForUser(resolver,
-                        Settings.System.STATUS_BAR_CLOCK_POSITION, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.STATUS_BAR_CLOCK_POSITION, 0,
+                    UserHandle.USER_CURRENT) == 1;
 
 		if (!centerClock && mClock != null) {
             mClock.updateClockVisibility(show);

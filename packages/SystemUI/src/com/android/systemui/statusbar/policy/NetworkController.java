@@ -1046,11 +1046,14 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         final boolean emergencyOnly = isEmergencyOnly();
 
         boolean showCustomLabel = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL, 1, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.NOTIFICATION_SHOW_CUSTOM_CARRIER_LABEL, 1,
+                    UserHandle.USER_CURRENT) == 1;
         final String customLabel = Settings.System.getStringForUser(mContext.getContentResolver(),
-                    Settings.System.CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
+                    Settings.System.CUSTOM_CARRIER_LABEL,
+                    UserHandle.USER_CURRENT);
         boolean showWifiLabel = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.NOTIFICATION_SHOW_WIFI_SSID, 0,
+                    UserHandle.USER_CURRENT) == 1;
 
         if (!mHasMobileDataFeature) {
             mDataSignalIconId = mPhoneSignalIconId = 0;

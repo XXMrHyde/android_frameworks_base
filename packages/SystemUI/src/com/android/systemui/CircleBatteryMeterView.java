@@ -265,21 +265,29 @@ public class CircleBatteryMeterView extends ImageView {
         ContentResolver resolver = mContext.getContentResolver();
 
         boolean showBatteryStatus = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1,
+                UserHandle.USER_CURRENT) == 1;
         int batteryStyle = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2,
+                UserHandle.USER_CURRENT);
         mShowText = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1,
+                UserHandle.USER_CURRENT) == 1;
         mCustomThinRingColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0,
+                UserHandle.USER_CURRENT) == 1;
         mIsCircleDotted = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_CIRCLE_DOTTED, 0,
+                UserHandle.USER_CURRENT) == 1;
         mDotLength = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH, 3, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH, 3,
+                UserHandle.USER_CURRENT);
         mDotInterval = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL, 2, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL, 2,
+                UserHandle.USER_CURRENT);
         mDotOffset = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET, 0, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET, 0,
+                UserHandle.USER_CURRENT);
 
         int defaultThinRingColor = mContext.getResources().getColor(
                 com.android.systemui.R.color.batterymeter_frame_color);
@@ -288,17 +296,23 @@ public class CircleBatteryMeterView extends ImageView {
         int defaultTextChargingColor = Color.GREEN;
 
         mThinRingColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR, defaultThinRingColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR,
+                defaultThinRingColor, UserHandle.USER_CURRENT);
         mCircleColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR, defaultColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
         mCircleTextColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, defaultColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
         mCircleTextChargingColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, defaultTextChargingColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR,
+                defaultTextChargingColor, UserHandle.USER_CURRENT);
         mCircleAnimSpeed = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED, 3, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED, 3,
+                UserHandle.USER_CURRENT);
 
-        mWarningLevel = mContext.getResources().getInteger(R.integer.config_lowBatteryWarningLevel);
+        mWarningLevel = mContext.getResources().getInteger(
+                R.integer.config_lowBatteryWarningLevel);
         mActivated = batteryStyle == BATTERY_STYLE_CIRCLE;
  
         setVisibility(showBatteryStatus && mActivated ? View.VISIBLE : View.GONE);

@@ -292,10 +292,17 @@ public class GlowPadView extends View {
         final ContentResolver resolver = context.getContentResolver();
 
         boolean isRingDotted = Settings.System.getIntForUser(resolver,
-                Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOTTED, 0, UserHandle.USER_CURRENT) == 1;
-        int dotLength = Settings.System.getIntForUser(resolver, Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_LENGTH, 5, UserHandle.USER_CURRENT);
-        int dotInterval = Settings.System.getIntForUser(resolver, Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_INTERVAL, 4, UserHandle.USER_CURRENT);
-        int dotOffset = Settings.System.getIntForUser(resolver, Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_OFFSET, 0, UserHandle.USER_CURRENT);
+                Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOTTED, 0,
+                UserHandle.USER_CURRENT) == 1;
+        int dotLength = Settings.System.getIntForUser(resolver,
+                Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_LENGTH, 5,
+                UserHandle.USER_CURRENT);
+        int dotInterval = Settings.System.getIntForUser(resolver,
+                Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_INTERVAL, 4,
+                UserHandle.USER_CURRENT);
+        int dotOffset = Settings.System.getIntForUser(resolver,
+                Settings.System.LOCKSCREEN_BATTERY_STATUS_RING_DOT_OFFSET, 0,
+                UserHandle.USER_CURRENT);
 
         if (isRingDotted) {
             mArcPaint.setPathEffect(new DashPathEffect(new float[]{dotLength,dotInterval},dotOffset));

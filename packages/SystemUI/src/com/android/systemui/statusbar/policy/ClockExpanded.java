@@ -72,7 +72,8 @@ public class ClockExpanded extends TextView implements DemoMode {
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR), false, this);
+                    Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         void unobserve() {
@@ -266,7 +267,8 @@ public class ClockExpanded extends TextView implements DemoMode {
         ContentResolver resolver = mContext.getContentResolver();
 
         mClockDateColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
 
         if (mAttached) {
             updateClock();

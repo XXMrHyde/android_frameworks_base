@@ -79,25 +79,35 @@ public class SignalClusterView
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         void unobserve() {
@@ -314,25 +324,35 @@ public class SignalClusterView
         ContentResolver resolver = mContext.getContentResolver();
 
         mWifiIconNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR,
+                0xffff8800, UserHandle.USER_CURRENT);
         mWifiIconConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
         mWifiActivityNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ACTIVITY_NORMAL_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
         mWifiActivityConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ACTIVITY_CONNECTED_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
         mMobileNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR,
+                0xffff8800, UserHandle.USER_CURRENT);
         mMobileConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
         mMobileNetworkTypeNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR,
+                0xffff8800, UserHandle.USER_CURRENT);
         mMobileNetworkTypeConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
         mMobileActivityNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
         mMobileActivityConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
 
         apply();
     }

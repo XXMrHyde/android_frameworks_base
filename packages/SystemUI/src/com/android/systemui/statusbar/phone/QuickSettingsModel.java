@@ -181,9 +181,11 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         public void startObserving() {
             final ContentResolver cr = mContext.getContentResolver();
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR), false, this,
+                    UserHandle.USER_ALL);
         }
     }
 
@@ -200,17 +202,23 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         public void startObserving() {
             final ContentResolver cr = mContext.getContentResolver();
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR), false, this,
+                    UserHandle.USER_ALL);
             cr.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR), false, this);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR), false, this,
+                    UserHandle.USER_ALL);
         }
     }
 
@@ -588,9 +596,11 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         ContentResolver resolver = mContext.getContentResolver();
 
         int wifiIconNormalColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ICON_NORMAL_COLOR, 0xffff8800,
+                UserHandle.USER_CURRENT);
         int wifiIconConnectedColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_WIFI_ICON_CONNECTED_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
 
         mWifiState.iconColor = mInetCondition == 1
                                        ? wifiIconConnectedColor
@@ -653,17 +663,23 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
         if (deviceHasMobileData()) {
             ContentResolver resolver = mContext.getContentResolver();
             int mobileNormalColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_SIGNAL_NORMAL_COLOR, 0xffff8800,
+                    UserHandle.USER_CURRENT);
             int mobileConnectedColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_SIGNAL_CONNECTED_COLOR, 0xffffffff,
+                    UserHandle.USER_CURRENT);
             int mobileNetworkTypeNormalColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR, 0xffff8800, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_NORMAL_COLOR, 0xffff8800,
+                    UserHandle.USER_CURRENT);
             int mobileNetworkTypeConnectedColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_NETWORK_TYPE_CONNECTED_COLOR, 0xffffffff,
+                    UserHandle.USER_CURRENT);
             int mobileActivityNormalColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_NORMAL_COLOR, 0xff000000,
+                    UserHandle.USER_CURRENT);
             int mobileActivityConnectedColor = Settings.System.getIntForUser(resolver,
-                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR, 0xff000000, UserHandle.USER_CURRENT);
+                    Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR, 0xff000000,
+                    UserHandle.USER_CURRENT);
 
             mRSSIState.iconColor = mInetCondition == 1
                                        ? mobileConnectedColor

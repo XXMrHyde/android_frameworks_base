@@ -85,21 +85,29 @@ public class CenterClock extends TextView  implements DemoMode {
             ContentResolver resolver = mContext.getContentResolver();
 
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_CLOCK), false, this);
+                    Settings.System.STATUS_BAR_SHOW_CLOCK),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_DATE), false, this);
+                    Settings.System.STATUS_BAR_SHOW_DATE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_POSITION), false, this);
+                    Settings.System.STATUS_BAR_CLOCK_POSITION),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_DATE_COLOR), false, this);
+                    Settings.System.STATUS_BAR_CLOCK_DATE_COLOR),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_AM_PM), false, this);
+                    Settings.System.STATUS_BAR_AM_PM),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_SIZE), false, this);
+                    Settings.System.STATUS_BAR_DATE_SIZE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_STYLE), false, this);
+                    Settings.System.STATUS_BAR_DATE_STYLE),
+                    false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_FORMAT), false, this);
+                    Settings.System.STATUS_BAR_DATE_FORMAT),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -326,19 +334,26 @@ public class CenterClock extends TextView  implements DemoMode {
         mIs24 = DateFormat.is24HourFormat(context);
 
         mShowClock = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1, UserHandle.USER_CURRENT) == 1;
+			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1,
+                UserHandle.USER_CURRENT) == 1;
         mShowDate = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_SHOW_DATE, 0, UserHandle.USER_CURRENT) == 1;
+			    Settings.System.STATUS_BAR_SHOW_DATE, 0,
+                UserHandle.USER_CURRENT) == 1;
         mCenterClock = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0, UserHandle.USER_CURRENT) == 1;
+			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0,
+                UserHandle.USER_CURRENT) == 1;
         mClockColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
         int amPmStyle = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_AM_PM, 2, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_AM_PM, 2,
+                UserHandle.USER_CURRENT);
         mDateStyle = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_DATE_STYLE, DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
+			    Settings.System.STATUS_BAR_DATE_STYLE,
+                DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
         mDateSizeSmall = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_DATE_SIZE, 0, UserHandle.USER_CURRENT) == 1;
+			    Settings.System.STATUS_BAR_DATE_SIZE, 0,
+                UserHandle.USER_CURRENT) == 1;
 
         if (mIs24) {
             mAmPmStyle = AM_PM_STYLE_GONE;

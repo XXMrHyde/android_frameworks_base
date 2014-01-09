@@ -429,13 +429,17 @@ public class BatteryMeterView extends View implements DemoMode {
         ContentResolver resolver = mContext.getContentResolver();
 
         boolean showBatteryStatus = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_SHOW_BATTERY_STATUS, 1,
+                UserHandle.USER_CURRENT) == 1;
         mBatteryStyle = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2,
+                UserHandle.USER_CURRENT);
         mShowPercent = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1,
+                UserHandle.USER_CURRENT) == 1;
         mCustomFrameColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0,
+                UserHandle.USER_CURRENT) == 1;
 
         int defaultFrameColor = mContext.getResources().getColor(
                 R.color.batterymeter_frame_color);
@@ -444,15 +448,20 @@ public class BatteryMeterView extends View implements DemoMode {
         int defaultChargingColor = Color.GREEN;
 
         mFrameColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR, defaultFrameColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR,
+                defaultFrameColor, UserHandle.USER_CURRENT);
         mBatteryColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR, defaultTextColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR,
+                defaultTextColor, UserHandle.USER_CURRENT);
         mBatteryTextColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR, defaultTextColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR,
+                defaultTextColor, UserHandle.USER_CURRENT);
         mBatteryTextChargingColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR, defaultChargingColor, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR,
+                defaultChargingColor, UserHandle.USER_CURRENT);
 
-        mWarningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
+        mWarningLevel = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_lowBatteryWarningLevel);
 
         boolean activated = (mBatteryStyle == BATTERY_STYLE_NORMAL ||
                       mBatteryStyle == BATTERY_STYLE_PERCENT);

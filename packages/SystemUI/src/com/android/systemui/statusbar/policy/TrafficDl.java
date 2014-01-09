@@ -46,18 +46,24 @@ public class TrafficDl extends TextView {
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
 
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE), false, this);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_SUMMARY),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR),
+                    false, this, UserHandle.USER_ALL);
 
             updateSettings();
         }
@@ -264,17 +270,23 @@ public class TrafficDl extends TextView {
         ContentResolver resolver = mContext.getContentResolver();
 
         mTrafficMeterEnable = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0,
+                UserHandle.USER_CURRENT) == 1;
         mTrafficMeterHide = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1,
+                UserHandle.USER_CURRENT) == 1;
         mTrafficMeterSummaryTime = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_TRAFFIC_SUMMARY, 3000, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_TRAFFIC_SUMMARY, 3000,
+                UserHandle.USER_CURRENT);
         mShowDl = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD, 1, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD, 1,
+                UserHandle.USER_CURRENT) == 1;
         mIsBit = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0,
+                UserHandle.USER_CURRENT) == 1;
         int trafficDLColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
 
         if (mTrafficMeterEnable && mShowDl && getConnectAvailable()) {
             setVisibility(View.VISIBLE);
