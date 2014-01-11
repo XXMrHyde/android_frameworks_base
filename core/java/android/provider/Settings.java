@@ -2637,6 +2637,56 @@ public final class Settings {
         public static final String EXPANDED_DESKTOP_IN_POWER_MENU = "expanded_desktop_in_power_menu";
 
         /**
+         * whether which Ram Usage Bar mode is used on recent switcher
+         * 0 = none
+         * 1 = only app use
+         * 2 = app and cache use
+         * 3 = app, cache and system use
+         * default: 0
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR_MODE = "recents_ram_bar_mode";
+
+        /**
+         * Ram Usage Bar system mem color
+         *
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR_MEM_COLOR = "recents_ram_bar_mem_color";
+
+        /**
+         * Ram Usage Bar cached mem color
+         *
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR_CACHE_COLOR = "recents_ram_bar_cache_color";
+
+        /**
+         * Ram Usage Bar app mem color
+         *
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR_ACTIVE_APPS_COLOR = "recents_ram_bar_active_apps_color";
+
+        /**
+         * Ram Usage Bar free ram color
+         *
+         * @hide
+         */
+        public static final String RECENTS_RAM_BAR_FREE_RAM_COLOR = "recents_ram_bar_free_ram_color";
+
+        /**
+         * Position of the clear all button on recents apps screen
+         * 0: Top left
+         * 1: Top right
+         * 2: Bottom left
+         * 3: Bottom right
+         * default: 2
+         * @hide
+         */
+        public static final String RECENTS_CLEAR_ALL_BTN_POS = "recents_clear_all_button_position";
+
+        /**
          * Show/hide clock
          * 0: Hide
          * 1: Show
