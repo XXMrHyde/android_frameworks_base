@@ -406,6 +406,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.QUICK_TILES_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
 
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_NORMAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_ENABLED_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_DISABLED_COLOR),
+                    false, this, UserHandle.USER_ALL);
+
             updateQuickSettings();
             updateSettings();
         }

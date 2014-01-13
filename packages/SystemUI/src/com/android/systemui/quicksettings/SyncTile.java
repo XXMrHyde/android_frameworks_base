@@ -73,9 +73,11 @@ public class SyncTile extends QuickSettingsTile {
     private synchronized void updateTile() {
         if (getSyncState()) {
             mDrawable = R.drawable.ic_qs_sync_on;
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_sync);
         } else {
             mDrawable = R.drawable.ic_qs_sync_off;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_sync_off);
         }
     }

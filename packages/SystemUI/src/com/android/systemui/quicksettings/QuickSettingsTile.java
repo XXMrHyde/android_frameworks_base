@@ -23,6 +23,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.os.UserHandle;
@@ -53,6 +54,10 @@ public class QuickSettingsTile implements OnClickListener {
     protected OnLongClickListener mOnLongClick;
     protected final int mTileLayout;
     protected int mDrawable;
+    protected int mDrawableNormalColor;
+    protected int mDrawableEnabledColor;
+    protected int mDrawableDisabledColor;
+    protected int mDrawableColor;
     protected String mLabel;
     protected int mTileTextSize;
     protected int mTileTextColor;
@@ -79,6 +84,10 @@ public class QuickSettingsTile implements OnClickListener {
     public void setupQuickSettingsTile(LayoutInflater inflater,
             QuickSettingsContainerView container) {
         container.updateResources();
+        mDrawableNormalColor = container.getTileIconNormalColor();
+        mDrawableEnabledColor = container.getTileIconEnabledColor();
+        mDrawableDisabledColor = container.getTileIconDisabledColor();
+        mDrawableColor = mDrawableNormalColor;
         mTileTextSize = container.getTileTextSize();
         mTileTextColor = container.getTileTextColor();
         mTileTextPadding = container.getTileTextPadding();
@@ -119,6 +128,7 @@ public class QuickSettingsTile implements OnClickListener {
         ImageView image = (ImageView) mTile.findViewById(R.id.image);
         if (image != null) {
             image.setImageResource(mDrawable);
+            image.setColorFilter(mDrawableColor, Mode.MULTIPLY);
         }
     }
 

@@ -63,9 +63,11 @@ public class ExpandedDesktopTile extends QuickSettingsTile {
                 0, UserHandle.USER_CURRENT) == 1;
         if (mEnabled) {
             mDrawable = R.drawable.ic_qs_expanded_desktop_on;
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_expanded_desktop);
         } else {
             mDrawable = R.drawable.ic_qs_expanded_desktop_off;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_expanded_desktop_off);
         }
     }

@@ -105,15 +105,17 @@ public class BluetoothTile extends QuickSettingsTile implements BluetoothStateCh
     }
 
     private synchronized void updateTile() {
-        if(enabled){
-            if(connected){
+        if (enabled){
+            if (connected){
                 mDrawable = R.drawable.ic_qs_bluetooth_on;
-            }else{
+            } else {
                 mDrawable = R.drawable.ic_qs_bluetooth_not_connected;
             }
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_bluetooth_label);
-        }else{
+        } else {
             mDrawable = R.drawable.ic_qs_bluetooth_off;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_bluetooth_off_label);
         }
     }

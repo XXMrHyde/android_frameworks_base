@@ -85,6 +85,8 @@ public class LocationTile extends QuickSettingsTile implements LocationSettingsC
         mLabel = mContext.getText(textResId).toString();
         mDrawable = mLocationEnabled
                 ? R.drawable.ic_qs_location_on : R.drawable.ic_qs_location_off;
+        mDrawableColor = mLocationEnabled
+                ? mDrawableEnabledColor : mDrawableDisabledColor;
     }
 
     @Override

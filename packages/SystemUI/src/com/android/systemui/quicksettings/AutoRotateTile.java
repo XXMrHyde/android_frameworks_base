@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,11 +68,13 @@ public class AutoRotateTile extends QuickSettingsTile {
     }
 
     private synchronized void updateTile() {
-        if(!getAutoRotation()){
+        if (!getAutoRotation()){
             mDrawable = R.drawable.ic_qs_rotation_locked;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_rotation_locked_label);
-        }else{
+        } else {
             mDrawable = R.drawable.ic_qs_auto_rotate;
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_rotation_unlocked_label);
         }
     }

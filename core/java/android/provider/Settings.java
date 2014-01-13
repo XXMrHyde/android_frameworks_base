@@ -3127,6 +3127,27 @@ public final class Settings {
         public static final String QUICK_TILES_BG_ALPHA = "quick_tiles_bg_alpha";
 
         /**
+         * Color of QuickSettings tiles icon normal color
+         * @hide
+         */
+        public static final String QUICK_TILES_ICON_NORMAL_COLOR = "quick_tiles_icon_normal_color";
+
+
+        /**
+         * QuickSettings tiles icon enabled color
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_ICON_ENABLED_COLOR = "quick_tiles_icon_enabled_color";
+
+        /**
+         * QuickSettings tiles icon disabled color
+         *
+         * @hide
+         */
+        public static final String QUICK_TILES_ICON_DISABLED_COLOR = "quick_tiles_icon_disabled_color";
+
+        /**
          * Whether to use own network activity icon colors for mobile and wifi tiles
          * @hide
          */

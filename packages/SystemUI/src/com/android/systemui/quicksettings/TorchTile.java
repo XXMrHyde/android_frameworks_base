@@ -76,9 +76,11 @@ public class TorchTile extends QuickSettingsTile {
     private synchronized void updateTile() {
         if (mActive) {
             mDrawable = R.drawable.ic_qs_torch_on;
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_torch);
         } else {
             mDrawable = R.drawable.ic_qs_torch_off;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_torch_off);
         }
     }

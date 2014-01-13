@@ -87,6 +87,7 @@ public class AirplaneModeTile extends QuickSettingsTile implements NetworkSignal
     private synchronized void updateTile() {
         mLabel = mContext.getString(R.string.quick_settings_airplane_mode_label);
         mDrawable = (enabled) ? R.drawable.ic_qs_airplane_on : R.drawable.ic_qs_airplane_off;
+        mDrawableColor = (enabled) ? mDrawableEnabledColor : mDrawableDisabledColor;
     }
 
     @Override

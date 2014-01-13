@@ -73,6 +73,7 @@ public class AlarmTile extends QuickSettingsTile {
 
     private synchronized void updateTile() {
         mDrawable = R.drawable.ic_qs_alarm_on;
+        mDrawableColor = mDrawableEnabledColor;
         mLabel = Settings.System.getStringForUser(mContext.getContentResolver(),
                 Settings.System.NEXT_ALARM_FORMATTED, UserHandle.USER_CURRENT);
     }

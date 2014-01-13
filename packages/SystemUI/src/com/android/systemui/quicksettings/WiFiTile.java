@@ -25,6 +25,7 @@ import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.UserHandle;
+import android.util.TypedValue;
 import android.provider.Settings;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -77,13 +78,7 @@ public class WiFiTile extends NetworkTile {
 
     @Override
     public void onChangeUri(ContentResolver resolver, Uri uri) {
-        updateResources();
-    }
-
-    @Override
-    public void updateResources() {
         updateTile();
-        super.updateResources();
     }
 
     @Override
@@ -145,6 +140,21 @@ public class WiFiTile extends NetworkTile {
             imageAo.setColorFilter(mInetCondition == 1
                     ? wifiActivityConnectedColor : wifiActivityNormalColor,
                     Mode.MULTIPLY);
+        }
+    }
+
+    @Override
+    void updateQuickSettings() {
+        TextView tv = (TextView) mTile.findViewById(R.id.text);
+        if (tv != null) {
+            tv.setText(mLabel);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTileTextSize);
+            tv.setPadding(0, mTileTextPadding, 0, 0);
+            tv.setTextColor(mTileTextColor);
+        }
+        ImageView image = (ImageView) mTile.findViewById(R.id.image);
+        if (image != null) {
+            image.setImageResource(mDrawable);
         }
     }
 

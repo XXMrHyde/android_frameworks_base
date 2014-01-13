@@ -226,4 +226,22 @@ public class QuickSettingsContainerView extends FrameLayout {
                 Settings.System.QUICK_TILES_TEXT_COLOR, 0xffcccccc, UserHandle.USER_CURRENT);
         return tileTextColor;
     }
+
+    public int getTileIconNormalColor() {
+        int tileTextColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_TILES_ICON_NORMAL_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+        return tileTextColor;
+    }
+
+    public int getTileIconEnabledColor() {
+        int tileTextColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_TILES_ICON_ENABLED_COLOR, 0xffffffff, UserHandle.USER_CURRENT);
+        return tileTextColor;
+    }
+
+    public int getTileIconDisabledColor() {
+        int tileTextColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QUICK_TILES_ICON_DISABLED_COLOR, 0xff404040, UserHandle.USER_CURRENT);
+        return tileTextColor;
+    }
 }
