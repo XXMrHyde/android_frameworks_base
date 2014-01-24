@@ -86,6 +86,9 @@
     <!-- Keyguard -->
     <uses-permission android:name="android.permission.CONTROL_KEYGUARD" />
 
+    <!-- Kill app permission -->
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
+
     <!-- Wifi Display -->
     <uses-permission android:name="android.permission.CONFIGURE_WIFI_DISPLAY" />
 
