@@ -2618,22 +2618,32 @@ public final class Settings {
         public static final String EXPANDED_DESKTOP_STYLE = "expanded_desktop_style";
 
         /**
-         * Show Screenshot in Power Menu
+         * Config for advanced power menu
+         *
          * @hide
          */
-        public static final String SCREENSHOT_IN_POWER_MENU = "screenshot_in_power_menu";
+        public static final String POWER_MENU_CONFIG = "power_menu_config";
 
         /**
-         * Show ScreenRecord in Power Menu
+         * Text color for advanced power menu
+         *
          * @hide
          */
-        public static final String SCREENRECORD_IN_POWER_MENU = "screenrecord_in_power_menu";
+        public static final String POWER_MENU_TEXT_COLOR = "power_menu_text_color";
 
         /**
-         * Show Expanded desktop in Power Menu
+         * Icon color for advanced power menu
+         *
          * @hide
          */
-        public static final String EXPANDED_DESKTOP_IN_POWER_MENU = "expanded_desktop_in_power_menu";
+        public static final String POWER_MENU_ICON_COLOR = "power_menu_icon_color";
+
+        /**
+         * Icon color mode for advanced power menu
+         *
+         * @hide
+         */
+        public static final String POWER_MENU_ICON_COLOR_MODE = "power_menu_icon_color_mode";
 
         /**
          * whether which Ram Usage Bar mode is used on recent switcher
