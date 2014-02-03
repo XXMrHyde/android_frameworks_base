@@ -109,6 +109,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private GlobalActionsDialog mDialog;
 
     private Action mSilentModeAction;
+    private ToggleAction mSilentModeOn;
     private ToggleAction mAirplaneModeOn;
     private ToggleAction mExpandDesktopModeOn;
 
@@ -118,6 +119,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mDeviceProvisioned = false;
     private ToggleAction.State mAirplaneState = ToggleAction.State.Off;
     private ToggleAction.State mExpandDesktopState = ToggleAction.State.Off;
+    private ToggleAction.State mSilentModeState = ToggleAction.State.Off;
     private boolean mIsWaitingForEcmExit = false;
     private boolean mHasTelephony;
     private boolean mHasVibrator;
@@ -226,12 +228,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 mContext, "shortcut_action_power_menu_values",
                 "shortcut_action_power_menu_entries");
 
-        // Simple toggle style if there's no vibrator, otherwise use a tri-state
-        if (!mHasVibrator) {
-            mSilentModeAction = new SilentModeToggleAction();
-        } else {
-            mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
-        }
+        mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
+
         mItems = new ArrayList<Action>();
 
         // bug report, if enabled
@@ -380,8 +378,16 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             config.getClickActionDescription());
                 mItems.add(mExpandDesktopModeOn);
             // silent mode
+            // Use a tri-state if there's a vibrator, otherwise a simple toggle style 
             } else if ((config.getClickAction().equals(PolicyConstants.ACTION_SOUND)) && (mShowSilentToggle)) {
-                mItems.add(mSilentModeAction);
+                if (mHasVibrator) {
+                    mItems.add(mSilentModeAction);
+                } else {
+                    constructSilentModeToggle(PolicyHelper.getPowerMenuIconImage(mContext,
+                                config.getClickAction(), config.getIcon(), true),
+                                config.getClickActionDescription());
+                    mItems.add(mSilentModeOn);
+                }
             // must be a custom app or action shorcut
             } else if (config.getClickAction() != null) {
                 mItems.add(
@@ -570,6 +576,33 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         onExpandDesktopModeChanged();
     }
 
+    private void constructSilentModeToggle(Drawable icon, String description) {
+        mSilentModeOn = new ToggleAction(
+                icon,
+                icon,
+                description,
+                R.string.global_action_silent_mode_on_status,
+                R.string.global_action_silent_mode_off_status) {
+
+            void onToggle(boolean on) {
+                if (on) {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                } else {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+            }
+
+            public boolean showDuringKeyguard() {
+                return true;
+            }
+
+            public boolean showBeforeProvisioning() {
+                return false;
+            }
+        };
+        onSilentModeChanged();
+    }
+
     private UserInfo getCurrentUser() {
         try {
             return ActivityManagerNative.getDefault().getCurrentUser();
@@ -619,12 +652,14 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private void prepareDialog() {
-        refreshSilentMode();
         if (mAirplaneModeOn != null) {
             mAirplaneModeOn.updateState(mAirplaneState);
         }
         if (mExpandDesktopModeOn != null) {
             mExpandDesktopModeOn.updateState(mExpandDesktopState);
+        }
+        if (mSilentModeOn != null) {
+            mSilentModeOn.updateState(mSilentModeState);
         }
         mAdapter.notifyDataSetChanged();
         mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
@@ -632,15 +667,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         if (mShowSilentToggle) {
             IntentFilter filter = new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION);
             mContext.registerReceiver(mRingerModeReceiver, filter);
-        }
-    }
-
-    private void refreshSilentMode() {
-        if (!mHasVibrator) {
-            final boolean silentModeOn =
-                    mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
-            ((ToggleAction)mSilentModeAction).updateState(
-                    silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off);
         }
     }
 
@@ -971,32 +997,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     }
 
-    private class SilentModeToggleAction extends ToggleAction {
-        public SilentModeToggleAction() {
-            super(mContext.getResources().getDrawable(R.drawable.ic_audio_vol_mute),
-                    mContext.getResources().getDrawable(R.drawable.ic_audio_vol),
-                    mContext.getResources().getString(R.string.global_action_toggle_silent_mode),
-                    R.string.global_action_silent_mode_on_status,
-                    R.string.global_action_silent_mode_off_status);
-        }
-
-        void onToggle(boolean on) {
-            if (on) {
-                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-            } else {
-                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-            }
-        }
-
-        public boolean showDuringKeyguard() {
-            return true;
-        }
-
-        public boolean showBeforeProvisioning() {
-            return false;
-        }
-    }
-
     private static class SilentModeTriStateAction implements Action, View.OnClickListener {
 
         private final int[] ITEM_IDS = { R.id.option1, R.id.option2, R.id.option3 };
@@ -1151,8 +1151,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
                 break;
             case MESSAGE_REFRESH:
-                refreshSilentMode();
                 mAdapter.notifyDataSetChanged();
+                onSilentModeChanged();
                 break;
             case MESSAGE_SHOW:
                 handleShow();
@@ -1183,6 +1183,15 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         mExpandDesktopState = expandDesktopModeOn ? ToggleAction.State.On : ToggleAction.State.Off;
         if (mExpandDesktopModeOn != null) {
             mExpandDesktopModeOn.updateState(mExpandDesktopState);
+        }
+    }
+
+    private void onSilentModeChanged() {
+        boolean silentModeOn =
+                mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT;
+        mSilentModeState = silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off;
+        if (mSilentModeOn != null) {
+            mSilentModeOn.updateState(mSilentModeState);
         }
     }
 

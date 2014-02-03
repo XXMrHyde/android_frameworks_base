@@ -184,6 +184,9 @@ public class PolicyHelper {
         } else if (clickAction.equals(PolicyConstants.ACTION_EXPANDED_DESKTOP)) {
             return context.getResources().getDrawable(
                 com.android.internal.R.drawable.ic_lock_expanded_desktop);
+        } else if (clickAction.equals(PolicyConstants.ACTION_SOUND)) {
+            return context.getResources().getDrawable(
+                com.android.internal.R.drawable.ic_audio_vol_mute_am);
         }
         return null;
     }
