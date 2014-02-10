@@ -3073,6 +3073,27 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
 
         /**
+         * Whether to show the quick access ribbons
+         *
+         * @hide
+         */
+        public static final String QAR_SHOW_TILES = "qar_show_tiles";
+
+        /**
+         * Quick Settings Quick access ribbon - linked layout
+         *
+         * @hide
+         */
+        public static final String QAR_TILES_LINKED = "qs_quick_access_linked";
+
+        /**
+         * Quick Settings Ribbon Tiles to Use
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_RIBBON_TILES = "quick_settings__ribbon_tiles";
+
+        /**
          * Whether to show custom carrier label on notification drawer
          * @hide
          */

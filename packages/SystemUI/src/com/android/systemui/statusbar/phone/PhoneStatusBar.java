@@ -227,11 +227,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
     // settings
     QuickSettingsController mQS;
-    boolean mHasSettingsPanel, mHideSettingsPanel, mHasFlipSettings;
+    boolean mHasSettingsPanel, mHasFlipSettings;
+    boolean mHideSettingsPanel;
     SettingsPanelView mSettingsPanel;
     View mFlipSettingsView;
-    QuickSettingsContainerView mSettingsContainer;
+    QuickSettingsContainerView mSettingsContainer, mRibbonContainer;
     int mSettingsPanelGravity;
+
+   // Ribbon settings
+    private boolean mShowQuickAccessRibbons = true;
+    private boolean mQuickAccessLayoutLinked;
+    private QuickSettingsHorizontalScrollView mRibbonView;
+    private QuickSettingsController mRibbonQS;
 
     // top bar
     View mNotificationPanelHeader;
@@ -399,6 +406,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.QUICK_SETTINGS_DYNAMIC_TILES),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QAR_SHOW_TILES),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QAR_TILES_LINKED),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_RIBBON_TILES),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QUICK_TILES_PER_ROW),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -449,19 +465,47 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.MENU_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
-
-            updateQuickSettings();
-            updateSettings();
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
-
-            updateQuickSettings();
-            updateSettings();
-
-            if (uri.equals(Settings.System.getUriFor(
+            if (uri != null && uri.equals(Settings.System.getUriFor(
+                    Settings.System.QAR_SHOW_TILES))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QAR_TILES_LINKED))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_RIBBON_TILES))) {
+                    updateQuickAccessRibbons();
+            } else if (uri != null && uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_TILES))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_SETTINGS_DYNAMIC_TILES))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QAR_TILES_LINKED))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_PER_ROW))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_PER_ROW_DUPLICATE_LANDSCAPE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_PRESSED_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_BG_ALPHA))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_NORMAL_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_ENABLED_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QUICK_TILES_ICON_DISABLED_COLOR))) {
+                if (mSettingsContainer != null) {
+                    updateQuickAccessRibbons();
+                    updateQuickSettings();
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_TINT))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE))
@@ -485,22 +529,60 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 if (mSearchPanelView != null) {
                     mSearchPanelView.updateSettings();
                 }
+            } else {
+                updateSettings();
             }
         }
     }
 
-    private void updateQuickSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
+    private void updateQuickAccessRibbons() {
+        final ContentResolver resolver = mContext.getContentResolver();
+        mShowQuickAccessRibbons = Settings.System.getIntForUser(resolver,
+                Settings.System.QAR_SHOW_TILES, 1, UserHandle.USER_CURRENT) == 1;
+        mQuickAccessLayoutLinked = Settings.System.getIntForUser(resolver,
+                Settings.System.QAR_TILES_LINKED, 1, UserHandle.USER_CURRENT) == 1;
+        String qarConfig = Settings.System.getStringForUser(resolver,
+                Settings.System.QUICK_SETTINGS_RIBBON_TILES, UserHandle.USER_CURRENT);
+        String qarLinkedConfig = Settings.System.getStringForUser(resolver,
+                Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
+        boolean hideQuickAccessRibbons = mQuickAccessLayoutLinked
+                ? qarLinkedConfig != null && qarLinkedConfig.isEmpty()
+                : (qarConfig != null && qarConfig.isEmpty())
+                || (qarLinkedConfig != null && qarLinkedConfig.isEmpty());
 
+        Log.d(TAG, "updateQuickAccessRibbons, Execute cleanupRibbon");
+        cleanupRibbon();
+
+        if (hideQuickAccessRibbons) {
+            mShowQuickAccessRibbons = false;
+        }
+        Log.d(TAG, "updateQuickAccessRibbons, Show Quick access ribbons is: " + (mShowQuickAccessRibbons ? "show" : "hide"));
+        Log.d(TAG, "updateQuickAccessRibbons, Execute inflateRibbon");
+        inflateRibbon();
+        if (mShowQuickAccessRibbons) {
+            Log.d(TAG, "updateQuickAccessRibbons, mShowQuickAccessRibbons is true");
+            mRibbonView.setVisibility(View.VISIBLE);
+            Log.d(TAG, "updateQuickAccessRibbons, Ribbon Visibility should be visible");
+        } else {
+            Log.d(TAG, "updateQuickAccessRibbons, mShowQuickAccessRibbons is false");
+            Log.d(TAG, "updateQuickAccessRibbons, Execute cleanupRibbon");
+            cleanupRibbon();
+        }
+    }
+
+    private void updateQuickSettings() {
+        final ContentResolver resolver = mContext.getContentResolver();
         String qsConfig = Settings.System.getStringForUser(resolver,
                 Settings.System.QUICK_SETTINGS_TILES, UserHandle.USER_CURRENT);
         boolean hideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
+
         if (hideSettingsPanel != mHideSettingsPanel) {
+            Log.d(TAG, "updateQuickSettings, execute recreateStatusBar");
             recreateStatusBar(false);
             return;
         }
-
         if (mQS != null) {
+            Log.d(TAG, "updateQuickSettings, execute mQS.setupQuickSettings");
             mQS.setupQuickSettings();
         }
     }
@@ -644,6 +726,65 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }
     }
 
+    private void cleanupRibbon() {
+        if (mRibbonView == null) {
+            Log.d(TAG, "cleanupRibbon, mRibbonView is null abort");
+            return;
+        }
+        Log.d(TAG, "cleanupRibbon, mRibbonView is not null");
+        mRibbonView.setVisibility(View.GONE);
+        Log.d(TAG, "cleanupRibbon, Ribbon visibility should be gone");
+        if (mRibbonQS != null) {
+            Log.d(TAG, "cleanupRibbon, mRibbonQS is not null");
+            mRibbonQS.shutdown();
+            Log.d(TAG, "cleanupRibbon, Executed mRibbonQS.shutdown");
+            mRibbonQS = null;
+            Log.d(TAG, "cleanupRibbon, mRibbonQS should be null");
+        } else {
+            Log.d(TAG, "cleanupRibbon, mRibbonQS is null");
+        }
+    }
+
+    private void inflateRibbon() {
+        if (mRibbonView == null) {
+            Log.d(TAG, "inflateRibbon, mRibbonView is null");
+            ViewStub ribbon_stub = (ViewStub) mStatusBarWindow.findViewById(R.id.ribbon_settings_stub);
+            if (ribbon_stub != null) {
+                Log.d(TAG, "inflateRibbon, ribbon_stub is not null");
+                mRibbonView = (QuickSettingsHorizontalScrollView) ((ViewStub)ribbon_stub).inflate();
+                mRibbonView.setVisibility(View.VISIBLE);
+            } else {
+                Log.d(TAG, "inflateRibbon, ribbon_stub is null");
+            }
+        } else {
+            Log.d(TAG, "inflateRibbon, mRibbonView is not null");
+        }
+        if (mRibbonQS == null) {
+            Log.d(TAG, "inflateRibbon, mRibbonQS is null");
+            Log.d(TAG, "inflateRibbon, mRibbonContainer is : "+ (mRibbonContainer == null ? "null" : "not null"));
+            mRibbonContainer = (QuickSettingsContainerView)
+                    mStatusBarWindow.findViewById(R.id.quick_settings_ribbon_container);
+            Log.d(TAG, "inflateRibbon, mRibbonContainer is : "+ (mRibbonContainer == null ? "null" : "not null"));
+            if (mRibbonContainer != null) {
+                Log.d(TAG, "inflateRibbon, mRibbonContainer is not null");
+                mRibbonQS = new QuickSettingsController(mContext, mRibbonContainer, this,
+                        mQuickAccessLayoutLinked ? Settings.System.QUICK_SETTINGS_TILES
+                            : Settings.System.QUICK_SETTINGS_RIBBON_TILES);
+                mRibbonQS.hideLiveTiles(true);
+                mRibbonQS.hideLiveTileLabels(true);
+                mRibbonQS.setService(this);
+                mRibbonQS.setBar(mStatusBarView);
+                mRibbonQS.setupQuickSettings();
+            } else {
+                Log.d(TAG, "inflateRibbon, mRibbonContainer is null");
+            }
+        } else {
+            Log.d(TAG, "inflateRibbon, mRibbonQS is not null");
+        }
+    }
+
+
+
     // ================================================================================
     // Constructing the view
     // ================================================================================
@@ -754,6 +895,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         String qsConfig = Settings.System.getStringForUser(
                 mContext.getContentResolver(), Settings.System.QUICK_SETTINGS_TILES,
                 UserHandle.USER_CURRENT);
+
         mHideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
 
         mHasSettingsPanel = res.getBoolean(R.bool.config_hasSettingsPanel) && !mHideSettingsPanel;
@@ -969,6 +1111,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             } else {
                 mQS = null; // fly away, be free
             }
+
+            Log.d(TAG, "makeStatusBarView, Show Quick access ribbons is: " + (mShowQuickAccessRibbons ? "show" : "hide"));
+            updateQuickAccessRibbons();
+            Log.d(TAG, "makeStatusBarView, Executed updateQuickAccessRibbons");
         }
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -1911,7 +2057,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     final int FLIP_DURATION = (FLIP_DURATION_IN + FLIP_DURATION_OUT);
 
     Animator mScrollViewAnim, mFlipSettingsViewAnim, mNotificationButtonAnim,
-        mQuickSettingsButtonAnim, mClearButtonAnim;
+        mQuickSettingsButtonAnim, mClearButtonAnim, mRibbonViewAnim;
 
     @Override
     public void animateExpandNotificationsPanel() {
@@ -1934,6 +2080,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     public void flipToNotifications() {
         if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
         if (mScrollViewAnim != null) mScrollViewAnim.cancel();
+        if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
         if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
@@ -1948,6 +2095,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     ObjectAnimator.ofFloat(mScrollView, View.SCALE_X, 1f)
                         .setDuration(FLIP_DURATION_IN)
                     )));
+        if (mRibbonView != null && mShowQuickAccessRibbons) {
+            mRibbonView.setVisibility(View.VISIBLE);
+            mRibbonViewAnim = start(
+                    startDelay(FLIP_DURATION_OUT * zeroOutDelays,
+                            interpolator(mDecelerateInterpolator,
+                                    ObjectAnimator.ofFloat(mRibbonView, View.SCALE_X, 1f)
+                                    .setDuration(FLIP_DURATION_IN)
+                                    )));
+        }
         mFlipSettingsViewAnim = start(
             setVisibilityWhenDone(
                 interpolator(mAccelerateInterpolator,
@@ -2011,6 +2167,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mQuickSettingsButton.setVisibility(View.GONE);
         mScrollView.setVisibility(View.GONE);
         mScrollView.setScaleX(0f);
+        if (mRibbonView != null) {
+            mRibbonView.setVisibility(View.GONE);
+            mRibbonView.setScaleX(0f);
+        }
         mNotificationButton.setVisibility(View.VISIBLE);
         mNotificationButton.setAlpha(1f);
         mClearButton.setVisibility(View.GONE);
@@ -2045,6 +2205,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mQuickSettingsButton.setAlpha(-percent);
             mScrollView.setVisibility(View.VISIBLE);
             mScrollView.setScaleX(-percent);
+            if (mRibbonView != null && mShowQuickAccessRibbons) {
+                mRibbonView.setVisibility(View.VISIBLE);
+                mRibbonView.setScaleX(-percent);
+            }
             mNotificationButton.setVisibility(View.GONE);
             updateCarrierAndWifiLabelVisibility(false, false);
         } else { // settings side
@@ -2053,6 +2217,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mQuickSettingsButton.setVisibility(View.GONE);
             mScrollView.setVisibility(View.GONE);
             mScrollView.setScaleX(0f);
+            if (mRibbonView != null) {
+                mRibbonView.setVisibility(View.GONE);
+                mRibbonView.setScaleX(0f);
+            }
             mNotificationButton.setVisibility(View.VISIBLE);
             mNotificationButton.setAlpha(percent);
             updateCarrierAndWifiLabelVisibility(false, true);
@@ -2066,6 +2234,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
         if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
         if (mScrollViewAnim != null) mScrollViewAnim.cancel();
+        if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
         if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
@@ -2087,6 +2256,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                         )
                     .setDuration(FLIP_DURATION_OUT),
                 mScrollView, View.INVISIBLE));
+        if (mRibbonView != null) {
+            mRibbonViewAnim = start(
+                    setVisibilityWhenDone(
+                            interpolator(mAccelerateInterpolator,
+                                    ObjectAnimator.ofFloat(mRibbonView, View.SCALE_X, 0f)
+                                    )
+                                    .setDuration(FLIP_DURATION_OUT),
+                                    mRibbonView, View.GONE));
+        }
         mQuickSettingsButtonAnim = start(
             setVisibilityWhenDone(
                 ObjectAnimator.ofFloat(mQuickSettingsButton, View.ALPHA, 0f)
@@ -2139,12 +2317,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             // reset things to their proper state
             if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
             if (mScrollViewAnim != null) mScrollViewAnim.cancel();
+            if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
             if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
             if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
             if (mClearButtonAnim != null) mClearButtonAnim.cancel();
 
             mScrollView.setScaleX(1f);
             mScrollView.setVisibility(View.VISIBLE);
+            if (mRibbonView != null && mShowQuickAccessRibbons) {
+                mRibbonView.setScaleX(1f);
+                mRibbonView.setVisibility(View.VISIBLE);
+            }
             mQuickSettingsButton.setAlpha(1f);
             mQuickSettingsButton.setVisibility(View.VISIBLE);
             mNotificationPanel.setVisibility(View.GONE);

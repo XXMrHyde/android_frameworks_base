@@ -126,6 +126,8 @@ public class QuickSettingsController {
     private ContentObserver mObserver;
     public PhoneStatusBar mStatusBarService;
     private final String mSettingsKey;
+    private boolean mHideLiveTiles;
+    private boolean mHideLiveTileLabels;
 
     private InputMethodTile mIMETile;
 
@@ -251,6 +253,10 @@ public class QuickSettingsController {
             }
         }
 
+        if (mHideLiveTiles) {
+            return;
+        }
+
         // Load the dynamic tiles
         // These toggles must be the last ones added to the view, as they will show
         // only when they are needed
@@ -310,6 +316,11 @@ public class QuickSettingsController {
         loadTiles();
         setupBroadcastReceiver();
         setupContentObserver();
+        if (mHideLiveTileLabels) {
+            for (QuickSettingsTile t : mQuickSettingsTiles) {
+                t.setLabelVisibility(false);
+            }
+        }
     }
 
     void setupContentObserver() {
@@ -403,5 +414,13 @@ public class QuickSettingsController {
         for (QuickSettingsTile t : mQuickSettingsTiles) {
             t.updateResources();
         }
+    }
+
+    public void hideLiveTileLabels(boolean hide) {
+        mHideLiveTileLabels = hide;
+    }
+
+    public void hideLiveTiles(boolean hide) {
+        mHideLiveTiles = hide;
     }
 }
