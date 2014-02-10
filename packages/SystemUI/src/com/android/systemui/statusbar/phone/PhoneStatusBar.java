@@ -550,22 +550,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 : (qarConfig != null && qarConfig.isEmpty())
                 || (qarLinkedConfig != null && qarLinkedConfig.isEmpty());
 
-        Log.d(TAG, "updateQuickAccessRibbons, Execute cleanupRibbon");
         cleanupRibbon();
 
         if (hideQuickAccessRibbons) {
             mShowQuickAccessRibbons = false;
         }
-        Log.d(TAG, "updateQuickAccessRibbons, Show Quick access ribbons is: " + (mShowQuickAccessRibbons ? "show" : "hide"));
-        Log.d(TAG, "updateQuickAccessRibbons, Execute inflateRibbon");
         inflateRibbon();
         if (mShowQuickAccessRibbons) {
-            Log.d(TAG, "updateQuickAccessRibbons, mShowQuickAccessRibbons is true");
             mRibbonView.setVisibility(View.VISIBLE);
-            Log.d(TAG, "updateQuickAccessRibbons, Ribbon Visibility should be visible");
         } else {
-            Log.d(TAG, "updateQuickAccessRibbons, mShowQuickAccessRibbons is false");
-            Log.d(TAG, "updateQuickAccessRibbons, Execute cleanupRibbon");
             cleanupRibbon();
         }
     }
@@ -577,12 +570,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         boolean hideSettingsPanel = qsConfig != null && qsConfig.isEmpty();
 
         if (hideSettingsPanel != mHideSettingsPanel) {
-            Log.d(TAG, "updateQuickSettings, execute recreateStatusBar");
             recreateStatusBar(false);
             return;
         }
         if (mQS != null) {
-            Log.d(TAG, "updateQuickSettings, execute mQS.setupQuickSettings");
             mQS.setupQuickSettings();
         }
     }
@@ -728,45 +719,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
     private void cleanupRibbon() {
         if (mRibbonView == null) {
-            Log.d(TAG, "cleanupRibbon, mRibbonView is null abort");
             return;
         }
-        Log.d(TAG, "cleanupRibbon, mRibbonView is not null");
         mRibbonView.setVisibility(View.GONE);
-        Log.d(TAG, "cleanupRibbon, Ribbon visibility should be gone");
         if (mRibbonQS != null) {
-            Log.d(TAG, "cleanupRibbon, mRibbonQS is not null");
             mRibbonQS.shutdown();
-            Log.d(TAG, "cleanupRibbon, Executed mRibbonQS.shutdown");
             mRibbonQS = null;
-            Log.d(TAG, "cleanupRibbon, mRibbonQS should be null");
         } else {
-            Log.d(TAG, "cleanupRibbon, mRibbonQS is null");
         }
     }
 
     private void inflateRibbon() {
         if (mRibbonView == null) {
-            Log.d(TAG, "inflateRibbon, mRibbonView is null");
             ViewStub ribbon_stub = (ViewStub) mStatusBarWindow.findViewById(R.id.ribbon_settings_stub);
             if (ribbon_stub != null) {
-                Log.d(TAG, "inflateRibbon, ribbon_stub is not null");
                 mRibbonView = (QuickSettingsHorizontalScrollView) ((ViewStub)ribbon_stub).inflate();
                 mRibbonView.setVisibility(View.VISIBLE);
-            } else {
-                Log.d(TAG, "inflateRibbon, ribbon_stub is null");
             }
-        } else {
-            Log.d(TAG, "inflateRibbon, mRibbonView is not null");
         }
         if (mRibbonQS == null) {
-            Log.d(TAG, "inflateRibbon, mRibbonQS is null");
-            Log.d(TAG, "inflateRibbon, mRibbonContainer is : "+ (mRibbonContainer == null ? "null" : "not null"));
             mRibbonContainer = (QuickSettingsContainerView)
                     mStatusBarWindow.findViewById(R.id.quick_settings_ribbon_container);
-            Log.d(TAG, "inflateRibbon, mRibbonContainer is : "+ (mRibbonContainer == null ? "null" : "not null"));
             if (mRibbonContainer != null) {
-                Log.d(TAG, "inflateRibbon, mRibbonContainer is not null");
                 mRibbonQS = new QuickSettingsController(mContext, mRibbonContainer, this,
                         mQuickAccessLayoutLinked ? Settings.System.QUICK_SETTINGS_TILES
                             : Settings.System.QUICK_SETTINGS_RIBBON_TILES);
@@ -775,11 +749,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 mRibbonQS.setService(this);
                 mRibbonQS.setBar(mStatusBarView);
                 mRibbonQS.setupQuickSettings();
-            } else {
-                Log.d(TAG, "inflateRibbon, mRibbonContainer is null");
             }
-        } else {
-            Log.d(TAG, "inflateRibbon, mRibbonQS is not null");
         }
     }
 
@@ -1112,9 +1082,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 mQS = null; // fly away, be free
             }
 
-            Log.d(TAG, "makeStatusBarView, Show Quick access ribbons is: " + (mShowQuickAccessRibbons ? "show" : "hide"));
             updateQuickAccessRibbons();
-            Log.d(TAG, "makeStatusBarView, Executed updateQuickAccessRibbons");
         }
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
