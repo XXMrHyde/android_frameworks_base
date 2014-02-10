@@ -725,7 +725,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         if (mRibbonQS != null) {
             mRibbonQS.shutdown();
             mRibbonQS = null;
-        } else {
         }
     }
 
