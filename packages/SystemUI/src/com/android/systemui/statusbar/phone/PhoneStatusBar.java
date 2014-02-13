@@ -268,6 +268,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private Clock mClock;
     private CenterClock mCclock;
     LinearLayout mCenterClockLayout;
+    View mCenterSpacer;
 
     // position
     int[] mPositionTmp = new int[2];
@@ -844,8 +845,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mMoreIcon = mStatusBarView.findViewById(R.id.moreIcon);
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
+        mClock = (Clock) mStatusBarView.findViewById(R.id.clock);
+        mCclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
+        mCenterSpacer = (View)mStatusBarView.findViewById(R.id.center_spacer);
         mCenterClockLayout = (LinearLayout) mStatusBarView.findViewById(R.id.center_clock_layout);
         mTickerView = mStatusBarView.findViewById(R.id.ticker);
+
+        mNotificationIcons.setCenterClock(mCclock);
+        mNotificationIcons.setCenterSpacer(mCenterSpacer);
 
         mPile = (NotificationRowLayout)mStatusBarWindow.findViewById(R.id.latestItems);
         mPile.setLayoutTransitionsEnabled(false);
@@ -954,9 +961,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mRotationLockController = new RotationLockController(mContext);
         final SignalClusterView signalCluster =
                 (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
-
-        mClock = (Clock) mStatusBarView.findViewById(R.id.clock);
-        mCclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
 
         mNetworkController.addSignalCluster(signalCluster);
         signalCluster.setNetworkController(mNetworkController);
