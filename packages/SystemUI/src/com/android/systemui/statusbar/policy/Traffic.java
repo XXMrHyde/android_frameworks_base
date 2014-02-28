@@ -5,8 +5,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
 import android.net.ConnectivityManager;
 import android.net.TrafficStats;
 import android.os.Handler;
@@ -15,28 +17,46 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class TrafficDl extends TextView {
-    public static final String TAG = "TrafficDl";
+import com.android.systemui.R;
+
+public class Traffic extends TextView {
+    public static final String TAG = "Traffic";
+    private static final int NO_TRAFFIC = 0;
+    private static final int TRAFFIC_UP = 1;
+    private static final int TRAFFIC_DOWN = 2;
+    private static final int TRAFFIC_UP_DOWN = 3;
+
     private boolean mAttached;
-    boolean mTrafficMeterEnable;
-    boolean mTrafficMeterHide;
-    boolean mShowDl;
-    boolean mIsBit;
-    int mTrafficMeterSummaryTime;
+    private boolean mTrafficMeterEnable;
+    private boolean mTrafficMeterHide;
+    private boolean mShowDl;
+    private boolean mShowUl;
+    private int mState = NO_TRAFFIC;
+
+    private int mTrafficIconColor;
+    private boolean mIsBit;
+    private int mTrafficMeterSummaryTime;
+
     long totalRxBytes;
+    long totalTxBytes;
     long lastUpdateTime;
     long trafficBurstStartTime;
-    long trafficBurstStartBytes;
+    long trafficBurstStartRxBytes;
+    long trafficBurstStartTxBytes;
     long keepOnUntil = Long.MIN_VALUE;
     NumberFormat decimalFormat = new DecimalFormat("##0.0");
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
-    private String mTrafficTypeView;
-    private boolean mIsQuicksettings;
+
+    private int txtSizeSingle;
+    private int txtSizeMulti;
+
+    Resources mResources;
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
@@ -53,16 +73,19 @@ public class TrafficDl extends TextView {
                     Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD),
+                    Settings.System.STATUS_BAR_TRAFFIC_SUMMARY),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_TRAFFIC_SUMMARY),
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR),
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
 
             updateSettings();
@@ -75,27 +98,19 @@ public class TrafficDl extends TextView {
 
     }
 
-    public TrafficDl(Context context) {
+    public Traffic(Context context) {
         this(context, null);
     }
 
-    public TrafficDl(Context context, AttributeSet attrs) {
+    public Traffic(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TrafficDl(Context context, AttributeSet attrs, int defStyle) {
+    public Traffic(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
-        TypedArray trafficType = context.obtainStyledAttributes(attrs,
-            com.android.systemui.R.styleable.TrafficText, 0, 0);
-        mTrafficTypeView = trafficType.getString(
-            com.android.systemui.R.styleable.TrafficText_trafficView);
-
-        if (mTrafficTypeView == null) {
-            mTrafficTypeView = "statusbar";
-        }
-
-        mIsQuicksettings = mTrafficTypeView.equals("quicksettings");
+        mResources = getResources();
+        txtSizeSingle = mResources.getDimensionPixelSize(R.dimen.net_traffic_single_text_size);
+        txtSizeMulti = mResources.getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
 
         updateSettings();
     }
@@ -153,6 +168,7 @@ public class TrafficDl extends TextView {
 
         if (getConnectAvailable()) {
             totalRxBytes = TrafficStats.getTotalRxBytes();
+            totalTxBytes = TrafficStats.getTotalTxBytes();
             lastUpdateTime = SystemClock.elapsedRealtime();
             trafficBurstStartTime = Long.MIN_VALUE;
 
@@ -163,28 +179,23 @@ public class TrafficDl extends TextView {
 
     private String formatTraffic(long trafffic, boolean speed) {
         if (trafffic > 10485760) { // 1024 * 1024 * 10
-            return ("D: ")
-                    + (speed ? "" : "(")
+            return (speed ? "" : "(")
                     + integerFormat.format(trafffic / 1048576)
                     + (speed ? (mIsBit ? "Mbit/s" : "MB/s") : "MB)");
         } else if (trafffic > 1048576) { // 1024 * 1024
-            return ("D: ")
-                    + (speed ? "" : "(")
+            return (speed ? "" : "(")
                     + decimalFormat.format(((float) trafffic) / 1048576f)
                     + (speed ? (mIsBit ? "Mbit/s" : "MB/s") : "MB)");
         } else if (trafffic > 10240) { // 1024 * 10
-            return ("D: ")
-                    + (speed ? "" : "(")
+            return (speed ? "" : "(")
                     + integerFormat.format(trafffic / 1024)
                     + (speed ? (mIsBit ? "Kbit/s" : "KB/s") : "KB)");
         } else if (trafffic > 1024) { // 1024
-            return ("D: ")
-                    + (speed ? "" : "(")
+            return (speed ? "" : "(")
                     + decimalFormat.format(((float) trafffic) / 1024f)
                     + (speed ? (mIsBit ? "Kbit/s" : "KB/s") : "KB)");
         } else {
-            return ("D: ")
-                    + (speed ? "" : "(")
+            return (speed ? "" : "(")
                     + integerFormat.format(trafffic)
                     + (speed ? (mIsBit ? "bit/s" : "B/s") : "B)");
         }
@@ -212,41 +223,96 @@ public class TrafficDl extends TextView {
             }
 
             long currentRxBytes = TrafficStats.getTotalRxBytes();
-            long newBytes = currentRxBytes - totalRxBytes;
+            long currentTxBytes = TrafficStats.getTotalTxBytes();
+            long newRxBytes = currentRxBytes - totalRxBytes;
+            long newTxBytes = currentTxBytes - totalTxBytes;
 
-            if (!mTrafficTypeView.equals("statusbar")) {
-                mTrafficMeterHide = false;
-            }
+            String output = "";
+            int textSize = txtSizeSingle;
+            int state = NO_TRAFFIC;
 
-            if (mTrafficMeterHide && newBytes == 0) {
-                long trafficBurstBytes = currentRxBytes - trafficBurstStartBytes;
+            if (mTrafficMeterHide && newTxBytes == 0) {
+                long trafficBurstTxBytes = currentTxBytes - trafficBurstStartTxBytes;
 
-                if (trafficBurstBytes != 0 && mTrafficMeterSummaryTime != 0) {
-                    setText(formatTraffic(trafficBurstBytes, false));
+                if (trafficBurstTxBytes != 0 && mTrafficMeterSummaryTime != 0) {
+                    if (mShowUl) {
+                        output = formatTraffic(trafficBurstTxBytes, false);
+                        state = TRAFFIC_UP;
+                    }
 
                     Log.i(TAG,
-                            "Traffic burst ended: " + trafficBurstBytes + "B in "
+                            "Traffic burst tx ended: " + trafficBurstTxBytes + "B in "
                                     + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
                                     / 1000 + "s");
                     keepOnUntil = SystemClock.elapsedRealtime() + mTrafficMeterSummaryTime;
                     trafficBurstStartTime = Long.MIN_VALUE;
-                    trafficBurstStartBytes = currentRxBytes;
+                    trafficBurstStartTxBytes = currentTxBytes;
                 }
             } else {
                 if (mTrafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
                     trafficBurstStartTime = lastUpdateTime;
-                    trafficBurstStartBytes = totalRxBytes;
+                    trafficBurstStartTxBytes = totalTxBytes;
                 }
-                setText(formatTraffic(mIsBit ? newBytes * 8000 / td : newBytes * 1000 / td, true));
+                if (mShowUl) {
+                    output = formatTraffic(mIsBit ? newTxBytes * 8000 / td : newTxBytes * 1000 / td, true);
+                    state = TRAFFIC_UP;
+                }
+            }
+
+            if (mTrafficMeterHide && newRxBytes == 0) {
+                long trafficBurstRxBytes = currentRxBytes - trafficBurstStartRxBytes;
+
+                if (trafficBurstRxBytes != 0 && mTrafficMeterSummaryTime != 0) {
+                    if (mShowDl) {
+                        if (output != "") {
+                            output += "\n";
+                            textSize = txtSizeMulti;
+                            state = TRAFFIC_UP_DOWN;
+                        } else {
+                            state = TRAFFIC_DOWN;
+                        }
+                        output += formatTraffic(trafficBurstRxBytes, false);
+                    }
+
+                    Log.i(TAG,
+                            "Traffic burst rx ended: " + trafficBurstRxBytes + "B in "
+                                    + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
+                                    / 1000 + "s");
+                    keepOnUntil = SystemClock.elapsedRealtime() + mTrafficMeterSummaryTime;
+                    trafficBurstStartTime = Long.MIN_VALUE;
+                    trafficBurstStartRxBytes = currentRxBytes;
+                }
+            } else {
+                if (mTrafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
+                    trafficBurstStartTime = lastUpdateTime;
+                    trafficBurstStartRxBytes = totalRxBytes;
+                }
+                if (mShowDl) {
+                    if (output != "") {
+                        output += "\n";
+                        textSize = txtSizeMulti;
+                        state = TRAFFIC_UP_DOWN;
+                    } else {
+                        state = TRAFFIC_DOWN;
+                    }
+                    output += formatTraffic(mIsBit ? newRxBytes * 8000 / td : newRxBytes * 1000 / td, true);
+                }
+            }
+
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)textSize);
+            setText(output);
+            if (mState != state) {
+                mState = state;
+                updateTrafficDrawable(mTrafficIconColor, mState);
             }
 
             // Hide if there is no traffic
-            if (mShowDl) {
-                if (mTrafficMeterHide && newBytes == 0) {
+            if (mShowDl || mShowUl) {
+                if (mTrafficMeterHide && newRxBytes == 0 && newTxBytes == 0) {
                     if (getVisibility() != GONE
                             && keepOnUntil < SystemClock.elapsedRealtime()) {
                         setText("");
-                        setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
+                        setVisibility(View.GONE);
                     }
                 } else {
                     if (getVisibility() != VISIBLE) {
@@ -255,10 +321,11 @@ public class TrafficDl extends TextView {
                 }
             } else {
                 setText("");
-                setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
+                setVisibility(View.GONE);
             }
 
             totalRxBytes = currentRxBytes;
+            totalTxBytes = currentTxBytes;
             lastUpdateTime = SystemClock.elapsedRealtime();
             if (getHandler() != null) {
                 getHandler().postDelayed(mRunnable, 500);
@@ -278,26 +345,51 @@ public class TrafficDl extends TextView {
         mTrafficMeterSummaryTime = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_TRAFFIC_SUMMARY, 3000,
                 UserHandle.USER_CURRENT);
-        mShowDl = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD, 1,
-                UserHandle.USER_CURRENT) == 1;
+        int indicator = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR, 2,
+                UserHandle.USER_CURRENT);
         mIsBit = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        int trafficDLColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR,
+        int trafficTextColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_TEXT_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+        mTrafficIconColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_ICON_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
 
-        if (mTrafficMeterEnable && mShowDl && getConnectAvailable()) {
+        mShowDl = (indicator == 0 || indicator == 2) ? true : false;
+        mShowUl = (indicator == 1 || indicator == 2) ? true : false;
+
+        if ((mShowDl || mShowUl) && mTrafficMeterEnable && getConnectAvailable()) {
             setVisibility(View.VISIBLE);
             if (mAttached) {
                 startTrafficUpdates();
             }
         } else {
-            setVisibility(mIsQuicksettings ? View.VISIBLE : View.GONE);
+            setVisibility(View.GONE);
             setText("");
         }
 
-        setTextColor(trafficDLColor);
+        setTextColor(trafficTextColor);
+        updateTrafficDrawable(mTrafficIconColor, mState);
+    }
+
+    private void updateTrafficDrawable(int color, int state) {
+        Drawable trafficDrawable = null;
+
+        if (state == TRAFFIC_UP) {
+            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_up);
+        } else if (state == TRAFFIC_DOWN) {
+            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_down);
+        } else if (state == TRAFFIC_UP_DOWN) {
+            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_updown);
+        }
+
+        if (trafficDrawable != null) {
+            trafficDrawable.setColorFilter(color, Mode.MULTIPLY);
+        }
+        setCompoundDrawablesWithIntrinsicBounds(
+                null, null, trafficDrawable, null);
     }
 }

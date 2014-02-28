@@ -2989,22 +2989,10 @@ public final class Settings {
         public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
 
         /**
-         * Whether to customize the status bar network speed indicator color
+         * Show/hide network speed indicator on no traffic
          * @hide
          */
-        public static final String STATUS_BAR_NETWORK_SPEED_ENABLE_THEME_DEFAULT = "status_bar_network_speed_enable_theme_default";
-
-        /**
-         * Show/hide network speed download indicator
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD = "status_bar_network_speed_show_download";
-
-        /**
-         * Show/hide network speed upload indicator
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD = "status_bar_network_speed_show_upload";
+        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
 
         /**
          * Show summary of traffic.
@@ -3013,28 +3001,32 @@ public final class Settings {
         public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
 
         /**
+         * Wether to show network speed indicators
+         * 0: download
+         * 1: upload
+         * 2: download and upload
+         * default: 2
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_INDICATOR = "status_bar_network_speed_indicator";
+
+        /**
          * Display network speed indicator value as bit/byte
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
 
         /**
-         * Show/hide network speed indicator on no traffic
-         * @hide
-         */
-        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
-
-        /**
          * Color of the network speed download indicator
          * @hide
          */
-        public static final String STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR = "status_bar_network_speed_download_color";
+        public static final String STATUS_BAR_NETWORK_SPEED_TEXT_COLOR = "status_bar_network_speed_text_color";
 
         /**
          * Color of the network speed upload indicator
          * @hide
          */
-        public static final String STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR = "status_bar_network_speed_upload_color";
+        public static final String STATUS_BAR_NETWORK_SPEED_ICON_COLOR = "status_bar_network_speed_icon_color";
 
         /**
          * Show the pending notification counts as overlays on the status bar

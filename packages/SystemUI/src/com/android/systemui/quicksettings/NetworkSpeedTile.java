@@ -31,22 +31,20 @@ import android.view.View.OnLongClickListener;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 import com.android.systemui.statusbar.phone.QuickSettingsController;
-import com.android.systemui.statusbar.policy.TrafficDl;
-import com.android.systemui.statusbar.policy.TrafficUl;
 
 public class NetworkSpeedTile extends QuickSettingsTile {
     private boolean mEnabled = false;
 
     public NetworkSpeedTile(Context context, QuickSettingsController qsc) {
-        super(context, qsc, R.layout.quick_settings_tile_network_speed);
+        super(context, qsc);
 
         mOnClick = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Change the system setting
                 Settings.System.putIntForUser(mContext.getContentResolver(),
-                        Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, mEnabled ? 0 : 1,
-                        UserHandle.USER_CURRENT);
+                        Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR,
+                        mEnabled ? 0 : 1, UserHandle.USER_CURRENT);
             }
         };
 
@@ -64,33 +62,7 @@ public class NetworkSpeedTile extends QuickSettingsTile {
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_UPLOAD), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_DOWNLOAD), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_UPLOAD_COLOR), this);
-        qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_NETWORK_SPEED_DOWNLOAD_COLOR), this);
-    }
-
-    @Override
-    public void onChangeUri(ContentResolver resolver, Uri uri) {
-        TrafficUl trafficUp = (TrafficUl) mTile.findViewById(R.id.text_ul);
-        TrafficDl trafficDown = (TrafficDl) mTile.findViewById(R.id.text_dl);
-
-        if (trafficUp != null) {
-            trafficUp.updateSettings();
-        }
-        if (trafficDown != null) {
-            trafficDown.updateSettings();
-        }
-        updateTile();
+                Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR), this);
     }
 
     @Override
@@ -99,27 +71,39 @@ public class NetworkSpeedTile extends QuickSettingsTile {
         super.onPostCreate();
     }
 
+    @Override
+    public void updateResources() {
+        updateTile();
+        super.updateResources();
+    }
+
     private synchronized void updateTile() {
         mEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
             Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0,
             UserHandle.USER_CURRENT) == 1;
+        int state = Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR, 2,
+            UserHandle.USER_CURRENT);
+
         if (mEnabled) {
+            mDrawableColor = mDrawableEnabledColor;
             mLabel = mContext.getString(R.string.quick_settings_network_speed);
+            if (state == 0) {
+                mDrawable = R.drawable.ic_qs_network_traffic_down;
+            } else if (state == 1) {
+                mDrawable = R.drawable.ic_qs_network_traffic_up;
+            } else {
+                mDrawable = R.drawable.ic_qs_network_traffic_updown;
+            }
         } else {
+            mDrawable = R.drawable.ic_qs_network_traffic_updown;
+            mDrawableColor = mDrawableDisabledColor;
             mLabel = mContext.getString(R.string.quick_settings_network_speed_off);
         }
-        updateQuickSettings();
     }
 
     @Override
-    void updateQuickSettings() {
-        TextView tv = (TextView) mTile.findViewById(R.id.text);
-        if (tv != null) {
-            tv.setText(mLabel);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTileTextSize);
-            tv.setPadding(0, mTileTextPadding, 0, 0);
-            tv.setTextColor(mTileTextColor);
-        }
+    public void onChangeUri(ContentResolver resolver, Uri uri) {
+        updateResources();
     }
-
 }

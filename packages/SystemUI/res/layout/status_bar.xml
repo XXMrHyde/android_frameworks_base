@@ -89,33 +89,13 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"/>
 
-           <LinearLayout android:id="@+id/traffic"
+            <com.android.systemui.statusbar.policy.Traffic
+                android:id="@+id/traffic"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-               <com.android.systemui.statusbar.policy.TrafficUl
-                   android:id="@+id/traffic_ul"
-                   android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:singleLine="true"
-                   android:layout_marginRight="4dp"
-                   android:gravity="center"
-                   systemui:trafficView="statusbar"
-               />
-
-               <com.android.systemui.statusbar.policy.TrafficDl
-                   android:id="@+id/traffic_dl"
-                   android:textAppearance="@style/TextAppearance.StatusBar.Traffic"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:singleLine="true"
-                   android:layout_marginRight="4dp"
-                   android:gravity="center"
-                   systemui:trafficView="statusbar"
-               />
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:singleLine="false"
+                android:gravity="right|center_vertical"
+                systemui:trafficView="statusbar"/>
     
             <LinearLayout
                 android:id="@+id/signal_battery_cluster"
