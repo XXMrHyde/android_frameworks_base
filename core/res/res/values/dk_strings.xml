@@ -43,10 +43,10 @@
     <string name="immersive_mode_confirmation_bottom">Swipe up from the bottom to exit full screen.</string>
 
     <!-- label for item that toggles expand desktop mode -->
-    <string name="global_actions_toggle_expanded_desktop_mode">Expanded desktop</string>
+    <string name="global_actions_toggle_expanded_desktop_mode">Immersive mode</string>
     <!-- status message in phone options dialog for when expanded desktop is on -->
-    <string name="global_actions_expanded_desktop_mode_on_status">Expanded desktop is ON</string>
+    <string name="global_actions_expanded_desktop_mode_on_status">Immersive mode is ON</string>
     <!-- status message in phone options dialog for when expanded desktop is off -->
-    <string name="global_actions_expanded_desktop_mode_off_status">Expanded desktop is Off</string>
+    <string name="global_actions_expanded_desktop_mode_off_status">Immersive mode is Off</string>
 </resources>
 

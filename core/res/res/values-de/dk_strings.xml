@@ -43,10 +43,10 @@
     <string name="immersive_mode_confirmation_bottom">Zum Schließen des Vollbilds von unten nach oben wischen.</string>
 
     <!-- label for item that toggles expand desktop mode -->
-    <string name="global_actions_toggle_expanded_desktop_mode">Erweiterter Desktop</string>
+    <string name="global_actions_toggle_expanded_desktop_mode">Immersive Mode</string>
     <!-- status message in phone options dialog for when expanded desktop is on -->
-    <string name="global_actions_expanded_desktop_mode_on_status">Erweiterter Desktop ist AN</string>
+    <string name="global_actions_expanded_desktop_mode_on_status">Immersive Mode ist AN</string>
     <!-- status message in phone options dialog for when expanded desktop is off -->
-    <string name="global_actions_expanded_desktop_mode_off_status">Erweiterter Desktop ist AUS</string>
+    <string name="global_actions_expanded_desktop_mode_off_status">Immersive Mode ist AUS</string>
 </resources>
 
