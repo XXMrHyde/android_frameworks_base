@@ -37,6 +37,19 @@
     <color name="batterymeter_bolt_color">#B2000000</color><!-- 70% black -->
     <color name="status_bar_clock_color">#FFFFFFFF</color>
 
+    <!-- Slim recent -->
+    <color name="recent_background">#F0000000</color>
+
+    <!-- Card Color -->
+    <color name="card_background">#ff1c1c1c</color>
+    <color name="card_background_header">#ff1c1c1c</color>
+    <color name="card_backgroundExpand">#ff252525</color>
+
+    <color name="card_text_color_header">#ffffffff</color>
+
+    <!-- Used by selector -->
+    <color name="card_pressed">#7ef5f5f5</color>
+
     <!-- Navigation bar -->
     <color name="navigationbar_button_default_color">#FFFFFFFF</color>
     <color name="navigationbar_button_glow_default_color">#FFFFFFFF</color>
