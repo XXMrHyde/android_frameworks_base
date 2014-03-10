@@ -499,9 +499,15 @@ public class IWindowManagerImpl implements IWindowManager {
     public void setTouchExplorationEnabled(boolean enabled) {
     }
 
-   /* @hide */
+    /* @hide */
     @Override
     public void showCustomIntentOnKeyguard(Intent intent) {
 
+    }
+
+    /* @hide */
+    @Override
+    public int getSystemUIVisibility() {
+        return 0;
     }
 }
