@@ -2696,6 +2696,13 @@ public final class Settings {
         public static final String RECENTS_CLEAR_ALL_BTN_POS = "recents_clear_all_button_position";
 
         /**
+         * Color of the background on recents screen
+         * 
+         * @hide
+         */
+        public static final String RECENTS_SCREEN_BG_COLOR = "recents_screen_bg_color";
+
+        /**
          * Battery warning preferences
          *
          * 0 = show dialog + play sound (default)

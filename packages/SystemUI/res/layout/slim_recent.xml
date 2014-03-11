@@ -30,8 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/recent_bg_dropshadow" >
+        android:gravity="center" >
 
         <com.android.cards.view.CardListView
             android:id="@+id/recent_list"

@@ -466,6 +466,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.MENU_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENTS_SCREEN_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -530,6 +533,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 if (mSearchPanelView != null) {
                     mSearchPanelView.updateSettings();
                 }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.RECENTS_SCREEN_BG_COLOR))) {
+                rebuildRecentsScreen();
             } else {
                 updateSettings();
             }

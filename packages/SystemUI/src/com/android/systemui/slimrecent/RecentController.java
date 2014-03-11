@@ -23,14 +23,20 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.content.res.Resources;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -195,6 +201,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 return false;
             }
         });
+        updateBackground();
 
     }
 
@@ -211,9 +218,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
             layoutParams.width =
                     mContext.getResources().getDimensionPixelSize(R.dimen.recent_width);
             mRecentContainer.setLayoutParams(layoutParams);
-
-            mRecentContent.setBackgroundResource(0);
-            mRecentContent.setBackgroundResource(R.drawable.recent_bg_dropshadow);
+            updateBackground();
             mRecentWarningContent.setBackgroundResource(0);
             mRecentWarningContent.setBackgroundResource(R.drawable.recent_warning_bg_dropshadow);
             mEmptyRecentView.setImageResource(0);
@@ -224,6 +229,21 @@ public class RecentController implements RecentPanelView.OnExitListener,
             mRecentPanelView.buildCardListAndAdapter();
         }
     }
+
+    private void updateBackground() {
+        Resources res = mContext.getResources();
+        ContentResolver resolver = mContext.getContentResolver();
+
+        Drawable bgDrawable = res.getDrawable(R.drawable.recent_bg_dropshadow);
+        int bgColor = Settings.System.getIntForUser(resolver,
+        Settings.System.RECENTS_SCREEN_BG_COLOR,
+        0xe6000000, UserHandle.USER_CURRENT);
+
+        bgDrawable.setColorFilter(bgColor, Mode.MULTIPLY);
+        mRecentContent.setBackground(null);
+        mRecentContent.setBackground(bgDrawable);
+    }
+
 
     /**
      * External call. Toggle recents panel.
