@@ -52,7 +52,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:visibility="gone"
-            android:src="@drawable/ic_empty_recent"
             />
 
     </LinearLayout>

@@ -2703,6 +2703,13 @@ public final class Settings {
         public static final String RECENTS_SCREEN_BG_COLOR = "recents_screen_bg_color";
 
         /**
+         * Color of the empty recent icon on recents screen
+         * 
+         * @hide
+         */
+        public static final String RECENTS_SCREEN_EMPTY_ICON_COLOR = "recents_screen_empty_icon_color";
+
+        /**
          * Battery warning preferences
          *
          * 0 = show dialog + play sound (default)

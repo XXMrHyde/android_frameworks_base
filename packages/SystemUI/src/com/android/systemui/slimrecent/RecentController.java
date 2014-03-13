@@ -202,6 +202,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
             }
         });
         updateBackground();
+        updateEmptyRecentIcon();
 
     }
 
@@ -221,8 +222,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
             updateBackground();
             mRecentWarningContent.setBackgroundResource(0);
             mRecentWarningContent.setBackgroundResource(R.drawable.recent_warning_bg_dropshadow);
-            mEmptyRecentView.setImageResource(0);
-            mEmptyRecentView.setImageResource(R.drawable.ic_empty_recent);
+            updateEmptyRecentIcon();
         }
         // Rebuild complete adapter and lists to force style updates.
         if (mRecentPanelView != null) {
@@ -242,6 +242,20 @@ public class RecentController implements RecentPanelView.OnExitListener,
         bgDrawable.setColorFilter(bgColor, Mode.MULTIPLY);
         mRecentContent.setBackground(null);
         mRecentContent.setBackground(bgDrawable);
+    }
+
+    private void updateEmptyRecentIcon() {
+        Resources res = mContext.getResources();
+        ContentResolver resolver = mContext.getContentResolver();
+
+        Drawable emptyRecentIcon = res.getDrawable(R.drawable.ic_empty_recent);
+        int iconColor = Settings.System.getIntForUser(resolver,
+        Settings.System.RECENTS_SCREEN_EMPTY_ICON_COLOR,
+        0xffCDCDCD, UserHandle.USER_CURRENT);
+
+        emptyRecentIcon.setColorFilter(iconColor, Mode.MULTIPLY);
+        mEmptyRecentView.setBackground(null);
+        mEmptyRecentView.setBackground(emptyRecentIcon);
     }
 
 
