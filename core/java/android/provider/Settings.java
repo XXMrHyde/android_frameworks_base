@@ -2684,6 +2684,12 @@ public final class Settings {
         public static final String RECENT_PANEL_SCALE_FACTOR = "recent_panel_scale_factor";
 
         /**
+         * User favorite tasks for recent panel.
+         * @hide
+         */
+        public static final String RECENT_PANEL_FAVORITES = "recent_panel_favorites";
+
+        /**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none
          * 1 = only app use
