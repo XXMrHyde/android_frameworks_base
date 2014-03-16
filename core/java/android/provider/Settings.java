@@ -2658,6 +2658,18 @@ public final class Settings {
         public static final String POWER_MENU_ICON_COLOR_MODE = "power_menu_icon_color_mode";
 
         /**
+         * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
+         * @hide
+         */
+        public static final String RECENT_PANEL_GRAVITY = "recent_panel_gravity";
+
+        /**
+         * Size of recent panel view in percent (default = 100).
+         * @hide
+         */
+        public static final String RECENT_PANEL_SCALE_FACTOR = "recent_panel_scale_factor";
+
+        /**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none
          * 1 = only app use
