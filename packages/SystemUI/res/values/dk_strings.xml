@@ -55,6 +55,9 @@
     <string name="quick_settings_label_enabled">On</string>
     <string name="quick_settings_label_disabled">Off</string>
     <string name="quick_settings_ringer_normal">Sound</string>
+    <string name="quick_settings_ringer_off">Silent</string>
+    <string name="quick_settings_vibrate_on">Vibration</string>
+    <string name="quick_settings_ringer_vibrate_on">Sound &amp; vibration</string>
     <string name="quick_settings_lockscreen">Lock screen</string>
     <string name="quick_settings_network_type">Network mode</string>
     <string name="quick_settings_network_speed">Network speed indicator</string>

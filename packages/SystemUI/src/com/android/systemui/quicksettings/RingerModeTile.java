@@ -38,10 +38,14 @@ public class RingerModeTile extends QuickSettingsTile {
     private static final String SEPARATOR = "OV=I=XseparatorX=I=VO";
 
     private static final Ringer[] RINGERS = new Ringer[] {
-        new Ringer(AudioManager.RINGER_MODE_SILENT, false, R.drawable.ic_qs_ring_off),
-        new Ringer(AudioManager.RINGER_MODE_VIBRATE, true, R.drawable.ic_qs_vibrate_on),
-        new Ringer(AudioManager.RINGER_MODE_NORMAL, false, R.drawable.ic_qs_ring_on),
-        new Ringer(AudioManager.RINGER_MODE_NORMAL, true, R.drawable.ic_qs_ring_vibrate_on)
+        new Ringer(AudioManager.RINGER_MODE_SILENT, false, R.drawable.ic_qs_ring_off,
+                R.string.quick_settings_ringer_off),
+        new Ringer(AudioManager.RINGER_MODE_VIBRATE, true, R.drawable.ic_qs_vibrate_on,
+                R.string.quick_settings_vibrate_on),
+        new Ringer(AudioManager.RINGER_MODE_NORMAL, false, R.drawable.ic_qs_ring_on,
+                R.string.quick_settings_ringer_normal),
+        new Ringer(AudioManager.RINGER_MODE_NORMAL, true, R.drawable.ic_qs_ring_vibrate_on,
+                R.string.quick_settings_ringer_vibrate_on)
     };
 
     private ArrayList<Ringer> mRingers;
@@ -109,12 +113,19 @@ public class RingerModeTile extends QuickSettingsTile {
     }
 
     private void updateTile() {
-        // The title does not change
-        mLabel = mContext.getString(R.string.quick_settings_ringer_normal);
-
-        // The icon will change depending on index
         findCurrentState();
+        // The title and icon will change depending on index
+        mLabel = mContext.getString(mRingers.get(mRingerIndex).mLabel);
         mDrawable = mRingers.get(mRingerIndex).mDrawable;
+        int ringerMode = mRingers.get(mRingerIndex).mRingerMode;
+
+        if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
+            mDrawableColor = mDrawableDisabledColor;
+        } else if (ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
+            mDrawableColor = mDrawableNormalColor;
+        } else if (ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+            mDrawableColor = mDrawableEnabledColor;
+        }
     }
 
     protected void toggleState() {
@@ -194,11 +205,13 @@ public class RingerModeTile extends QuickSettingsTile {
         final boolean mVibrateWhenRinging;
         final int mRingerMode;
         final int mDrawable;
+        final int mLabel;
 
-        Ringer(int ringerMode, boolean vibrateWhenRinging, int drawable) {
+        Ringer(int ringerMode, boolean vibrateWhenRinging, int drawable, int label) {
             mVibrateWhenRinging = vibrateWhenRinging;
             mRingerMode = ringerMode;
             mDrawable = drawable;
+            mLabel = label;
         }
     }
 }
