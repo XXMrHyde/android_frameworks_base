@@ -581,14 +581,14 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 icon,
                 icon,
                 description,
-                R.string.global_action_silent_mode_on_status,
-                R.string.global_action_silent_mode_off_status) {
+                R.string.global_action_silent_mode_off_status,
+                R.string.global_action_silent_mode_on_status) {
 
             void onToggle(boolean on) {
                 if (on) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                } else {
                     mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                } else {
+                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
             }
 
@@ -1049,6 +1049,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                     if (icon != null) {
                         icon.setImageDrawable(ImageHelper.resize(mContext, new BitmapDrawable(
                             ImageHelper.getColoredBitmap(icon.getDrawable(), iconColor)), 35));
+                        icon.setAlpha(selectedIndex == i ? 1.0f : 0.3f);
                     }
                 }
                 itemView.setOnClickListener(this);
@@ -1188,7 +1189,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private void onSilentModeChanged() {
         boolean silentModeOn =
-                mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT;
+                mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
         mSilentModeState = silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off;
         if (mSilentModeOn != null) {
             mSilentModeOn.updateState(mSilentModeState);
