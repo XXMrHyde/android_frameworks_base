@@ -48,5 +48,9 @@
     <string name="global_actions_expanded_desktop_mode_on_status">Immersive Mode ist AN</string>
     <!-- status message in phone options dialog for when expanded desktop is off -->
     <string name="global_actions_expanded_desktop_mode_off_status">Immersive Mode ist AUS</string>
+    <!-- status message in phone options dialog for when sound_mode is on -->
+    <string name="global_action_sound_mode_on_status">Ton ist AN</string>
+    <!-- status message in phone options dialog for when sound_mode is off -->
+    <string name="global_action_sound_mode_off_status">Ton ist AUS</string>
 </resources>
 

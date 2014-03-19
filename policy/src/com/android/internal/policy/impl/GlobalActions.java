@@ -98,7 +98,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private static final String TAG = "GlobalActions";
 
-    private static final boolean SHOW_SILENT_TOGGLE = true;
+    private static final boolean SHOW_Sound_TOGGLE = true;
 
     private final Context mContext;
     private final WindowManagerFuncs mWindowManagerFuncs;
@@ -108,8 +108,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private ArrayList<Action> mItems;
     private GlobalActionsDialog mDialog;
 
-    private Action mSilentModeAction;
-    private ToggleAction mSilentModeOn;
+    private Action mSoundModeAction;
+    private ToggleAction mSoundModeOn;
     private ToggleAction mAirplaneModeOn;
     private ToggleAction mExpandDesktopModeOn;
 
@@ -119,11 +119,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mDeviceProvisioned = false;
     private ToggleAction.State mAirplaneState = ToggleAction.State.Off;
     private ToggleAction.State mExpandDesktopState = ToggleAction.State.Off;
-    private ToggleAction.State mSilentModeState = ToggleAction.State.Off;
+    private ToggleAction.State mSoundModeState = ToggleAction.State.Off;
     private boolean mIsWaitingForEcmExit = false;
     private boolean mHasTelephony;
     private boolean mHasVibrator;
-    private final boolean mShowSilentToggle;
+    private final boolean mShowSoundToggle;
 
     private static int mTextColor;
 
@@ -157,7 +157,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         mHasVibrator = vibrator != null && vibrator.hasVibrator();
 
-        mShowSilentToggle = SHOW_SILENT_TOGGLE && !mContext.getResources().getBoolean(
+        mShowSoundToggle = SHOW_Sound_TOGGLE && !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useFixedVolume);
     }
 
@@ -228,7 +228,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 mContext, "shortcut_action_power_menu_values",
                 "shortcut_action_power_menu_entries");
 
-        mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
+        mSoundModeAction = new SoundModeTriStateAction(mContext, mAudioManager, mHandler);
 
         mItems = new ArrayList<Action>();
 
@@ -377,16 +377,16 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             config.getClickAction(), config.getIcon(), true),
                             config.getClickActionDescription());
                 mItems.add(mExpandDesktopModeOn);
-            // silent mode
+            // Sound mode
             // Use a tri-state if there's a vibrator, otherwise a simple toggle style 
-            } else if ((config.getClickAction().equals(PolicyConstants.ACTION_SOUND)) && (mShowSilentToggle)) {
+            } else if ((config.getClickAction().equals(PolicyConstants.ACTION_SOUND)) && (mShowSoundToggle)) {
                 if (mHasVibrator) {
-                    mItems.add(mSilentModeAction);
+                    mItems.add(mSoundModeAction);
                 } else {
-                    constructSilentModeToggle(PolicyHelper.getPowerMenuIconImage(mContext,
+                    constructSoundModeToggle(PolicyHelper.getPowerMenuIconImage(mContext,
                                 config.getClickAction(), config.getIcon(), true),
                                 config.getClickActionDescription());
-                    mItems.add(mSilentModeOn);
+                    mItems.add(mSoundModeOn);
                 }
             // must be a custom app or action shorcut
             } else if (config.getClickAction() != null) {
@@ -576,13 +576,13 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         onExpandDesktopModeChanged();
     }
 
-    private void constructSilentModeToggle(Drawable icon, String description) {
-        mSilentModeOn = new ToggleAction(
+    private void constructSoundModeToggle(Drawable icon, String description) {
+        mSoundModeOn = new ToggleAction(
                 icon,
                 icon,
                 description,
-                R.string.global_action_silent_mode_off_status,
-                R.string.global_action_silent_mode_on_status) {
+                R.string.global_action_sound_mode_on_status,
+                R.string.global_action_sound_mode_off_status) {
 
             void onToggle(boolean on) {
                 if (on) {
@@ -600,7 +600,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 return false;
             }
         };
-        onSilentModeChanged();
+        onSoundModeChanged();
     }
 
     private UserInfo getCurrentUser() {
@@ -658,13 +658,13 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         if (mExpandDesktopModeOn != null) {
             mExpandDesktopModeOn.updateState(mExpandDesktopState);
         }
-        if (mSilentModeOn != null) {
-            mSilentModeOn.updateState(mSilentModeState);
+        if (mSoundModeOn != null) {
+            mSoundModeOn.updateState(mSoundModeState);
         }
         mAdapter.notifyDataSetChanged();
         mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
         mDialog.setTitle(R.string.global_actions);
-        if (mShowSilentToggle) {
+        if (mShowSoundToggle) {
             IntentFilter filter = new IntentFilter(AudioManager.RINGER_MODE_CHANGED_ACTION);
             mContext.registerReceiver(mRingerModeReceiver, filter);
         }
@@ -672,7 +672,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     /** {@inheritDoc} */
     public void onDismiss(DialogInterface dialog) {
-        if (mShowSilentToggle) {
+        if (mShowSoundToggle) {
             try {
                 mContext.unregisterReceiver(mRingerModeReceiver);
             } catch (IllegalArgumentException ie) {
@@ -684,7 +684,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     /** {@inheritDoc} */
     public void onClick(DialogInterface dialog, int which) {
-        if (!(mAdapter.getItem(which) instanceof SilentModeTriStateAction)) {
+        if (!(mAdapter.getItem(which) instanceof SoundModeTriStateAction)) {
             dialog.dismiss();
         }
         mAdapter.getItem(which).onPress();
@@ -997,7 +997,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     }
 
-    private static class SilentModeTriStateAction implements Action, View.OnClickListener {
+    private static class SoundModeTriStateAction implements Action, View.OnClickListener {
 
         private final int[] ITEM_IDS = { R.id.option1, R.id.option2, R.id.option3 };
         private final int[] ICON_IDS = { R.id.icon1, R.id.icon2, R.id.icon3 };
@@ -1006,7 +1006,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         private final Handler mHandler;
         private final Context mContext;
 
-        SilentModeTriStateAction(Context context, AudioManager audioManager, Handler handler) {
+        SoundModeTriStateAction(Context context, AudioManager audioManager, Handler handler) {
             mAudioManager = audioManager;
             mHandler = handler;
             mContext = context;
@@ -1024,7 +1024,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         public View create(Context context, View convertView, ViewGroup parent,
                 LayoutInflater inflater) {
-            View v = inflater.inflate(R.layout.global_actions_silent_mode, parent, false);
+            View v = inflater.inflate(R.layout.global_actions_sound_mode, parent, false);
 
             int selectedIndex = ringerModeToIndex(mAudioManager.getRingerMode());
 
@@ -1153,7 +1153,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 break;
             case MESSAGE_REFRESH:
                 mAdapter.notifyDataSetChanged();
-                onSilentModeChanged();
+                onSoundModeChanged();
                 break;
             case MESSAGE_SHOW:
                 handleShow();
@@ -1187,12 +1187,12 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     }
 
-    private void onSilentModeChanged() {
-        boolean silentModeOn =
+    private void onSoundModeChanged() {
+        boolean soundModeOn =
                 mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
-        mSilentModeState = silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off;
-        if (mSilentModeOn != null) {
-            mSilentModeOn.updateState(mSilentModeState);
+        mSoundModeState = soundModeOn ? ToggleAction.State.On : ToggleAction.State.Off;
+        if (mSoundModeOn != null) {
+            mSoundModeOn.updateState(mSoundModeState);
         }
     }
 

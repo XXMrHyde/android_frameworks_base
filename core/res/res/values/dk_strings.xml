@@ -48,5 +48,9 @@
     <string name="global_actions_expanded_desktop_mode_on_status">Immersive mode is ON</string>
     <!-- status message in phone options dialog for when expanded desktop is off -->
     <string name="global_actions_expanded_desktop_mode_off_status">Immersive mode is Off</string>
+    <!-- status message in phone options dialog for when sound_mode is on -->
+    <string name="global_action_sound_mode_on_status">Sound is ON</string>
+    <!-- status message in phone options dialog for when sound_mode is off -->
+    <string name="global_action_sound_mode_off_status">Sound is OFF</string>
 </resources>
 

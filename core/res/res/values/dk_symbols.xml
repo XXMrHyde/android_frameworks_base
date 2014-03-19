@@ -25,12 +25,18 @@
   <java-symbol type="string" name="global_actions" />
   <java-symbol type="string" name="global_action_screenshot" />
   <java-symbol type="string" name="global_action_screenrecord" />
-
-  <java-symbol type="array" name="shutdown_reboot_actions" />
-  <java-symbol type="array" name="shutdown_reboot_options" />
-
+  <java-symbol type="string" name="global_action_sound_mode_on_status" />
+  <java-symbol type="string" name="global_action_sound_mode_off_status" />
   <java-symbol type="string" name="reboot_progress" />
   <java-symbol type="string" name="reboot_system" />
+  <java-symbol type="layout" name="global_actions_sound_mode" />
+  <java-symbol type="array" name="shutdown_reboot_actions" />
+  <java-symbol type="array" name="shutdown_reboot_options" />
+  <java-symbol type="color" name="power_menu_icon_default_color" />
+  <java-symbol type="color" name="power_menu_text_default_color" />
+  <java-symbol type="id" name="icon1" />
+  <java-symbol type="id" name="icon2" />
+  <java-symbol type="id" name="icon3" />
 
   <!-- Slim recent app screen-->
   <java-symbol type="integer" name="config_recentDefaultDur" />
@@ -41,13 +47,6 @@
 
   <!-- Config IME switcher -->
   <java-symbol type="bool" name="config_show_IMESwitcher" />
-
-  <!-- Power menu -->
-  <java-symbol type="color" name="power_menu_icon_default_color" />
-  <java-symbol type="color" name="power_menu_text_default_color" />
-  <java-symbol type="id" name="icon1" />
-  <java-symbol type="id" name="icon2" />
-  <java-symbol type="id" name="icon3" />
 
   <!-- Expanded desktop -->
   <java-symbol type="string" name="global_actions_toggle_expanded_desktop_mode" />
