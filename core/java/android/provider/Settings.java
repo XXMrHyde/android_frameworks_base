@@ -2735,6 +2735,13 @@ public final class Settings {
         public static final String POWER_UI_LOW_BATTERY_WARNING_POLICY = "power_ui_low_battery_warning_policy";
 
         /**
+         * Whether to control brightness from status bar
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
          * Show/hide clock
          * 0: Hide
          * 1: Show
