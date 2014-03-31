@@ -221,7 +221,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
      * External call from theme engines to apply
      * new styles.
      */
-    public void rebuildRecentsScreen() {
+    public void rebuildRecents() {
         // Set new layout parameters and backgrounds.
         if (mRecentContainer != null) {
             final ViewGroup.LayoutParams layoutParams = mRecentContainer.getLayoutParams();
@@ -286,7 +286,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 ? R.drawable.recent_bg_dropshadow_left
                 : R.drawable.recent_bg_dropshadow);
         int bgColor = Settings.System.getIntForUser(resolver,
-        Settings.System.RECENTS_SCREEN_BG_COLOR,
+        Settings.System.RECENT_PANEL_BG_COLOR,
         0xe6000000, UserHandle.USER_CURRENT);
 
         bgDrawable.setColorFilter(bgColor, Mode.MULTIPLY);
@@ -301,7 +301,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 ? R.drawable.ic_empty_recent_left
                 : R.drawable.ic_empty_recent);
         int iconColor = Settings.System.getIntForUser(resolver,
-        Settings.System.RECENTS_SCREEN_EMPTY_ICON_COLOR,
+        Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR,
         0xffCDCDCD, UserHandle.USER_CURRENT);
 
         emptyRecentIcon.setColorFilter(iconColor, Mode.MULTIPLY);
@@ -601,7 +601,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
             // and notify RecentPanelView and CacheController about new value.
             if (scaleFactor != mScaleFactor) {
                 mScaleFactor = scaleFactor;
-                rebuildRecentsScreen();
+                rebuildRecents();
             }
             if (mRecentPanelView != null) {
                 mRecentPanelView.setScaleFactor(mScaleFactor);

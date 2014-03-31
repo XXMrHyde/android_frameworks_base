@@ -639,9 +639,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     }
 
-    protected void rebuildRecentsScreen() {
+    protected void rebuildRecents() {
         if (mRecents != null) {
-            mRecents.rebuildRecentsScreen();
+            mRecents.rebuildRecents();
         }
     }
 

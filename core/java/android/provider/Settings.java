@@ -2658,13 +2658,27 @@ public final class Settings {
         public static final String POWER_MENU_ICON_COLOR_MODE = "power_menu_icon_color_mode";
 
         /**
-         * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
+         * Color of the recent app panel background
+         * 
+         * @hide
+         */
+        public static final String RECENT_PANEL_BG_COLOR = "recent_panel_bg_color";
+
+        /**
+         * Color of the recent app panel empty icon
+         * 
+         * @hide
+         */
+        public static final String RECENT_PANEL_EMPTY_ICON_COLOR = "recent_panel_empty_icon_color";
+
+        /**
+         * Whether recent app panel gravity is left or right (default = Gravity.RIGHT).
          * @hide
          */
         public static final String RECENT_PANEL_GRAVITY = "recent_panel_gravity";
 
         /**
-         * Size of recent panel view in percent (default = 100).
+         * Size of recent app panel view in percent (default = 100).
          * @hide
          */
         public static final String RECENT_PANEL_SCALE_FACTOR = "recent_panel_scale_factor";
@@ -2718,20 +2732,6 @@ public final class Settings {
          * @hide
          */
         public static final String RECENTS_CLEAR_ALL_BTN_POS = "recents_clear_all_button_position";
-
-        /**
-         * Color of the background on recents screen
-         * 
-         * @hide
-         */
-        public static final String RECENTS_SCREEN_BG_COLOR = "recents_screen_bg_color";
-
-        /**
-         * Color of the empty recent icon on recents screen
-         * 
-         * @hide
-         */
-        public static final String RECENTS_SCREEN_EMPTY_ICON_COLOR = "recents_screen_empty_icon_color";
 
         /**
          * Battery warning preferences

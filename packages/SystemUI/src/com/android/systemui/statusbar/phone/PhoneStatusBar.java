@@ -501,10 +501,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.MENU_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.RECENTS_SCREEN_BG_COLOR),
+                    Settings.System.RECENT_PANEL_BG_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.RECENTS_SCREEN_EMPTY_ICON_COLOR),
+                    Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
         }
 
@@ -576,10 +576,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.SCREEN_BRIGHTNESS_MODE))) {
                 updateBrightnessControl();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.RECENTS_SCREEN_BG_COLOR))
+                    Settings.System.RECENT_PANEL_BG_COLOR))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.RECENTS_SCREEN_EMPTY_ICON_COLOR))) {
-                rebuildRecentsScreen();
+                    Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR))) {
+                rebuildRecents();
 
             } else {
                 updateSettings();
@@ -3500,7 +3500,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             repositionNavigationBar();
         }
 
-        rebuildRecentsScreen();
+        rebuildRecents();
 
         // recreate StatusBarIconViews.
         for (int i = 0; i < nIcons; i++) {
