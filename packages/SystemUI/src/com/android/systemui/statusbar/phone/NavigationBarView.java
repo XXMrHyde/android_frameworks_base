@@ -62,6 +62,7 @@ import com.android.internal.util.darkkat.ButtonsConstants;
 import com.android.internal.util.darkkat.ButtonsHelper;
 import com.android.internal.util.darkkat.ImageHelper;
 import com.android.internal.util.darkkat.DeviceUtils;
+import com.android.internal.widget.LockPatternUtils;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
@@ -677,6 +678,7 @@ public class NavigationBarView extends LinearLayout {
         final boolean disableSearch = !hasNavringTargets();
         final boolean keyguardProbablyEnabled =
                 (mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0 && !disableSearch;
+        LockPatternUtils lockPatternUtils = new LockPatternUtils(mContext);
 
         mDelegateHelper.setDisabled(disableSearch);
 
@@ -723,7 +725,10 @@ public class NavigationBarView extends LinearLayout {
         }
 
         final boolean shouldShowCamera = disableHome
-            && !((disabledFlags & View.STATUS_BAR_DISABLE_SEARCH) != 0);
+            && !((disabledFlags & View.STATUS_BAR_DISABLE_SEARCH) != 0)
+            &&  Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_ENABLE_CAMERA, 1) == 1
+            && lockPatternUtils.getWidgetsEnabled();
         final View cameraButton = getCameraButton();
         if (cameraButton != null) {
             cameraButton.setVisibility(

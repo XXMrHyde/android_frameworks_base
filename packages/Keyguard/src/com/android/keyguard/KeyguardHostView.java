@@ -479,6 +479,12 @@ public class KeyguardHostView extends KeyguardViewBase {
                 || (mDisabledFeatures & DevicePolicyManager.KEYGUARD_DISABLE_SECURE_CAMERA) != 0;
     }
 
+    private boolean cameraDisabledByUser() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                           Settings.System.LOCKSCREEN_ENABLE_CAMERA, 1) == 0
+                || widgetsDisabled();
+    }
+
     private void updateSecurityViews() {
         int children = mSecurityViewContainer.getChildCount();
         for (int i = 0; i < children; i++) {
@@ -1256,8 +1262,9 @@ public class KeyguardHostView extends KeyguardViewBase {
         // We currently disable cameras in safe mode because we support loading 3rd party
         // cameras we can't trust.  TODO: plumb safe mode into camera creation code and only
         // inflate system-provided camera?
-        if (!mSafeModeEnabled && !cameraDisabledByDpm() && mUserSetupCompleted
-                && mContext.getResources().getBoolean(R.bool.kg_enable_camera_default_widget)) {
+        if (!mSafeModeEnabled && !cameraDisabledByDpm() && !cameraDisabledByUser()
+                && mUserSetupCompleted && mContext.getResources().getBoolean(
+                        R.bool.kg_enable_camera_default_widget)) {
             View cameraWidget =
                     CameraWidgetFrame.create(mContext, mCameraWidgetCallbacks, mActivityLauncher);
             if (cameraWidget != null) {

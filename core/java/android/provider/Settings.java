@@ -2618,6 +2618,12 @@ public final class Settings {
         public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
+         * Whether camera should be shown on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_ENABLE_CAMERA = "lockscreen_enable_camera";
+
+        /**
          * Expanded desktop on/off state
          * @hide
          */
