@@ -2576,7 +2576,7 @@ public final class Settings {
         public static final String LOCKSCREEN_COLORIZE_LOCK = "lockscreen_colorize_lock";
 
         /**
-         * Lockscreen targets ring color
+         * Lockscreen targets color
          * @hide
          */
         public static final String LOCKSCREEN_TARGETS_COLOR = "lockscreen_targets_color";
@@ -2588,7 +2588,7 @@ public final class Settings {
         public static final String LOCKSCREEN_TARGETS_RING_COLOR = "lockscreen_targets_ring_color";
 
         /**
-         * Lockscreen lock color (handle and expanded locks)
+         * Lockscreen lock color (handle)
          * @hide
          */
         public static final String LOCKSCREEN_LOCK_COLOR = "lockscreen_lock_color";
@@ -2716,7 +2716,7 @@ public final class Settings {
         public static final String LOCKSCREEN_TEXT_COLOR = "lockscreen_text_color";
 
         /**
-         * Lockscreen widget add, glowpad ring, text, failed pattern ring colors
+         * Lockscreen failed pattern ring colors
          * @hide
          */
         public static final String LOCKSCREEN_PATTERN_FAIL_COLOR = "lockscreen_pattern_fail_color";
