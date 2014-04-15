@@ -85,6 +85,12 @@ public class CarrierText extends TextView {
         mLockPatternUtils = new LockPatternUtils(mContext);
         boolean useAllCaps = mContext.getResources().getBoolean(R.bool.kg_use_all_caps);
         setTransformationMethod(new CarrierTextTransformationMethod(mContext, useAllCaps));
+        int textColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_TEXT_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+        setTextColor(textColor);
+
     }
 
     protected void updateCarrierText(State simState, CharSequence plmn, CharSequence spn) {
@@ -93,14 +99,11 @@ public class CarrierText extends TextView {
                     Settings.System.LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL, 1, UserHandle.USER_CURRENT) == 1;
         String customLabel = Settings.System.getStringForUser(getContext().getContentResolver(),
                 Settings.System.CUSTOM_CARRIER_LABEL, UserHandle.USER_CURRENT);
-        int labelColor = Settings.System.getIntForUser(getContext().getContentResolver(),
-                    Settings.System.LOCKSCREEN_CARRIER_LABEL_COLOR, 0xffbebebe, UserHandle.USER_CURRENT);
         if (!showCustomLabel || customLabel == null || customLabel.length() == 0) {
             setText(text);
         } else {
             setText(customLabel);
         }
-        setTextColor(labelColor);
     }
 
     @Override

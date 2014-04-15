@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -127,6 +128,14 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         // vibrate mode will be the same for the life of this screen
         mLockPatternView.setTactileFeedbackEnabled(mLockPatternUtils.isTactileFeedbackEnabled());
 
+        mLockPatternView.setLockPatternColor(Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_LOCK_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT), Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_PATTERN_FAIL_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT));
+
         mForgotPatternButton = (Button) findViewById(R.id.forgot_password_button);
         // note: some configurations don't have an emergency call area
         if (mForgotPatternButton != null) {
@@ -145,7 +154,9 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
         mEcaView = findViewById(R.id.keyguard_selector_fade_container);
         View bouncerFrameView = findViewById(R.id.keyguard_bouncer_frame);
         if (bouncerFrameView != null) {
-            mBouncerFrame = bouncerFrameView.getBackground();
+            mBouncerFrame =
+                    KeyguardSecurityViewHelper.colorizeFrame(mContext,
+                    bouncerFrameView.getBackground());
         }
     }
 

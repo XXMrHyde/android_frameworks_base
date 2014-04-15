@@ -2515,6 +2515,91 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * Allows to show the background activity back the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_SEE_THROUGH = "lockscreen_see_through";
+
+        /**
+         * Allows setting the radius for blur
+         * @hide
+         */
+        public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
+
+        /**
+         *Whether lock before unlock is enabled or disabled
+         * @hide
+         */
+        public static final String LOCK_BEFORE_UNLOCK = "lock_before_unlock";
+
+        /**
+         * Whether double-tap and hold on the lock glowpad starts the torch
+         * @hide
+         */
+        public static final String LOCKSCREEN_GLOWPAD_TORCH = "lockscreen_glowpad_torch";
+
+        /**
+         * Stores values for custom lockscreen targets
+         * @hide
+         */
+        public static final String LOCKSCREEN_TARGETS = "lockscreen_targets";
+
+        /**
+         * Whether phone lockscreen uses 5 or 8 targets
+         * @hide
+         */
+        public static final String LOCKSCREEN_EIGHT_TARGETS = "lockscreen_eight_targets";
+
+        /**
+         * Whether to Colorize lockscreen targets icons
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_COLORIZE_TARGETS_ICON = "lockscreen_colorize_targets_icon";
+
+        /**
+         * Lockscreen custom lock icon
+         * @hide
+         */
+        public static final String LOCKSCREEN_LOCK_ICON = "lockscreen_lock_icon";
+
+        /**
+         * Whether to use DarkKat lock icon on the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_USE_DK_LOCK_ICON = "lockscreen_use_dk_lock_icon";
+
+        /**
+         * Colorize custom lock icon true/false
+         * @hide
+         */
+        public static final String LOCKSCREEN_COLORIZE_LOCK = "lockscreen_colorize_lock";
+
+        /**
+         * Lockscreen targets ring color
+         * @hide
+         */
+        public static final String LOCKSCREEN_TARGETS_COLOR = "lockscreen_targets_color";
+
+        /**
+         * Lockscreen targets ring color
+         * @hide
+         */
+        public static final String LOCKSCREEN_TARGETS_RING_COLOR = "lockscreen_targets_ring_color";
+
+        /**
+         * Lockscreen lock color (handle and expanded locks)
+         * @hide
+         */
+        public static final String LOCKSCREEN_LOCK_COLOR = "lockscreen_lock_color";
+
+        /**
+         * Lockscreen dots color (glowpad dots)
+         * @hide
+         */
+        public static final String LOCKSCREEN_DOTS_COLOR = "lockscreen_dots_color";
+
+        /**
          * Whether to show the battery status ring on lockscreen
          * @hide
          */
@@ -2569,16 +2654,54 @@ public final class Settings {
         public static final String LOCKSCREEN_BATTERY_STATUS_RING_CHARGING_COLOR = "lockscreen_battery_status_ring_charging_color";
 
         /**
+         * Defines the shortcuts to be shown on lockscreen
+         * Usage is like this: target:icon|target:icon|target:icon
+         * if :icon is not set, default application icon will be used
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHORTCUTS = "lockscreen_shortcuts";
+
+        /**
+         * Whether shorcuts open with normal or longpress
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHORTCUTS_LONGPRESS = "lockscreen_shortcuts_longpress";
+
+        /**
+         * Weather to minimize lockscreen challenge on screen turned on
+         * @hide
+         */
+        public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
+
+        /**
+         * Whether camera should be shown on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_ENABLE_CAMERA = "lockscreen_enable_camera";
+
+        /**
+         * Whether to use the carousel as widget container on portrait view
+         * @hide
+         */
+        public static final String LOCKSCREEN_USE_WIDGET_CONTAINER_CAROUSEL = "lockscreen_use_widget_container_carousel";
+
+        /**
+         * Whether to hide the frame behind lockscreen widgets
+         * @hide
+         */
+        public static final String LOCKSCREEN_WIDGET_FRAME_ENABLED = "lockscreen_widget_frame_enabled";
+
+        /**
+         * Lockscreen frame color (widgets/security frame color)
+         * @hide
+         */
+        public static final String LOCKSCREEN_FRAME_COLOR = "lockscreen_frame_color";
+
+        /**
          * Whether to show custom carrier label on lockscreen
          * @hide
          */
         public static final String LOCKSCREEN_SHOW_CUSTOM_CARRIER_LABEL = "lockscreen_show_custom_carrier_label";
-
-        /**
-         * Color of the carrier label on lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_CARRIER_LABEL_COLOR = "lockscreen_carrier_label_color";
 
          /**
           * Always show the battery status on the lockscreen
@@ -2587,41 +2710,23 @@ public final class Settings {
         public static final String LOCKSCREEN_ALWAYS_SHOW_BATTERY_STATUS = "lockscreen_always_show_battery";
 
         /**
-         * Color of the status on lockscreen
+         * Color of the text on lockscreen
          * @hide
          */
-        public static final String LOCKSCREEN_STATUS_COLOR = "lockscreen_status_color";
+        public static final String LOCKSCREEN_TEXT_COLOR = "lockscreen_text_color";
 
         /**
-         * Weather to minimize lockscreen challenge on screen turned on
+         * Lockscreen widget add, glowpad ring, text, failed pattern ring colors
          * @hide
          */
-        public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
+        public static final String LOCKSCREEN_PATTERN_FAIL_COLOR = "lockscreen_pattern_fail_color";
 
-         /**
+        /**
          * Holds the text for the Carrier label. An empty string
          * will bring the default text back.
          * @hide
          */
         public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
-
-        /**
-         * Allows to show the background activity back the lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_SEE_THROUGH = "lockscreen_see_through";
-
-        /**
-         * Allows setting the radius for blur
-         * @hide
-         */
-        public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
-
-        /**
-         * Whether camera should be shown on lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_ENABLE_CAMERA = "lockscreen_enable_camera";
 
         /**
          * Expanded desktop on/off state

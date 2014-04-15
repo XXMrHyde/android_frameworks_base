@@ -29,9 +29,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -48,6 +52,7 @@ import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 
 import com.android.internal.R;
+import com.android.internal.util.darkkat.ImageHelper;
 
 import java.util.ArrayList;
 
@@ -65,6 +70,40 @@ public class GlowPadView extends View {
     private static final int STATE_TRACKING = 3;
     private static final int STATE_SNAP = 4;
     private static final int STATE_FINISH = 5;
+
+    //Lockscreen targets
+    /**
+     * @hide
+     */
+    public final static String ICON_RESOURCE = "icon_resource";
+
+    /**
+     * @hide
+     */
+    public final static String ICON_PACKAGE = "icon_package";
+
+    /**
+     * @hide
+     */
+    public final static String ICON_FILE = "icon_file";
+
+    /**
+     * Number of customizable lockscreen targets for tablets
+     * @hide
+     */
+    public final static int MAX_TABLET_TARGETS = 7;
+
+    /**
+     * Number of customizable lockscreen targets for phones
+     * @hide
+     */
+    public final static int MAX_PHONE_TARGETS = 4;
+
+    /**
+     * Empty target used to reference unused lockscreen targets
+     * @hide
+     */
+    public final static String EMPTY_TARGET = "empty";
 
     // Animation properties.
     private static final float SNAP_MARGIN_DEFAULT = 20.0f; // distance to ring before we snap to it
@@ -104,6 +143,9 @@ public class GlowPadView extends View {
     private AnimationBundle mGlowAnimations = new AnimationBundle();
     private ArrayList<String> mTargetDescriptions;
     private ArrayList<String> mDirectionDescriptions;
+    private Drawable mPointDrawable;
+    private Drawable mPadDrawable;
+    private GradientDrawable mRingDrawable;
     private OnTriggerListener mOnTriggerListener;
     private TargetDrawable mHandleDrawable;
     private TargetDrawable mOuterRing;
@@ -226,6 +268,11 @@ public class GlowPadView extends View {
         super(context, attrs);
         Resources res = context.getResources();
 
+        boolean useDkLockIcon = Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_USE_DK_LOCK_ICON, 0,
+                UserHandle.USER_CURRENT) == 1;
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GlowPadView);
         mInnerRadius = a.getDimension(R.styleable.GlowPadView_innerRadius, mInnerRadius);
         mOuterRadius = a.getDimension(R.styleable.GlowPadView_outerRadius, mOuterRadius);
@@ -239,8 +286,13 @@ public class GlowPadView extends View {
                 mFeedbackCount);
         mAllowScaling = a.getBoolean(R.styleable.GlowPadView_allowScaling, false);
         TypedValue handle = a.peekValue(R.styleable.GlowPadView_handleDrawable);
+        mPadDrawable = useDkLockIcon
+                ? a.getDrawable(R.styleable.GlowPadView_handleDrawableDk)
+                : a.getDrawable(R.styleable.GlowPadView_handleDrawable);
         mHandleDrawable = new TargetDrawable(res, handle != null ? handle.resourceId : 0);
         mHandleDrawable.setState(TargetDrawable.STATE_INACTIVE);
+        mRingDrawable = (GradientDrawable) a.getDrawable(
+                R.styleable.GlowPadView_outerRingDrawable).mutate();
         mOuterRing = new TargetDrawable(res,
                 getResourceId(a, R.styleable.GlowPadView_outerRingDrawable));
 
@@ -248,7 +300,7 @@ public class GlowPadView extends View {
         mMagneticTargets = a.getBoolean(R.styleable.GlowPadView_magneticTargets, mMagneticTargets);
 
         int pointId = getResourceId(a, R.styleable.GlowPadView_pointDrawable);
-        Drawable pointDrawable = pointId != 0 ? res.getDrawable(pointId) : null;
+        mPointDrawable = pointId != 0 ? res.getDrawable(pointId) : null;
         mGlowRadius = a.getDimension(R.styleable.GlowPadView_glowRadius, 0.0f);
 
         TypedValue outValue = new TypedValue();
@@ -256,9 +308,6 @@ public class GlowPadView extends View {
         // Read array of target drawables
         if (a.getValue(R.styleable.GlowPadView_targetDrawables, outValue)) {
             internalSetTargetResources(outValue.resourceId);
-        }
-        if (mTargetDrawables == null || mTargetDrawables.size() == 0) {
-            throw new IllegalStateException("Must specify at least one target drawable");
         }
 
         // Read array of target descriptions
@@ -287,7 +336,7 @@ public class GlowPadView extends View {
 
         assignDefaultsIfNeeded();
 
-        mPointCloud = new PointCloud(pointDrawable);
+        mPointCloud = new PointCloud(mPointDrawable);
         mPointCloud.makePointCloud(mInnerRadius, mOuterRadius);
         mPointCloud.glowManager.setRadius(mGlowRadius);
 
@@ -439,6 +488,38 @@ public class GlowPadView extends View {
             case STATE_FINISH:
                 doFinish();
                 break;
+        }
+    }
+
+    public void setColoredIcons(int lockColor, int dotColor, int ringColor, Bitmap custom) {
+        Resources res = mContext.getResources();
+
+        if (custom != null) {
+            Drawable handleDrawable = ImageHelper.resize(mContext,
+                new BitmapDrawable(mContext.getResources(),
+                    ImageHelper.getCircleBitmap(custom)), 68);
+            if (lockColor != -2) {
+                handleDrawable = new BitmapDrawable(mContext.getResources(),
+                        ImageHelper.getColoredBitmap(handleDrawable, lockColor));
+            }
+            setHandleDrawable(handleDrawable);
+        } else {
+            if (mPadDrawable != null) {
+                mPadDrawable.setColorFilter(null);
+                mPadDrawable.setColorFilter(lockColor, PorterDuff.Mode.MULTIPLY);
+                setHandleDrawable(mPadDrawable);
+            }
+        }
+
+        if (mPointDrawable != null) {
+            mPointDrawable.setColorFilter(null);
+            mPointDrawable.setColorFilter(dotColor, PorterDuff.Mode.MULTIPLY);
+        }
+
+        if (mRingDrawable != null) {
+            mRingDrawable.setStroke(2, ringColor);
+            mRingDrawable.invalidateSelf();
+            setRingDrawable(mRingDrawable);
         }
     }
 
@@ -632,6 +713,11 @@ public class GlowPadView extends View {
 
     private void internalSetTargetResources(int resourceId) {
         final ArrayList<TargetDrawable> targets = loadDrawableArray(resourceId);
+
+        if (targets.size() == 0) {
+            throw new IllegalStateException("Must specify at least one target drawable");
+        }
+
         mTargetDrawables = targets;
         mTargetResourceId = resourceId;
 
@@ -653,12 +739,30 @@ public class GlowPadView extends View {
         }
     }
 
-    private void internalSetTargetResources(ArrayList<TargetDrawable> drawList) {
+    private void internalSetTargetResources(ArrayList<TargetDrawable> targets) {
+        if (targets == null || targets.size() == 0) {
+            throw new IllegalStateException("Must specify at least one target drawable");
+        }
         mTargetResourceId = 0;
-        mTargetDrawables = drawList;
-        updateTargetPositions(mWaveCenterX, mWaveCenterY);
-        updatePointCloudPosition(mWaveCenterX, mWaveCenterY);
-        hideTargets(false, false);
+        mTargetDrawables = targets;
+
+        int maxWidth = mHandleDrawable.getWidth();
+        int maxHeight = mHandleDrawable.getHeight();
+        final int count = targets.size();
+        for (int i = 0; i < count; i++) {
+            TargetDrawable target = targets.get(i);
+            maxWidth = Math.max(maxWidth, target.getWidth());
+            maxHeight = Math.max(maxHeight, target.getHeight());
+        }
+        if (mMaxTargetWidth != maxWidth || mMaxTargetHeight != maxHeight) {
+            mMaxTargetWidth = maxWidth;
+            mMaxTargetHeight = maxHeight;
+            requestLayout(); // required to resize layout and call updateTargetPositions()
+        } else {
+            updateTargetPositions(mWaveCenterX, mWaveCenterY);
+            updatePointCloudPosition(mWaveCenterX, mWaveCenterY);
+            hideTargets(false, false);
+        }
     }
 
     /**
@@ -692,6 +796,10 @@ public class GlowPadView extends View {
         return mTargetDrawables;
     }
 
+    public void setMagneticTargets(boolean enabled) {
+        mMagneticTargets = enabled;
+    }
+
     /**
      * Sets the resource id specifying the target descriptions for accessibility.
      *
@@ -702,6 +810,16 @@ public class GlowPadView extends View {
         if (mTargetDescriptions != null) {
             mTargetDescriptions.clear();
         }
+    }
+
+    /**
+     * Sets the target descriptions for accessibility.
+     *
+     * @param targetDescriptions The target descriptions list.
+     * @hide
+     */
+    public void setTargetDescriptions(ArrayList<String> targetDescriptions) {
+        mTargetDescriptions = targetDescriptions;
     }
 
     /**
@@ -723,6 +841,16 @@ public class GlowPadView extends View {
         if (mDirectionDescriptions != null) {
             mDirectionDescriptions.clear();
         }
+    }
+
+    /**
+     * Sets the target direction descriptions for accessibility.
+     *
+     * @param targetDescriptions The target descriptions list.
+     * @hide
+     */
+    public void setDirectionDescriptions(ArrayList<String> directionDescriptions) {
+        mDirectionDescriptions = directionDescriptions;
     }
 
     /**
@@ -1183,17 +1311,13 @@ public class GlowPadView extends View {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        final int width = right - left;
-        final int height = bottom - top;
 
         // Target placement width/height. This puts the targets on the greater of the ring
         // width or the specified outer radius.
         final float placementWidth = getRingWidth();
         final float placementHeight = getRingHeight();
-        float newWaveCenterX = mHorizontalInset
-                + Math.max(width, mMaxTargetWidth + placementWidth) / 2;
-        float newWaveCenterY = mVerticalInset
-                + Math.max(height, + mMaxTargetHeight + placementHeight) / 2;
+        float newWaveCenterX = mHorizontalInset + (mMaxTargetWidth + placementWidth) / 2;
+        float newWaveCenterY = mVerticalInset + (mMaxTargetHeight + placementHeight) / 2;
 
         if (mInitialLayout) {
             stopAndHideWaveAnimation();
@@ -1331,7 +1455,7 @@ public class GlowPadView extends View {
             || index >= mTargetDescriptions.size()) {
             mTargetDescriptions = loadDescriptions(mTargetDescriptionsResourceId);
             if (mTargetDrawables.size() != mTargetDescriptions.size()) {
-                Log.w(TAG, "The number of target drawables must be"
+                if (DEBUG) Log.v(TAG, "The number of target drawables must be"
                         + " equal to the number of target descriptions.");
                 return null;
             }
@@ -1344,7 +1468,7 @@ public class GlowPadView extends View {
             || index >= mDirectionDescriptions.size()) {
             mDirectionDescriptions = loadDescriptions(mDirectionDescriptionsResourceId);
             if (mTargetDrawables.size() != mDirectionDescriptions.size()) {
-                Log.w(TAG, "The number of target drawables must be"
+                if (DEBUG) Log.v(TAG, "The number of target drawables must be"
                         + " equal to the number of direction descriptions.");
                 return null;
             }
@@ -1353,7 +1477,13 @@ public class GlowPadView extends View {
     }
 
     private ArrayList<String> loadDescriptions(int resourceId) {
-        TypedArray array = getContext().getResources().obtainTypedArray(resourceId);
+        TypedArray array = null;
+        try {
+            array = getContext().getResources().obtainTypedArray(resourceId);
+        } catch (Resources.NotFoundException e) {
+            return null;
+        }
+        if (array == null) return null;
         final int count = array.length();
         ArrayList<String> targetContentDescriptions = new ArrayList<String>(count);
         for (int i = 0; i < count; i++) {
@@ -1462,5 +1592,25 @@ public class GlowPadView extends View {
     public void setArc(float angle, int color) {
         mArcAngle = angle;
         mArcPaint.setColor(color);
+    }
+
+    public void setHandleDrawable(Drawable handle) {
+        Resources res = mContext.getResources();
+        if (handle != null) {
+            mHandleDrawable = new TargetDrawable(res, handle);
+        } else {
+            mHandleDrawable = new TargetDrawable(res, 0);
+        }
+        mHandleDrawable.setState(TargetDrawable.STATE_INACTIVE);
+    }
+
+    private void setRingDrawable(Drawable ring) {
+        Resources res = mContext.getResources();
+        if (ring != null) {
+            mOuterRing = new TargetDrawable(res, ring);
+        } else {
+            mOuterRing = new TargetDrawable(res, 0);
+        }
+        mOuterRing.setState(TargetDrawable.STATE_INACTIVE);
     }
 }

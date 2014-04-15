@@ -52,5 +52,8 @@
     <string name="global_action_sound_mode_on_status">Sound is ON</string>
     <!-- status message in phone options dialog for when sound_mode is off -->
     <string name="global_action_sound_mode_off_status">Sound is OFF</string>
+
+    <!-- Description of accessibility direction for targets [CHAR LIMIT=NONE] -->
+    <string name="accessibility_target_direction">Swipe to activate a target</string>
 </resources>
 

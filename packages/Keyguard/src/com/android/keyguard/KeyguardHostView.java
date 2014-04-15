@@ -37,8 +37,15 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.UserInfo;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.media.RemoteControlClient;
 import android.os.Looper;
 import android.os.Parcel;
@@ -55,6 +62,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RemoteViews.OnClickHandler;
 
 import java.io.File;
@@ -78,11 +87,12 @@ public class KeyguardHostView extends KeyguardViewBase {
     // Found in KeyguardAppWidgetPickActivity.java
     static final int APPWIDGET_HOST_ID = 0x4B455947;
 
-    private final int MAX_WIDGETS = 5;
+    private final int MAX_WIDGETS = 20;
 
     private AppWidgetHost mAppWidgetHost;
     private AppWidgetManager mAppWidgetManager;
     private KeyguardWidgetPager mAppWidgetContainer;
+    private KeyguardWidgetPager mAppWidgetContainerHidden;
     private KeyguardSecurityViewFlipper mSecurityViewContainer;
     private KeyguardSelectorView mKeyguardSelectorView;
     private KeyguardTransportControlView mTransportControl;
@@ -358,8 +368,21 @@ public class KeyguardHostView extends KeyguardViewBase {
         // Grab instances of and make any necessary changes to the main layouts. Create
         // view state manager and wire up necessary listeners / callbacks.
         View deleteDropTarget = findViewById(R.id.keyguard_widget_pager_delete_target);
-        mAppWidgetContainer = (KeyguardWidgetPager) findViewById(R.id.app_widget_container);
+        if (Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_USE_WIDGET_CONTAINER_CAROUSEL,
+                0, UserHandle.USER_CURRENT) == 1) {
+            mAppWidgetContainerHidden =
+                (KeyguardWidgetPager) findViewById(R.id.app_widget_container);
+            mAppWidgetContainer =
+                (KeyguardWidgetPager) findViewById(R.id.app_widget_container_carousel);
+        } else {
+            mAppWidgetContainerHidden =
+                (KeyguardWidgetPager) findViewById(R.id.app_widget_container_carousel);
+            mAppWidgetContainer =
+                (KeyguardWidgetPager) findViewById(R.id.app_widget_container);
+        }
         mAppWidgetContainer.setVisibility(VISIBLE);
+        removeView(mAppWidgetContainerHidden);
         mAppWidgetContainer.setCallbacks(mWidgetCallbacks);
         mAppWidgetContainer.setDeleteDropTarget(deleteDropTarget);
         mAppWidgetContainer.setMinScale(0.5f);
@@ -382,6 +405,8 @@ public class KeyguardHostView extends KeyguardViewBase {
         mSecurityViewContainer = (KeyguardSecurityViewFlipper) findViewById(R.id.view_flipper);
         mKeyguardSelectorView = (KeyguardSelectorView) findViewById(R.id.keyguard_selector_view);
         mViewStateManager.setSecurityViewContainer(mSecurityViewContainer);
+
+        setLockColor();
 
         setBackButtonEnabled(false);
 
@@ -444,6 +469,40 @@ public class KeyguardHostView extends KeyguardViewBase {
         if (!shouldEnableAddWidget()) {
             mAppWidgetContainer.setAddWidgetEnabled(false);
         }
+    }
+
+    private void setLockColor() {
+        int color = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_LOCK_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+
+        ImageButton lock = (ImageButton) findViewById(R.id.expand_challenge_handle);
+        Bitmap lockBitmap = BitmapFactory.decodeResource(
+                getContext().getResources(), R.drawable.kg_security_lock_normal);
+        if (lock != null && lockBitmap != null) {
+            lock.setImageDrawable(returnColorizedStateListDrawable(lockBitmap, color));
+        }
+    }
+
+    private StateListDrawable returnColorizedStateListDrawable(Bitmap bitmap, int color) {
+        StateListDrawable lockStates = new StateListDrawable();
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        Bitmap overlayFocused = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap overlayPressed = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvasFocused = new Canvas(overlayFocused);
+        Canvas canvasPressed = new Canvas(overlayPressed);
+        Paint paint = new Paint();
+        paint.setColorFilter(new LightingColorFilter(color, 1));
+        canvasFocused.drawBitmap(bitmap, 0, 0, paint);
+        paint.setAlpha(175);
+        canvasPressed.drawBitmap(bitmap, 0, 0, paint);
+        lockStates.addState(new int[] {android.R.attr.state_pressed},
+                new BitmapDrawable(getResources(), overlayPressed));
+        lockStates.addState(new int[] {-android.R.attr.state_pressed},
+                new BitmapDrawable(getResources(), overlayFocused));
+        return lockStates;
     }
 
     private void setBackButtonEnabled(boolean enabled) {
@@ -758,15 +817,28 @@ public class KeyguardHostView extends KeyguardViewBase {
      * @param turningOff true if the device is being turned off
      */
     void showPrimarySecurityScreen(boolean turningOff) {
-        SecurityMode securityMode = mSecurityModel.getSecurityMode();
-        if (DEBUG) Log.v(TAG, "showPrimarySecurityScreen(turningOff=" + turningOff + ")");
-        if (!turningOff &&
-                KeyguardUpdateMonitor.getInstance(mContext).isAlternateUnlockEnabled()) {
-            // If we're not turning off, then allow biometric alternate.
-            // We'll reload it when the device comes back on.
-            securityMode = mSecurityModel.getAlternateFor(securityMode);
+        final boolean lockBeforeUnlock = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCK_BEFORE_UNLOCK, 0,
+                UserHandle.USER_CURRENT) == 1;
+        final boolean isSimOrAccount = mCurrentSecuritySelection == SecurityMode.SimPin
+                || mCurrentSecuritySelection == SecurityMode.SimPuk
+                || mCurrentSecuritySelection == SecurityMode.Account
+                || mCurrentSecuritySelection == SecurityMode.Invalid;
+
+        if (lockBeforeUnlock && !isSimOrAccount) {
+            showSecurityScreen(SecurityMode.None);
+        } else {
+            SecurityMode securityMode = mSecurityModel.getSecurityMode();
+            if (DEBUG) Log.v(TAG, "showPrimarySecurityScreen(turningOff=" + turningOff + ")");
+            if (!turningOff &&
+                    KeyguardUpdateMonitor.getInstance(mContext).isAlternateUnlockEnabled()) {
+                // If we're not turning off, then allow biometric alternate.
+                // We'll reload it when the device comes back on.
+                securityMode = mSecurityModel.getAlternateFor(securityMode);
+            }
+            showSecurityScreen(securityMode);
         }
-        showSecurityScreen(securityMode);
     }
 
     /**
@@ -1249,7 +1321,17 @@ public class KeyguardHostView extends KeyguardViewBase {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             View addWidget = inflater.inflate(R.layout.keyguard_add_widget, this, false);
             mAppWidgetContainer.addWidget(addWidget, 0);
-            View addWidgetButton = addWidget.findViewById(R.id.keyguard_add_widget_view);
+
+            int color = Settings.System.getIntForUser(
+                    mContext.getContentResolver(),
+                    Settings.System.LOCKSCREEN_FRAME_COLOR, 0xffffffff,
+                    UserHandle.USER_CURRENT);
+            ImageView addWidgetButton = (ImageView)
+                    addWidget.findViewById(R.id.keyguard_add_widget_view);
+                Bitmap addWidgetBitmap = BitmapFactory.decodeResource(
+                        getContext().getResources(), R.drawable.kg_add_widget);
+                addWidgetButton.setImageDrawable(
+                        returnColorizedStateListDrawable(addWidgetBitmap, color));
             addWidgetButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

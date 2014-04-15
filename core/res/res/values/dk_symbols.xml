@@ -72,4 +72,9 @@
   <java-symbol type="bool" name="config_intrusiveBatteryLed" />
   <java-symbol type="bool" name="config_multiColorNotificationLed" />
 
+  <!-- Description of accessibility direction for targets -->
+  <java-symbol type="string" name="accessibility_target_direction" />
+  <!-- Description of accessibility unlock target -->
+  <java-symbol type="string" name="description_target_unlock" />
+
 </resources>

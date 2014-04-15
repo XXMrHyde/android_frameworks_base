@@ -113,9 +113,16 @@ public class KeyguardWidgetFrame extends FrameLayout {
         // we need to specify a height.
         mSmallWidgetHeight =
                 res.getDimensionPixelSize(R.dimen.kg_small_widget_height);
-        mBackgroundDrawable = res.getDrawable(R.drawable.kg_widget_bg_padded);
-        mGradientColor = res.getColor(R.color.kg_widget_pager_gradient);
-        mGradientPaint.setXfermode(sAddBlendMode);
+        if (KeyguardSecurityViewHelper.hideWidgetFrame(context)) {
+            mBackgroundDrawable = null;
+            mGradientColor = res.getColor(R.color.kg_widget_pager_gradient_disabled);
+        } else {
+            mBackgroundDrawable =
+                    KeyguardSecurityViewHelper.colorizeFrame(context,
+                    res.getDrawable(R.drawable.kg_widget_bg_padded));
+            mGradientColor = res.getColor(R.color.kg_widget_pager_gradient);
+            mGradientPaint.setXfermode(sAddBlendMode);
+        }
     }
 
     @Override
@@ -224,7 +231,7 @@ public class KeyguardWidgetFrame extends FrameLayout {
     }
 
     protected void drawBg(Canvas canvas) {
-        if (mBackgroundAlpha > 0.0f) {
+        if (mBackgroundDrawable != null && mBackgroundAlpha > 0.0f) {
             Drawable bg = mBackgroundDrawable;
 
             bg.setAlpha((int) (mBackgroundAlpha * mBackgroundAlphaMultiplier * 255));

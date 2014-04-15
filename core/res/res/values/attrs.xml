@@ -5726,6 +5726,9 @@
         <!-- Sets a drawable as the center. -->
         <attr name="handleDrawable"/>
 
+        <!-- Sets a drawable as the center. -->
+        <attr name="handleDrawableDk" format="reference" />
+
         <!-- Drawable to use for wave ripple animation. -->
         <attr name="outerRingDrawable" format="reference"/>
 

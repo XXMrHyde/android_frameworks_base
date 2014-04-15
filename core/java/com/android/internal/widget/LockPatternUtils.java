@@ -1280,6 +1280,12 @@ public class LockPatternUtils {
             button.setCompoundDrawablesWithIntrinsicBounds(emergencyIcon, 0, 0, 0);
         }
         button.setText(textId);
+
+        int textColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_TEXT_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+        button.setTextColor(textColor);
     }
 
     /**

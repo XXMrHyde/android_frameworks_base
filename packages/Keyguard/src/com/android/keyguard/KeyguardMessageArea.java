@@ -194,6 +194,11 @@ class KeyguardMessageArea extends TextView {
 
         mSeparator = getResources().getString(R.string.kg_text_message_separator);
 
+        int textColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_TEXT_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+        setTextColor(textColor);
         update();
     }
 
@@ -227,10 +232,7 @@ class KeyguardMessageArea extends TextView {
         MutableInt icon = new MutableInt(0);
         CharSequence status = concat(getChargeInfo(icon), getOwnerInfo(), getCurrentMessage());
         setCompoundDrawablesWithIntrinsicBounds(icon.value, 0, 0, 0);
-        int statusColor = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.LOCKSCREEN_STATUS_COLOR, 0xffbebebe, UserHandle.USER_CURRENT);
         setText(status);
-        setTextColor(statusColor);
     }
 
     private CharSequence concat(CharSequence... args) {

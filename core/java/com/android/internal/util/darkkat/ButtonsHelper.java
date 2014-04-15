@@ -115,6 +115,32 @@ public class ButtonsHelper {
                     config);
     }
 
+    // get and set the lockcreen shortcut configs from provider and return propper arraylist objects
+    // @ButtonConfig
+    public static ArrayList<ButtonConfig> getLockscreenShortcutConfig(Context context) {
+        String config = Settings.System.getStringForUser(
+                    context.getContentResolver(),
+                    Settings.System.LOCKSCREEN_SHORTCUTS,
+                    UserHandle.USER_CURRENT);
+        if (config == null) {
+            config = "";
+        }
+
+        return (ConfigSplitHelper.getButtonsConfigValues(context, config, null, null, true));
+    }
+
+    public static void setLockscreenShortcutConfig(Context context,
+            ArrayList<ButtonConfig> buttonsConfig, boolean reset) {
+        String config;
+        if (reset) {
+            config = "";
+        } else {
+            config = ConfigSplitHelper.setButtonsConfig(buttonsConfig, true);
+        }
+        Settings.System.putString(context.getContentResolver(),
+                    Settings.System.LOCKSCREEN_SHORTCUTS, config);
+    }
+
     public static Drawable getButtonIconImage(Context context,
             String clickAction, String customIcon) {
         int resId = -1;

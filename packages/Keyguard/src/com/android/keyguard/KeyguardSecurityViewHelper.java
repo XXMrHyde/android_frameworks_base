@@ -19,7 +19,12 @@ package com.android.keyguard;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.ContentResolver;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 
 /**
@@ -90,5 +95,26 @@ public class KeyguardSecurityViewHelper {
                 bouncerFrame.setAlpha(0);
             }
         }
+    }
+
+    public static boolean hideWidgetFrame(Context context) {
+        return Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_WIDGET_FRAME_ENABLED, 0,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
+    public static Drawable colorizeFrame(Context context, Drawable frameDrawable) {
+        int frameColor = Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_FRAME_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+
+        if (frameDrawable != null) {
+            frameDrawable.setColorFilter(null);
+            frameDrawable.setColorFilter(frameColor, PorterDuff.Mode.SRC_ATOP);
+        }
+
+        return frameDrawable;
     }
 }
