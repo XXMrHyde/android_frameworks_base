@@ -78,8 +78,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
 
     // Animation control values.
     private static final int ANIMATION_STATE_NONE = 0;
-    private static final int ANIMATION_STATE_IN   = 1;
-    private static final int ANIMATION_STATE_OUT  = 2;
+    private static final int ANIMATION_STATE_OUT  = 1;
 
     // Animation state.
     private int mAnimationState = ANIMATION_STATE_NONE;
@@ -174,13 +173,8 @@ public class RecentController implements RecentPanelView.OnExitListener,
                         new RecentListOnScaleGestureListener(mRecentWarningContent, cardListView));
 
         // Prepare recents panel view and set the listeners
-        cardListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                recentListGestureDetector.onTouchEvent(event);
-                return false;
-            }
-        });
+        cardListView.setGestureDetector(recentListGestureDetector);
+
         mRecentPanelView = new RecentPanelView(mContext, this, cardListView, mEmptyRecentView);
         mRecentPanelView.setOnExitListener(this);
         mRecentPanelView.setOnTasksLoadedListener(this);
@@ -459,21 +453,21 @@ public class RecentController implements RecentPanelView.OnExitListener,
         if (isShowing()) {
             mIsPreloaded = false;
             mIsToggled = false;
+            mIsShowing = false;
             mRecentPanelView.setTasksLoaded(false);
             mRecentPanelView.dismissPopup();
             if (forceHide) {
                 if (DEBUG) Log.d(TAG, "force hide recent window");
-                mIsShowing = false;
                 CacheController.getInstance(mContext).setRecentScreenShowing(false);
                 mAnimationState = ANIMATION_STATE_NONE;
-                mHandler.removeCallbacks(mRecentThirdStageLoader);
+                mHandler.removeCallbacks(mRecentRunnable);
                 mWindowManager.removeViewImmediate(mParentView);
                 return true;
             } else if (mAnimationState != ANIMATION_STATE_OUT) {
                 if (DEBUG) Log.d(TAG, "out animation starting");
                 mAnimationState = ANIMATION_STATE_OUT;
-                mHandler.removeCallbacks(mRecentThirdStageLoader);
-                mHandler.postDelayed(mRecentThirdStageLoader, mContext.getResources().getInteger(
+                mHandler.removeCallbacks(mRecentRunnable);
+                mHandler.postDelayed(mRecentRunnable, mContext.getResources().getInteger(
                         com.android.internal.R.integer.config_recentDefaultDur));
                 mWindowManager.removeView(mParentView);
                 return true;
@@ -487,11 +481,9 @@ public class RecentController implements RecentPanelView.OnExitListener,
         if (DEBUG) Log.d(TAG, "in animation starting");
         mIsShowing = true;
         sendCloseSystemWindows();
+        mAnimationState = ANIMATION_STATE_NONE;
+        mHandler.removeCallbacks(mRecentRunnable);
         CacheController.getInstance(mContext).setRecentScreenShowing(true);
-        mAnimationState = ANIMATION_STATE_IN;
-        mHandler.removeCallbacks(mRecentThirdStageLoader);
-        mHandler.postDelayed(mRecentThirdStageLoader, mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_recentDefaultDur));
         mWindowManager.addView(mParentView, generateLayoutParameter());
     }
 
@@ -521,31 +513,13 @@ public class RecentController implements RecentPanelView.OnExitListener,
     }
 
     /**
-     * Runnable for our last loading stage.
-     * It looks first weird to use a runable for it. But it does not harm here.
-     * It just gives our in animation a bit time before we start loading invisible
-     * content. Even in the case we are not ready and the user access allready not loaded
-     * content the content will be loaded in this moment due that it get called by either
-     * the third loading stage here or by the getView method from our cards arrayadapter.
-     * So we are save here to call the third loading stage with the default animation delay.
-     *
-     * This helps especially low end non gfx devices to play the animation proper.
+     * Runnable if recent panel closed to notify the cache controller about the state.
      */
-    private final Runnable mRecentThirdStageLoader = new Runnable() {
+    private final Runnable mRecentRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mAnimationState == ANIMATION_STATE_IN) {
-                if (DEBUG) Log.d(TAG, "in animation finished");
-                // Now we can trigger 3rd loading stage and load
-                // all missing resources on invisble cards or
-                // content.
-                mRecentPanelView.updateInvisibleCards();
-                // We are now full visible. Notify to be safe the
-                // arrayadapter about this situation.
-                mRecentPanelView.notifyDataSetChanged(true);
-            } else if (mAnimationState == ANIMATION_STATE_OUT) {
+            if (mAnimationState == ANIMATION_STATE_OUT) {
                 if (DEBUG) Log.d(TAG, "out animation finished");
-                mIsShowing = false;
                 CacheController.getInstance(mContext).setRecentScreenShowing(false);
             }
             mAnimationState = ANIMATION_STATE_NONE;
@@ -568,6 +542,9 @@ public class RecentController implements RecentPanelView.OnExitListener,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_PANEL_SCALE_FACTOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_PANEL_EXPANDED_MODE),
                     false, this, UserHandle.USER_ALL);
             update();
         }
@@ -605,6 +582,10 @@ public class RecentController implements RecentPanelView.OnExitListener,
             }
             if (mRecentPanelView != null) {
                 mRecentPanelView.setScaleFactor(mScaleFactor);
+                mRecentPanelView.setExpandedMode(Settings.System.getIntForUser(
+                    resolver, Settings.System.RECENT_PANEL_EXPANDED_MODE,
+                    mRecentPanelView.EXPANDED_MODE_AUTO,
+                    UserHandle.USER_CURRENT));
             }
         }
     }

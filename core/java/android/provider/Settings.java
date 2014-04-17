@@ -2795,6 +2795,14 @@ public final class Settings {
         public static final String RECENT_PANEL_SCALE_FACTOR = "recent_panel_scale_factor";
 
         /**
+         * Recent panel expanded mode (auto = 0, always = 1, never = 2).
+         * default = 0.
+         *
+         * @hide
+         */
+        public static final String RECENT_PANEL_EXPANDED_MODE = "recent_panel_expanded_mode";
+
+        /**
          * User favorite tasks for recent panel.
          * @hide
          */
