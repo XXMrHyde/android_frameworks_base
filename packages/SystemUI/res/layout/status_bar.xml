@@ -83,12 +83,6 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <LinearLayout android:id="@+id/statusIcons"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"/>
-
             <com.android.systemui.statusbar.policy.Traffic
                 android:id="@+id/traffic"
                 android:layout_width="wrap_content"
@@ -96,6 +90,12 @@
                 android:singleLine="false"
                 android:gravity="right|center_vertical"
                 systemui:trafficView="statusbar"/>
+
+            <LinearLayout android:id="@+id/statusIcons"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"/>
     
             <LinearLayout
                 android:id="@+id/signal_battery_cluster"
