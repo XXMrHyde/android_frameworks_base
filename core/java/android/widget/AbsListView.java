@@ -84,7 +84,10 @@ import android.widget.RemoteViews.OnClickHandler;
 import com.android.internal.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class that can be used to implement virtualized lists of items. A list does
@@ -706,9 +709,10 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
      * for ListView Animations
      */
     private boolean mIsWidget;
+    private boolean mIsScrolling;
     private int mListAnimationMode = 0;
     private int mListAnimationInterpolatorMode = 0;
-    private boolean mListAnimationModeSet = false;
+    private Set<String> mExcludedApps = new HashSet<String>();
     private int mWidth, mHeight = 0;
     private int mPositionV;
     private boolean mIsTap = false;
@@ -859,6 +863,20 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 
         setPersistentDrawingCache(ViewGroup.PERSISTENT_ANIMATION_CACHE
             | ViewGroup.PERSISTENT_SCROLLING_CACHE);
+
+        createExcludedAppsSet(Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.LISTVIEW_ANIMATION_EXCLUDED_APPS));
+    }
+
+    /**
+     * Create the set of excluded apps given a string of packages delimited with '|'.
+     * @param excludedApps
+     */
+    private void createExcludedAppsSet(String excludedApps) {
+        if (TextUtils.isEmpty(excludedApps))
+            return;
+        String[] appsToExclude = excludedApps.split("\\|");
+        mExcludedApps = new HashSet<String>(Arrays.asList(appsToExclude));
     }
 
     @Override
@@ -2265,7 +2283,7 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
         if (scrapView != null) {
             child = mAdapter.getView(position, scrapView, this);
 
-            if (mListAnimationMode != 0 && !mIsWidget) {
+            if (mIsScrolling && !mIsWidget) {
                 child = setAnimation(child);
             }
 
@@ -2330,7 +2348,22 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
     }
 
     private View setAnimation(View view) {
-        if (view == null) {
+        if (mExcludedApps.contains(mContext.getApplicationInfo().packageName)) {
+            mListAnimationMode = 0;
+        } else {
+            mListAnimationMode = Settings.System.getInt(
+                        mContext.getContentResolver(),
+                        Settings.System.LISTVIEW_ANIMATION,
+                        0);
+        }
+
+        int listAnimationInterpolatorMode = Settings.System.getInt(
+                mContext.getContentResolver(),
+                Settings.System.LISTVIEW_INTERPOLATOR,
+                0);
+
+        if (mListAnimationMode == 0
+            || view == null) {
             return view;
         }
 
@@ -4187,25 +4220,14 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
      * @param newState The new scroll state.
      */
     void reportScrollStateChange(int newState) {
-        if (newState != mLastScrollState) {
-            mLastScrollState = newState;
-            if (newState == OnScrollListener.SCROLL_STATE_IDLE) {
-                mListAnimationModeSet = false;
-                mListAnimationMode = 0;
-            } else if (!mListAnimationModeSet) {
-                mListAnimationModeSet = true;
-                mListAnimationMode = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.LISTVIEW_ANIMATION,
-                        0, UserHandle.USER_CURRENT_OR_SELF);
-                if (mListAnimationMode != 0) {
-                    mListAnimationInterpolatorMode = Settings.System.getIntForUser(
-                            mContext.getContentResolver(),
-                            Settings.System.LISTVIEW_INTERPOLATOR,
-                            0, UserHandle.USER_CURRENT_OR_SELF);
-                }
+        if (newState == OnScrollListener.SCROLL_STATE_IDLE) {
+                mIsScrolling = false;
+            } else {
+                mIsScrolling = true;
             }
+        if (newState != mLastScrollState) {
             if (mOnScrollListener != null) {
+                mLastScrollState = newState;
                 mOnScrollListener.onScrollStateChanged(this, newState);
             }
         }
