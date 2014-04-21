@@ -2769,6 +2769,13 @@ public final class Settings {
         public static final String POWER_MENU_ICON_COLOR_MODE = "power_menu_icon_color_mode";
 
         /**
+         * Whether to use Slim recents or default recents
+         *
+         * @hide
+         */
+        public static final String RECENT_APPS_TYPE = "recent_apps_type";
+
+        /**
          * Color of the recent app panel background
          * 
          * @hide

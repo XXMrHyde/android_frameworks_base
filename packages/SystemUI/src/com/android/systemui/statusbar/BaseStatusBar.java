@@ -79,6 +79,7 @@ import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.widget.SizeAdaptiveLayout;
 import com.android.systemui.R;
 import com.android.systemui.SearchPanelView;
+import com.android.systemui.RecentsComponent;
 import com.android.systemui.SystemUI;
 import com.android.systemui.slimrecent.RecentController;
 import com.android.systemui.statusbar.phone.KeyguardTouchDelegate;
@@ -166,6 +167,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     private boolean mDeviceProvisioned = false;
 
     private RecentController mRecents;
+    private RecentsComponent mDefaultRecents;
+    private boolean mSlimRecent = false;
 
     private int mExpandedDesktopStyle = 0;
 
@@ -291,7 +294,14 @@ public abstract class BaseStatusBar extends SystemUI implements
         mLocale = mContext.getResources().getConfiguration().locale;
         mLayoutDirection = TextUtils.getLayoutDirectionFromLocale(mLocale);
 
-        mRecents = new RecentController(mContext, mLayoutDirection);
+        mSlimRecent = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.RECENT_APPS_TYPE, 1, UserHandle.USER_CURRENT) == 1;
+
+        if (mSlimRecent) {
+            mRecents = new RecentController(mContext, mLayoutDirection);
+        } else {
+            mDefaultRecents = getComponent(RecentsComponent.class);
+        }
 
         mStatusBarContainer = new FrameLayout(mContext);
 
@@ -615,32 +625,57 @@ public abstract class BaseStatusBar extends SystemUI implements
     };
 
     protected void toggleRecentsActivity() {
-        if (mRecents != null) {
-            mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
-                    mExpandedDesktopStyle);
+        if (mSlimRecent) {
+            if (mRecents != null) {
+                mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
+                        mExpandedDesktopStyle);
+            }
+        } else {
+            if (mDefaultRecents != null) {
+                mDefaultRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView(),
+                        mExpandedDesktopStyle);
+            }
         }
     }
 
     protected void preloadRecentTasksList() {
-        if (mRecents != null) {
-            mRecents.preloadRecentTasksList();
+        if (mSlimRecent) {
+            if (mRecents != null) {
+                mRecents.preloadRecentTasksList();
+            }
+        } else {
+            if (mDefaultRecents != null) {
+                mDefaultRecents.preloadRecentTasksList();
+            }
         }
     }
 
     protected void cancelPreloadingRecentTasksList() {
-        if (mRecents != null) {
-            mRecents.cancelPreloadingRecentTasksList();
+        if (mSlimRecent) {
+            if (mRecents != null) {
+                mRecents.cancelPreloadingRecentTasksList();
+            }
+        } else {
+            if (mDefaultRecents != null) {
+                mDefaultRecents.cancelPreloadingRecentTasksList();
+            }
         }
     }
 
     protected void closeRecents() {
-        if (mRecents != null) {
-            mRecents.closeRecents();
+        if (mSlimRecent) {
+            if (mRecents != null) {
+                mRecents.closeRecents();
+            }
+        } else {
+            if (mDefaultRecents != null) {
+                mDefaultRecents.closeRecents();
+            }
         }
     }
 
     protected void rebuildRecents() {
-        if (mRecents != null) {
+        if (mSlimRecent && mRecents != null) {
             mRecents.rebuildRecents();
         }
     }
