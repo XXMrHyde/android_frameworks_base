@@ -567,11 +567,6 @@ public class ActivityManager {
      */
     public static final int RECENT_IGNORE_UNAVAILABLE = 0x0002;
 
-     /**
-     * @hide
-     */
-    public static final int RECENT_DO_NOT_COUNT_EXCLUDED = 0x0004;
-
     /**
      * @hide
      */
