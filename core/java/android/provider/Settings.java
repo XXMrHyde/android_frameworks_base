@@ -2886,6 +2886,24 @@ public final class Settings {
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
+         * Status bar opaque color
+         * @hide
+         */
+        public static final String STATUS_BAR_OPAQUE_COLOR = "status_bar_opaque_color";
+
+        /**
+         * Status bar semi transparent color
+         * @hide
+         */
+        public static final String STATUS_BAR_SEMI_TRANS_COLOR = "status_bar_semi_trans_color";
+
+        /**
+         * Status bar gradient color
+         * @hide
+         */
+        public static final String STATUS_BAR_GRADIENT_COLOR = "status_bar_gradient_color";
+
+        /**
          * Show/hide clock
          * 0: Hide
          * 1: Show
@@ -3472,6 +3490,24 @@ public final class Settings {
          * @hide
          */
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
+
+        /**
+         * Navigation bar opaque color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_OPAQUE_COLOR = "navigation_bar_opaque_color";
+
+        /**
+         * Navigation bar semi transparent color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SEMI_TRANS_COLOR = "navigation_bar_semi_trans_color";
+
+        /**
+         * Navigation bar gradient color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_GRADIENT_COLOR = "navigation_bar_gradient_color";
 
         /**
          * Navigation bar button color
