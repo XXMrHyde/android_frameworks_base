@@ -33,6 +33,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -43,6 +44,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -102,10 +104,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private boolean mFitThumbnailToXY;
     private int mRecentItemLayoutId;
     private boolean mHighEndGfx;
-    private ImageView mClearRecentsTopLeft;
-    private ImageView mClearRecentsTopRight;
-    private ImageView mClearRecentsBottomLeft;
-    private ImageView mClearRecentsBottomRight;
+
+    private ImageView mClearRecents;
     private int mClearPosition;
 
     private LinearColorBar mRamUsageBar;
@@ -129,6 +129,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         public View findViewForTask(int persistentTaskId);
         public void drawFadedEdges(Canvas c, int left, int right, int top, int bottom);
         public void setOnScrollListener(Runnable listener);
+        public void removeAllViewsInLayout();
     }
 
     private final class OnLongClickDelegate implements View.OnLongClickListener {
@@ -369,19 +370,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
             mRecentsNoApps.setAlpha(1f);
             mRecentsNoApps.setVisibility(mNoApps ? View.VISIBLE : View.INVISIBLE);
-            mClearRecentsTopLeft.setVisibility(
-                                    !mNoApps && mClearPosition == 0 
-                                    ? View.VISIBLE : View.GONE);
-            mClearRecentsTopRight.setVisibility(
-                                    !mNoApps && mClearPosition == 1
-                                    ? View.VISIBLE : View.GONE);
-            mClearRecentsBottomLeft.setVisibility(
-                                       !mNoApps && mClearPosition == 2
-                                       ? View.VISIBLE : View.GONE);
-            mClearRecentsBottomRight.setVisibility(
-                                        !mNoApps && mClearPosition == 3
-                                        ? View.VISIBLE : View.GONE);
-
+            updateClearRecentsButton();
             onAnimationEnd(null);
             setFocusable(true);
             setFocusableInTouchMode(true);
@@ -393,6 +382,36 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             if (mPopup != null) {
                 mPopup.dismiss();
             }
+        }
+    }
+
+    private void  updateClearRecentsButton() {
+        int mClearPosition = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.RECENTS_CLEAR_ALL_BTN_POS,
+                Constants.CLEAR_RECENTS_BUTTON_BOTTOM_LEFT, UserHandle.USER_CURRENT);
+
+        if (mClearPosition != Constants.CLEAR_RECENTS_BUTTON_DISABLED) {
+            mClearRecents.setVisibility(mNoApps ? View.GONE : View.VISIBLE);
+            FrameLayout.LayoutParams layoutParams =
+                    (FrameLayout.LayoutParams)mClearRecents.getLayoutParams();
+             switch (mClearPosition) {
+                case Constants.CLEAR_RECENTS_BUTTON_TOP_LEFT:
+                    layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+                    break;
+                case Constants.CLEAR_RECENTS_BUTTON_TOP_RIGHT:
+                    layoutParams.gravity = Gravity.TOP | Gravity.RIGHT;
+                    break;
+                case Constants.CLEAR_RECENTS_BUTTON_BOTTOM_LEFT:
+                    layoutParams.gravity = Gravity.BOTTOM | Gravity.LEFT;
+                    break;
+                case Constants.CLEAR_RECENTS_BUTTON_BOTTOM_RIGHT:
+                default:
+                    layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+                    break;
+            }
+            mClearRecents.setLayoutParams(layoutParams);
+        } else {
+            mClearRecents.setVisibility(View.GONE);
         }
     }
 
@@ -488,35 +507,16 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         mRecentsScrim = findViewById(R.id.recents_bg_protect);
         mRecentsNoApps = findViewById(R.id.recents_no_apps);
 
-        mClearRecentsTopLeft = (ImageView) findViewById(R.id.recents_clear_top_left);
-        mClearRecentsTopRight = (ImageView) findViewById(R.id.recents_clear_top_right);
-        mClearRecentsBottomLeft = (ImageView) findViewById(R.id.recents_clear_bottom_left);
-        mClearRecentsBottomRight = (ImageView) findViewById(R.id.recents_clear_bottom_right);
+        mClearRecents = (ImageView) findViewById(R.id.recents_clear);
 
-        mClearPosition = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.RECENTS_CLEAR_ALL_BTN_POS, 2,
-                UserHandle.USER_CURRENT);
-
-        ImageView clearRecents = null;
-
-        if (mClearPosition == 0) {
-            clearRecents = mClearRecentsTopLeft;
-        } else if (mClearPosition == 1) {
-            clearRecents = mClearRecentsTopRight;
-        } else if (mClearPosition == 2) {
-            clearRecents = mClearRecentsBottomLeft;
-        } else if (mClearPosition == 3) {
-            clearRecents = mClearRecentsBottomRight;
-        }
-
-        if (clearRecents != null) {
-            clearRecents.setOnClickListener(new OnClickListener() {
+        if (mClearRecents != null) {
+            mClearRecents.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((ViewGroup)mRecentsContainer).removeAllViewsInLayout();
                 }
             });
-            clearRecents.setOnLongClickListener(new OnLongClickListener() {
+            mClearRecents.setOnLongClickListener(new OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     ((ViewGroup)mRecentsContainer).removeAllViewsInLayout();
