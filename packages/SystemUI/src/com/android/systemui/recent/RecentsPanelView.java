@@ -369,6 +369,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
 
             mRecentsNoApps.setAlpha(1f);
             mRecentsNoApps.setVisibility(mNoApps ? View.VISIBLE : View.INVISIBLE);
+            setBgColor();
             updateClearRecentsButton();
             onAnimationEnd(null);
             setFocusable(true);
@@ -411,6 +412,25 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             mClearRecents.setLayoutParams(layoutParams);
         } else {
             mClearRecents.setVisibility(View.GONE);
+        }
+    }
+
+    private void setBgColor() {
+        int color = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.RECENT_BG_COLOR,
+                0xe0000000, UserHandle.USER_CURRENT);
+
+        if (mRecentsScrim != null) {
+            mHighEndGfx = ActivityManager.isHighEndGfx();
+            if (!mHighEndGfx) {
+                mRecentsScrim.setBackground(null);
+            } else if (color == 0xe0000000 &&
+                        mRecentsScrim.getBackground() instanceof BitmapDrawable) {
+                // In order to save space, we make the background texture repeat in the Y direction
+                ((BitmapDrawable) mRecentsScrim.getBackground()).setTileModeY(TileMode.REPEAT);
+            } else {
+                mRecentsScrim.setBackgroundColor(color);
+            }
         }
     }
 
@@ -534,15 +554,6 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             });
         }
 
-        if (mRecentsScrim != null) {
-            mHighEndGfx = ActivityManager.isHighEndGfx();
-            if (!mHighEndGfx) {
-                mRecentsScrim.setBackground(null);
-            } else if (mRecentsScrim.getBackground() instanceof BitmapDrawable) {
-                // In order to save space, we make the background texture repeat in the Y direction
-                ((BitmapDrawable) mRecentsScrim.getBackground()).setTileModeY(TileMode.REPEAT);
-            }
-        }
         updateRamBar();
     }
 
