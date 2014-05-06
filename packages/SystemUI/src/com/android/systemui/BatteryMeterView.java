@@ -65,6 +65,7 @@ public class BatteryMeterView extends View implements DemoMode {
 
     boolean mShowIcon = true;
     boolean mShowPercent = false;
+    boolean mShowPercentSign = true;
     Paint mFramePaint, mBatteryPaint, mWarningTextPaint, mTextPaint, mBoltPaint;
     int mButtonHeight;
     private float mTextHeight, mWarningTextHeight;
@@ -386,7 +387,7 @@ public class BatteryMeterView extends View implements DemoMode {
             mTextHeight = -mTextPaint.getFontMetrics().ascent;
 
             String str;
-            if (mTextOnly) {
+            if ((mTextOnly && mShowPercentSign) || (mTextOnly && mBatteryTypeView.equals("quicksettings"))) {
                 str = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level) + "%";
             } else {
                 str = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
@@ -426,6 +427,8 @@ public class BatteryMeterView extends View implements DemoMode {
     }
 
     public void updateSettings() {
+        BatteryTracker tracker = mDemoMode ? mDemoTracker : mTracker;
+        final int level = tracker.level;
         ContentResolver resolver = mContext.getContentResolver();
 
         boolean showBatteryStatus = Settings.System.getIntForUser(resolver,
@@ -436,6 +439,9 @@ public class BatteryMeterView extends View implements DemoMode {
                 UserHandle.USER_CURRENT);
         mShowPercent = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1,
+                UserHandle.USER_CURRENT) == 1;
+        mShowPercentSign = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_SHOW_PERCENTAGE_SIGN, 1,
                 UserHandle.USER_CURRENT) == 1;
         mCustomFrameColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0,
@@ -477,7 +483,16 @@ public class BatteryMeterView extends View implements DemoMode {
             if (mBatteryTypeView.equals("statusbar")) {
                 height = metrics.density * 16f + 0.5f;
                 if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
-                    width = metrics.density * 35f + 0.5f;
+                    if (level < 10) {
+                        width = metrics.density * (mShowPercentSign ? 21f : 10f)
+                                + 0.5f;
+                    } else if (level >= 10 && level <= 99) {
+                        width = metrics.density * (mShowPercentSign ? 29f : 18f)
+                                + 0.5f;
+                    } else {
+                        width = metrics.density * (mShowPercentSign ? 37f : 26f)
+                                + 0.5f;
+                    }
                 } else {
                     width = metrics.density * 10.5f + 0.5f;
                 }

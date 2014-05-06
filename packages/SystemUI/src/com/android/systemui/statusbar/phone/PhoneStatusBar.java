@@ -384,6 +384,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_SHOW_PERCENTAGE_SIGN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -580,7 +583,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR))) {
                 rebuildRecents();
-
             } else {
                 updateSettings();
             }

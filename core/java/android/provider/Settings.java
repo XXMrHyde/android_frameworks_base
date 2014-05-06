@@ -3001,6 +3001,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "battery_status_show_text";
 
         /**
+         * Whether to show a battery status text
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_SHOW_PERCENTAGE_SIGN = "battery_status_show_percentage_sign";
+
+        /**
          * Whether to use a custom color for the battery frame
          * @hide
          */
