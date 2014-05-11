@@ -6157,6 +6157,12 @@ public final class Settings {
         public static final String ADB_ENABLED = "adb_enabled";
 
         /**
+         * The TCP/IP port to run ADB on, or -1 for USB
+         * @hide
+         */
+        public static final String ADB_PORT = "adb_port";
+
+        /**
          * Whether assisted GPS should be enabled or not.
          * @hide
          */
