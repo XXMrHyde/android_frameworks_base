@@ -484,13 +484,13 @@ public class BatteryMeterView extends View implements DemoMode {
                 height = metrics.density * 16f + 0.5f;
                 if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
                     if (level < 10) {
-                        width = metrics.density * (mShowPercentSign ? 21f : 10f)
+                        width = metrics.density * (mShowPercentSign ? 22f : 10f)
                                 + 0.5f;
                     } else if (level >= 10 && level <= 99) {
-                        width = metrics.density * (mShowPercentSign ? 29f : 18f)
+                        width = metrics.density * (mShowPercentSign ? 30f : 18f)
                                 + 0.5f;
                     } else {
-                        width = metrics.density * (mShowPercentSign ? 37f : 26f)
+                        width = metrics.density * (mShowPercentSign ? 38f : 26f)
                                 + 0.5f;
                     }
                 } else {
