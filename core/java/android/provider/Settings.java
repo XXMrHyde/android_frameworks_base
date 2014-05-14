@@ -2527,6 +2527,18 @@ public final class Settings {
         public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
+         * Whether to colorize the lockscreen background
+         * @hide
+         */
+        public static final String LOCKSCREEN_COLORIZE_BACKGROUND = "lockscreen_colorize_background";
+
+        /**
+         * Lockscreen background color
+         * @hide
+         */
+        public static final String LOCKSCREEN_BACKGROUND_COLOR = "lockscreen_background_color";
+
+        /**
          *Whether lock before unlock is enabled or disabled
          * @hide
          */
