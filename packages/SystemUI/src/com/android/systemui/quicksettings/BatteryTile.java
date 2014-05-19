@@ -80,9 +80,9 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT), this);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_MINI_ICON), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR), this);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_CIRCLE_DOTTED), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
@@ -92,16 +92,21 @@ public class BatteryTile extends QuickSettingsTile implements BatteryStateChange
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED), this);
+        qsc.registerObservedContent(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR), this);
+        qsc.registerObservedContent(Settings.System.getUriFor(
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_TEXT_HIGHT_COLOR), this);
+        qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_BATTERY_FRAME_COLOR), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
                 Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), this);
+                Settings.System.STATUS_BAR_BATTERY_TEXT_HIGHT_COLOR), this);
         qsc.registerObservedContent(Settings.System.getUriFor(
-                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED), this);
-
+                Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), this);
     }
 
     @Override

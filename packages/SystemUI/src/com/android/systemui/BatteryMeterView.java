@@ -63,11 +63,12 @@ public class BatteryMeterView extends View implements DemoMode {
 
     int[] mColors;
 
-    boolean mShowIcon = true;
-    boolean mShowPercent = false;
-    boolean mShowPercentSign = true;
+    private boolean mShowIcon = true;
+    private boolean mShowMiniIcon;
+    public boolean mShowPercent = true;
+    private boolean mShowPercentSign = true;
     Paint mFramePaint, mBatteryPaint, mWarningTextPaint, mTextPaint, mBoltPaint;
-    int mButtonHeight;
+    private int mButtonHeight;
     private float mTextHeight, mWarningTextHeight;
 
     private int mHeight;
@@ -84,8 +85,10 @@ public class BatteryMeterView extends View implements DemoMode {
     private int mBatteryStyle;
     private int mBatteryColor;
     private boolean mCustomFrameColor;
+    private boolean mCustomHightColor;
     private int mFrameColor;
     private int mBatteryTextColor;
+    private int mBatteryTextHightColor;
     private int mBatteryTextChargingColor;
     private boolean mTextOnly = false;
     private String mBatteryTypeView;
@@ -299,10 +302,13 @@ public class BatteryMeterView extends View implements DemoMode {
         int width = mWidth - pl - pr;
 
         mButtonHeight = (int) (height * 0.12f);
-
-        mFrame.set(0, 0, width, height);
-        mFrame.offset(pl, pt);
-
+        if (mShowMiniIcon && mShowPercent) {
+            mFrame.set(0, 0, (width / 3), height);
+            mFrame.offset(pl + ((width / 3) * 2), pt);
+        } else {
+            mFrame.set(0, 0, width, height);
+            mFrame.offset(pl, pt);
+        }
         mButtonFrame.set(
                 mFrame.left + width * 0.25f,
                 mFrame.top,
@@ -371,18 +377,29 @@ public class BatteryMeterView extends View implements DemoMode {
             final float x = mWidth * 0.5f;
             final float y = (mHeight + mWarningTextHeight) * 0.48f;
             c.drawText(mWarningString, x, y, mWarningTextPaint);
-        } else if (mShowPercent) {
-            if (mTextOnly) {
-                DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        }
+        if (mShowPercent && !(mBatteryStyle == BATTERY_STYLE_NORMAL && !mShowMiniIcon && tracker.plugged)) {
+            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+            if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
+                if(mShowMiniIcon) {
+                    if (mBatteryTypeView.equals("statusbar")) {
+                        mTextPaint.setTextSize(height *
+                                (SINGLE_DIGIT_PERCENT ? 0.95f
+                                        : (tracker.level == 100 ? 0.58f : 0.7f)));
+                    } else if (mBatteryTypeView.equals("quicksettings")) {
+                        mTextPaint.setTextSize((int) (metrics.density * 14f + 0.5f));
+                    }
+                } else {
+                    mTextPaint.setTextSize(height *
+                            (SINGLE_DIGIT_PERCENT ? 0.75f
+                                    : (tracker.level == 100 ? 0.38f : 0.5f)));
+                }
+            } else if (mTextOnly) {
                 if (mBatteryTypeView.equals("statusbar")) {
                     mTextPaint.setTextSize((int) (metrics.density * 16f));
                 } else if (mBatteryTypeView.equals("quicksettings")) {
                     mTextPaint.setTextSize((int) (metrics.density * 22f + 0.5f));
                 }
-            } else {
-                mTextPaint.setTextSize(height *
-                        (SINGLE_DIGIT_PERCENT ? 0.75f
-                                : (tracker.level == 100 ? 0.38f : 0.5f)));
             }
             mTextHeight = -mTextPaint.getFontMetrics().ascent;
 
@@ -392,7 +409,18 @@ public class BatteryMeterView extends View implements DemoMode {
             } else {
                 str = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
             }
-            final float x = mWidth * 0.5f;
+            final float x;
+            if (mShowMiniIcon && !mTextOnly && mShowPercent) {
+              if (mBatteryTypeView.equals("statusbar")) {
+                x = (mWidth * 0.5f) - (mWidth * 0.25f);
+              } else if (mBatteryTypeView.equals("quicksettings")) {
+                x = (mWidth * 0.5f) - (mWidth * 0.2f);
+              } else {
+                x = mWidth * 0.5f;
+              }
+            } else {
+              x = mWidth * 0.5f;
+            }
             final float y = (mHeight + mTextHeight) * 0.47f;
             c.drawText(str,
                     x,
@@ -437,6 +465,9 @@ public class BatteryMeterView extends View implements DemoMode {
         mBatteryStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2,
                 UserHandle.USER_CURRENT);
+        mShowMiniIcon = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_MINI_ICON, 0,
+                UserHandle.USER_CURRENT) == 1;
         mShowPercent = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1,
                 UserHandle.USER_CURRENT) == 1;
@@ -445,6 +476,9 @@ public class BatteryMeterView extends View implements DemoMode {
                 UserHandle.USER_CURRENT) == 1;
         mCustomFrameColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mCustomHightColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_TEXT_HIGHT_COLOR, 1,
                 UserHandle.USER_CURRENT) == 1;
 
         int defaultFrameColor = mContext.getResources().getColor(
@@ -462,6 +496,9 @@ public class BatteryMeterView extends View implements DemoMode {
         mBatteryTextColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR,
                 defaultTextColor, UserHandle.USER_CURRENT);
+        mBatteryTextHightColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_HIGHT_COLOR,
+                defaultChargingColor, UserHandle.USER_CURRENT);
         mBatteryTextChargingColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR,
                 defaultChargingColor, UserHandle.USER_CURRENT);
@@ -494,7 +531,11 @@ public class BatteryMeterView extends View implements DemoMode {
                                 + 0.5f;
                     }
                 } else {
-                    width = metrics.density * 10.5f + 0.5f;
+                    if (mShowMiniIcon) {
+                        width = metrics.density * (mShowPercent ? 22f : 7f) + 0.5f;
+                    } else {
+                        width = metrics.density * 10.5f + 0.5f;
+                    }
                 }
                 lp = new LinearLayout.LayoutParams((int) width, (int) height);
                 lp.setMarginStart((int) (metrics.density * 6f + 0.5f));
@@ -504,7 +545,11 @@ public class BatteryMeterView extends View implements DemoMode {
                 if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
                     width = metrics.density * 52f + 0.5f;
                 } else {
-                    width = metrics.density * 22f + 0.5f;
+                    if (mShowMiniIcon) {
+                        width = metrics.density * (mShowPercent ? 37f : 16f) + 0.5f;
+                    } else {
+                        width = metrics.density * 22f + 0.5f;
+                    }
                 }
                 lp = new LinearLayout.LayoutParams((int) width, (int) height);
                 lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
@@ -524,6 +569,9 @@ public class BatteryMeterView extends View implements DemoMode {
         if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
             mShowIcon = true;
             SHOW_100_PERCENT = mShowPercent ? true : false;
+            if (mShowMiniIcon) {
+                font = Typeface.create("sans-serif", Typeface.NORMAL);
+            }
         } else if (mBatteryStyle == BATTERY_STYLE_PERCENT) {
             mShowIcon = false;
             mShowPercent = true;
@@ -537,19 +585,25 @@ public class BatteryMeterView extends View implements DemoMode {
 
         if (tracker.level <= mWarningLevel && !tracker.plugged) {
             mBatteryPaint.setColor(Color.RED);
+            mFramePaint.setColor(Color.RED);
+            mFramePaint.setAlpha(51);
             mTextPaint.setColor(Color.RED);
         } else {
             mBatteryPaint.setColor(mBatteryColor);
-            mTextPaint.setColor(tracker.plugged ? mBatteryTextChargingColor : mBatteryTextColor);
+            if (!mCustomFrameColor) {
+                mFramePaint.setColor(mBatteryPaint.getColor());
+                mFramePaint.setAlpha(51);
+            } else {
+                mFramePaint.setColor(mFrameColor);
+            }
+            if (mCustomHightColor && tracker.level >= 90 && !tracker.plugged) {
+                mTextPaint.setColor(mBatteryTextHightColor);
+            } else {
+                mTextPaint.setColor(tracker.plugged ? mBatteryTextChargingColor : mBatteryTextColor);
+            }
             if (tracker.plugged) {
                 mBoltPaint.setColor(mBatteryTextChargingColor);
             }
-        }
-        if (!mCustomFrameColor) {
-            mFramePaint.setColor(mBatteryPaint.getColor());
-            mFramePaint.setAlpha(51);
-        } else {
-            mFramePaint.setColor(mFrameColor);
         }
 
         postInvalidate();

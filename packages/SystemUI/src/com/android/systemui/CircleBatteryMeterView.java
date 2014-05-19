@@ -94,9 +94,11 @@ public class CircleBatteryMeterView extends ImageView {
     private int mDotInterval;
     private int mDotOffset;
     private boolean mCustomThinRingColor;
+    private boolean mCustomHightColor;
     private int mThinRingColor;
     private int mCircleColor;
     private int mCircleTextColor;
+    private int mCircleTextHightColor;
     private int mCircleTextChargingColor;
     private int mCircleAnimSpeed;
 
@@ -288,6 +290,9 @@ public class CircleBatteryMeterView extends ImageView {
         mDotOffset = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CIRCLE_DOT_OFFSET, 0,
                 UserHandle.USER_CURRENT);
+        mCustomHightColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_CUSTOM_TEXT_HIGHT_COLOR, 1,
+                UserHandle.USER_CURRENT) == 1;
 
         int defaultThinRingColor = mContext.getResources().getColor(
                 com.android.systemui.R.color.batterymeter_frame_color);
@@ -304,6 +309,9 @@ public class CircleBatteryMeterView extends ImageView {
         mCircleTextColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR,
                 defaultColor, UserHandle.USER_CURRENT);
+        mCircleTextHightColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_HIGHT_COLOR,
+                defaultTextChargingColor, UserHandle.USER_CURRENT);
         mCircleTextChargingColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR,
                 defaultTextChargingColor, UserHandle.USER_CURRENT);
@@ -359,24 +367,26 @@ public class CircleBatteryMeterView extends ImageView {
 
     private void updateColors() {
 
+        int thinRingColor = mThinRingColor;
         int statusColor = mCircleColor;
         int textColor = mCircleTextColor;
 
         if (mLevel <= mWarningLevel && !mIsCharging) {
+            thinRingColor = Color.RED;
             statusColor = Color.RED;
             textColor = Color.RED;
+        } else if (mLevel >= 90 && mCustomHightColor && !mIsCharging) {
+            textColor = mCircleTextHightColor;
         } else if (mIsCharging) {
             textColor = mCircleTextChargingColor;
+        } else if (!mCustomThinRingColor) {
+            thinRingColor = statusColor;
         }
 
-        mPaintFont.setColor(textColor);
+        mPaintThinRing.setColor(thinRingColor);
+        mPaintThinRing.setAlpha(51);
         mPaintStatus.setColor(statusColor);
-        if (!mCustomThinRingColor) {
-            mPaintThinRing.setColor(mPaintStatus.getColor());
-            mPaintThinRing.setAlpha(51);
-        } else {
-            mPaintThinRing.setColor(mThinRingColor);
-        }
+        mPaintFont.setColor(textColor);
     }
 
     /**

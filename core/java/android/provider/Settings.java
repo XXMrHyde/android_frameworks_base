@@ -3007,31 +3007,31 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "battery_status_style";
 
         /**
+         * Whether to show a smaler version of the battery status icon
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_MINI_ICON = "battery_status_show_mini_icon";
+
+        /**
          * Whether to show a battery status text
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "battery_status_show_text";
 
         /**
-         * Whether to show a battery status text
+         * Whether to show the percent sign for battery status text (only)
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_SHOW_PERCENTAGE_SIGN = "battery_status_show_percentage_sign";
 
         /**
-         * Whether to use a custom color for the battery frame
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR = "battery_custom_frame_color";
-
-        /**
-         * Whether to show the Circle battery status dotted in statusbar
+         * Whether to show the Circle battery status dotted
          * @hide
          */
         public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
 
         /**
-         * Length of the Circle battery status dots in statusbar, (if enabled "dotted")
+         * Length of the Circle battery status dots, (if enabled "dotted")
          *
          * Values 0 - 10
          * default : 3
@@ -3041,7 +3041,7 @@ public final class Settings {
         public static final String STATUS_BAR_CIRCLE_DOT_LENGTH = "battery_circle_dot_length";
 
         /**
-         * Interval of the Circle battery status dots in statusbar, (if enabled "dotted")
+         * Interval of the Circle battery status dots, (if enabled "dotted")
          *
          * Values 0 - 10
          * default : 2
@@ -3051,7 +3051,7 @@ public final class Settings {
         public static final String STATUS_BAR_CIRCLE_DOT_INTERVAL = "battery_circle_dot_interval";
 
         /**
-         * Offset of the Circle battery status dots in statusbar, (if enabled "dotted")
+         * Offset of the Circle battery status dots, (if enabled "dotted")
          *
          * Values 0 - 10
          * default : 0
@@ -3061,34 +3061,54 @@ public final class Settings {
         public static final String STATUS_BAR_CIRCLE_DOT_OFFSET = "battery_circle_dot_offset";
 
         /**
-         *Battery fill icon color in statusbar
+         * Circle battery animation speed during charge
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
+
+        /**
+         * Whether to use a custom color for the battery frame
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_CUSTOM_FRAME_COLOR = "battery_custom_frame_color";
+
+        /**
+         * Whether to use a custom color for the battery text
+         * (battery level >= 90)
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_CUSTOM_TEXT_HIGHT_COLOR = "battery_custom_hight_color";
+
+        /**
+         *Battery fill color
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_COLOR = "battery_status_color";
 
         /**
-         * Battery empty icon color in statusbar
+         * Battery frame color
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_FRAME_COLOR = "battery_frame_color";
 
         /**
-         * Battery icon text color in statusbar
+         * Battery text color
+         * (battery level >= 90)
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_HIGHT_COLOR = "battery_text_hight_color";
+
+        /**
+         * Battery text color
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "battery_text_color";
 
         /**
-         * Battery icon text charging color in statusbar
+         * Battery text charging color
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR = "battery_text_charging_color";
-
-        /**
-         * Circle battery animation speed during charge in statusbar
-         * @hide
-         */
-        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
 
         /**
          * Show/hide battery bar
