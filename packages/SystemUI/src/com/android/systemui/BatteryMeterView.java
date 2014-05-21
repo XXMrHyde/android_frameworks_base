@@ -539,6 +539,7 @@ public class BatteryMeterView extends View implements DemoMode {
                 }
                 lp = new LinearLayout.LayoutParams((int) width, (int) height);
                 lp.setMarginStart((int) (metrics.density * 6f + 0.5f));
+                lp.setMargins(0, 0, 0, (int) (metrics.density * 0.5f + 0.5f));
                 setLayoutParams(lp);
             } else if (mBatteryTypeView.equals("quicksettings")) {
                 height = metrics.density * 32f + 0.5f;
@@ -553,8 +554,6 @@ public class BatteryMeterView extends View implements DemoMode {
                 }
                 lp = new LinearLayout.LayoutParams((int) width, (int) height);
                 lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-                lp.setMargins(0, res.getDimensionPixelSize(R.dimen.qs_tile_margin_above_icon),
-                    0, res.getDimensionPixelSize(R.dimen.qs_tile_margin_below_icon));
                 setLayoutParams(lp);
             }
 

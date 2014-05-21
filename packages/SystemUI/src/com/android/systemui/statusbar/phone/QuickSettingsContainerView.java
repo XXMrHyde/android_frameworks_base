@@ -97,20 +97,20 @@ public class QuickSettingsContainerView extends FrameLayout {
         }
         // Calculate the cell width dynamically
         int width = MeasureSpec.getSize(widthMeasureSpec);
-
         int availableWidth = (int) (width - getPaddingLeft() - getPaddingRight() -
                 (mNumFinalColumns - 1) * mCellGap);
         float cellWidth = (float) Math.ceil(((float) availableWidth) / mNumFinalColumns);
 
         int cellHeight = 0;
+        int height = 0;
         float cellGap = mCellGap;
 
         if (mSingleRow) {
             cellWidth = MeasureSpec.getSize(heightMeasureSpec);
-            cellHeight = (int) cellWidth;
+            height = (int) cellWidth;
             cellGap /= 2;
         } else {
-            cellHeight = (int) getResources().getDimension(R.dimen.quick_settings_cell_height);
+            height = MeasureSpec.getSize(heightMeasureSpec);
         }
 
         // Update each of the children's widths accordingly to the cell width
@@ -124,9 +124,11 @@ public class QuickSettingsContainerView extends FrameLayout {
                 ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
                 int colSpan = v.getColumnSpan();
                 lp.width = (int) ((colSpan * cellWidth) + (colSpan - 1) * cellGap);
-                lp.height = cellHeight;
+                if (mSingleRow) {
+                    lp.height = height;
+                }
 
-                if (mNumFinalColumns > 3 && !isLandscape()) {
+                if (mNumFinalColumns > 3 && !isLandscape() || !mSingleRow) {
                     lp.height = (lp.width * mNumFinalColumns - 1) / mNumFinalColumns;
                 }
 
@@ -135,6 +137,10 @@ public class QuickSettingsContainerView extends FrameLayout {
                 int newHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
                 v.measure(newWidthSpec, newHeightSpec);
 
+                // Save the cell height
+                if (cellHeight <= 0) {
+                    cellHeight = v.getMeasuredHeight();
+                }
                 cursor += colSpan;
                 totalWidth += v.getMeasuredWidth() + cellGap;
             }
