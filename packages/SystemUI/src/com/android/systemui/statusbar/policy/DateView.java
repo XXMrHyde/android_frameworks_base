@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -49,8 +50,6 @@ public class DateView extends TextView {
     private String mLastText;
     private SettingsObserver mObserver;
     private boolean mAttachedToWindow;
-
-    protected int mClockDateColor = 0xffffffff;
 
     Handler mHandler;
 
@@ -153,14 +152,15 @@ public class DateView extends TextView {
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mClockDateColor = Settings.System.getIntForUser(resolver,
+        int clockDateColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff,
                 UserHandle.USER_CURRENT);
 
         if (mAttachedToWindow) {
             updateClock();
         }
-
-        setTextColor(mClockDateColor);
+        getBackground().setColorFilter(null);
+        getBackground().setColorFilter(clockDateColor, Mode.MULTIPLY);
+        setTextColor(clockDateColor);
     }
 }

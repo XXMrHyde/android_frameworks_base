@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserHandle;
@@ -60,8 +61,6 @@ public class ClockExpanded extends TextView implements DemoMode {
 
     private static final int AM_PM_STYLE = AM_PM_STYLE_GONE;
 
-    protected int mClockDateColor = 0xffffffff;
-
     Handler mHandler;
 
     protected class SettingsObserver extends ContentObserver {
@@ -99,7 +98,6 @@ public class ClockExpanded extends TextView implements DemoMode {
 
         mHandler = new Handler();
         mObserver = new SettingsObserver(mHandler);
-        updateSettings();
     }
 
     @Override
@@ -266,7 +264,7 @@ public class ClockExpanded extends TextView implements DemoMode {
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mClockDateColor = Settings.System.getIntForUser(resolver,
+        int clockDateColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR, 0xffffffff,
                 UserHandle.USER_CURRENT);
 
@@ -274,7 +272,9 @@ public class ClockExpanded extends TextView implements DemoMode {
             updateClock();
         }
 
-        setTextColor(mClockDateColor);
+        getBackground().setColorFilter(null);
+        getBackground().setColorFilter(clockDateColor, Mode.MULTIPLY);
+        setTextColor(clockDateColor);
     }
 }
 

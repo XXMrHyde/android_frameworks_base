@@ -3293,16 +3293,28 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_BG_ALPHA = "notification_background_alpha";
 
         /**
+         * Always show the settings button at the status bar expanded header
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+
+        /**
+         * Color of the status bar expanded header background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR = "status_bar_expanded_header_background_color";
+
+        /**
          * Color of the status bar expanded clock and date
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_CLOCK_DATE_COLOR = "status_bar_expanded_clock_date_color";
 
         /**
-         * Always show the settings button at the status bar expanded header
+         * Color of the status bar expanded header buttons
          * @hide
          */
-        public static final String STATUS_BAR_EXPANDED_SETTINGS_BUTTON = "status_bar_expanded_settings_button";
+        public static final String STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR = "status_bar_expanded_header_buttons_color";
 
         /**
          * Whether to show the quick access ribbons

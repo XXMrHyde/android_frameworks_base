@@ -51,6 +51,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
@@ -429,6 +430,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.STATUS_BAR_EXPANDED_SETTINGS_BUTTON),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_BG),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -575,6 +582,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     prepareNavigationBarView();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR))) {
+                updateHeaderColors();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_CAN_MOVE))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVRING_CONFIG))) {
@@ -639,6 +651,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         if (mQS != null) {
             mQS.setupQuickSettings();
         }
+    }
+
+    private void updateHeaderColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int headerBgColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
+        int headerButtonsColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mNotificationPanelHeader != null) {
+            mNotificationPanelHeader.setBackground(new FastColorDrawable(headerBgColor));
+        }
+        if (mClearButton != null) {
+            setHeaderButtonColors((ImageView) mClearButton, headerButtonsColor);
+        }
+        if (mSettingsButton != null) {
+            setHeaderButtonColors(mSettingsButton, headerButtonsColor);
+        }
+        if (mQuickSettingsButton != null) {
+            setHeaderButtonColors(mQuickSettingsButton, headerButtonsColor);
+        }
+        if (mNotificationButton != null) {
+            setHeaderButtonColors(mNotificationButton, headerButtonsColor);
+        }
+
+    }
+
+    private void setHeaderButtonColors(ImageView iv, int color) {
+        iv.getBackground().setColorFilter(null);
+        iv.setColorFilter(null);
+        iv.getBackground().setColorFilter(color, Mode.MULTIPLY);
+        iv.setColorFilter(color, Mode.MULTIPLY);
     }
 
     private void updateSettings() {
@@ -1009,6 +1056,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 mNotificationButton.setOnLongClickListener(mNotificationButtonLongListener);
             }
         }
+
+        updateHeaderColors();
 
         mScrollView = (ScrollView)mStatusBarWindow.findViewById(R.id.scroll);
         mScrollView.setVerticalScrollBarEnabled(false); // less drawing during pulldowns
@@ -1552,6 +1601,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
     @Override
     protected void refreshLayout(int layoutDirection) {
+
         if (mNavigationBarView != null) {
             mNavigationBarView.setLayoutDirection(layoutDirection);
         }
@@ -1580,6 +1630,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mNotificationButton.setImageResource(R.drawable.ic_notifications);
         }
 
+        updateHeaderColors();
         refreshAllStatusBarIcons();
     }
 
