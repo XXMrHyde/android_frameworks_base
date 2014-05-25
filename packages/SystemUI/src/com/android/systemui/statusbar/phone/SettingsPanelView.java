@@ -52,7 +52,11 @@ public class SettingsPanelView extends PanelView {
     private QuickSettingsController mQS;
     private QuickSettingsContainerView mQSContainer;
 
+    Drawable mHandleBarBackground;
     Drawable mHandleBar;
+    int mHandleBackgroundColor;
+    int mHandleBackgroundAlpha;
+    int mHandleBarColor;
     int mHandleBarHeight;
     View mHandleView;
     Drawable mBackgroundDrawable;
@@ -69,6 +73,7 @@ public class SettingsPanelView extends PanelView {
         mQSContainer = (QuickSettingsContainerView) findViewById(R.id.quick_settings_container);
 
         Resources resources = getContext().getResources();
+        mHandleBarBackground = resources.getDrawable(R.drawable.status_bar_close_background);
         mHandleBar = resources.getDrawable(R.drawable.status_bar_close);
         mHandleBarHeight = resources.getDimensionPixelSize(R.dimen.close_handle_height);
         mHandleView = findViewById(R.id.handle);
@@ -145,6 +150,7 @@ public class SettingsPanelView extends PanelView {
         if (changed) {
             final int pl = getPaddingLeft();
             final int pr = getPaddingRight();
+            mHandleBarBackground.setBounds(pl, 0, getWidth() - pr, (int) mHandleBarHeight);
             mHandleBar.setBounds(pl, 0, getWidth() - pr, (int) mHandleBarHeight);
         }
     }
@@ -154,7 +160,14 @@ public class SettingsPanelView extends PanelView {
         super.draw(canvas);
         final int off = (int) (getHeight() - mHandleBarHeight - getPaddingBottom());
         canvas.translate(0, off);
+        setCloseHandleDrawablesColor();
+        mHandleBarBackground.setColorFilter(null);
+        mHandleBarBackground.setColorFilter(mHandleBackgroundColor, Mode.MULTIPLY);
+        mHandleBarBackground.setAlpha(mHandleBackgroundAlpha);
+        mHandleBarBackground.draw(canvas);
         mHandleBar.setState(mHandleView.getDrawableState());
+        mHandleBar.setColorFilter(null);
+        mHandleBar.setColorFilter(mHandleBarColor, Mode.MULTIPLY);
         mHandleBar.draw(canvas);
         canvas.translate(0, -off);
     }
@@ -218,5 +231,23 @@ public class SettingsPanelView extends PanelView {
             mBackgroundDrawable.setAlpha(backgroundAlpha);
             mBackground.setImageDrawable(mBackgroundDrawable);
         }
+    }
+
+    protected void setCloseHandleDrawablesColor() {
+        mHandleBackgroundColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR,
+                0xff0c0c0c, UserHandle.USER_CURRENT);
+
+        float alpha = Settings.System.getFloatForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_ALPHA,
+                0f, UserHandle.USER_CURRENT);
+        mHandleBackgroundAlpha = (int) ((1 - alpha) * 255);
+
+        mHandleBarColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BAR_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
     }
 }

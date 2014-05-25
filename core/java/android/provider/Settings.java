@@ -3500,6 +3500,25 @@ public final class Settings {
          */
         public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
 
+
+        /**
+         * Close handle background color on expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR = "close_handle_background_color";
+
+        /**
+         * Close handle background alpha on expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_ALPHA = "close_handle_background_alpha";
+
+        /**
+         * Close handle bar color on expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOSE_HANDLE_BAR_COLOR = "close_handle_bar_color";
+
         /**
          * Whether to enable quiet hours.
          * @hide
