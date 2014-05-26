@@ -3272,7 +3272,20 @@ public final class Settings {
          * Show the pending notification counts as overlays on the status bar
          * @hide
          */
-        public static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
+        public static final String STATUS_BAR_SHOW_NOTIF_COUNT = "status_bar_show_notif_count";
+
+        /**
+         * Color of the status bar notif count icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_ICON_COLOR = "status_bar_notif_count_icon_color";
+
+        /**
+         * Color of the status bar notif count text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
+
 
         /**
          * Sets the portrait background of notification drawer
