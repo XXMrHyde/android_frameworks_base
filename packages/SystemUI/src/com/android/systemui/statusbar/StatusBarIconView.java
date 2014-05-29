@@ -22,11 +22,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.DrawableContainer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuff.Mode;
 import android.os.UserHandle;
 import android.os.Handler;
@@ -180,7 +183,15 @@ public class StatusBarIconView extends AnimatedImageView {
                        Mode.MULTIPLY);
             setImageDrawable(drawable);
         } else if (mNotification != null && mColorizeNotifIcons) {
-            setImageBitmap(ImageHelper.getColoredBitmap(drawable, mIconColor));
+            if (drawable instanceof AnimationDrawable) {
+                PorterDuffColorFilter cf =
+                    new PorterDuffColorFilter(mIconColor, Mode.MULTIPLY);
+                ((DrawableContainer)drawable).setColorFilter(mIconColor,
+                       Mode.MULTIPLY);
+                setImageDrawable(drawable);
+            } else {
+                setImageBitmap(ImageHelper.getColoredBitmap(drawable, mIconColor));
+            }
         } else {
             setImageDrawable(drawable);
         }
