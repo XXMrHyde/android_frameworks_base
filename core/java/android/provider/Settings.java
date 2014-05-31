@@ -3287,6 +3287,12 @@ public final class Settings {
         public static final String STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR = "status_bar_notif_system_icon_color";
 
         /**
+         * Color of the status bar notification text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_TEXT_COLOR = "status_bar_notif_text_color";
+
+        /**
          * Color of the status bar notification count icon
          * @hide
          */
