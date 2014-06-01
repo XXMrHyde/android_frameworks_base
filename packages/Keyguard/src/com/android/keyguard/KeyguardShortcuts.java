@@ -37,9 +37,9 @@ import android.widget.TextView;
 
 import com.android.internal.R;
 import com.android.internal.util.darkkat.AppHelper;
-import com.android.internal.util.darkkat.ButtonsHelper;
 import com.android.internal.util.darkkat.ButtonConfig;
 import com.android.internal.util.darkkat.DeviceUtils;
+import com.android.internal.util.darkkat.LockscreenShortcutHelper;
 import com.android.internal.util.darkkat.LockscreenTargetUtils;
 import com.android.internal.util.darkkat.DkActions;
 
@@ -78,7 +78,7 @@ public class KeyguardShortcuts extends LinearLayout {
     }
 
     private void createShortcuts() {
-        ArrayList<ButtonConfig> buttonsConfig = ButtonsHelper.getLockscreenShortcutConfig(mContext);
+        ArrayList<ButtonConfig> buttonsConfig = LockscreenShortcutHelper.getLockscreenShortcutConfig(mContext);
         if (buttonsConfig.size() == 0 ||
                 !DeviceUtils.isPhone(mContext) ||
                 LockscreenTargetUtils.isEightTargets(mContext)) {
@@ -100,7 +100,7 @@ public class KeyguardShortcuts extends LinearLayout {
             LinearLayout.LayoutParams vp =
                     new LinearLayout.LayoutParams(dimens, dimens);
             i.setLayoutParams(vp);
-            i.setImageDrawable(ButtonsHelper.getButtonIconImage(
+            i.setImageDrawable(LockscreenShortcutHelper.getLockscreenShortcutIconImage(
                     mContext, buttonConfig.getClickAction(), buttonConfig.getIcon()));
 
             i.setContentDescription(AppHelper.getFriendlyNameForUri(

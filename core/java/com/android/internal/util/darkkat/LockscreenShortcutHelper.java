@@ -34,91 +34,45 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-public class ButtonsHelper {
+public class LockscreenShortcutHelper {
 
     private static final String SYSTEM_METADATA_NAME = "android";
     private static final String SYSTEMUI_METADATA_NAME = "com.android.systemui";
-    private static final String SETTINGS_METADATA_NAME = "com.android.settings";
 
-    // get and set the navbar configs from provider and return propper arraylist objects
+    // get and set the lockcreen shortcut configs from provider and return propper arraylist objects
     // @ButtonConfig
-    public static ArrayList<ButtonConfig> getNavBarConfig(Context context) {
-        return (ConfigSplitHelper.getButtonsConfigValues(context,
-            getNavBarProvider(context), null, null, false));
-    }
-
-    // get @ButtonConfig with description if needed and other then an app description
-    public static ArrayList<ButtonConfig> getNavBarConfigWithDescription(
-            Context context, String values, String entries) {
-        return (ConfigSplitHelper.getButtonsConfigValues(context,
-            getNavBarProvider(context), values, entries, false));
-    }
-
-    private static String getNavBarProvider(Context context) {
+    public static ArrayList<ButtonConfig> getLockscreenShortcutConfig(Context context) {
         String config = Settings.System.getStringForUser(
                     context.getContentResolver(),
-                    Settings.System.NAVIGATION_BAR_CONFIG,
+                    Settings.System.LOCKSCREEN_SHORTCUTS,
                     UserHandle.USER_CURRENT);
         if (config == null) {
-            config = ButtonsConstants.NAVIGATION_CONFIG_DEFAULT;
+            config = "";
         }
-        return config;
+
+        return (ConfigSplitHelper.getButtonsConfigValues(context, config, null, null, true));
     }
 
-    public static void setNavBarConfig(Context context,
+    public static void setLockscreenShortcutConfig(Context context,
             ArrayList<ButtonConfig> buttonsConfig, boolean reset) {
         String config;
         if (reset) {
-            config = ButtonsConstants.NAVIGATION_CONFIG_DEFAULT;
+            config = "";
         } else {
-            config = ConfigSplitHelper.setButtonsConfig(buttonsConfig, false);
+            config = ConfigSplitHelper.setButtonsConfig(buttonsConfig, true);
         }
         Settings.System.putString(context.getContentResolver(),
-                    Settings.System.NAVIGATION_BAR_CONFIG,
-                    config);
+                    Settings.System.LOCKSCREEN_SHORTCUTS, config);
     }
 
-    // get and set the navring configs from provider and return propper arraylist objects
-    // @ButtonConfig
-    public static ArrayList<ButtonConfig> getNavRingConfig(Context context) {
-        return (ConfigSplitHelper.getButtonsConfigValues(context,
-            getNavRingProvider(context), null, null, false));
-    }
-
-    public static ArrayList<ButtonConfig> getNavRingConfigWithDescription(
-            Context context, String values, String entries) {
-        return (ConfigSplitHelper.getButtonsConfigValues(context,
-            getNavRingProvider(context), values, entries, false));
-    }
-
-    private static String getNavRingProvider(Context context) {
-        String config = Settings.System.getStringForUser(
-                    context.getContentResolver(),
-                    Settings.System.NAVRING_CONFIG,
-                    UserHandle.USER_CURRENT);
-        if (config == null) {
-            config = ButtonsConstants.NAV_RING_CONFIG_DEFAULT;
-        }
-        return config;
-    }
-
-    public static void setNavRingConfig(Context context,
-            ArrayList<ButtonConfig> buttonsConfig, boolean reset) {
-        String config;
-        if (reset) {
-            config = ButtonsConstants.NAV_RING_CONFIG_DEFAULT;
-        } else {
-            config = ConfigSplitHelper.setButtonsConfig(buttonsConfig, false);
-        }
-        Settings.System.putString(context.getContentResolver(),
-                    Settings.System.NAVRING_CONFIG,
-                    config);
-    }
-
-    public static Drawable getButtonIconImage(Context context,
+    public static Drawable getLockscreenShortcutIconImage(Context context,
             String clickAction, String customIcon) {
         int resId = -1;
+        int defaultIconColor = 0xffffffff;
+        int iconColor = defaultIconColor;
+        int colorMode = 3;
         Drawable d = null;
+        Drawable dError = null;
         PackageManager pm = context.getPackageManager();
         if (pm == null) {
             return null;
@@ -132,6 +86,15 @@ public class ButtonsHelper {
             return null;
         }
 
+        colorMode = Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_SHORTCUTS_ICON_COLOR_MODE, 3,
+                UserHandle.USER_CURRENT);
+        iconColor = Settings.System.getIntForUser(
+                context.getContentResolver(),
+                Settings.System.LOCKSCREEN_SHORTCUTS_ICON_COLOR, defaultIconColor,
+                UserHandle.USER_CURRENT);
+
         if (!clickAction.startsWith("**")) {
             try {
                 d = pm.getActivityIcon(Intent.parseUri(clickAction, 0));
@@ -139,66 +102,72 @@ public class ButtonsHelper {
                 resId = systemUiResources.getIdentifier(
                     SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_null", null, null);
                 if (resId > 0) {
-                    d = systemUiResources.getDrawable(resId);
-                    return d;
+                    dError = systemUiResources.getDrawable(resId);
+                    if (colorMode != 3 && colorMode == 0) {
+                        dError = new BitmapDrawable(
+                            ImageHelper.getColoredBitmap(dError, iconColor));
+                    }
                 }
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
         }
 
+        boolean coloring = false;
         if (customIcon != null && customIcon.startsWith(ButtonsConstants.SYSTEM_ICON_IDENTIFIER)) {
             resId = systemUiResources.getIdentifier(customIcon.substring(
                         ButtonsConstants.SYSTEM_ICON_IDENTIFIER.length()), "drawable", "android");
             if (resId > 0) {
-                return systemUiResources.getDrawable(resId);
+                d = systemUiResources.getDrawable(resId);
+                if (colorMode != 3) {
+                    coloring = true;
+                }
             }
         } else if (customIcon != null && !customIcon.equals(ButtonsConstants.ICON_EMPTY)) {
             File f = new File(Uri.parse(customIcon).getPath());
             if (f.exists()) {
-                return new BitmapDrawable(context.getResources(),
-                    ImageHelper.getRoundedCornerBitmap(
+                d = new BitmapDrawable(context.getResources(),
+                        ImageHelper.getRoundedCornerBitmap(
                         new BitmapDrawable(context.getResources(),
                         f.getAbsolutePath()).getBitmap()));
+                if (colorMode != 3 && colorMode != 1) {
+                    coloring = true;
+                }
             } else {
-                Log.e("ButtonsHelper:", "can't access custom icon image");
+                Log.e("LockscreenShortcutHelper:", "can't access custom icon image");
                 return null;
             }
         } else if (clickAction.startsWith("**")) {
-            resId = getButtonsSystemIcon(systemUiResources, clickAction);
-
-            if (resId > 0) {
-                return systemUiResources.getDrawable(resId);
+            d = systemUiResources.getDrawable(
+                    getLockscreenShortcutSystemIcon(systemUiResources, clickAction));
+            if (colorMode != 3) {
+                coloring = true;
             }
+        } else if (colorMode != 3 && colorMode == 0) {
+            coloring = true;
         }
-        return d;
+        if (dError == null) {
+            if (coloring) {
+                d = new BitmapDrawable(ImageHelper.getColoredBitmap(d, iconColor));
+            }
+            return d;
+        } else {
+            return dError;
+        }
     }
 
-    private static int getButtonsSystemIcon(Resources systemUiResources, String clickAction) {
+    private static int getLockscreenShortcutSystemIcon(Resources systemUiResources, String clickAction) {
         int resId = -1;
 
-        if (clickAction.equals(ButtonsConstants.ACTION_HOME)) {
-            resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_home", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_BACK)) {
-            resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_back", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_RECENTS)) {
+        if (clickAction.equals(ButtonsConstants.ACTION_RECENTS)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_recent", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_SEARCH)
-                || clickAction.equals(ButtonsConstants.ACTION_ASSIST)) {
+        } else if (clickAction.equals(ButtonsConstants.ACTION_ASSIST)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_search", null, null);
         } else if (clickAction.equals(ButtonsConstants.ACTION_SCREENSHOT)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_screenshot", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_MENU)) {
-            resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_MENU_BIG)) {
-            resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu_big", null, null);
         } else if (clickAction.equals(ButtonsConstants.ACTION_IME)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ime_switcher", null, null);
@@ -235,9 +204,6 @@ public class ButtonsHelper {
         } else if (clickAction.equals(ButtonsConstants.ACTION_TORCH)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_torch", null, null);
-        } else if (clickAction.equals(ButtonsConstants.ACTION_THEME_SWITCH)) {
-            resId = systemUiResources.getIdentifier(
-                        SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_theme_switch", null, null);
         } else {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_null", null, null);

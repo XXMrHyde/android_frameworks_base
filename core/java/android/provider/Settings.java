@@ -2680,6 +2680,20 @@ public final class Settings {
         public static final String LOCKSCREEN_SHORTCUTS_LONGPRESS = "lockscreen_shortcuts_longpress";
 
         /**
+         * Icon color mode for lockscreen shortcuts
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHORTCUTS_ICON_COLOR_MODE = "power_menu_icon_color_mode";
+
+        /**
+         * Icon color for lockscreen shortcuts
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_SHORTCUTS_ICON_COLOR = "power_menu_icon_color";
+
+        /**
          * Weather to minimize lockscreen challenge on screen turned on
          * @hide
          */
