@@ -88,11 +88,6 @@ public class DeviceUtils {
         return vibrator.hasVibrator();
     }
 
-    // remove network mode tile
-    public static boolean removeTileNetworkmode(Context ctx) {
-        return true;
-    }
-
     public static boolean deviceSupportsTorch(Context context) {
         PackageManager pm = context.getPackageManager();
         try {

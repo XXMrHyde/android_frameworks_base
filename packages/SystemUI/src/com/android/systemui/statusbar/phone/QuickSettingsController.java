@@ -159,7 +159,6 @@ public class QuickSettingsController {
         boolean bluetoothSupported = DeviceUtils.deviceSupportsBluetooth();
         boolean mobileDataSupported = DeviceUtils.deviceSupportsMobileData(mContext);
         boolean torchSupported = DeviceUtils.deviceSupportsTorch(mContext);
-        boolean NetworkmodeSupported = !DeviceUtils.removeTileNetworkmode(mContext);
 
         if (!bluetoothSupported) {
             TILES_DEFAULT.remove(TILE_BLUETOOTH);
@@ -216,7 +215,7 @@ public class QuickSettingsController {
                 qs = new MobileNetworkTile(mContext, this, mStatusBarService.mNetworkController);
             } else if (tile.equals(TILE_LOCKSCREEN)) {
                 qs = new ToggleLockscreenTile(mContext, this);
-            } else if (tile.equals(TILE_NETWORKMODE) && NetworkmodeSupported) {
+            } else if (tile.equals(TILE_NETWORKMODE) && mobileDataSupported) {
                 qs = new MobileNetworkTypeTile(mContext,
                         this, mStatusBarService.mNetworkController);
             } else if (tile.equals(TILE_AUTOROTATE)) {
