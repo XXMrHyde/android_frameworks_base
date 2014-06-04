@@ -1144,6 +1144,9 @@ public final class PowerManagerService extends IPowerManager.Stub
         if (!mSystemReady || mDirty == 0) {
             return;
         }
+        if (!Thread.holdsLock(mLock)) {
+            Slog.wtf(TAG, "Power manager lock was not held when calling updatePowerStateLocked");
+        }
 
         // Phase 0: Basic state updates.
         updateIsPoweredLocked(mDirty);
