@@ -30,6 +30,7 @@ import static com.android.internal.util.darkkat.QSConstants.TILE_EXPANDEDDESKTOP
 import static com.android.internal.util.darkkat.QSConstants.TILE_IMESWITCHER;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCATION;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCKSCREEN;
+import static com.android.internal.util.darkkat.QSConstants.TILE_LTE;
 import static com.android.internal.util.darkkat.QSConstants.TILE_MOBILEDATA;
 import static com.android.internal.util.darkkat.QSConstants.TILE_MUSIC;
 import static com.android.internal.util.darkkat.QSConstants.TILE_NETWORKMODE;
@@ -77,6 +78,7 @@ import com.android.systemui.quicksettings.BugReportTile;
 import com.android.systemui.quicksettings.ExpandedDesktopTile;
 import com.android.systemui.quicksettings.LocationTile;
 import com.android.systemui.quicksettings.InputMethodTile;
+import com.android.systemui.quicksettings.LteTile;
 import com.android.systemui.quicksettings.MobileNetworkTile;
 import com.android.systemui.quicksettings.MobileNetworkTypeTile;
 import com.android.systemui.quicksettings.MusicTile;
@@ -157,6 +159,7 @@ public class QuickSettingsController {
     void loadTiles() {
         // Filter items not compatible with device
         boolean bluetoothSupported = DeviceUtils.deviceSupportsBluetooth();
+        boolean lteSupported = DeviceUtils.deviceSupportsLte(mContext);
         boolean mobileDataSupported = DeviceUtils.deviceSupportsMobileData(mContext);
         boolean torchSupported = DeviceUtils.deviceSupportsTorch(mContext);
 
@@ -168,6 +171,10 @@ public class QuickSettingsController {
             TILES_DEFAULT.remove(TILE_WIFIAP);
             TILES_DEFAULT.remove(TILE_MOBILEDATA);
             TILES_DEFAULT.remove(TILE_NETWORKMODE);
+        }
+
+        if (!lteSupported) {
+            TILES_DEFAULT.remove(TILE_LTE);
         }
 
         if (!torchSupported) {
@@ -215,6 +222,8 @@ public class QuickSettingsController {
                 qs = new MobileNetworkTile(mContext, this, mStatusBarService.mNetworkController);
             } else if (tile.equals(TILE_LOCKSCREEN)) {
                 qs = new ToggleLockscreenTile(mContext, this);
+            } else if (tile.equals(TILE_LTE)) {
+                qs = new LteTile(mContext, this);
             } else if (tile.equals(TILE_NETWORKMODE) && mobileDataSupported) {
                 qs = new MobileNetworkTypeTile(mContext,
                         this, mStatusBarService.mNetworkController);
