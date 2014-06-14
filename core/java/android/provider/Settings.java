@@ -2899,6 +2899,13 @@ public final class Settings {
         public static final String RECENT_BG_COLOR = "recent_bg_color";
 
         /**
+         * Color of the clear all button
+         * 
+         * @hide
+         */
+        public static final String RECENT_CLEAR_ALL_BTN_COLOR = "recent_clear_all_button_color";
+
+        /**
          * Battery warning preferences
          *
          * 0 = show dialog + play sound (default)
