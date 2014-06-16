@@ -80,6 +80,7 @@ public class DkActions {
         }
 
         if (!action.equals(ButtonsConstants.ACTION_QS)
+                && !action.equals(ButtonsConstants.ACTION_SMART_PULLDOWN)
                 && !action.equals(ButtonsConstants.ACTION_NOTIFICATIONS)
                 && !action.equals(ButtonsConstants.ACTION_TORCH)) {
             try {
@@ -178,6 +179,15 @@ public class DkActions {
             }
             try {
                 barService.toggleQSShade();
+            } catch (RemoteException e) {
+            }
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_SMART_PULLDOWN)) {
+            if (isKeyguardShowing && isKeyguardSecure) {
+                return;
+            }
+            try {
+                barService.toggleSmartPulldown();
             } catch (RemoteException e) {
             }
             return;

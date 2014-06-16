@@ -62,6 +62,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_TOGGLE_SCREENSHOT          = 20 << MSG_SHIFT;
     private static final int MSG_TOGGLE_LAST_APP            = 21 << MSG_SHIFT;
     private static final int MSG_TOGGLE_KILL_APP            = 22 << MSG_SHIFT;
+    private static final int MSG_SMART_PULLDOWN             = 23 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -107,6 +108,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void setAutoRotate(boolean enabled);
         public void toggleNotificationShade();
         public void toggleQSShade();
+        public void toggleSmartPulldown();
         public void toggleScreenshot();
         public void toggleLastApp();
         public void toggleKillApp();
@@ -268,6 +270,13 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void toggleSmartPulldown() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SMART_PULLDOWN);
+            mHandler.sendEmptyMessage(MSG_SMART_PULLDOWN);
+        }
+    }
+
     public void toggleScreenshot() {
         synchronized (mList) {
             mHandler.removeMessages(MSG_TOGGLE_SCREENSHOT);
@@ -377,6 +386,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_TOGGLE_QS_SHADE:
                     mCallbacks.toggleQSShade();
+                    break;
+                case MSG_SMART_PULLDOWN:
+                    mCallbacks.toggleSmartPulldown();
                     break;
                 case MSG_TOGGLE_SCREENSHOT:
                     mCallbacks.toggleScreenshot();
