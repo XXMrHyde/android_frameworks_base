@@ -430,7 +430,7 @@ public class CircleBatteryMeterView extends ImageView {
 
         float strokeWidth = mCircleSize / 7f;
         mPaintStatus.setStrokeWidth(strokeWidth);
-        mPaintThinRing.setStrokeWidth(strokeWidth / 3.5f);
+        mPaintThinRing.setStrokeWidth(strokeWidth);
 
         // calculate rectangle for drawArc calls
         int pLeft = getPaddingLeft();
