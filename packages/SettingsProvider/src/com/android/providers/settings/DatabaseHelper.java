@@ -1952,6 +1952,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void loadRibbonSetting(SQLiteStatement stmt) {
+        String tiles = mContext.getResources().getString(R.string.def_quick_settings_ribbon_tiles);
+        if (!TextUtils.isEmpty(tiles)) {
+            loadSetting(stmt, Settings.System.QS_QUICK_ACCESS, "1");
+            loadSetting(stmt, Settings.System.QS_QUICK_ACCESS_LINKED, "0");
+            loadSetting(stmt, Settings.System.QUICK_SETTINGS_RIBBON_TILES, tiles);
+        }
+    }
+
     private void loadHeadsUpSetting(SQLiteStatement stmt) {
         String dndValues = mContext.getResources()
                 .getString(R.string.def_heads_up_notification_dnd_values);
@@ -2014,6 +2023,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             loadIntegerSetting(stmt, Settings.System.POINTER_SPEED,
                     R.integer.def_pointer_speed);
 
+            loadRibbonSetting(stmt);
             loadHeadsUpSetting(stmt);
 
         } finally {
