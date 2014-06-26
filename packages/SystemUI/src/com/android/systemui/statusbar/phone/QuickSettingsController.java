@@ -27,6 +27,7 @@ import static com.android.internal.util.darkkat.QSConstants.TILE_BRIGHTNESS;
 import static com.android.internal.util.darkkat.QSConstants.TILE_BUGREPORT;
 import static com.android.internal.util.darkkat.QSConstants.TILE_DELIMITER;
 import static com.android.internal.util.darkkat.QSConstants.TILE_EXPANDEDDESKTOP;
+import static com.android.internal.util.darkkat.QSConstants.TILE_HEADS_UP;
 import static com.android.internal.util.darkkat.QSConstants.TILE_IMESWITCHER;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCATION;
 import static com.android.internal.util.darkkat.QSConstants.TILE_LOCKSCREEN;
@@ -76,8 +77,9 @@ import com.android.systemui.quicksettings.BluetoothTile;
 import com.android.systemui.quicksettings.BrightnessTile;
 import com.android.systemui.quicksettings.BugReportTile;
 import com.android.systemui.quicksettings.ExpandedDesktopTile;
-import com.android.systemui.quicksettings.LocationTile;
+import com.android.systemui.quicksettings.HeadsUpTile;
 import com.android.systemui.quicksettings.InputMethodTile;
+import com.android.systemui.quicksettings.LocationTile;
 import com.android.systemui.quicksettings.LteTile;
 import com.android.systemui.quicksettings.MobileNetworkTile;
 import com.android.systemui.quicksettings.MobileNetworkTypeTile;
@@ -254,6 +256,8 @@ public class QuickSettingsController {
                 qs = new RebootTile(mContext, this);
             } else if (tile.equals(TILE_QUICKRECORD)) {
                 qs = new QuickRecordTile(mContext, this);
+            } else if (tile.equals(TILE_HEADS_UP)) {
+                qs = new HeadsUpTile(mContext, this);
             }
 
             if (qs != null) {

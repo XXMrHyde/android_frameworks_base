@@ -1955,8 +1955,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void loadRibbonSetting(SQLiteStatement stmt) {
         String tiles = mContext.getResources().getString(R.string.def_quick_settings_ribbon_tiles);
         if (!TextUtils.isEmpty(tiles)) {
-            loadSetting(stmt, Settings.System.QS_QUICK_ACCESS, "1");
-            loadSetting(stmt, Settings.System.QS_QUICK_ACCESS_LINKED, "0");
+            loadSetting(stmt, Settings.System.QAR_SHOW_TILES, "1");
+            loadSetting(stmt, Settings.System.QAR_TILES_LINKED, "0");
             loadSetting(stmt, Settings.System.QUICK_SETTINGS_RIBBON_TILES, tiles);
         }
     }
