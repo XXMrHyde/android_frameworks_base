@@ -3426,6 +3426,20 @@ public final class Settings {
         public static final String HEADS_UP_NOTIFICATION = "heads_up_enabled";
 
         /**
+         * Heads Up Notifications time out
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_TIMEOUT = "heads_up_timeout";
+
+        /**
+         * Heads Up Notifications time out full screen
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_TIMEOUT_FS = "heads_up_timeout_fs";
+
+        /**
          * Which applications to disable heads up notifications in
          *
          * @hide
