@@ -34,6 +34,7 @@ public class Traffic extends TextView {
 
     private boolean mAttached;
     private boolean mTrafficMeterEnable;
+    private boolean mShowIndicatorIcon;
     private boolean mTrafficMeterHide;
     private boolean mShowDl;
     private boolean mShowUl;
@@ -77,6 +78,9 @@ public class Traffic extends TextView {
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_ICON),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE),
@@ -348,6 +352,9 @@ public class Traffic extends TextView {
         int indicator = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR, 2,
                 UserHandle.USER_CURRENT);
+        mShowIndicatorIcon = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_ICON, 1,
+                UserHandle.USER_CURRENT) == 1;
         mIsBit = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0,
                 UserHandle.USER_CURRENT) == 1;
@@ -378,18 +385,23 @@ public class Traffic extends TextView {
     private void updateTrafficDrawable(int color, int state) {
         Drawable trafficDrawable = null;
 
-        if (state == TRAFFIC_UP) {
-            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_up);
-        } else if (state == TRAFFIC_DOWN) {
-            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_down);
-        } else if (state == TRAFFIC_UP_DOWN) {
-            trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_updown);
-        }
+        if (mShowIndicatorIcon) {
+            if (state == TRAFFIC_UP) {
+                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_up);
+            } else if (state == TRAFFIC_DOWN) {
+                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_down);
+            } else if (state == TRAFFIC_UP_DOWN) {
+                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_updown);
+            }
 
-        if (trafficDrawable != null) {
-            trafficDrawable.setColorFilter(color, Mode.MULTIPLY);
+            if (trafficDrawable != null) {
+                trafficDrawable.setColorFilter(color, Mode.MULTIPLY);
+            }
         }
         setCompoundDrawablesWithIntrinsicBounds(
-                null, null, trafficDrawable, null);
+                null,
+                null,
+                mShowIndicatorIcon ? trafficDrawable : null,
+                null);
     }
 }

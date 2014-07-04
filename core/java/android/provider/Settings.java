@@ -3323,6 +3323,12 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_SPEED_INDICATOR = "status_bar_network_speed_indicator";
 
         /**
+         * Show/hide network speed indicator icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_ICON = "status_bar_network_speed_show_icon";
+
+        /**
          * Display network speed indicator value as bit/byte
          * @hide
          */
