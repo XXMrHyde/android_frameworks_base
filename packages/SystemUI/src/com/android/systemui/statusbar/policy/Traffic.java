@@ -33,16 +33,16 @@ public class Traffic extends TextView {
     private static final int TRAFFIC_UP_DOWN = 3;
 
     private boolean mAttached;
-    private boolean mTrafficMeterEnable;
-    private boolean mShowIndicatorIcon;
-    private boolean mTrafficMeterHide;
+    private boolean mEnabled;
+    private boolean mShowIcon;
+    private boolean mHide;
     private boolean mShowDl;
     private boolean mShowUl;
     private int mState = NO_TRAFFIC;
 
-    private int mTrafficIconColor;
+    private int mIconColor;
     private boolean mIsBit;
-    private int mTrafficMeterSummaryTime;
+    private int mSummaryTime;
 
     long totalRxBytes;
     long totalTxBytes;
@@ -221,7 +221,7 @@ public class Traffic extends TextView {
         public void run() {
             long td = SystemClock.elapsedRealtime() - lastUpdateTime;
 
-            if (td == 0 || !mTrafficMeterEnable) {
+            if (td == 0 || !mEnabled) {
                 // we just updated the view, nothing further to do
                 return;
             }
@@ -235,10 +235,10 @@ public class Traffic extends TextView {
             int textSize = txtSizeSingle;
             int state = NO_TRAFFIC;
 
-            if (mTrafficMeterHide && newTxBytes == 0) {
+            if (mHide && newTxBytes == 0) {
                 long trafficBurstTxBytes = currentTxBytes - trafficBurstStartTxBytes;
 
-                if (trafficBurstTxBytes != 0 && mTrafficMeterSummaryTime != 0) {
+                if (trafficBurstTxBytes != 0 && mSummaryTime != 0) {
                     if (mShowUl) {
                         output = formatTraffic(trafficBurstTxBytes, false);
                         state = TRAFFIC_UP;
@@ -248,12 +248,12 @@ public class Traffic extends TextView {
                             "Traffic burst tx ended: " + trafficBurstTxBytes + "B in "
                                     + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
                                     / 1000 + "s");
-                    keepOnUntil = SystemClock.elapsedRealtime() + mTrafficMeterSummaryTime;
+                    keepOnUntil = SystemClock.elapsedRealtime() + mSummaryTime;
                     trafficBurstStartTime = Long.MIN_VALUE;
                     trafficBurstStartTxBytes = currentTxBytes;
                 }
             } else {
-                if (mTrafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
+                if (mHide && trafficBurstStartTime == Long.MIN_VALUE) {
                     trafficBurstStartTime = lastUpdateTime;
                     trafficBurstStartTxBytes = totalTxBytes;
                 }
@@ -263,10 +263,10 @@ public class Traffic extends TextView {
                 }
             }
 
-            if (mTrafficMeterHide && newRxBytes == 0) {
+            if (mHide && newRxBytes == 0) {
                 long trafficBurstRxBytes = currentRxBytes - trafficBurstStartRxBytes;
 
-                if (trafficBurstRxBytes != 0 && mTrafficMeterSummaryTime != 0) {
+                if (trafficBurstRxBytes != 0 && mSummaryTime != 0) {
                     if (mShowDl) {
                         if (output != "") {
                             output += "\n";
@@ -282,12 +282,12 @@ public class Traffic extends TextView {
                             "Traffic burst rx ended: " + trafficBurstRxBytes + "B in "
                                     + (SystemClock.elapsedRealtime() - trafficBurstStartTime)
                                     / 1000 + "s");
-                    keepOnUntil = SystemClock.elapsedRealtime() + mTrafficMeterSummaryTime;
+                    keepOnUntil = SystemClock.elapsedRealtime() + mSummaryTime;
                     trafficBurstStartTime = Long.MIN_VALUE;
                     trafficBurstStartRxBytes = currentRxBytes;
                 }
             } else {
-                if (mTrafficMeterHide && trafficBurstStartTime == Long.MIN_VALUE) {
+                if (mHide && trafficBurstStartTime == Long.MIN_VALUE) {
                     trafficBurstStartTime = lastUpdateTime;
                     trafficBurstStartRxBytes = totalRxBytes;
                 }
@@ -307,12 +307,12 @@ public class Traffic extends TextView {
             setText(output);
             if (mState != state) {
                 mState = state;
-                updateTrafficDrawable(mTrafficIconColor, mState);
+                updateDrawable(mIconColor, mState);
             }
 
             // Hide if there is no traffic
             if (mShowDl || mShowUl) {
-                if (mTrafficMeterHide && newRxBytes == 0 && newTxBytes == 0) {
+                if (mHide && newRxBytes == 0 && newTxBytes == 0) {
                     if (getVisibility() != GONE
                             && keepOnUntil < SystemClock.elapsedRealtime()) {
                         setText("");
@@ -340,35 +340,35 @@ public class Traffic extends TextView {
     public void updateSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mTrafficMeterEnable = Settings.System.getIntForUser(resolver,
+        mEnabled = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mTrafficMeterHide = Settings.System.getIntForUser(resolver,
+        mHide = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC, 1,
                 UserHandle.USER_CURRENT) == 1;
-        mTrafficMeterSummaryTime = Settings.System.getIntForUser(resolver,
+        mSummaryTime = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_TRAFFIC_SUMMARY, 3000,
                 UserHandle.USER_CURRENT);
-        int indicator = Settings.System.getIntForUser(resolver,
+        int indicatorType = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_INDICATOR, 2,
                 UserHandle.USER_CURRENT);
-        mShowIndicatorIcon = Settings.System.getIntForUser(resolver,
+        mShowIcon = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_SHOW_ICON, 1,
                 UserHandle.USER_CURRENT) == 1;
         mIsBit = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_BIT_BYTE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        int trafficTextColor = Settings.System.getIntForUser(resolver,
+        int textColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_TEXT_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
-        mTrafficIconColor = Settings.System.getIntForUser(resolver,
+        mIconColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_SPEED_ICON_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
 
-        mShowDl = (indicator == 0 || indicator == 2) ? true : false;
-        mShowUl = (indicator == 1 || indicator == 2) ? true : false;
+        mShowDl = (indicatorType == 0 || indicatorType == 2) ? true : false;
+        mShowUl = (indicatorType == 1 || indicatorType == 2) ? true : false;
 
-        if ((mShowDl || mShowUl) && mTrafficMeterEnable && getConnectAvailable()) {
+        if ((mShowDl || mShowUl) && mEnabled && getConnectAvailable()) {
             setVisibility(View.VISIBLE);
             if (mAttached) {
                 startTrafficUpdates();
@@ -378,30 +378,30 @@ public class Traffic extends TextView {
             setText("");
         }
 
-        setTextColor(trafficTextColor);
-        updateTrafficDrawable(mTrafficIconColor, mState);
+        setTextColor(textColor);
+        updateDrawable(mIconColor, mState);
     }
 
-    private void updateTrafficDrawable(int color, int state) {
-        Drawable trafficDrawable = null;
+    private void updateDrawable(int color, int state) {
+        Drawable drawable = null;
 
-        if (mShowIndicatorIcon) {
+        if (mShowIcon) {
             if (state == TRAFFIC_UP) {
-                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_up);
+                drawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_up);
             } else if (state == TRAFFIC_DOWN) {
-                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_down);
+                drawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_down);
             } else if (state == TRAFFIC_UP_DOWN) {
-                trafficDrawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_updown);
+                drawable = mResources.getDrawable(R.drawable.stat_sys_network_traffic_updown);
             }
 
-            if (trafficDrawable != null) {
-                trafficDrawable.setColorFilter(color, Mode.MULTIPLY);
+            if (drawable != null) {
+                drawable.setColorFilter(color, Mode.MULTIPLY);
             }
         }
         setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
-                mShowIndicatorIcon ? trafficDrawable : null,
+                mShowIcon ? drawable : null,
                 null);
     }
 }
