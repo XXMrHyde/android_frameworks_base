@@ -3425,11 +3425,26 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR = "status_bar_expanded_header_buttons_color";
 
         /**
-         * Heads Up Notifications
+         * Whether to show heads up notification expanded
          *
          * @hide
          */
-        public static final String HEADS_UP_NOTIFICATION = "heads_up_enabled";
+        public static final String HEADS_UP_EXPANDED = "heads_up_expanded";
+
+        /**
+         * Whether notification updates from background notifications should be shown as heads up.
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_SHOW_UPDATE = "heads_up_show_update";
+
+        /**
+         * Time where heads up is disabled by user interaction
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_SNOOZE_TIME = "heads_up_snooze_time";
+
 
         /**
          * Heads Up Notifications time out
@@ -3443,21 +3458,7 @@ public final class Settings {
          *
          * @hide
          */
-        public static final String HEADS_UP_TIMEOUT_FS = "heads_up_timeout_fs";
-
-        /**
-         * Which applications to disable heads up notifications in
-         *
-         * @hide
-         */
-        public static final String HEADS_UP_CUSTOM_VALUES = "heads_up_custom_values";
-
-        /**
-         * Which applications to disable heads up notifications for
-         *
-         * @hide
-         */
-        public static final String HEADS_UP_BLACKLIST_VALUES = "heads_up_blacklist_values";
+        public static final String HEADS_UP_USE_CUSTOM_TIMEOUT_FS = "heads_up_use_custom_timeout_fs";
 
         /**
          * Whether to show the quick access ribbons

@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.android.systemui.ExpandHelper;
@@ -51,8 +52,11 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
     private ViewGroup mContentHolder;
     private ViewGroup mContentSlider;
+    private ImageButton mSnoozeButton;
 
     private NotificationData.Entry mHeadsUp;
+    private boolean mHeadsUpIsExpanded;
+    private boolean mSnoozeButtonVisibility;
 
     public HeadsUpNotificationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -68,13 +72,21 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         mBar = bar;
     }
 
+    public void setSnoozeVisibility(boolean show) {
+        mSnoozeButtonVisibility = show;
+        if (mSnoozeButton != null) {
+            mSnoozeButton.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+    }
+
     public ViewGroup getHolder() {
         return mContentHolder;
     }
 
-    public boolean setNotification(NotificationData.Entry headsUp) {
+    public boolean setNotification(NotificationData.Entry headsUp, boolean isExpanded) {
         mHeadsUp = headsUp;
-        mHeadsUp.row.setExpanded(false);
+        mHeadsUpIsExpanded = isExpanded;
+        mHeadsUp.row.setExpanded(isExpanded && mHeadsUp.row.isExpandable());
         if (mContentHolder == null) {
             // too soon!
             return false;
@@ -134,9 +146,19 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         mContentHolder = (ViewGroup) findViewById(R.id.content_holder);
         mContentSlider = (ViewGroup) findViewById(R.id.content_slider);
 
+        mSnoozeButton = (ImageButton) findViewById(R.id.heads_up_snooze_button);
+        if (mSnoozeButton != null) {
+            mSnoozeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mBar.snoozeHeadsUp();
+                }
+            });
+            mSnoozeButton.setVisibility(mSnoozeButtonVisibility ? View.VISIBLE : View.GONE);
+        }
+
         if (mHeadsUp != null) {
             // whoops, we're on already!
-            setNotification(mHeadsUp);
+            setNotification(mHeadsUp, mHeadsUpIsExpanded);
         }
     }
 
@@ -160,7 +182,6 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_OUTSIDE:
-                mBar.hideHeadsUp();
                 return true;
             default:
                 mBar.resetHeadsUpDecayTimer();
@@ -223,9 +244,9 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     }
 
     @Override
-    public void onChildDismissed(View v) {
+    public void onChildDismissed(View v, boolean direction) {
         Log.v(TAG, "User swiped heads up to dismiss");
-        mBar.onHeadsUpDismissed();
+        mBar.onHeadsUpDismissed(direction);
     }
 
     @Override

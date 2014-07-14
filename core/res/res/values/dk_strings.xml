@@ -55,5 +55,9 @@
 
     <!-- Description of accessibility direction for targets [CHAR LIMIT=NONE] -->
     <string name="accessibility_target_direction">Swipe to activate a target</string>
+
+    <!-- Heads up -->
+    <string name="permlab_changeHeadsUpState">enable or disable heads up</string>
+    <string name="permdesc_changeHeadsUpState">Allows the application to change whether another application is allowed to show normal notifications as heads up notification.</string>
 </resources>
 

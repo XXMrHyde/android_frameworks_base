@@ -76,7 +76,7 @@ public class ExpandHelper implements Gefingerpoken, OnClickListener {
     private int mExpansionStyle = NONE;
     private boolean mWatchingForPull;
     private boolean mHasPopped;
-    private boolean mForcedOneFinger = false;
+    private boolean mForcedOneFinger;
     private View mEventSource;
     private View mCurrView;
     private View mCurrViewTopGlow;
