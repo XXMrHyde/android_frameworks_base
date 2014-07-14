@@ -64,6 +64,7 @@ public class SignalClusterView
     private int mMobileNetworkTypeConnectedColor;
     private int mMobileActivityNormalColor;
     private int mMobileActivityConnectedColor;
+    private int mAirplaneModeColor;
 
     ViewGroup mWifiGroup, mMobileGroup;
     ImageView mWifi, mMobile, mWifiActivity, mMobileActivity, mMobileType, mAirplane;
@@ -107,6 +108,9 @@ public class SignalClusterView
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR),
+                    false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_AIRPLANE_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
         }
 
@@ -255,14 +259,12 @@ public class SignalClusterView
         if (mWifiVisible) {
             mWifi.setImageResource(mWifiStrengthId);
             mWifi.setColorFilter(mInetCondition == 1
-                                     ? mWifiIconConnectedColor
-                                     : mWifiIconNormalColor,
-                                     Mode.MULTIPLY);
+                    ? mWifiIconConnectedColor : mWifiIconNormalColor,
+                    Mode.MULTIPLY);
             mWifiActivity.setImageResource(mWifiActivityId);
             mWifiActivity.setColorFilter(mInetCondition == 1
-                                             ? mWifiActivityConnectedColor
-                                             : mWifiActivityNormalColor,
-                                             Mode.MULTIPLY);
+                    ? mWifiActivityConnectedColor : mWifiActivityNormalColor,
+                    Mode.MULTIPLY);
 
             mWifiGroup.setContentDescription(mWifiDescription);
             mWifiGroup.setVisibility(View.VISIBLE);
@@ -278,19 +280,16 @@ public class SignalClusterView
         if (mMobileVisible && !mIsAirplaneMode) {
             mMobile.setImageResource(mMobileStrengthId);
             mMobile.setColorFilter(mInetCondition == 1
-                                       ? mMobileConnectedColor
-                                       : mMobileNormalColor,
-                                       Mode.MULTIPLY);
+                    ? mMobileConnectedColor : mMobileNormalColor,
+                    Mode.MULTIPLY);
             mMobileActivity.setImageResource(mMobileActivityId);
             mMobileActivity.setColorFilter(mInetCondition == 1
-                                               ? mMobileActivityConnectedColor
-                                               : mMobileActivityNormalColor,
-                                               Mode.MULTIPLY);
+                    ? mMobileActivityConnectedColor : mMobileActivityNormalColor,
+                    Mode.MULTIPLY);
             mMobileType.setImageResource(mMobileTypeId);
             mMobileType.setColorFilter(mInetCondition == 1
-                                           ? mMobileNetworkTypeConnectedColor
-                                           : mMobileNetworkTypeNormalColor,
-                                           Mode.MULTIPLY);
+                    ? mMobileNetworkTypeConnectedColor : mMobileNetworkTypeNormalColor,
+                    Mode.MULTIPLY);
 
             mMobileGroup.setContentDescription(mMobileTypeDescription + " " + mMobileDescription);
             mMobileGroup.setVisibility(View.VISIBLE);
@@ -300,6 +299,7 @@ public class SignalClusterView
 
         if (mIsAirplaneMode) {
             mAirplane.setImageResource(mAirplaneIconId);
+            mAirplane.setColorFilter(mAirplaneModeColor, Mode.MULTIPLY);
             mAirplane.setVisibility(View.VISIBLE);
         } else {
             mAirplane.setVisibility(View.GONE);
@@ -353,6 +353,9 @@ public class SignalClusterView
         mMobileActivityConnectedColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SIGNAL_ACTIVITY_CONNECTED_COLOR,
                 0xff000000, UserHandle.USER_CURRENT);
+        mAirplaneModeColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_AIRPLANE_MODE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
 
         apply();
     }
