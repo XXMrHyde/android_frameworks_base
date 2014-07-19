@@ -58,7 +58,6 @@ import android.inputmethodservice.InputMethodService;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.UserHandle;
 import android.os.IBinder;
 import android.os.IPowerManager;
 import android.os.Message;
@@ -130,6 +129,8 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
 import com.android.systemui.statusbar.policy.RotationLockController;
+import com.android.systemui.statusbar.policy.WeatherPanel;
+import com.android.systemui.statusbar.policy.WeatherText;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -258,6 +259,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     View mClearButton;
     boolean mShowSettingsButton = false;
     ImageView mSettingsButton, mQuickSettingsButton, mNotificationButton;
+
+     // Weather panel and text
+     boolean mWeatherPanelEnabled;
+     boolean mWeatherTextEnabled;
+     WeatherPanel mWeatherPanel;
+     WeatherText mWeatherText;
 
     // carrier/wifi label
     private TextView mCarrierLabel;
@@ -450,6 +457,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.STATUS_BAR_EXPANDED_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_CARRIER_WIFI_LABEL_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -616,6 +632,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR))) {
                 updateHeaderColors();
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_TEXT_COLOR))) {
+                updateWeatherSettings();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_ALPHA))
@@ -764,6 +787,36 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         iv.setColorFilter(null);
         iv.getBackground().setColorFilter(color, Mode.MULTIPLY);
         iv.setColorFilter(color, Mode.MULTIPLY);
+    }
+
+    private void updateWeatherSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mWeatherPanelEnabled = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, 0,
+                UserHandle.USER_CURRENT) == 0
+                && Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mWeatherTextEnabled = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, 0,
+                UserHandle.USER_CURRENT) == 1
+                && Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER, 0,
+                UserHandle.USER_CURRENT) == 1;
+        int textColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_TEXT_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mWeatherPanel != null) {
+            mWeatherPanel.setVisibility(mWeatherPanelEnabled
+                    ? View.VISIBLE : View.GONE);
+        }
+        if (mWeatherText != null) {
+            ((TextView)mWeatherText).setTextColor(textColor);
+            mWeatherText.setVisibility(mWeatherTextEnabled
+                    ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updateSettings() {
@@ -963,6 +1016,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
+
+        mWeatherPanel = (WeatherPanel) mStatusBarWindow.findViewById(R.id.weatherpanel);
+        mWeatherPanel.setOnClickListener(mWeatherPanelListener);
+        mWeatherPanel.setOnLongClickListener(mWeatherPanelLongListener);
+        mWeatherText = (WeatherText) mStatusBarWindow.findViewById(R.id.weather);
+        updateWeatherSettings();
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -3547,6 +3606,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
                     "com.android.settings.Settings$StatusBarExpandedQsSettingsActivity");
+            startActivityDismissingKeyguard(intent, true);
+            return true;
+        }
+    };
+
+    private View.OnClickListener mWeatherPanelListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            vibrate();
+            Intent weatherintent = new Intent("com.android.settings.INTENT_WEATHER_REQUEST");
+            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_TYPE", "updateweather");
+            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_ISMANUAL", true);
+            mContext.sendBroadcast(weatherintent);
+        }
+    };
+
+    private View.OnLongClickListener mWeatherPanelLongListener =
+            new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.android.settings",
+                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsActivity");
             startActivityDismissingKeyguard(intent, true);
             return true;
         }

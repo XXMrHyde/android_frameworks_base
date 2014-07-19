@@ -24,6 +24,9 @@
     <!-- Network traffic monitor multi-line text size -->
     <dimen name="net_traffic_multi_text_size">10dp</dimen>
 
+   <!-- Height of carrier label + close handle -->
+   <dimen name="weather_text_margin">56dp</dimen>
+
     <!-- Slim recent app panel -->
     <dimen name="recent_width">230dp</dimen>
     <dimen name="recent_app_icon_size">48dp</dimen>

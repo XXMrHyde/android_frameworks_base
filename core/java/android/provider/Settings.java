@@ -3431,6 +3431,56 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR = "status_bar_expanded_header_buttons_color";
 
         /**
+         * Whether to enable the weather on the expanded statusbar
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_ENABLE_WEATHER = "status_bar_expanded_enable_weather";
+
+        /**
+         * How to show weather on the expanded statusbar
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_STYLE = "status_bar_expanded_weather_style";
+
+        /**
+         * Weather icon style on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_ICON = "status_bar_expanded_weather_icon";
+
+        /**
+         * Wether to show the current (weather) location on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_LOCATION = "status_bar_expanded_weather_show_location";
+
+        /**
+         * Weather panel background color on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_COLOR = "status_bar_expanded_weather_background_color";
+
+        /**
+         * Weather panel pressed background color on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_PRESSED_COLOR = "status_bar_expanded_weather_background_pressed_color";
+
+        /**
+         * Weather panel icon color on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_ICON_COLOR = "status_bar_expanded_weather_icon_color";
+
+        /**
+         * Weather text color on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_TEXT_COLOR = "status_bar_expanded_weather_text_color";
+
+        /**
          * Whether to show heads up notification expanded
          *
          * @hide
