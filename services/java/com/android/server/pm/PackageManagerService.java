@@ -3894,23 +3894,32 @@ public class PackageManagerService extends IPackageManager.Stub {
             for (PackageParser.Package pkg : pkgs) {
                 final PackageParser.Package p = pkg;
                 synchronized (mInstallLock) {
-                    if (!p.mDidDexOpt) {
-                        executorService.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isFirstBoot()) {
-                                    i[0]++;
-                                    postBootMessageUpdate(i[0], pkgsSize);
+                    executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isFirstBoot()) {
+                                i[0]++;
+                                try {
+                                    // give the packagename to the PhoneWindowManager
+                                    ApplicationInfo ai;
+                                    try {
+                                        ai = mContext.getPackageManager().getApplicationInfo(p.packageName, 0);
+                                    } catch (Exception e) {
+                                        ai = null;
+                                    }
+                                    mPolicy.setPackageName((String) (ai != null ? mContext.getPackageManager().getApplicationLabel(ai) : p.packageName));
+                                    ActivityManagerNative.getDefault().showBootMessage(
+                                            mContext.getResources().getString(
+                                                    com.android.internal.R.string.android_upgrading_apk,
+                                                    i[0], pkgsSize), true);
+                                } catch (RemoteException e) {
                                 }
+                            }
+                            if (!p.mDidDexOpt) {
                                 performDexOptLI(p, false, false, true);
                             }
-                        });
-                    } else {
-                        if (!isFirstBoot()) {
-                            i[0]++;
-                            postBootMessageUpdate(i[0], pkgsSize);
                         }
-                    }
+                    });
                 }
             }
             executorService.shutdown();
@@ -3921,16 +3930,6 @@ public class PackageManagerService extends IPackageManager.Stub {
             }
             final long time = System.currentTimeMillis() - start;
             Slog.v("MIK", "Finished in "+time+" ms");
-        }
-    }
-
-    private void postBootMessageUpdate(int n, int total) {
-        try {
-            ActivityManagerNative.getDefault().showBootMessage(
-                    mContext.getResources().getString(
-                            com.android.internal.R.string.android_upgrading_apk,
-                            n, total), true);
-        } catch (RemoteException e) {
         }
     }
 
