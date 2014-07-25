@@ -44,6 +44,7 @@ public class ButtonsConstants {
     public static final String ACTION_EXPANDED_DESKTOP     = "**expanded_desktop**";
     public static final String ACTION_THEME_SWITCH         = "**theme_switch**";
     public static final String ACTION_SMART_PULLDOWN       = "**smart_pulldown**";
+    public static final String ACTION_WEATHER_SETTINGS     = "**weather_settings**";
 
     // no action
     public static final String ACTION_NULL            = "**null**";

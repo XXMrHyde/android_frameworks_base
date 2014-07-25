@@ -3445,7 +3445,7 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_WEATHER_STYLE = "status_bar_expanded_weather_style";
 
         /**
-         * Weather icon style on the expanded statusbar
+         * Weather panel icon style on the expanded statusbar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_WEATHER_ICON = "status_bar_expanded_weather_icon";
@@ -3455,6 +3455,24 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_LOCATION = "status_bar_expanded_weather_show_location";
+
+        /**
+         * Wether to show the current wind information on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_WIND = "status_bar_expanded_weather_show_wind";
+
+        /**
+         * Wether to show the current humidity information on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_HUMIDITY = "status_bar_expanded_weather_show_humidity";
+
+        /**
+         * Wether to show the current (weather) refresh timestemp information on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_TIMESTAMP = "status_bar_expanded_weather_show_timestamp";
 
         /**
          * Weather panel background color on the expanded statusbar
@@ -3469,10 +3487,16 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_PRESSED_COLOR = "status_bar_expanded_weather_background_pressed_color";
 
         /**
-         * Weather panel icon color on the expanded statusbar
+         * Weather panel weather icon color on the expanded statusbar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_WEATHER_ICON_COLOR = "status_bar_expanded_weather_icon_color";
+
+        /**
+         * Weather panel button icon color on the expanded statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_BUTTON_ICON_COLOR = "status_bar_expanded_weather_button_icon_color";
 
         /**
          * Weather text color on the expanded statusbar

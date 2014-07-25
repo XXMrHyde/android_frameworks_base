@@ -111,7 +111,4 @@
     <string name="status_bar_notification_heads_up_enable_title">Enable heads up</string>
     <string name="status_bar_notification_heads_up_disable_title">Disable heads up</string>
     <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
-
-     <!-- Weather -->
-     <string name="weatherpanel_slash">/</string>
 </resources>
