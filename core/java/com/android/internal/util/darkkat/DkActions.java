@@ -262,6 +262,24 @@ public class DkActions {
                     "com.android.settings.Settings$StatusBarExpandedWeatherSettingsActivity");
             startActivity(context, windowManagerService, isKeyguardShowing, intent);
             return;
+        } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_OPTIONS)) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.android.settings",
+                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsOptionsActivity");
+            startActivity(context, windowManagerService, isKeyguardShowing, intent);
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_CLICK)) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.android.settings",
+                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsClickActionsActivity");
+            startActivity(context, windowManagerService, isKeyguardShowing, intent);
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_COLORS)) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.android.settings",
+                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsColorsActivity");
+            startActivity(context, windowManagerService, isKeyguardShowing, intent);
+            return;
         } else {
             // we must have a custom uri
             Intent intent = null;

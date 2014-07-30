@@ -3475,6 +3475,49 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_TIMESTAMP = "status_bar_expanded_weather_show_timestamp";
 
         /**
+         * Weather top bar settings button click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_CLICK_TOP_BAR_SETTINGS = "status_bar_expanded_weather_click_top_bar_settings";
+
+        /**
+         * Weather left panel click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_CLICK_LEFT_PANEL = "status_bar_expanded_weather_click_left_panel";
+
+        /**
+         * Weather left panel long click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_LEFT_PANEL = "status_bar_expanded_weather_long_click_left_panel";
+
+        /**
+         * Weather condition image click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_CLICK_IMAGE = "status_bar_expanded_weather_click_image";
+
+        /**
+         * Weather condition image long click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_IMAGE = "status_bar_expanded_weather_long_click_image";
+
+        /**
+         * Weather left panel click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_CLICK_RIGHT_PANEL = "status_bar_expanded_weather_click_right_panel";
+
+        /**
+         * Weather left panel long click action
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL = "status_bar_expanded_weather_long_click_right_panel";
+
+
+        /**
          * Weather panel background color on the expanded statusbar
          * @hide
          */

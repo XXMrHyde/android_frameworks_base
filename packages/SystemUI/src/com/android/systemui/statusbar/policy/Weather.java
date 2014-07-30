@@ -8,9 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff.Mode;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -49,13 +48,15 @@ public class Weather extends LinearLayout {
 
     private TextView mWeatherBarText;
     private LinearLayout mWeatherPanelTopBar;
-    private ImageView mWeatherDivider;
+    private LinearLayout mWeatherPanelLeft;
+    private LinearLayout mWeatherPanelRight;
     private LinearLayout mWeatherPanel;
+    private LinearLayout mLayoutConditionImage;
+    private TextView mCity;
     private ImageView mRefreshButton;
     private ImageView mCollapseButton;
     private ImageView mSettingsButton;
-
-    private TextView mCity;
+    private ImageView mWeatherDivider;
     private TextView mCurrentTemp;
     private TextView mTemp;
     private TextView mCondition;
@@ -71,6 +72,14 @@ public class Weather extends LinearLayout {
     private boolean mShowWinds;
     private boolean mShowHumidity;
     private boolean mShowTimestamp;
+
+    private String mClickSettings;
+    private String mClickLeftPanel;
+    private String mLongClickLeftPanel;
+    private String mClickImage;
+    private String mLongClickImage;
+    private String mClickRightPanel;
+    private String mLongClickRightPanel;
 
     private int mBgColor;
     private int mBgPressedColor;
@@ -117,6 +126,27 @@ public class Weather extends LinearLayout {
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_TIMESTAMP),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_TOP_BAR_SETTINGS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_LEFT_PANEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_LEFT_PANEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_IMAGE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_IMAGE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_RIGHT_PANEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -142,23 +172,79 @@ public class Weather extends LinearLayout {
     private View.OnClickListener mWeatherOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (v.getId() == R.id.button_refresh) {
-                vibrate();
-                Intent weatherintent = new Intent("com.android.settings.INTENT_WEATHER_REQUEST");
-                weatherintent.putExtra("com.android.settings.INTENT_EXTRA_TYPE", "updateweather");
-                weatherintent.putExtra("com.android.settings.INTENT_EXTRA_ISMANUAL", true);
-                v.getContext().sendBroadcast(weatherintent);
+                refreshWeather(v);
             } else if (v.getId() == R.id.button_collapse) {
                 updateWeatherStyle(STYLE_BAR);
                 Settings.System.putInt(mResolver,
                         Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, STYLE_BAR);
             } else if (v.getId() == R.id.button_settings) {
                 vibrate();
-                DkActions.processAction(mContext, ButtonsConstants.ACTION_WEATHER_SETTINGS, false);
-            } else {
+                DkActions.processAction(mContext, mClickSettings, false);
+            } else if (v.getId() == R.id.weather_bar_text) {
                 updateWeatherStyle(STYLE_PANEL);
                 Settings.System.putInt(mResolver,
                         Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, STYLE_PANEL);
+            } else if (v.getId() == R.id.weather_panel_left) {
+                if (mClickLeftPanel.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                } else if (mClickLeftPanel.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mClickLeftPanel, false);
+                }
+            } else if (v.getId() == R.id.layout_condition_image) {
+                if (mClickImage.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                } else if (mClickImage.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mClickImage, false);
+                }
+            } else if (v.getId() == R.id.weather_panel_right) {
+                if (mClickRightPanel.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                } else if (mClickRightPanel.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mClickRightPanel, false);
+                }
             }
+        }
+    };
+
+    private View.OnLongClickListener mWeatherLongListener =
+            new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (v.getId() == R.id.weather_panel_left) {
+                if (mLongClickLeftPanel.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                    return true;
+                } else if (mLongClickLeftPanel.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mLongClickLeftPanel, false);
+                }
+            } else if (v.getId() == R.id.layout_condition_image) {
+                if (mLongClickImage.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                return true;
+                } else if (mLongClickImage.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mLongClickImage, false);
+                }
+            } else if (v.getId() == R.id.weather_panel_right) {
+                if (mLongClickRightPanel.equals(ButtonsConstants.ACTION_NULL)) {
+                    // do nothing
+                    return true;
+                } else if (mLongClickRightPanel.equals(ButtonsConstants.ACTION_REFRESH_WEATHER)) {
+                    refreshWeather(v);
+                } else {
+                    DkActions.processAction(mContext, mLongClickRightPanel, false);
+                }
+            }
+            return true;
         }
     };
 
@@ -172,12 +258,15 @@ public class Weather extends LinearLayout {
         super.onAttachedToWindow();
 
         mWeatherBarText = (TextView) this.findViewById(R.id.weather_bar_text);
-        mWeatherDivider = (ImageView) this.findViewById(R.id.weather_divider);
         mWeatherPanelTopBar = (LinearLayout) this.findViewById(R.id.weather_panel_top_bar);
         mWeatherPanel = (LinearLayout) this.findViewById(R.id.weather_panel);
+        mWeatherPanelLeft = (LinearLayout) this.findViewById(R.id.weather_panel_left);
+        mWeatherPanelRight = (LinearLayout) this.findViewById(R.id.weather_panel_right);
+        mLayoutConditionImage = (LinearLayout) this.findViewById(R.id.layout_condition_image);
         mRefreshButton = (ImageView) this.findViewById(R.id.button_refresh);
         mCollapseButton = (ImageView) this.findViewById(R.id.button_collapse);
         mSettingsButton = (ImageView) this.findViewById(R.id.button_settings);
+        mWeatherDivider = (ImageView) this.findViewById(R.id.weather_divider);
         mCity = (TextView) this.findViewById(R.id.city);
         mCurrentTemp = (TextView) this.findViewById(R.id.current_temp);
         mTemp = (TextView) this.findViewById(R.id.high_low_temp);
@@ -193,7 +282,12 @@ public class Weather extends LinearLayout {
             mRefreshButton.setOnClickListener(mWeatherOnClickListener);
             mCollapseButton.setOnClickListener(mWeatherOnClickListener);
             mSettingsButton.setOnClickListener(mWeatherOnClickListener);
-
+            mWeatherPanelLeft.setOnClickListener(mWeatherOnClickListener);
+            mWeatherPanelRight.setOnClickListener(mWeatherOnClickListener);
+            mWeatherPanelLeft.setOnLongClickListener(mWeatherLongListener);
+            mWeatherPanelRight.setOnLongClickListener(mWeatherLongListener);
+            mLayoutConditionImage.setOnClickListener(mWeatherOnClickListener);
+            mLayoutConditionImage.setOnLongClickListener(mWeatherLongListener);
             IntentFilter filter = new IntentFilter("com.android.settings.INTENT_WEATHER_UPDATE");
             mContext.registerReceiver(weatherReceiver, filter, null, getHandler());
             if (mSettingsObserver == null) {
@@ -213,6 +307,14 @@ public class Weather extends LinearLayout {
             mContext.unregisterReceiver(weatherReceiver);
             mAttached = false;
         }
+    }
+
+    private void refreshWeather(View v) {
+        vibrate();
+        Intent weatherintent = new Intent("com.android.settings.INTENT_WEATHER_REQUEST");
+        weatherintent.putExtra("com.android.settings.INTENT_EXTRA_TYPE", "updateweather");
+        weatherintent.putExtra("com.android.settings.INTENT_EXTRA_ISMANUAL", true);
+        v.getContext().sendBroadcast(weatherintent);
     }
 
     public void updateWeather(Intent intent) {
@@ -267,6 +369,27 @@ public class Weather extends LinearLayout {
         mShowTimestamp = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_TIMESTAMP, 0,
                 UserHandle.USER_CURRENT) == 1;
+        mClickSettings = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_TOP_BAR_SETTINGS,
+                UserHandle.USER_CURRENT);
+        mClickLeftPanel = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_LEFT_PANEL,
+                UserHandle.USER_CURRENT);
+        mLongClickLeftPanel = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_LEFT_PANEL,
+                UserHandle.USER_CURRENT);
+        mClickImage = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_IMAGE,
+                UserHandle.USER_CURRENT);
+        mLongClickImage = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_IMAGE,
+                UserHandle.USER_CURRENT);
+        mClickRightPanel = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_CLICK_RIGHT_PANEL,
+                UserHandle.USER_CURRENT);
+        mLongClickRightPanel = Settings.System.getStringForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL,
+                UserHandle.USER_CURRENT);
         mBgColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
@@ -282,6 +405,28 @@ public class Weather extends LinearLayout {
         mTextColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_TEXT_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mClickSettings == null || mClickSettings == "") {
+            mClickSettings = ButtonsConstants.ACTION_WEATHER_SETTINGS;
+        }
+        if (mClickLeftPanel == null || mClickLeftPanel == "") {
+            mClickLeftPanel = ButtonsConstants.ACTION_NULL;
+        }
+        if (mLongClickLeftPanel == null || mLongClickLeftPanel == "") {
+            mLongClickLeftPanel = ButtonsConstants.ACTION_NULL;
+        }
+        if (mClickImage == null || mClickImage == "") {
+            mClickImage = ButtonsConstants.ACTION_NULL;
+        }
+        if (mLongClickImage == null || mLongClickImage == "") {
+            mLongClickImage = ButtonsConstants.ACTION_NULL;
+        }
+        if (mClickRightPanel == null || mClickRightPanel == "") {
+            mClickRightPanel = ButtonsConstants.ACTION_NULL;
+        }
+        if (mLongClickRightPanel == null || mLongClickRightPanel == "") {
+            mLongClickRightPanel = ButtonsConstants.ACTION_NULL;
+        }
 
         updateWeatherStyle(mWeatherStyle);
         updateConditionImage(mIconType);
@@ -300,13 +445,15 @@ public class Weather extends LinearLayout {
             mWeatherBarText.setClickable(false);
             mWeatherPanelTopBar.setVisibility(View.VISIBLE);
             mWeatherPanelTopBar.setClickable(true);
-            mWeatherDivider.setVisibility(View.VISIBLE);
             mWeatherPanel.setVisibility(View.VISIBLE);
             mWeatherPanel.setClickable(true);
+            mLayoutConditionImage.setClickable(true);
+            mWeatherDivider.setVisibility(View.VISIBLE);
         } else {
+            mWeatherDivider.setVisibility(View.GONE);
+            mLayoutConditionImage.setClickable(false);
             mWeatherPanel.setVisibility(View.GONE);
             mWeatherPanel.setClickable(false);
-            mWeatherDivider.setVisibility(View.GONE);
             mWeatherPanelTopBar.setVisibility(View.GONE);
             mWeatherPanelTopBar.setClickable(false);
             mWeatherBarText.setVisibility(View.VISIBLE);
@@ -335,16 +482,13 @@ public class Weather extends LinearLayout {
     }
 
     private void updateBackground() {
-        ColorDrawable bgDrawable = new ColorDrawable(mBgColor);
-        ColorDrawable bgDrawableTransparent = new ColorDrawable(0x00000000);
-        ColorDrawable bgPresDrawable = new ColorDrawable(mBgPressedColor);
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[] {android.R.attr.state_pressed}, bgPresDrawable);
-        states.addState(new int[] {}, bgDrawableTransparent);
+        ColorDrawable weatherBgDrawable = new ColorDrawable(mBgColor);
 
-        setBackground(bgDrawable);
-        mWeatherBarText.setBackground(states);
-        mWeatherPanel.setBackground(states);
+        setBackground(weatherBgDrawable);
+        mWeatherBarText.getBackground().setColorFilter(mBgPressedColor, Mode.MULTIPLY);
+        mWeatherPanelLeft.getBackground().setColorFilter(mBgPressedColor, Mode.MULTIPLY);
+        mWeatherPanelRight.getBackground().setColorFilter(mBgPressedColor, Mode.MULTIPLY);
+        mLayoutConditionImage.getBackground().setColorFilter(mBgPressedColor, Mode.MULTIPLY);
     }
 
     private void updateButtonColors() {

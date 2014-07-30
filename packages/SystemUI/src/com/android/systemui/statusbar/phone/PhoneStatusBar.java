@@ -985,8 +985,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mStatusBarView.setBar(this);
 
         mWeather = (Weather) mStatusBarWindow.findViewById(R.id.weather);
-        mWeather.setOnLongClickListener(mWeatherLongListener);
-
         updateWeatherVisibility();
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
@@ -3572,18 +3570,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
                     "com.android.settings.Settings$StatusBarExpandedQsSettingsActivity");
-            startActivityDismissingKeyguard(intent, true);
-            return true;
-        }
-    };
-
-    private View.OnLongClickListener mWeatherLongListener =
-            new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsActivity");
             startActivityDismissingKeyguard(intent, true);
             return true;
         }
