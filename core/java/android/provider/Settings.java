@@ -2745,6 +2745,12 @@ public final class Settings {
         public static final String LOCKSCREEN_SHORTCUTS_ICON_COLOR = "power_menu_icon_color";
 
         /**
+         * Weather to use all widgets on lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_ENABLE_ALL_WIDGETS = "lockscreen_enable_all_widgets";
+
+        /**
          * Weather to minimize lockscreen challenge on screen turned on
          * @hide
          */
