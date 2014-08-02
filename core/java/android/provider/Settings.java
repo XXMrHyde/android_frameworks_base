@@ -3103,6 +3103,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_SHOW_PERCENTAGE_SIGN = "battery_status_show_percentage_sign";
 
         /**
+         * Battery animation speed during charge
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_ANIMATION_SPEED = "battery_status_text_animation_speed";
+
+        /**
          * Whether to show the Circle battery status dotted
          * @hide
          */
@@ -3137,12 +3143,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CIRCLE_DOT_OFFSET = "battery_circle_dot_offset";
-
-        /**
-         * Circle battery animation speed during charge
-         * @hide
-         */
-        public static final String STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED = "circle_battery_animation_speed";
 
         /**
          * Whether to use a custom color for the battery frame

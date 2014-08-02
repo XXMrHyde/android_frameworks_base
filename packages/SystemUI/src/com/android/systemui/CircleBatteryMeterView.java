@@ -100,7 +100,7 @@ public class CircleBatteryMeterView extends ImageView {
     private int mCircleTextColor;
     private int mCircleTextHightColor;
     private int mCircleTextChargingColor;
-    private int mCircleAnimSpeed;
+    private int mAnimSpeed;
 
     private String mCircleBatteryView;
 
@@ -315,8 +315,8 @@ public class CircleBatteryMeterView extends ImageView {
         mCircleTextChargingColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR,
                 defaultTextChargingColor, UserHandle.USER_CURRENT);
-        mCircleAnimSpeed = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CIRCLE_BATTERY_ANIMATIONSPEED, 3,
+        mAnimSpeed = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_ANIMATION_SPEED, 3,
                 UserHandle.USER_CURRENT);
 
         mWarningLevel = mContext.getResources().getInteger(
@@ -375,8 +375,12 @@ public class CircleBatteryMeterView extends ImageView {
             thinRingColor = Color.RED;
             statusColor = Color.RED;
             textColor = Color.RED;
-        } else if (mLevel >= 90 && mCustomHightColor && !mIsCharging) {
-            textColor = mCircleTextHightColor;
+        } else if (mLevel >= 90 && !mIsCharging) {
+            if (mCustomHightColor) {
+                textColor = mCircleTextHightColor;
+            } else {
+                textColor = Color.GREEN;
+            }
         } else if (mIsCharging) {
             textColor = mCircleTextChargingColor;
         } else if (!mCustomThinRingColor) {
@@ -409,7 +413,7 @@ public class CircleBatteryMeterView extends ImageView {
         if (mAnimOffset > 360) {
             mAnimOffset = 0;
         } else {
-            mAnimOffset += mCircleAnimSpeed;
+            mAnimOffset += mAnimSpeed;
         }
 
         mHandler.removeCallbacks(mInvalidate);
