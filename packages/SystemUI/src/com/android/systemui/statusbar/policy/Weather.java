@@ -392,7 +392,7 @@ public class Weather extends LinearLayout {
                 UserHandle.USER_CURRENT);
         mBgColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
+                0xff191919, UserHandle.USER_CURRENT);
         mBgPressedColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_PRESSED_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
