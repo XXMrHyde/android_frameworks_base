@@ -22,6 +22,8 @@
 
     <!-- Button to reboot the phone, within the Reboot Options dialog -->
     <string name="reboot_reboot">Reboot</string>
+    <!-- Button to soft reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_soft_reboot">Reboot (soft)</string>
     <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
     <string name="reboot_recovery">Recovery</string>
     <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
