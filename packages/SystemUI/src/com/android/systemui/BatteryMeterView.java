@@ -425,7 +425,7 @@ public class BatteryMeterView extends View implements DemoMode {
             }
         }
 
-        if (tracker.plugged && !mTextOnly) {
+        if (tracker.plugged && (mAnimSpeed == 0 || mShowMiniIcon) && !mTextOnly) {
             // draw the bolt
             final float bl = mFrame.left + mFrame.width() / 4.5f;
             final float bt = mFrame.top + mFrame.height() / 6f;
@@ -453,7 +453,7 @@ public class BatteryMeterView extends View implements DemoMode {
             final float y = (mHeight + mWarningTextHeight) * 0.48f;
             c.drawText(mWarningString, x, y, mWarningTextPaint);
         }
-        if (mShowPercent && !(mBatteryStyle == BATTERY_STYLE_NORMAL && !mShowMiniIcon && tracker.plugged)) {
+        if (mShowPercent && !(tracker.plugged && mAnimSpeed == 0 && !mShowMiniIcon)) {
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
             if (mBatteryStyle == BATTERY_STYLE_NORMAL) {
                 if(mShowMiniIcon) {
