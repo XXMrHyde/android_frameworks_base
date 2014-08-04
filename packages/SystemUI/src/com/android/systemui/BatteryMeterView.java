@@ -425,7 +425,7 @@ public class BatteryMeterView extends View implements DemoMode {
             }
         }
 
-        if (tracker.plugged && (mAnimSpeed == 0 || mShowMiniIcon) && !mTextOnly) {
+        if (tracker.plugged && (mAnimSpeed == 0 || mShowMiniIcon || !mShowPercent) && !mTextOnly) {
             // draw the bolt
             final float bl = mFrame.left + mFrame.width() / 4.5f;
             final float bt = mFrame.top + mFrame.height() / 6f;
