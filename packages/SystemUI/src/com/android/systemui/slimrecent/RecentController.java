@@ -280,8 +280,8 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 ? R.drawable.recent_bg_dropshadow_left
                 : R.drawable.recent_bg_dropshadow);
         int bgColor = Settings.System.getIntForUser(resolver,
-        Settings.System.RECENT_PANEL_BG_COLOR,
-        0xe6000000, UserHandle.USER_CURRENT);
+                Settings.System.RECENT_PANEL_BG_COLOR,
+                0xe6000000, UserHandle.USER_CURRENT);
 
         bgDrawable.setColorFilter(bgColor, Mode.MULTIPLY);
         mRecentContent.setBackground(bgDrawable);
@@ -295,8 +295,8 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 ? R.drawable.ic_empty_recent_left
                 : R.drawable.ic_empty_recent);
         int iconColor = Settings.System.getIntForUser(resolver,
-        Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR,
-        0xffCDCDCD, UserHandle.USER_CURRENT);
+                Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR,
+                0xffCDCDCD, UserHandle.USER_CURRENT);
 
         emptyRecentIcon.setColorFilter(iconColor, Mode.MULTIPLY);
         mEmptyRecentView.setBackground(emptyRecentIcon);

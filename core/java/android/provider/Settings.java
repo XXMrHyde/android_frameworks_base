@@ -2873,6 +2873,13 @@ public final class Settings {
         public static final String RECENT_PANEL_EMPTY_ICON_COLOR = "recent_panel_empty_icon_color";
 
         /**
+         * Color of the recent app panel header text
+         * 
+         * @hide
+         */
+        public static final String RECENT_PANEL_HEADER_TEXT_COLOR = "recent_panel_header_text_color";
+
+        /**
          * Whether recent app panel gravity is left or right (default = Gravity.RIGHT).
          * @hide
          */
