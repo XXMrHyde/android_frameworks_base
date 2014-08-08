@@ -2334,7 +2334,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     final int FLIP_DURATION = (FLIP_DURATION_IN + FLIP_DURATION_OUT);
 
     Animator mScrollViewAnim, mFlipSettingsViewAnim, mNotificationButtonAnim,
-        mQuickSettingsButtonAnim, mClearButtonAnim, mRibbonViewAnim;
+        mQuickSettingsButtonAnim, mClearButtonAnim, mRibbonViewAnim, mWeatherAnim;
 
     @Override
     public void animateExpandNotificationsPanel() {
@@ -2358,6 +2358,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
         if (mScrollViewAnim != null) mScrollViewAnim.cancel();
         if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
+        if (mWeatherAnim != null) mWeatherAnim.cancel();
         if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
@@ -2378,6 +2379,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     startDelay(FLIP_DURATION_OUT * zeroOutDelays,
                             interpolator(mDecelerateInterpolator,
                                     ObjectAnimator.ofFloat(mRibbonView, View.SCALE_X, 1f)
+                                    .setDuration(FLIP_DURATION_IN)
+                                    )));
+        }
+        if (mWeather != null && mWeatherEnabled) {
+            mWeather.setVisibility(View.VISIBLE);
+            mWeatherAnim = start(
+                    startDelay(FLIP_DURATION_OUT * zeroOutDelays,
+                            interpolator(mDecelerateInterpolator,
+                                    ObjectAnimator.ofFloat(mWeather, View.SCALE_X, 1f)
                                     .setDuration(FLIP_DURATION_IN)
                                     )));
         }
@@ -2448,6 +2458,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mRibbonView.setVisibility(View.GONE);
             mRibbonView.setScaleX(0f);
         }
+        if (mWeather != null) {
+            mWeather.setVisibility(View.GONE);
+            mWeather.setScaleX(0f);
+        }
         mNotificationButton.setVisibility(View.VISIBLE);
         mNotificationButton.setAlpha(1f);
         mClearButton.setVisibility(View.GONE);
@@ -2486,6 +2500,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 mRibbonView.setVisibility(View.VISIBLE);
                 mRibbonView.setScaleX(-percent);
             }
+            if (mWeather != null && mWeatherEnabled) {
+                mWeather.setVisibility(View.VISIBLE);
+                mWeather.setScaleX(-percent);
+            }
             mNotificationButton.setVisibility(View.GONE);
             updateCarrierAndWifiLabelVisibility(false, false);
         } else { // settings side
@@ -2497,6 +2515,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             if (mRibbonView != null) {
                 mRibbonView.setVisibility(View.GONE);
                 mRibbonView.setScaleX(0f);
+            }
+            if (mWeather != null) {
+                mWeather.setVisibility(View.GONE);
+                mWeather.setScaleX(0f);
             }
             mNotificationButton.setVisibility(View.VISIBLE);
             mNotificationButton.setAlpha(percent);
@@ -2512,6 +2534,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
         if (mScrollViewAnim != null) mScrollViewAnim.cancel();
         if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
+        if (mWeatherAnim != null) mWeatherAnim.cancel();
         if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
         if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
         if (mClearButtonAnim != null) mClearButtonAnim.cancel();
@@ -2541,6 +2564,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                                     )
                                     .setDuration(FLIP_DURATION_OUT),
                                     mRibbonView, View.GONE));
+        }
+        if (mWeather != null) {
+            mWeatherAnim = start(
+                    setVisibilityWhenDone(
+                            interpolator(mAccelerateInterpolator,
+                                    ObjectAnimator.ofFloat(mWeather, View.SCALE_X, 0f)
+                                    )
+                                    .setDuration(FLIP_DURATION_OUT),
+                                    mWeather, View.GONE));
         }
         mQuickSettingsButtonAnim = start(
             setVisibilityWhenDone(
@@ -2595,6 +2627,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             if (mFlipSettingsViewAnim != null) mFlipSettingsViewAnim.cancel();
             if (mScrollViewAnim != null) mScrollViewAnim.cancel();
             if (mRibbonViewAnim != null) mRibbonViewAnim.cancel();
+            if (mWeatherAnim != null) mWeatherAnim.cancel();
             if (mQuickSettingsButtonAnim != null) mQuickSettingsButtonAnim.cancel();
             if (mNotificationButtonAnim != null) mNotificationButtonAnim.cancel();
             if (mClearButtonAnim != null) mClearButtonAnim.cancel();
@@ -2604,6 +2637,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             if (mRibbonView != null && mShowQuickAccessRibbons) {
                 mRibbonView.setScaleX(1f);
                 mRibbonView.setVisibility(View.VISIBLE);
+            }
+            if (mWeather != null && mWeatherEnabled) {
+                mWeather.setScaleX(1f);
+                mWeather.setVisibility(View.VISIBLE);
             }
             mQuickSettingsButton.setAlpha(1f);
             mQuickSettingsButton.setVisibility(View.VISIBLE);

@@ -64,16 +64,16 @@
             android:layout_height="@dimen/notification_panel_header_height"
             />
 
-        <include layout="@layout/weather"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            />
-
         <ViewStub android:id="@+id/ribbon_settings_stub"
             android:layout="@layout/ribbon_settings"
             android:layout_width="match_parent"
             android:layout_height="@dimen/notification_min_height"
+            />
+
+        <include layout="@layout/weather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             />
 
         <TextView

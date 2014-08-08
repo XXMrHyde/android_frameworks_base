@@ -259,25 +259,25 @@ public class DkActions {
         } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS)) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsActivity");
+                    "com.android.settings.Settings$WeatherSettingsActivity");
             startActivity(context, windowManagerService, isKeyguardShowing, intent);
             return;
         } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_OPTIONS)) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsOptionsActivity");
+                    "com.android.settings.Settings$WeatherSettingsOptionsActivity");
             startActivity(context, windowManagerService, isKeyguardShowing, intent);
             return;
         } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_CLICK)) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsClickActionsActivity");
+                    "com.android.settings.Settings$WeatherSettingsClickActionsActivity");
             startActivity(context, windowManagerService, isKeyguardShowing, intent);
             return;
         } else if (action.equals(ButtonsConstants.ACTION_WEATHER_SETTINGS_COLORS)) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.setClassName("com.android.settings",
-                    "com.android.settings.Settings$StatusBarExpandedWeatherSettingsColorsActivity");
+                    "com.android.settings.Settings$WeatherSettingsColorsActivity");
             startActivity(context, windowManagerService, isKeyguardShowing, intent);
             return;
         } else {
