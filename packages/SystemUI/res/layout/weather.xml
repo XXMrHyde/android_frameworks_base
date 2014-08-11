@@ -20,24 +20,43 @@
     <LinearLayout
         android:id="@+id/weather_panel_top_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/city"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:paddingLeft="10dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textAppearance="@android:style/TextAppearance"
-            android:textSize="22.0sp" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:paddingBottom="5dp" >
+
+            <TextView
+                android:id="@+id/city"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:textAppearance="@android:style/TextAppearance"
+                android:singleLine="true"
+                android:textSize="20.0sp" />
+
+            <TextView
+                android:id="@+id/current_temp_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:textAppearance="@android:style/TextAppearance"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="16.0sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:paddingRight="5dp" >
+            android:layout_weight="2"
+            android:gravity="right" >
 
             <ImageView
                 android:id="@+id/button_refresh"
@@ -52,17 +71,19 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:scaleType="fitXY"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 android:src="?android:attr/dividerHorizontal" />
 
             <ImageView
                 android:id="@+id/button_collapse"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:paddingRight="5dp"
                 android:scaleType="centerInside"
                 android:background="@drawable/ic_notify_button_bg"
                 android:src="@drawable/ic_weather_up" />
@@ -70,15 +91,16 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:scaleType="fitXY"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 android:src="?android:attr/dividerHorizontal" />
 
             <ImageView
                 android:id="@+id/button_settings"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:scaleType="centerInside"
@@ -100,18 +122,15 @@
         android:id="@+id/weather_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="5dp" >
+        android:padding="5dp" >
 
         <LinearLayout
             android:id="@+id/weather_panel_left"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:orientation="vertical"
+            android:paddingRight="5dp"
             android:background="@drawable/ic_notify_button_bg">
 
             <TextView
@@ -119,9 +138,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:paddingRight="5dp"
-                android:singleLine="true"
                 android:textAppearance="@android:style/TextAppearance"
+                android:singleLine="true"
                 android:textSize="20.0sp" />
 
             <TextView
@@ -129,7 +147,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:paddingRight="5dp"
                 android:textAppearance="@android:style/TextAppearance"
                 android:textSize="10.0sp" />
 
@@ -138,74 +155,65 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:paddingRight="5dp"
+                android:textAppearance="@android:style/TextAppearance"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textAppearance="@android:style/TextAppearance"
                 android:textSize="14.0sp" />
         </LinearLayout>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:paddingTop="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
             android:src="?android:attr/dividerHorizontal" />
 
         <LinearLayout
             android:id="@+id/layout_condition_image"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:orientation="horizontal" 
             android:background="@drawable/ic_notify_button_bg">
 
             <ImageView
                 android:id="@+id/condition_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="top|center_horizontal"
+                android:layout_gravity="center"
                 android:src="@drawable/weather_condition" />
         </LinearLayout>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:padding="5dp"
             android:scaleType="fitXY"
-            android:paddingTop="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
             android:src="?android:attr/dividerHorizontal" />
 
         <LinearLayout
             android:id="@+id/weather_panel_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
             android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
             android:background="@drawable/ic_notify_button_bg">
 
             <TextView
                 android:id="@+id/humidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:singleLine="true"
                 android:textAppearance="@android:style/TextAppearance"
+                android:singleLine="true"
                 android:textSize="14.0sp" />
 
             <TextView
                 android:id="@+id/winds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
                 android:textAppearance="@android:style/TextAppearance"
                 android:textSize="14.0sp" />
 
@@ -213,7 +221,6 @@
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
                 android:textAppearance="@android:style/TextAppearance"
                 android:textSize="14.0sp" />
         </LinearLayout>

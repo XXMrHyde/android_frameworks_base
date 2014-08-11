@@ -627,7 +627,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 updateHeaderColors();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER))) {
-                updateWeatherVisibility();
+                updateWeather();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -729,6 +729,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         } else {
             cleanupRibbon();
         }
+        updateWeather();
     }
 
     private void updateQuickSettings() {
@@ -780,7 +781,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         iv.setColorFilter(color, Mode.MULTIPLY);
     }
 
-    private void updateWeatherVisibility() {
+    private void updateWeather() {
         mWeatherEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_EXPANDED_ENABLE_WEATHER, 0,
                 UserHandle.USER_CURRENT) == 1;
@@ -788,6 +789,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         if (mWeather != null) {
             mWeather.setVisibility(mWeatherEnabled
                     ? View.VISIBLE : View.GONE);
+
+            ViewGroup.MarginLayoutParams lp =
+                    (ViewGroup.MarginLayoutParams) mWeather.getLayoutParams();
+            float density = mContext.getResources().getDisplayMetrics().density;
+            int dp = 2;
+            int marginTop = (int) (dp * density);
+
+            lp.setMargins(0, (mShowQuickAccessRibbons ? marginTop : 0), 0, 0);
+            mWeather.setLayoutParams(lp);
         }
     }
 
@@ -990,7 +1000,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mStatusBarView.setBar(this);
 
         mWeather = (Weather) mStatusBarWindow.findViewById(R.id.weather);
-        updateWeatherVisibility();
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -1347,6 +1356,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mBattery = (BatteryMeterView) mStatusBarView.findViewById(R.id.battery);
         mCircleBattery = (CircleBatteryMeterView) mStatusBarView.findViewById(R.id.circle_battery);
         updateSettings();
+        updateWeather();
 
         return mStatusBarView;
     }

@@ -1,6 +1,9 @@
 
 package com.android.systemui.statusbar.policy;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -15,6 +18,8 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,21 +47,23 @@ public class Weather extends LinearLayout {
     public static final String EXTRA_CONDITION_CODE = "condition_code";
 
     public static final int STYLE_PANEL = 0;
-    public static final int STYLE_BAR = 1;
     public static final int ICON_STYLE_MONOCHROME = 0;
     public static final int ICON_STYLE_COLOR = 1;
 
-    private TextView mWeatherBarText;
     private LinearLayout mWeatherPanelTopBar;
     private LinearLayout mWeatherPanelLeft;
     private LinearLayout mWeatherPanelRight;
     private LinearLayout mWeatherPanel;
     private LinearLayout mLayoutConditionImage;
-    private TextView mCity;
+
     private ImageView mRefreshButton;
     private ImageView mCollapseButton;
     private ImageView mSettingsButton;
     private ImageView mWeatherDivider;
+
+    private TextView mWeatherBarText;
+    private TextView mCity;
+    private TextView mCurrentTempCondition;
     private TextView mCurrentTemp;
     private TextView mTemp;
     private TextView mCondition;
@@ -64,7 +71,13 @@ public class Weather extends LinearLayout {
     private TextView mHumidity;
     private TextView mWinds;
     private TextView mTimestamp;
+
     private String mCondition_code = "";
+
+    private Animator mExpandPanelAnimator;
+    private Animator mExpandTextAnimator;
+    private Animator mCollapsePanelAnimator;
+    private Animator mCollapseTextAnimator;
 
     private int mWeatherStyle;
     private int mIconType;
@@ -86,6 +99,9 @@ public class Weather extends LinearLayout {
     private int mIconColor;
     private int mButtonIconColor;
     private int mTextColor;
+
+    private boolean mIsPanelExpanded = true;
+    private boolean mExpanding;
 
     private Intent mIntent = null;
     private SettingsObserver mSettingsObserver;
@@ -174,16 +190,12 @@ public class Weather extends LinearLayout {
             if (v.getId() == R.id.button_refresh) {
                 refreshWeather(v);
             } else if (v.getId() == R.id.button_collapse) {
-                updateWeatherStyle(STYLE_BAR);
-                Settings.System.putInt(mResolver,
-                        Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, STYLE_BAR);
+                expandOrCollapsePanel(mIsPanelExpanded);
             } else if (v.getId() == R.id.button_settings) {
                 vibrate();
                 DkActions.processAction(mContext, mClickSettings, false);
             } else if (v.getId() == R.id.weather_bar_text) {
-                updateWeatherStyle(STYLE_PANEL);
-                Settings.System.putInt(mResolver,
-                        Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, STYLE_PANEL);
+                refreshWeather(v);
             } else if (v.getId() == R.id.weather_panel_left) {
                 if (mClickLeftPanel.equals(ButtonsConstants.ACTION_NULL)) {
                     // do nothing
@@ -268,6 +280,7 @@ public class Weather extends LinearLayout {
         mSettingsButton = (ImageView) this.findViewById(R.id.button_settings);
         mWeatherDivider = (ImageView) this.findViewById(R.id.weather_divider);
         mCity = (TextView) this.findViewById(R.id.city);
+        mCurrentTempCondition = (TextView) this.findViewById(R.id.current_temp_condition);
         mCurrentTemp = (TextView) this.findViewById(R.id.current_temp);
         mTemp = (TextView) this.findViewById(R.id.high_low_temp);
         mCondition = (TextView) this.findViewById(R.id.condition);
@@ -294,6 +307,7 @@ public class Weather extends LinearLayout {
                 mSettingsObserver = new SettingsObserver(new Handler());
             }
             mSettingsObserver.observe();
+            setupExpandCollapseAction();
             updateSettings();
         }
 
@@ -322,6 +336,7 @@ public class Weather extends LinearLayout {
 
         mWeatherBarText.setText(setWeatherBarText(intent));
         mCity.setText(intent.getCharSequenceExtra(EXTRA_CITY));
+        mCurrentTempCondition.setText(setWeatherCurrentTempCondition(intent));
         mCurrentTemp.setText(intent.getCharSequenceExtra(EXTRA_TEMP));
         mTemp.setText(setTemp(intent));
         mCondition.setText(intent.getCharSequenceExtra(EXTRA_CONDITION));
@@ -343,6 +358,13 @@ public class Weather extends LinearLayout {
         return text;
     }
 
+    private CharSequence setWeatherCurrentTempCondition(Intent intent) {         
+        String text = ((mShowLocation ? ", " : "")
+                + (String) intent.getCharSequenceExtra(EXTRA_TEMP) + ", " 
+                + (String) intent.getCharSequenceExtra(EXTRA_CONDITION));
+        return text;
+    }
+
     private CharSequence setTemp(Intent intent) {
         String text =
                 (String) intent.getCharSequenceExtra(EXTRA_HIGH) + "/"
@@ -352,8 +374,8 @@ public class Weather extends LinearLayout {
 
     private void updateSettings() {
         mWeatherStyle = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE, 0,
-                UserHandle.USER_CURRENT);
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_STYLE,
+                STYLE_PANEL, UserHandle.USER_CURRENT);
         mIconType = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON, 0,
                 UserHandle.USER_CURRENT);
@@ -434,6 +456,8 @@ public class Weather extends LinearLayout {
         updateBackground();
         updateButtonColors();
         setTextColor(mTextColor);
+        mCurrentTempCondition.setVisibility(
+                mIsPanelExpanded ? View.GONE : View.VISIBLE);
         if (mIntent != null) {
             updateWeather(mIntent);
         }
@@ -442,22 +466,27 @@ public class Weather extends LinearLayout {
     private void updateWeatherStyle(int style) {
         if (style == STYLE_PANEL) {
             mWeatherBarText.setVisibility(View.GONE);
-            mWeatherBarText.setClickable(false);
             mWeatherPanelTopBar.setVisibility(View.VISIBLE);
-            mWeatherPanelTopBar.setClickable(true);
-            mWeatherPanel.setVisibility(View.VISIBLE);
-            mWeatherPanel.setClickable(true);
-            mLayoutConditionImage.setClickable(true);
-            mWeatherDivider.setVisibility(View.VISIBLE);
+            mWeatherDivider.setVisibility(mIsPanelExpanded ?
+                    View.VISIBLE : View.GONE);
+            mWeatherPanel.setVisibility(mIsPanelExpanded ?
+                    View.VISIBLE : View.GONE);
+            mWeatherBarText.setClickable(false);
+            mWeatherPanelLeft.setClickable(mIsPanelExpanded ?
+                    true : false);
+            mLayoutConditionImage.setClickable(mIsPanelExpanded ?
+                    true : false);
+            mWeatherPanelRight.setClickable(mIsPanelExpanded ?
+                    true : false);
         } else {
-            mWeatherDivider.setVisibility(View.GONE);
-            mLayoutConditionImage.setClickable(false);
-            mWeatherPanel.setVisibility(View.GONE);
-            mWeatherPanel.setClickable(false);
             mWeatherPanelTopBar.setVisibility(View.GONE);
-            mWeatherPanelTopBar.setClickable(false);
+            mWeatherDivider.setVisibility(View.GONE);
+            mWeatherPanel.setVisibility(View.GONE);
             mWeatherBarText.setVisibility(View.VISIBLE);
             mWeatherBarText.setClickable(true);
+            mWeatherPanelLeft.setClickable(false);
+            mLayoutConditionImage.setClickable(false);
+            mWeatherPanelRight.setClickable(true);
         }
     }
 
@@ -507,12 +536,139 @@ public class Weather extends LinearLayout {
     private void setTextColor(int color) {
         mWeatherBarText.setTextColor(color);
         mCity.setTextColor(color);
+        mCurrentTempCondition.setTextColor(color);
         mCurrentTemp.setTextColor(color);
         mTemp.setTextColor(color);
         mCondition.setTextColor(color);
         mHumidity.setTextColor(color);
         mWinds.setTextColor(color);
         mTimestamp.setTextColor(color);
+    }
+
+    private void expandOrCollapsePanel(boolean expanded) {
+        if (expanded) {
+            mWeatherPanelLeft.setClickable(false);
+            mLayoutConditionImage.setClickable(false);
+            mWeatherPanelRight.setClickable(true);
+            animateCollapsing();
+        } else {
+            mWeatherPanelLeft.setClickable(true);
+            mLayoutConditionImage.setClickable(true);
+            mWeatherPanelRight.setClickable(true);
+            animateExpanding();
+        }
+    }
+
+    private void animateExpanding() {
+        mWeatherDivider.setVisibility(View.VISIBLE);
+        mWeatherPanel.setVisibility(View.VISIBLE);
+        mExpandPanelAnimator.start();
+        mExpandTextAnimator.start();
+    }
+
+    private void animateCollapsing() {
+        mCollapsePanelAnimator.start();
+        mCollapseTextAnimator.start();
+    }
+
+    private void setupExpandCollapseAction() {
+        mWeatherPanel.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        mWeatherPanel.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                        View parent = (View) mWeatherPanel.getParent();
+                        final int widthSpec = View.MeasureSpec.makeMeasureSpec(
+                                parent.getMeasuredWidth() - parent.getPaddingLeft()
+                                        - parent.getPaddingRight(), View.MeasureSpec.AT_MOST);
+                        final int heightSpec = View.MeasureSpec.makeMeasureSpec(
+                                LayoutParams.WRAP_CONTENT, View.MeasureSpec.AT_MOST);
+
+                        mWeatherPanel.measure(widthSpec, heightSpec);
+                        mExpanding = true;
+                        mExpandPanelAnimator = createSlideAnimator(
+                                0, mWeatherPanel.getMeasuredHeight());
+                        mExpandTextAnimator = createAlphaAnimator(100, 0);
+                        mExpanding = false;
+                        mCollapsePanelAnimator = createSlideAnimator(
+                                mWeatherPanel.getMeasuredHeight(), 0);
+                        mCollapseTextAnimator = createAlphaAnimator(0, 100);
+                        return true;
+                    }
+                });
+    }
+
+    private ValueAnimator createSlideAnimator(int start, int end) {
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int value = (Integer) valueAnimator.getAnimatedValue();
+
+                ViewGroup.LayoutParams layoutParams = mWeatherPanel.getLayoutParams();
+                layoutParams.height = value;
+                mWeatherPanel.setLayoutParams(layoutParams);
+            }
+        });
+        if (mExpanding) {
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    mCollapseButton.setImageResource(R.drawable.ic_weather_up);
+                    mIsPanelExpanded = true;
+                    if (mIntent != null) {
+                        updateWeather(mIntent);
+                    }
+                }
+            });
+        } else {
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    mCollapseButton.setImageResource(R.drawable.ic_weather_down);
+                    mWeatherDivider.setVisibility(View.GONE);
+                    mWeatherPanel.setVisibility(View.GONE);
+                    mIsPanelExpanded = false;
+                    if (mIntent != null) {
+                        updateWeather(mIntent);
+                    }
+                }
+            });
+        }
+        return animator;
+    }
+
+    private ValueAnimator createAlphaAnimator(int start, int end) {
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int value = (Integer) valueAnimator.getAnimatedValue();
+                float currentAlpha = value / 100f;
+                float valueSize = (4.0f / 100) * value;
+                mCurrentTempCondition.setAlpha(currentAlpha);
+                mCity.setTextSize(mExpanding ? 16.0f + valueSize : 20.0f - valueSize);
+            }
+        });
+        if (mExpanding) {
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mCurrentTempCondition.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mCurrentTempCondition.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+        return animator;
     }
 
     private void vibrate() {
