@@ -108,7 +108,7 @@
     <string name="smart_pulldown_disabled">Desplegable inteligente está desactivado</string>
 
     <!-- Heads up -->
-    <string name="status_bar_notification_heads_up_enable_titl e">Habilitar heads up</string>
-    <string name="status_bar_notification_heads_up_disable_tit le">Deshabilitar heads up</string>
+    <string name="status_bar_notification_heads_up_enable_title">Habilitar heads up</string>
+    <string name="status_bar_notification_heads_up_disable_title">Deshabilitar heads up</string>
     <string name="heads_up_snooze_message">Heads up se ha deshabilitado durante <xliff:g id="number">%d</xliff:g> minutos.</string>
 </resources>
