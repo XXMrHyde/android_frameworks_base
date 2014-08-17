@@ -2566,6 +2566,20 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * whether to colorize the account icons of the settings app root list
+         * 
+         * @hide
+         */
+        public static final String SETTINGS_ROOT_LIST_COLORIZE_ACCOUNT_ICONS = "settings_root_list_colorize_account_icons";
+
+        /**
+         * Colors of the settings app root list icons 
+         * 
+         * @hide
+         */
+        public static final String SETTINGS_ROOT_LIST_ICON_COLOR = "settings_root_list_icon_color";
+
+        /**
          * Allows to show the background activity back the lockscreen
          * @hide
          */
