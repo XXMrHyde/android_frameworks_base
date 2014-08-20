@@ -3990,6 +3990,12 @@ public final class Settings {
         public static final String LISTVIEW_ANIMATION_EXCLUDED_APPS = "listview_animation_excluded_apps";
 
         /**
+         * Wether to play the bootanimation preview looped
+         * @hide
+         */
+        public static final String BOOTANIMATION_PREVIEW_LOOP = "bootanimation_preview_loop";
+
+        /**
           * Volume keys control cursor in text fields (default is 0)
           * 0 - Disabled
           * 1 - Volume up/down moves cursor left/right
