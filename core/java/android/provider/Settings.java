@@ -2573,6 +2573,20 @@ public final class Settings {
         public static final String SETTINGS_ROOT_LIST_COLORIZE_ACCOUNT_ICONS = "settings_root_list_colorize_account_icons";
 
         /**
+         * Colors of the settings app root list category text 
+         * 
+         * @hide
+         */
+        public static final String SETTINGS_ROOT_LIST_CATEGORY_TEXT_COLOR = "settings_root_list_category_text_color";
+
+        /**
+         * Colors of the settings app root list title text
+         * 
+         * @hide
+         */
+        public static final String SETTINGS_ROOT_LIST_TITLE_TEXT_COLOR = "settings_root_list_title_text_color";
+
+        /**
          * Colors of the settings app root list icons 
          * 
          * @hide
