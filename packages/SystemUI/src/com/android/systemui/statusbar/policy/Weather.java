@@ -4,6 +4,7 @@ package com.android.systemui.statusbar.policy;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.res.Resources;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.android.internal.util.darkkat.ButtonsConstants;
 import com.android.internal.util.darkkat.DkActions;
+import com.android.internal.util.darkkat.ImageHelper;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
@@ -72,7 +74,7 @@ public class Weather extends LinearLayout {
     private TextView mWinds;
     private TextView mTimestamp;
 
-    private String mCondition_code = "";
+    private String mCondition_code = "100";
 
     private Animator mExpandPanelAnimator;
     private Animator mExpandTextAnimator;
@@ -94,6 +96,7 @@ public class Weather extends LinearLayout {
     private String mClickRightPanel;
     private String mLongClickRightPanel;
 
+    private boolean mColorizeAllIcons;
     private int mBgColor;
     private int mBgPressedColor;
     private int mIconColor;
@@ -161,6 +164,9 @@ public class Weather extends LinearLayout {
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_COLORRIZE_ALL_ICONS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_COLOR),
@@ -340,15 +346,10 @@ public class Weather extends LinearLayout {
         mCurrentTemp.setText(intent.getCharSequenceExtra(EXTRA_TEMP));
         mTemp.setText(setTemp(intent));
         mCondition.setText(intent.getCharSequenceExtra(EXTRA_CONDITION));
-        int level = 100;
-        try {
-            level = Integer.parseInt(mCondition_code);
-        } catch (Exception e) {
-        }
-        mConditionImage.setImageLevel(level);
         mHumidity.setText(intent.getCharSequenceExtra(EXTRA_HUMIDITY));
         mWinds.setText(intent.getCharSequenceExtra(EXTRA_WIND));
         mTimestamp.setText(intent.getCharSequenceExtra(EXTRA_LAST_UPDATE));
+        updateConditionImage();
     }
 
     private CharSequence setWeatherBarText(Intent intent) {
@@ -412,6 +413,9 @@ public class Weather extends LinearLayout {
         mLongClickRightPanel = Settings.System.getStringForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL,
                 UserHandle.USER_CURRENT);
+        mColorizeAllIcons = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_WEATHER_COLORRIZE_ALL_ICONS,
+                0, UserHandle.USER_CURRENT) == 1;
         mBgColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_WEATHER_BACKGROUND_COLOR,
                 0xff191919, UserHandle.USER_CURRENT);
@@ -451,7 +455,7 @@ public class Weather extends LinearLayout {
         }
 
         updateWeatherStyle(mWeatherStyle);
-        updateConditionImage(mIconType);
+        updateConditionImage();
         updateAdditionalInfoVisibility();
         updateBackground();
         updateButtonColors();
@@ -490,16 +494,39 @@ public class Weather extends LinearLayout {
         }
     }
 
-    private void updateConditionImage(int iconStyle) {
+    private void updateConditionImage() {
+        Resources res = mContext.getResources();
+        boolean monochrome = false;
+        String iconTypeName = "";
+
         if (mIconType == ICON_STYLE_MONOCHROME) {
-            mConditionImage.setImageResource(R.drawable.weather_condition);
-            mConditionImage.setColorFilter(mIconColor, Mode.MULTIPLY);
+            monochrome = true;
         } else if (mIconType == ICON_STYLE_COLOR) {
-            mConditionImage.setImageResource(R.drawable.weather_condition_color);
-            mConditionImage.setColorFilter(null);
+            iconTypeName = "color_";
         } else {
-            mConditionImage.setImageResource(R.drawable.weather_condition_vclouds);
-            mConditionImage.setColorFilter(null);
+            iconTypeName = "vclouds_";
+        }
+
+        String filename = "weather_" + iconTypeName + mCondition_code;
+
+        int resID = res.getIdentifier(filename, "drawable", mContext.getPackageName());
+
+        if (resID == 0) {
+            filename = "weather_" + iconTypeName + "na";
+            resID = res.getIdentifier(filename, "drawable", mContext.getPackageName());
+        }
+
+        mConditionImage.setImageDrawable(res.getDrawable(resID));
+        Drawable d = mConditionImage.getDrawable();
+
+        if (monochrome) {
+            d.setColorFilter(mIconColor, Mode.MULTIPLY);
+        } else {
+            d.setColorFilter(null);
+            if (mColorizeAllIcons) {
+                mConditionImage.setImageDrawable(null);
+                mConditionImage.setImageBitmap(ImageHelper.getColoredBitmap(d, mIconColor));
+            }
         }
     }
 

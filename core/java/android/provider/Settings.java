@@ -3557,6 +3557,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_WEATHER_LONG_CLICK_RIGHT_PANEL = "status_bar_expanded_weather_long_click_right_panel";
 
+        /**
+         * Whether to colorize all icons
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_COLORRIZE_ALL_ICONS = "status_bar_expanded_weather_colorize_all_icons";
 
         /**
          * Weather panel background color on the expanded statusbar
