@@ -2570,6 +2570,13 @@ public final class Settings {
          * 
          * @hide
          */
+        public static final String SETTINGS_ROOT_LIST_SHOW_MOBILE_SETTINGS = "settings_root_list_show_mobile settings";
+
+        /**
+         * whether to colorize the account icons of the settings app root list
+         * 
+         * @hide
+         */
         public static final String SETTINGS_ROOT_LIST_COLORIZE_ACCOUNT_ICONS = "settings_root_list_colorize_account_icons";
 
         /**
