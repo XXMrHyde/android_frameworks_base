@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
 import android.media.AudioManager;
 import android.media.AudioService;
 import android.media.AudioSystem;
@@ -118,6 +120,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     private boolean mVoiceCapable;
     private boolean mVolumeLinkNotification;
     private int mCurrentOverlayStyle = -1;
+    private int mIconColor;
 
     // True if we want to play tones on the system stream when the master stream is specified.
     private final boolean mPlayMasterStreamTones;
@@ -229,13 +232,15 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     private ContentObserver mSettingsObserver = new ContentObserver(this) {
         @Override
         public void onChange(boolean selfChange) {
-            mVolumeLinkNotification = Settings.System.getIntForUser(mContext.getContentResolver(),
+            ContentResolver resolver = mContext.getContentResolver();
+            mVolumeLinkNotification = Settings.System.getIntForUser(resolver,
                     Settings.System.VOLUME_LINK_NOTIFICATION, 1,
                     UserHandle.USER_CURRENT) == 1;
-            int overlayStyle = Settings.System.getIntForUser(mContext.getContentResolver(),
+            int overlayStyle = Settings.System.getIntForUser(resolver,
                     Settings.System.MODE_VOLUME_OVERLAY, VOLUME_OVERLAY_EXPANDABLE,
                     UserHandle.USER_CURRENT);
             changeOverlayStyle(overlayStyle);
+            updateColors();
         }
     };
 
@@ -359,6 +364,12 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         context.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.MODE_VOLUME_OVERLAY), false,
                 mSettingsObserver, UserHandle.USER_ALL);
+        context.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.VOLUME_DIALOG_BG_COLOR), false,
+                mSettingsObserver, UserHandle.USER_ALL);
+        context.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.VOLUME_DIALOG_ICON_COLOR), false,
+                mSettingsObserver, UserHandle.USER_ALL);
 
         boolean masterVolumeKeySounds = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useVolumeKeySounds);
@@ -367,6 +378,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
 
         mMoreButton.setOnClickListener(this);
         listenToRingerMode();
+        updateColors();
     }
 
     private void changeOverlayStyle(int newStyle) {
@@ -488,6 +500,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             sc.iconMuteRes = streamRes.iconMuteRes;
             sc.icon.setImageResource(sc.iconRes);
             sc.icon.setOnClickListener(this);
+            sc.icon.setColorFilter(mIconColor, Mode.MULTIPLY);
             sc.seekbarView = (SeekBar) sc.group.findViewById(R.id.seekbar);
             int plusOne = (streamType == AudioSystem.STREAM_BLUETOOTH_SCO ||
                     streamType == AudioSystem.STREAM_VOICE_CALL) ? 1 : 0;
@@ -551,10 +564,12 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         // Force reloading the image resource
         sc.icon.setImageDrawable(null);
         sc.icon.setImageResource(muted ? sc.iconMuteRes : sc.iconRes);
+        sc.icon.setColorFilter(mIconColor, Mode.MULTIPLY);
         if (((sc.streamType == AudioManager.STREAM_RING) ||
                 (sc.streamType == AudioManager.STREAM_NOTIFICATION)) &&
                 mAudioManager.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
             sc.icon.setImageResource(R.drawable.ic_audio_ring_notif_vibrate);
+            sc.icon.setColorFilter(mIconColor, Mode.MULTIPLY);
         }
         if (sc.streamType == AudioService.STREAM_REMOTE_MUSIC) {
             // never disable touch interactions for remote playback, the muting is not tied to
@@ -723,6 +738,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         StreamControl sc = mStreamControls.get(streamType);
         if (sc != null) {
             sc.icon.setImageResource(isMuted(sc.streamType) ? sc.iconMuteRes : sc.iconRes);
+            sc.icon.setColorFilter(mIconColor, Mode.MULTIPLY);
         }
 
         onVolumeChanged(streamType, flags);
@@ -1033,6 +1049,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             sc.iconRes = resId;
             sc.iconMuteRes = resMuteId;
             sc.icon.setImageResource(isMuted(sc.streamType) ? sc.iconMuteRes : sc.iconRes);
+            sc.icon.setColorFilter(mIconColor, Mode.MULTIPLY);
         }
     }
 
@@ -1171,5 +1188,28 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             return;
         }
         resetTimeout();
+    }
+
+    private void updateColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        Drawable defaultBackground = mContext.getResources().getDrawable(
+                R.drawable.dialog_full_holo_dark).getCurrent();
+        Drawable customBackground = mContext.getResources().getDrawable(
+                R.drawable.dialog_vol_custom_bg).getCurrent();
+        int backgroundColor = Settings.System.getIntForUser(resolver,
+                Settings.System.VOLUME_DIALOG_BG_COLOR, 0xff282828,
+                UserHandle.USER_CURRENT);
+        mIconColor = Settings.System.getIntForUser(resolver,
+                Settings.System.VOLUME_DIALOG_ICON_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+
+        if (backgroundColor != 0xff282828) {
+            customBackground.setColorFilter(backgroundColor, Mode.MULTIPLY);
+            mPanel.setBackground(customBackground);
+        } else {
+            mPanel.setBackground(defaultBackground);
+        }
+        ((ImageView)mMoreButton).setColorFilter(mIconColor, Mode.MULTIPLY);
     }
 }
