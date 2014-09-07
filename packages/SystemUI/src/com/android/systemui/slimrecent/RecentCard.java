@@ -18,6 +18,9 @@
 package com.android.systemui.slimrecent;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,6 +38,12 @@ public class RecentCard extends Card {
     private RecentExpandedCard mExpandedCard;
 
     private int mPersistentTaskId;
+
+    private int defaultCardBgColor = mContext.getResources().getColor(
+                R.color.card_background);
+    private int customCardBgColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.RECENT_PANEL_HEADER_BG_COLOR,
+                defaultCardBgColor, UserHandle.USER_CURRENT);
 
     public RecentCard(Context context, TaskDescription td, float scaleFactor) {
         this(context, R.layout.inner_base_main, td, scaleFactor);
@@ -64,6 +73,13 @@ public class RecentCard extends Card {
         mExpandedCard = new RecentExpandedCard(
                 context, td.persistentTaskId, td.getLabel(), scaleFactor);
         initExpandedState(td);
+
+        // set default or custom background
+        if (customCardBgColor != 0xff1c1c1c) {
+            this.setBackgroundResource(new ColorDrawable(customCardBgColor));
+        } else {
+            this.setBackgroundResource(new ColorDrawable(defaultCardBgColor));
+        }
 
         // Finally add header, icon and expanded area to our card.
         addCardHeader(mHeader);

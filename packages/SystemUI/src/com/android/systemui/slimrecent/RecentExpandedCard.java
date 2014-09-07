@@ -28,6 +28,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Process;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -55,6 +57,9 @@ public class RecentExpandedCard extends CardExpand {
     private float mScaleFactor;
     private boolean mScaleFactorChanged;
 
+    private int mDefaultCardBgColor;
+    private int mCustomCardBgColor;
+
     private BitmapDownloaderTask mTask;
 
     private boolean mReload;
@@ -74,6 +79,11 @@ public class RecentExpandedCard extends CardExpand {
         mPersistentTaskId = persistentTaskId;
         mLabel = label;
         mScaleFactor = scaleFactor;
+
+        mDefaultCardBgColor = mContext.getResources().getColor(R.color.card_background);
+        mCustomCardBgColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.RECENT_PANEL_HEADER_BG_COLOR,
+                mDefaultCardBgColor, UserHandle.USER_CURRENT);
 
         initDimensions();
     }
@@ -169,6 +179,13 @@ public class RecentExpandedCard extends CardExpand {
                             .getBitmapFromMemCache(String.valueOf(mPersistentTaskId)));
                 }
             }
+        }
+
+        // set default or custom background
+        if (mCustomCardBgColor != 0xff1c1c1c) {
+            parent.setBackgroundColor(mCustomCardBgColor);
+        } else {
+            parent.setBackgroundColor(mDefaultCardBgColor);
         }
     }
 
