@@ -2922,11 +2922,18 @@ public final class Settings {
         public static final String RECENT_PANEL_EMPTY_ICON_COLOR = "recent_panel_empty_icon_color";
 
         /**
-         * Color of the recent app panel header background
+         * Color of the recent app panel card header background
          * 
          * @hide
          */
         public static final String RECENT_PANEL_HEADER_BG_COLOR = "recent_panel_header_bg_color";
+
+        /**
+         * Color of the recent app panel card background
+         * 
+         * @hide
+         */
+        public static final String RECENT_PANEL_CARD_BG_COLOR = "recent_panel_card_bg_color";
 
         /**
          * Color of the recent app panel header text

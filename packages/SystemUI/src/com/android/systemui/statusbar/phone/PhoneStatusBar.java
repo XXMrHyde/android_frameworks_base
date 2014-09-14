@@ -550,6 +550,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.RECENT_PANEL_HEADER_BG_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_PANEL_CARD_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.RECENT_PANEL_HEADER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -662,6 +665,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.RECENT_PANEL_EMPTY_ICON_COLOR))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.RECENT_PANEL_HEADER_BG_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.RECENT_PANEL_CARD_BG_COLOR))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.RECENT_PANEL_HEADER_TEXT_COLOR))) {
                 rebuildRecents();

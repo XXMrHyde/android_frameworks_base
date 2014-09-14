@@ -82,7 +82,7 @@ public class RecentExpandedCard extends CardExpand {
 
         mDefaultCardBgColor = mContext.getResources().getColor(R.color.card_background);
         mCustomCardBgColor = Settings.System.getIntForUser(
-                mContext.getContentResolver(), Settings.System.RECENT_PANEL_HEADER_BG_COLOR,
+                mContext.getContentResolver(), Settings.System.RECENT_PANEL_CARD_BG_COLOR,
                 mDefaultCardBgColor, UserHandle.USER_CURRENT);
 
         initDimensions();

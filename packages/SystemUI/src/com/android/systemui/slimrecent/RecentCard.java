@@ -39,11 +39,11 @@ public class RecentCard extends Card {
 
     private int mPersistentTaskId;
 
-    private int defaultCardBgColor = mContext.getResources().getColor(
+    private int mDefaultCardHeaderBgColor = mContext.getResources().getColor(
                 R.color.card_background);
-    private int customCardBgColor = Settings.System.getIntForUser(
+    private int mCustomCardHeaderBgColor = Settings.System.getIntForUser(
                 mContext.getContentResolver(), Settings.System.RECENT_PANEL_HEADER_BG_COLOR,
-                defaultCardBgColor, UserHandle.USER_CURRENT);
+                mDefaultCardHeaderBgColor, UserHandle.USER_CURRENT);
 
     public RecentCard(Context context, TaskDescription td, float scaleFactor) {
         this(context, R.layout.inner_base_main, td, scaleFactor);
@@ -75,10 +75,10 @@ public class RecentCard extends Card {
         initExpandedState(td);
 
         // set default or custom background
-        if (customCardBgColor != 0xff1c1c1c) {
-            this.setBackgroundResource(new ColorDrawable(customCardBgColor));
+        if (mCustomCardHeaderBgColor != 0xff1c1c1c) {
+            this.setBackgroundResource(new ColorDrawable(mCustomCardHeaderBgColor));
         } else {
-            this.setBackgroundResource(new ColorDrawable(defaultCardBgColor));
+            this.setBackgroundResource(new ColorDrawable(mDefaultCardHeaderBgColor));
         }
 
         // Finally add header, icon and expanded area to our card.
