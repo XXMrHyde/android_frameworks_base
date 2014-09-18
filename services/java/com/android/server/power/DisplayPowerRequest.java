@@ -62,7 +62,7 @@ final class DisplayPowerRequest {
     // visible to the user.
     public boolean blockScreenOn;
 
-    // Slim settings - override config for ElectronBeam mode
+    // DK settings - override config for ElectronBeam mode
     public int electronBeamMode;
 
     public DisplayPowerRequest() {
