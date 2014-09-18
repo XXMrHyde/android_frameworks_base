@@ -3048,6 +3048,17 @@ public final class Settings {
         public static final String VOLUME_DIALOG_ICON_COLOR = "volume_dialog_icon_color";
 
         /**
+         * Electronic beam animation mode
+         * 0 = off,
+         * 1 = always horizontal,
+         * 2 = always vertical,
+         * 3 = dependent on orientation
+         * 4 = dependent on orientation
+         * @hide
+         */
+        public static final String SYSTEM_POWER_CRT_MODE = "system_power_crt_mode";
+
+        /**
          * Battery warning preferences
          *
          * 0 = show dialog + play sound (default)
