@@ -2963,6 +2963,13 @@ public final class Settings {
         public static final String RECENT_PANEL_EXPANDED_MODE = "recent_panel_expanded_mode";
 
         /**
+         * Whether to show the topmost task in the recent panel
+         *
+         * @hide
+         */
+        public static final String RECENT_PANEL_SHOW_TOPMOST = "recent_panel_show_topmost";
+
+        /**
          * User favorite tasks for recent panel.
          * @hide
          */
