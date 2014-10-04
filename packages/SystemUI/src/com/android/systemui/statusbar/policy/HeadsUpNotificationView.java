@@ -19,7 +19,14 @@ package com.android.systemui.statusbar.policy;
 import android.app.Notification;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -41,6 +48,11 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     private static final boolean DEBUG = false;
     private static final boolean SPEW = DEBUG;
 
+    private static final int DEFAULT_BACKGROUND_COLOR = 0xff181818;
+    private static final int DEFAULT_BACKGROUND_PRESSED_COLOR = 0xff454545;
+    private static final int DEFAULT_ICON_COLOR = 0xffffffff;
+    private static final int FULL_OPAQUE = 255;
+
     Rect mTmpRect = new Rect();
 
     private final int mTouchSensitivityDelay;
@@ -52,7 +64,13 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
 
     private ViewGroup mContentHolder;
     private ViewGroup mContentSlider;
+    private View mExpanded;
+    private View mExpandedBig;
     private ImageButton mSnoozeButton;
+
+    private int mBackgroundColor;
+    private int mBackgroundPressedColor;
+    private int mIconColor;
 
     private NotificationData.Entry mHeadsUp;
     private boolean mHeadsUpIsExpanded;
@@ -66,17 +84,12 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         super(context, attrs, defStyle);
         mTouchSensitivityDelay = getResources().getInteger(R.integer.heads_up_sensitivity_delay);
         if (DEBUG) Log.v(TAG, "create() " + mTouchSensitivityDelay);
+        mContext = context;
+        updateSettings();
     }
 
     public void setBar(BaseStatusBar bar) {
         mBar = bar;
-    }
-
-    public void setSnoozeVisibility(boolean show) {
-        mSnoozeButtonVisibility = show;
-        if (mSnoozeButton != null) {
-            mSnoozeButton.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
     }
 
     public ViewGroup getHolder() {
@@ -98,6 +111,8 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         mContentHolder.addView(mHeadsUp.row);
         mSwipeHelper.snapChild(mContentSlider, 1f);
         mStartTouchTime = System.currentTimeMillis() + mTouchSensitivityDelay;
+        setBackground();
+        setIconColors();
         return true;
     }
 
@@ -159,6 +174,82 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
         if (mHeadsUp != null) {
             // whoops, we're on already!
             setNotification(mHeadsUp, mHeadsUpIsExpanded);
+        }
+    }
+
+    public void setSnoozeVisibility(boolean show) {
+        mSnoozeButtonVisibility = show;
+        if (mSnoozeButton != null) {
+            mSnoozeButton.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void setBackground() {
+        if (mContentHolder == null || mHeadsUp == null) {
+            return;
+        }
+
+        mExpanded = mHeadsUp.expanded;
+        mExpandedBig = mHeadsUp.getBigContentView();
+        updateSettings();
+
+        if (mBackgroundColor == DEFAULT_BACKGROUND_COLOR) {
+            mContentHolder.setBackgroundResource(R.drawable.heads_up_window_bg);
+            if (mSnoozeButton != null) {
+                mSnoozeButton.setBackgroundResource(R.drawable.heads_up_snooze_bg);
+            }
+        } else {
+            Drawable background =
+                    mContext.getResources().getDrawable(R.drawable.heads_up_window_custom_bg);
+            int bgAlpha = Color.alpha(mBackgroundColor);
+            if (bgAlpha != FULL_OPAQUE) {
+                mBackgroundColor +=  FULL_OPAQUE << 24;
+            }
+            background.setColorFilter(mBackgroundColor, Mode.MULTIPLY);
+            mContentHolder.setBackground(background);
+            if (bgAlpha != FULL_OPAQUE) {
+                background.setAlpha(bgAlpha);
+            } else {
+                background.setAlpha(255);
+            }
+            if (mSnoozeButton != null) {
+                updateSettings();
+                StateListDrawable snoozeBgStates = new StateListDrawable();
+                ColorDrawable snoozeBgDrawable = new ColorDrawable(mBackgroundColor);
+                ColorDrawable snoozePresDrawable = new ColorDrawable(mBackgroundPressedColor);
+                snoozeBgStates.addState(new int[] {android.R.attr.state_pressed}, snoozePresDrawable);
+                snoozeBgStates.addState(new int[] {}, snoozeBgDrawable);
+                mSnoozeButton.setBackground(snoozeBgStates);
+            }
+        }
+
+        StateListDrawable bgStates = new StateListDrawable();
+        ColorDrawable bgDrawable = new ColorDrawable(0x00000000);
+        ColorDrawable presDrawable = new ColorDrawable(mBackgroundPressedColor);
+        bgStates.addState(new int[] {android.R.attr.state_pressed}, presDrawable);
+        bgStates.addState(new int[] {}, bgDrawable);
+
+        if (mExpanded !=null) {
+            mExpanded.setBackground(bgStates);
+        }
+        if (mExpandedBig != null) {
+            mExpandedBig.setBackground(bgStates);
+        }
+    }
+
+    public void setIconColors() {
+        if (mContentHolder == null || mHeadsUp == null) {
+            return;
+        }
+        updateSettings();
+        if (mSnoozeButton != null) {
+            mSnoozeButton.setColorFilter(null);
+            int iconAlpha = Color.alpha(mIconColor);
+            if (iconAlpha != FULL_OPAQUE) {
+                mIconColor +=  FULL_OPAQUE << 24;
+            }
+            mSnoozeButton.setColorFilter(mIconColor, Mode.MULTIPLY);
+            mSnoozeButton.setImageAlpha(iconAlpha);
         }
     }
 
@@ -268,5 +359,17 @@ public class HeadsUpNotificationView extends FrameLayout implements SwipeHelper.
     @Override
     public View getChildContentView(View v) {
         return mContentSlider;
+    }
+
+    private void updateSettings() {
+        mBackgroundColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.HEADS_UP_BG_COLOR,
+                DEFAULT_BACKGROUND_COLOR, UserHandle.USER_CURRENT);
+        mBackgroundPressedColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.HEADS_UP_BG_PRESSED_COLOR,
+                DEFAULT_BACKGROUND_PRESSED_COLOR, UserHandle.USER_CURRENT);
+        mIconColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.HEADS_UP_ICON_COLOR,
+                DEFAULT_ICON_COLOR, UserHandle.USER_CURRENT);
     }
 }

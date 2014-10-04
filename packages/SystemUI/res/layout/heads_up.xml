@@ -47,6 +47,6 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/heads_up_snooze" />
+                android:src="@drawable/ic_heads_up_snooze" />
     </RelativeLayout>
 </com.android.systemui.statusbar.policy.HeadsUpNotificationView>

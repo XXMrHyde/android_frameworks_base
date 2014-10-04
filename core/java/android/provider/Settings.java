@@ -3707,6 +3707,37 @@ public final class Settings {
         public static final String HEADS_UP_USE_CUSTOM_TIMEOUT_FS = "heads_up_use_custom_timeout_fs";
 
         /**
+         * Heads Up background color
+         * @hide
+         */
+        public static final String HEADS_UP_BG_COLOR = "heads_up_bg_color";
+
+        /**
+         * Heads Up background pressed color
+         * @hide
+         */
+        public static final String HEADS_UP_BG_PRESSED_COLOR = "heads_up_bg_pressed_color";
+
+        /**
+         * Whether to colorize heads up notification icons
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_COLORIZE_NOTIF_ICONS = "heads_up_colorize_notif_icons";
+
+        /**
+         * Heads Up icon color
+         * @hide
+         */
+        public static final String HEADS_UP_ICON_COLOR = "heads_up_icon_color";
+
+        /**
+         * Heads Up text color
+         * @hide
+         */
+        public static final String HEADS_UP_TEXT_COLOR = "heads_up_text_color";
+
+        /**
          * Whether to show the quick access ribbons
          *
          * @hide

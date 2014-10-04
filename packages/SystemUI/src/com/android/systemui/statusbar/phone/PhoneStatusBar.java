@@ -576,6 +576,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_USE_CUSTOM_TIMEOUT_FS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BG_PRESSED_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -720,6 +729,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                         mContext.getContentResolver(),
                         Settings.System.HEADS_UP_USE_CUSTOM_TIMEOUT_FS,
                         0, UserHandle.USER_CURRENT) == 1;
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BG_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BG_PRESSED_COLOR))) {
+                mHeadsUpNotificationView.setBackground();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_ICON_COLOR))) {
+                mHeadsUpNotificationView.setIconColors();
             } else {
                 updateSettings();
             }
@@ -1733,7 +1750,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             StatusBarNotification notification, Entry shadeEntry) {
         if (DEBUG) Log.d(TAG, "launching notification in heads up mode");
         Entry interruptionCandidate = new Entry(key, notification, null);
-        if (inflateViews(interruptionCandidate, mHeadsUpNotificationView.getHolder())) {
+
+        // get text color and icon color value
+        int headsUpTextColor = Settings.System.getIntForUser(
+            mContext.getContentResolver(),
+            Settings.System.HEADS_UP_TEXT_COLOR, 0xffffffff,
+            UserHandle.USER_CURRENT);
+        boolean headsUpColorizeIcons = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.HEADS_UP_COLORIZE_NOTIF_ICONS, 0,
+                UserHandle.USER_CURRENT) == 1;
+        int headsUpIconColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.HEADS_UP_ICON_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
+
+        if (inflateViews(interruptionCandidate,
+                mHeadsUpNotificationView.getHolder(), headsUpTextColor,
+                        headsUpIconColor, headsUpColorizeIcons)) {
             mInterruptingNotificationTime = System.currentTimeMillis();
             mInterruptingNotificationEntry = interruptionCandidate;
             if (shadeEntry != null) {

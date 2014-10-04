@@ -37,6 +37,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -801,7 +802,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected void onShowSearchPanel() {
     }
 
-    public boolean inflateViews(NotificationData.Entry entry, ViewGroup parent) {
+    public boolean inflateViews(NotificationData.Entry entry,
+            ViewGroup parent, int customTextColor, int customIconColor, boolean colorizeIcons) {
         int minHeight =
                 mContext.getResources().getDimensionPixelSize(R.dimen.notification_min_height);
         int maxHeight =
@@ -811,6 +813,50 @@ public abstract class BaseStatusBar extends SystemUI implements
         RemoteViews bigContentView = sbn.getNotification().bigContentView;
         if (contentView == null) {
             return false;
+        }
+        if (customTextColor != 0xffffffff) {
+            if (contentView != null) {
+                contentView.setTextColor(com.android.internal.R.id.title, customTextColor);
+                contentView.setTextColor(com.android.internal.R.id.text, customTextColor);
+                contentView.setTextColor(com.android.internal.R.id.big_text, customTextColor);
+                contentView.setTextColor(com.android.internal.R.id.time, customTextColor);
+                contentView.setTextColor(com.android.internal.R.id.text2, customTextColor);
+                contentView.setTextColor(com.android.internal.R.id.info, customTextColor);
+            }
+            if (bigContentView != null) {
+                bigContentView.setTextColor(com.android.internal.R.id.title, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.text, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.big_text, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.time, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.text2, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.info, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text0, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text1, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text2, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text3, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text4, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text5, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_text6, customTextColor);
+                bigContentView.setTextColor(com.android.internal.R.id.inbox_more, customTextColor);
+            }
+        }
+        if (customIconColor != 0xffffffff) {
+            if (contentView != null) {
+                if (colorizeIcons) {
+                    contentView.setDrawableParameters(com.android.internal.R.id.icon,
+                            false, -1, customIconColor, Mode.MULTIPLY, -1);
+                    contentView.setDrawableParameters(com.android.internal.R.id.right_icon,
+                            false, -1, customIconColor, Mode.MULTIPLY, -1);
+                }
+            }
+            if (bigContentView != null) {
+                if (colorizeIcons) {
+                    bigContentView.setDrawableParameters(com.android.internal.R.id.icon,
+                            false, -1, customIconColor, Mode.MULTIPLY, -1);
+                    bigContentView.setDrawableParameters(com.android.internal.R.id.right_icon,
+                            false, -1, customIconColor, Mode.MULTIPLY, -1);
+                }
+            }
         }
 
         // create the row view
@@ -1020,7 +1066,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
         // Construct the expanded view.
         NotificationData.Entry entry = new NotificationData.Entry(key, notification, iconView);
-        if (!inflateViews(entry, mPile)) {
+        if (!inflateViews(entry, mPile, 0xffffffff, 0xffffffff, false)) {
             handleNotificationError(key, notification, "Couldn't expand RemoteViews for: "
                     + notification);
             return null;
