@@ -66,6 +66,14 @@ public class ButtonsConstants {
             "**theme_switch**";
     public static final String ACTION_SMART_PULLDOWN           =
             "**smart_pulldown**";
+    public static final String ACTION_IME_NAVIGATION_LEFT      =
+            "**ime_nav_left**";
+    public static final String ACTION_IME_NAVIGATION_RIGHT     =
+            "**ime_nav_right**";
+    public static final String ACTION_IME_NAVIGATION_UP        =
+            "**ime_nav_up**";
+    public static final String ACTION_IME_NAVIGATION_DOWN      =
+            "**ime_nav_down**";
     public static final String ACTION_REFRESH_WEATHER          =
             "**refresh_weather**";
     public static final String ACTION_WEATHER_SETTINGS         =

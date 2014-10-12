@@ -102,8 +102,12 @@
     <string name="status_bar_recent_playstore_item_title">Play Store</string>
     <string name="status_bar_recent_amazon_item_title">Amazon Store</string>
 
-   <!-- Smart PullDown Warning -->
+    <!-- Smart PullDown Warning -->
     <string name="smart_pulldown_disabled">Intelligentes Öffnen ist deaktiviert</string>
+
+    <!-- Navigation bar IME navigation -->
+    <string name="accessibility_ime_navigation_left">Zeiger links</string>
+    <string name="accessibility_ime_navigation_right">Zeiger rechts</string>
 
     <!-- Heads up -->
     <string name="status_bar_notification_heads_up_enable_title">Heads-Up aktivieren</string>

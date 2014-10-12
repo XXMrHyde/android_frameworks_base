@@ -4014,6 +4014,12 @@ public final class Settings {
         public static final String NAVIGATION_BAR_GRADIENT_COLOR = "navigation_bar_gradient_color";
 
         /**
+         * Whether to use text navigation keys on the navigation bar
+         * @hide
+         */
+        public static final String NAVBAR_BUTTON_USE_CURSOR_KEYS = "navbar_button_use_cursor_keys";
+
+        /**
          * Navigation bar button color
          * @hide
          */

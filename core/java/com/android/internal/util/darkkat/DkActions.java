@@ -103,6 +103,18 @@ public class DkActions {
                 || action.equals(ButtonsConstants.ACTION_MENU_BIG)) {
             injectKeyDelayed(KeyEvent.KEYCODE_MENU, isLongpress, false);
             return;
+        } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_LEFT)) {
+            injectKeyDelayed(KeyEvent.KEYCODE_DPAD_LEFT, isLongpress, false);
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_RIGHT)) {
+            injectKeyDelayed(KeyEvent.KEYCODE_DPAD_RIGHT, isLongpress, false);
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_UP)) {
+            injectKeyDelayed(KeyEvent.KEYCODE_DPAD_UP, isLongpress, false);
+            return;
+        } else if (action.equals(ButtonsConstants.ACTION_IME_NAVIGATION_DOWN)) {
+            injectKeyDelayed(KeyEvent.KEYCODE_DPAD_DOWN, isLongpress, false);
+            return;
         } else if (action.equals(ButtonsConstants.ACTION_POWER_MENU)) {
             injectKeyDelayed(KeyEvent.KEYCODE_POWER, isLongpress, true);
         } else if (action.equals(ButtonsConstants.ACTION_POWER)) {
@@ -191,6 +203,7 @@ public class DkActions {
             } catch (RemoteException e) {
             }
             return;
+
         } else if (action.equals(ButtonsConstants.ACTION_ASSIST)) {
             Intent intent = ((SearchManager) context.getSystemService(Context.SEARCH_SERVICE))
               .getAssistIntent(context, true, UserHandle.USER_CURRENT);
@@ -351,7 +364,16 @@ public class DkActions {
     private static void injectKeyDelayed(int keyCode,
             boolean longpress, boolean sendOnlyDownMessage) {
         long when = SystemClock.uptimeMillis();
-        int downflags = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
+        int downflags = 0;
+        int upflags = 0;
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+            || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+            || keyCode == KeyEvent.KEYCODE_DPAD_UP
+            || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            downflags = upflags = KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE;
+        } else {
+            downflags = upflags = KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
+        }
         if (longpress) {
             downflags |= KeyEvent.FLAG_LONG_PRESS;
         }
@@ -369,7 +391,7 @@ public class DkActions {
         }
         KeyEvent up = new KeyEvent(when, when + 30, KeyEvent.ACTION_UP, keyCode, 0, 0,
                 KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
-                KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+                upflags,
                 InputDevice.SOURCE_KEYBOARD);
         mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_INJECT_KEY_UP, up), 30);
     }

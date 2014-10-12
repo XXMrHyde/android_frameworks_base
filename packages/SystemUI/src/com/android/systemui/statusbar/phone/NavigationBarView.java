@@ -88,15 +88,17 @@ public class NavigationBarView extends LinearLayout {
 
     // Definitions for navbar menu button customization
     private final static int SHOW_RIGHT_MENU = 0;
-    private final static int SHOW_LEFT_MENU = 1;
-    private final static int SHOW_BOTH_MENU = 2;
+    private final static int SHOW_LEFT_MENU  = 1;
+    private final static int SHOW_BOTH_MENU  = 2;
 
     private final static int MENU_VISIBILITY_ALWAYS = 0;
-    private final static int MENU_VISIBILITY_NEVER = 1;
+    private final static int MENU_VISIBILITY_NEVER  = 1;
     private final static int MENU_VISIBILITY_SYSTEM = 2;
 
-    private static final int KEY_MENU_RIGHT = 0;
-    private static final int KEY_MENU_LEFT = 1;
+    private static final int KEY_MENU_RIGHT           = 0;
+    private static final int KEY_MENU_LEFT            = 1;
+    private static final int KEY_IME_NAVIGATION_LEFT  = 2;
+    private static final int KEY_IME_NAVIGATION_RIGHT = 3;
 
     private int mMenuVisibility;
     private int mMenuSetting;
@@ -109,9 +111,11 @@ public class NavigationBarView extends LinearLayout {
     boolean mVertical;
     boolean mScreenOn;
 
-    boolean mShowMenu;
-    int mDisabledFlags = 0;
-    int mNavigationIconHints = 0;
+    private boolean mShowMenu;
+    private boolean mIMENavigation;
+    private boolean mIMECursorDisabled;
+    private int mDisabledFlags = 0;
+    private int mNavigationIconHints = 0;
 
     private Drawable mBackIcon, mBackAltIcon;
 
@@ -262,6 +266,10 @@ public class NavigationBarView extends LinearLayout {
 
         mButtonsConfig = ButtonsHelper.getNavBarConfig(mContext);
         mButtonIdList = new ArrayList<Integer>();
+
+        mIMECursorDisabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.NAVBAR_BUTTON_USE_CURSOR_KEYS, 0,
+                UserHandle.USER_CURRENT) == 0;
     }
 
     private void watchForDevicePolicyChanges() {
@@ -330,6 +338,14 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.menu);
     }
 
+    public View getLeftIMENavigationButton() {
+        return mCurrentView.findViewById(R.id.ime_navigation_left);
+    }
+
+    public View getRightIMENavigationButton() {
+        return mCurrentView.findViewById(R.id.ime_navigation_right);
+    }
+
     public View getCustomButton(int buttonId) {
         return mCurrentView.findViewById(buttonId);
     }
@@ -394,6 +410,11 @@ public class NavigationBarView extends LinearLayout {
             addButton(navButtonLayout, leftMenuKeyView, landscape);
             addLightsOutButton(lightsOut, leftMenuKeyView, landscape, true);
 
+            // add left ime navigation key
+            View leftIMENavigationKeyView = generateMenuKey(landscape, KEY_IME_NAVIGATION_LEFT);
+            addButton(navButtonLayout, leftIMENavigationKeyView, landscape);
+            addLightsOutButton(lightsOut, leftIMENavigationKeyView, landscape, true);
+
             ButtonConfig buttonConfig;
 
             for (int j = 0; j < mButtonsConfig.size(); j++) {
@@ -425,6 +446,11 @@ public class NavigationBarView extends LinearLayout {
             View rightMenuKeyView = generateMenuKey(landscape, KEY_MENU_RIGHT);
             addButton(navButtonLayout, rightMenuKeyView, landscape);
             addLightsOutButton(lightsOut, rightMenuKeyView, landscape, true);
+
+            // add right ime navigation key
+            View rightIMENavigationKeyView = generateMenuKey(landscape, KEY_IME_NAVIGATION_RIGHT);
+            addButton(navButtonLayout, rightIMENavigationKeyView, landscape);
+            addLightsOutButton(lightsOut, rightIMENavigationKeyView, landscape, true);
         }
         colorizeStaticButtons();
         setMenuVisibility(mShowMenu, true);
@@ -557,25 +583,44 @@ public class NavigationBarView extends LinearLayout {
     }
 
     private View generateMenuKey(boolean landscape, int keyId) {
+        Drawable d = null;
         KeyButtonView v = new KeyButtonView(mContext, null);
         v.setLayoutParams(getLayoutParams(landscape, 40));
-        v.setCode(KeyEvent.KEYCODE_MENU);
-        v.setVisibility(View.INVISIBLE);
-        v.setContentDescription(getResources().getString(R.string.accessibility_menu));
+        if (keyId == KEY_MENU_LEFT || keyId == KEY_MENU_RIGHT) {
+            v.setClickAction(ButtonsConstants.ACTION_MENU);
+            v.setLongpressAction(ButtonsConstants.ACTION_NULL);
+            if (keyId == KEY_MENU_LEFT) {
+                v.setId(R.id.menu_left);
+            } else {
+                v.setId(R.id.menu);
+            }
+            v.setVisibility(View.INVISIBLE);
+            v.setContentDescription(getResources().getString(R.string.accessibility_menu));
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_menu);
+        } else if (keyId == KEY_IME_NAVIGATION_LEFT) {
+            v.setClickAction(ButtonsConstants.ACTION_IME_NAVIGATION_LEFT);
+            v.setLongpressAction(ButtonsConstants.ACTION_IME_NAVIGATION_UP);
+            v.setId(R.id.ime_navigation_left);
+            v.setVisibility(View.GONE);
+            v.setContentDescription(getResources().getString(
+                    R.string.accessibility_ime_navigation_left));
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_ime_left);
+        } else {
+            v.setClickAction(ButtonsConstants.ACTION_IME_NAVIGATION_RIGHT);
+            v.setLongpressAction(ButtonsConstants.ACTION_IME_NAVIGATION_DOWN);
+            v.setId(R.id.ime_navigation_right);
+            v.setVisibility(View.GONE);
+            v.setContentDescription(getResources().getString(
+                    R.string.accessibility_ime_navigation_right));
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_ime_right);
+        }
         v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
                 : R.drawable.ic_sysbar_highlight);
 
-        Drawable d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_menu);
         if (mNavBarButtonColorMode != 3) {
             v.setImageBitmap(ImageHelper.getColoredBitmap(d, mNavBarButtonColor));
         } else {
             v.setImageDrawable(d);
-        }
-
-        if (keyId == KEY_MENU_LEFT) {
-            v.setId(R.id.menu_left);
-        } else {
-            v.setId(R.id.menu);
         }
         return v;
     }
@@ -659,6 +704,7 @@ public class NavigationBarView extends LinearLayout {
                     ? mBackAltIcon : mBackIcon);
         }
 
+        handleIMENavigation(backAlt, false);
         setDisabledFlags(mDisabledFlags, true);
     }
 
@@ -734,6 +780,7 @@ public class NavigationBarView extends LinearLayout {
             cameraButton.setVisibility(
                     shouldShowCamera && !mCameraDisabledByDpm ? View.VISIBLE : View.GONE);
         }
+        handleIMENavigation(mIMENavigation, true);
         setMenuVisibility(mShowMenu, true);
     }
 
@@ -777,7 +824,8 @@ public class NavigationBarView extends LinearLayout {
 
     public void setMenuVisibility(final boolean show, final boolean force) {
         if (!force && mShowMenu == show
-            || mMenuVisibility == MENU_VISIBILITY_NEVER) {
+            || mMenuVisibility == MENU_VISIBILITY_NEVER
+            || mIMENavigation) {
             return;
         }
 
@@ -799,6 +847,36 @@ public class NavigationBarView extends LinearLayout {
             rightMenuKeyView.setVisibility(showRightMenuButton ? View.VISIBLE : View.INVISIBLE);
         }
         mShowMenu = show;
+    }
+
+    private void handleIMENavigation(boolean show, boolean force) {
+        if (!force && mIMENavigation == show
+                || mIMECursorDisabled) {
+            return;
+        }
+        View leftIMENavigationKeyView = getLeftIMENavigationButton();
+        View rightIMENavigationKeyView = getRightIMENavigationButton();
+        View leftMenuKeyView = getLeftMenuButton();
+        View rightMenuKeyView = getRightMenuButton();
+        if (leftIMENavigationKeyView == null || rightIMENavigationKeyView == null
+                || leftMenuKeyView == null || rightMenuKeyView == null) {
+            return;
+        }
+        mIMENavigation = show;
+        if (show) {
+            leftMenuKeyView.setVisibility(View.GONE);
+            rightMenuKeyView.setVisibility(View.GONE);
+            leftIMENavigationKeyView.setVisibility(View.VISIBLE);
+            rightIMENavigationKeyView.setVisibility(View.VISIBLE);
+            return;
+        }
+        leftIMENavigationKeyView.setVisibility(View.GONE);
+        rightIMENavigationKeyView.setVisibility(View.GONE);
+        if (mMenuVisibility == MENU_VISIBILITY_NEVER) {
+            leftMenuKeyView.setVisibility(View.INVISIBLE);
+            rightMenuKeyView.setVisibility(View.INVISIBLE);
+        }
+        setMenuVisibility(mShowMenu, true);
     }
 
     @Override
@@ -867,6 +945,11 @@ public class NavigationBarView extends LinearLayout {
         return mVertical;
     }
 
+    public void setNavigationBarDisableIMECursor(boolean disabled) {
+        mIMECursorDisabled = disabled;
+    }
+
+
     public void reorient() {
         final int rot = mDisplay.getRotation();
         for (int i=0; i<4; i++) {
@@ -887,6 +970,7 @@ public class NavigationBarView extends LinearLayout {
         // force the low profile & disabled states into compliance
         mBarTransitions.init(mVertical);
         setDisabledFlags(mDisabledFlags, true /* force */);
+        handleIMENavigation(mIMENavigation, true /* force */);
         setMenuVisibility(mShowMenu, true /* force */);
 
         if (DEBUG) {
