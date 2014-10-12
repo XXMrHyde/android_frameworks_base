@@ -3087,6 +3087,13 @@ public final class Settings {
         public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
+         * Whether to put the device to sleep by double tap gesture on the statusbar 
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_to_sleep";
+
+        /**
          * Status bar opaque color
          * @hide
          */
