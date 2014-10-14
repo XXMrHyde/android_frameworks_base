@@ -204,20 +204,6 @@ public class BarTransitions {
                         Settings.System.NAVIGATION_BAR_GRADIENT_COLOR,
                         0x66000000, UserHandle.USER_CURRENT);
             }
-
-            // The semi transparent color has a default transparency of 40%,
-            // in my opinion, it makes no sense to change the default transparency at all,
-            // so check the current transparency, and change it to 40% if needed.
-            int currentAlpha = Color.alpha(mSemiTransColor);
-            int defaultAlpha = 102;
-
-            if (currentAlpha != defaultAlpha) {
-                int r = Color.red(mSemiTransColor);
-                int g = Color.green(mSemiTransColor);
-                int b = Color.blue(mSemiTransColor);
-
-                mSemiTransColor = (defaultAlpha << 24) + (r << 16) + (g << 8) + b;
-            }
         }
 
         public void applyModeBackground(int oldMode, int newMode, boolean animate) {
