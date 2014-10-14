@@ -54,21 +54,30 @@ public class BarTransitions {
 
     private final String mTag;
     private final View mView;
-    private final BarBackgroundDrawable mBarBackground;
+    private final int mGradientResourceId;
+    private final boolean mIsStatusbar;
+
+    private BarBackgroundDrawable mBarBackground;
 
     private int mMode;
 
     public BarTransitions(View view, int gradientResourceId, boolean isStatusbar) {
         mTag = "BarTransitions." + view.getClass().getSimpleName();
         mView = view;
-        mBarBackground = new BarBackgroundDrawable(mView.getContext(), gradientResourceId, isStatusbar);
-        if (HIGH_END) {
-            mView.setBackground(mBarBackground);
-        }
+        mGradientResourceId = gradientResourceId;
+        mIsStatusbar = isStatusbar;
+        setBarBackground();
     }
 
     public int getMode() {
         return mMode;
+    }
+
+    public void setBarBackground() {
+        mBarBackground = new BarBackgroundDrawable(mView.getContext(), mGradientResourceId, mIsStatusbar);
+        if (HIGH_END) {
+            mView.setBackground(mBarBackground);
+        }
     }
 
     public void transitionTo(int mode, boolean animate) {

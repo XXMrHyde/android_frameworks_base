@@ -541,6 +541,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     Settings.System.NAVIGATION_BAR_CAN_MOVE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_OPAQUE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SEMI_TRANS_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_GRADIENT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_OPAQUE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SEMI_TRANS_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GRADIENT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.MENU_LOCATION),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -645,12 +663,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     prepareNavigationBarView();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SEMI_TRANS_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_GRADIENT_COLOR))) {
+                if (mNavigationBarView != null) {
+                    mNavigationBarView.getBarTransitions().setBarBackground();
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVBAR_BUTTON_USE_CURSOR_KEYS))) {
                 if (mNavigationBarView != null) {
                     mNavigationBarView.setNavigationBarDisableIMECursor(
                         Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.NAVBAR_BUTTON_USE_CURSOR_KEYS, 0,
                         UserHandle.USER_CURRENT) == 0);
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_OPAQUE_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SEMI_TRANS_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GRADIENT_COLOR))) {
+                if (mStatusBarView != null) {
+                    mStatusBarView.getBarTransitions().setBarBackground();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR))
