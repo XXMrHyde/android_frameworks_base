@@ -107,6 +107,10 @@
     <!-- Smart PullDown Warning -->
     <string name="smart_pulldown_disabled">Desplegable inteligente está desactivado</string>
 
+    <!-- Navigation bar IME navigation -->
+    <string name="accessibility_ime_navigation_left">Cursor izquierda</string>
+    <string name="accessibility_ime_navigation_right">Cursor derecha</string>
+
     <!-- Heads up -->
     <string name="status_bar_notification_heads_up_enable_title">Habilitar heads up</string>
     <string name="status_bar_notification_heads_up_disable_title">Deshabilitar heads up</string>
