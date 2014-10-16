@@ -18,15 +18,19 @@ package com.android.systemui.statusbar.phone;
 
 import android.animation.TimeInterpolator;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -51,19 +55,24 @@ public class BarTransitions {
 
     private final String mTag;
     private final View mView;
-    private final BarBackgroundDrawable mBarBackground;
+    private int mGradientResourceId;
+    private int mOpaqueColorResourceId;
+    private int mSemiTransparentColorResourceId;
+    private final boolean mIsStatusbar;
+    private BarBackgroundDrawable mBarBackground;
 
     private int mMode;
 
     public BarTransitions(View view, int gradientResourceId, int opaqueColorResourceId,
-            int semiTransparentColorResourceId) {
+            int semiTransparentColorResourceId, boolean isStatusbar) {
         mTag = "BarTransitions." + view.getClass().getSimpleName();
         mView = view;
-        mBarBackground = new BarBackgroundDrawable(mView.getContext(), gradientResourceId,
-                opaqueColorResourceId, semiTransparentColorResourceId);
-        if (HIGH_END) {
-            mView.setBackground(mBarBackground);
-        }
+        mGradientResourceId = gradientResourceId;
+        mOpaqueColorResourceId = opaqueColorResourceId;
+        mSemiTransparentColorResourceId = semiTransparentColorResourceId;
+        mIsStatusbar = isStatusbar;
+
+        setBarBackground();
     }
 
     protected void setGradientResourceId(int gradientResourceId) {
@@ -77,6 +86,14 @@ public class BarTransitions {
 
     public int getMode() {
         return mMode;
+    }
+
+    public void setBarBackground() {
+        mBarBackground = new BarBackgroundDrawable(mView.getContext(), mGradientResourceId,
+                mOpaqueColorResourceId, mSemiTransparentColorResourceId, mIsStatusbar);
+        if (HIGH_END) {
+            mView.setBackground(mBarBackground);
+        }
     }
 
     public void transitionTo(int mode, boolean animate) {
@@ -132,6 +149,13 @@ public class BarTransitions {
         private final int mSemiTransparentColorResourceId;
         private final TimeInterpolator mInterpolator;
 
+        private static final int DEFAULT_OPAQUE_COLOR =
+                0xff000000;
+        private static final int DEFAULT_SEMI_TRANS_COLOR =
+                0x66000000;
+        private static final int DEFAULT_GRADIENT_COLOR =
+                0xff000000;
+
         private int mOpaque;
         private int mSemiTransparent;
         private Drawable mGradient;
@@ -146,17 +170,39 @@ public class BarTransitions {
         private int mGradientAlphaStart;
         private int mColorStart;
 
+        private int mOpaqueColor;
+        private int mSemiTransColor;
+        private int mGradientColor;
+        private boolean mIsStatusbarColor;
+
+        private Context mContext;
+
         public BarBackgroundDrawable(Context context, int gradientResourceId,
-                int opaqueColorResourceId, int semiTransparentColorResourceId) {
-            final Resources res = context.getResources();
+                int opaqueColorResourceId, int semiTransparentColorResourceId,
+                boolean isStatusbar) {
+            mContext = context;
+            final Resources res = mContext.getResources();
+            mIsStatusbarColor = isStatusbar;
+
+            updateUserColors();
+
             if (DEBUG_COLORS) {
                 mOpaque = 0xff0000ff;
                 mSemiTransparent = 0x7f0000ff;
             } else {
-                mOpaque = res.getColor(opaqueColorResourceId);
-                mSemiTransparent = res.getColor(semiTransparentColorResourceId);
+                if (mOpaqueColor == DEFAULT_OPAQUE_COLOR) {
+                    mOpaque = res.getColor(opaqueColorResourceId);
+                } else {
+                    mOpaque = mOpaqueColor;
+                }
+                if (mSemiTransColor == DEFAULT_SEMI_TRANS_COLOR) {
+                    mSemiTransparent = res.getColor(semiTransparentColorResourceId);
+                } else {
+                    mSemiTransparent = mSemiTransColor;
+                }
             }
             mGradient = res.getDrawable(gradientResourceId);
+            mGradient.setColorFilter(mGradientColor, Mode.MULTIPLY);
             mInterpolator = new LinearInterpolator();
             mGradientResourceId = gradientResourceId;
             mOpaqueColorResourceId = opaqueColorResourceId;
@@ -164,18 +210,26 @@ public class BarTransitions {
         }
 
         public void setGradientResourceId(Resources res, int gradientResourceId) {
+            updateUserColors();
             mGradient = res.getDrawable(gradientResourceId);
+            mGradient.setColorFilter(mGradientColor, Mode.MULTIPLY);
             mGradientResourceId = gradientResourceId;
         }
 
         public void updateResources(Resources res)  {
-            mOpaque = res.getColor(mOpaqueColorResourceId);
-            mSemiTransparent = res.getColor(mSemiTransparentColorResourceId);
+            updateUserColors();
+            if (mOpaqueColor != DEFAULT_OPAQUE_COLOR) {
+                mOpaque = res.getColor(mOpaqueColorResourceId);
+            }
+            if (mSemiTransColor != DEFAULT_SEMI_TRANS_COLOR) {
+                mSemiTransparent = res.getColor(mSemiTransparentColorResourceId);
+            }
             // Retrieve the current bounds for mGradient so they can be set to
             // the new drawable being loaded, otherwise the bounds will be (0, 0, 0, 0)
             // and the gradient will not be drawn.
             Rect bounds = mGradient.getBounds();
             mGradient = res.getDrawable(mGradientResourceId);
+            mGradient.setColorFilter(mGradientColor, Mode.MULTIPLY);
             mGradient.setBounds(bounds);
         }
 
@@ -193,6 +247,32 @@ public class BarTransitions {
         protected void onBoundsChange(Rect bounds) {
             super.onBoundsChange(bounds);
             mGradient.setBounds(bounds);
+        }
+
+        public void updateUserColors() {
+            final ContentResolver resolver = mContext.getContentResolver();
+
+            if (mIsStatusbarColor) {
+                mOpaqueColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.STATUS_BAR_OPAQUE_COLOR,
+                        DEFAULT_OPAQUE_COLOR, UserHandle.USER_CURRENT);
+                mSemiTransColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.STATUS_BAR_SEMI_TRANS_COLOR,
+                        DEFAULT_SEMI_TRANS_COLOR, UserHandle.USER_CURRENT);
+                mGradientColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.STATUS_BAR_GRADIENT_COLOR,
+                        DEFAULT_GRADIENT_COLOR, UserHandle.USER_CURRENT);
+            } else {
+                mOpaqueColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.NAVIGATION_BAR_OPAQUE_COLOR,
+                        DEFAULT_OPAQUE_COLOR, UserHandle.USER_CURRENT);
+                mSemiTransColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.NAVIGATION_BAR_SEMI_TRANS_COLOR,
+                        DEFAULT_SEMI_TRANS_COLOR, UserHandle.USER_CURRENT);
+                mGradientColor = Settings.System.getIntForUser(resolver,
+                        Settings.System.NAVIGATION_BAR_GRADIENT_COLOR,
+                        DEFAULT_GRADIENT_COLOR, UserHandle.USER_CURRENT);
+            }
         }
 
         public void applyModeBackground(int oldMode, int newMode, boolean animate) {

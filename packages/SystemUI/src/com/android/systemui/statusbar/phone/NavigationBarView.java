@@ -1002,7 +1002,7 @@ public class NavigationBarView extends LinearLayout {
         public StatusBarBlockerTransitions(View statusBarBlocker) {
             super(statusBarBlocker, R.drawable.status_background,
                     R.color.status_bar_background_opaque,
-                    R.color.status_bar_background_semi_transparent);
+                    R.color.status_bar_background_semi_transparent, false);
         }
 
         public void init() {
