@@ -3121,6 +3121,15 @@ public final class Settings {
         public static final String STATUS_BAR_SHOW_CLOCK = "status_bar_show_clock";
 
         /**
+         * Whether to show the clock on lockscreen
+         * 0: Hide
+         * 1: Show
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_FORCE_CLOCK_ON_LOCKSCREEN = "status_bar_force_clock_on_lockscreen";
+
+        /**
          * Show/hide date
          * 0: Hide
          * 1: Show
