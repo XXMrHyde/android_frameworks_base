@@ -1702,6 +1702,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         boolean showClock = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SHOW_CLOCK,
                 CLOCK_VISIBLE, mCurrentUserId) == CLOCK_VISIBLE;
+        boolean forceClockOnLockscreen = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_FORCE_CLOCK_ON_LOCKSCREEN, 0,
+                mCurrentUserId) == CLOCK_VISIBLE;
         mClockPosition = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_POSITION,
                 CLOCK_POSITION_RIGHT, mCurrentUserId);
@@ -1721,6 +1724,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateNotificationIcons();
 
         if (mClockView != null) {
+            if (forceClockOnLockscreen) {
+                mShowClock = true;
+            }
             int visibility = showClock
                     && mShowClock ? View.VISIBLE : View.GONE;
             if (mClockPosition == CLOCK_POSITION_CENTERED && mTicking) {
