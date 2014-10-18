@@ -3708,6 +3708,64 @@ public final class Settings {
         public static final String STATUS_BAR_GRADIENT_COLOR = "status_bar_gradient_color";
 
         /**
+         * Show/hide clock
+         * 0: Hide
+         * 1: Show
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_CLOCK = "status_bar_show_clock";
+
+        /**
+         * Show/hide date
+         * 0: Hide
+         * 1: Show
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_DATE = "status_bar_show_date";
+
+        /**
+         * Whether to show the clock centered in status bar
+         * 0: Right clock
+         * 1: Center clock
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_POSITION = "status_bar_clock_position";
+
+        /**
+         * Whether to show the date small in status bar
+         * 0: Normal
+         * 1: Small
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_SIZE = "status_bar_date_size";
+
+        /**
+         * Sets the date string style
+         * 0 - Regular style
+         * 1 - Lowercase
+         * 2 - Uppercase
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_STYLE = "status_bar_date_style";
+
+        /**
+         * Stores the java DateFormat string for the date
+         * @hide
+         */
+        public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
+
+        /**
+         * Color of the clock/date in status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_DATE_COLOR = "status_bar_clock_date_color";
+
+        /**
          * Navigation bar opaque color
          * @hide
          */
@@ -3724,6 +3782,8 @@ public final class Settings {
          * @hide
          */
         public static final String NAVIGATION_BAR_GRADIENT_COLOR = "navigation_bar_gradient_color";
+
+        // DarkKat additions end
 
          /**
          * Settings to backup. This is here so that it's in the same place as the settings
