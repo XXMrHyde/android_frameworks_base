@@ -173,8 +173,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int BRIGHTNESS_CONTROL_LONG_PRESS_TIMEOUT = 750; // ms
     private static final int BRIGHTNESS_CONTROL_LINGER_THRESHOLD = 20;
 
-    private static final int CLOCK_VISIBILITY_HIDDEN = 0;
-    private static final int CLOCK_VISIBILITY_VISIBLE = 1;
+    private static final int CLOCK_VISIBLE = 1;
     private static final int CLOCK_POSITION_RIGHT = 0;
     private static final int CLOCK_POSITION_CENTERED = 1;
 
@@ -283,7 +282,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // clock
     private boolean mShowClock = true;
-    private boolean mHideClock = false;
     private int mClockPosition;
     private Clock mClockView;
 
@@ -448,9 +446,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_CLOCK))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_POSITION))) {
-                updateClock();
-            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_POSITION))
+                || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_DATE))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AM_PM))
@@ -462,7 +459,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_DATE_FORMAT))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_COLOR))) {
-                updateClockSettings();
+                updateClock();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_OPAQUE_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -1694,6 +1691,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     public void showClock(boolean show) {
+        if (mStatusBarView == null) return;
         mShowClock = show;
         updateClock();
     }
@@ -1701,10 +1699,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateClock() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mHideClock = Settings.System.getIntForUser(resolver,
+        boolean showClock = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SHOW_CLOCK,
-                CLOCK_VISIBILITY_HIDDEN, mCurrentUserId) ==
-                CLOCK_VISIBILITY_HIDDEN;
+                CLOCK_VISIBLE, mCurrentUserId) == CLOCK_VISIBLE;
         mClockPosition = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_POSITION,
                 CLOCK_POSITION_RIGHT, mCurrentUserId);
@@ -1724,24 +1721,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateNotificationIcons();
 
         if (mClockView != null) {
-            int visibility = !mHideClock
+            int visibility = showClock
                     && mShowClock ? View.VISIBLE : View.GONE;
             if (mClockPosition == CLOCK_POSITION_CENTERED && mTicking) {
                 visibility = View.INVISIBLE;
             }
             mClockView.setVisibility(visibility);
         }
-    }
-
-    private void updateClockSettings() {
-        Clock clockView = (Clock) mStatusBarView.findViewById(R.id.clock);
-        Clock centerClockView = (Clock) mStatusBarView.findViewById(R.id.center_clock);
-        if (clockView != null) {
-            clockView.updateSettings();
-        }
-        if (centerClockView != null) {
-            centerClockView.updateSettings();
-        }
+        mClockView.updateSettings();
     }
 
     /**

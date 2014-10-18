@@ -76,7 +76,6 @@ public class Clock extends TextView implements DemoMode, OnClickListener, OnLong
     private int mDateStyle = DATE_STYLE_UPPERCASE;
     private boolean mShowDate;
     private boolean mDateSizeSmall;
-    private int mColor;
 
     public Clock(Context context) {
         this(context, null);
@@ -361,12 +360,12 @@ public class Clock extends TextView implements DemoMode, OnClickListener, OnLong
         mDateStyle = Settings.System.getIntForUser(resolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE,
                 DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
-        mColor = Settings.System.getIntForUser(resolver,
+        int color = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
                 DEFAULT_COLOR, UserHandle.USER_CURRENT);
 
-        if (mColor == DEFAULT_COLOR) {
-            mColor = context.getResources().getColor(
+        if (color == DEFAULT_COLOR) {
+            color = context.getResources().getColor(
                     com.android.systemui.R.color.status_bar_clock_color);
         }
 
@@ -380,7 +379,7 @@ public class Clock extends TextView implements DemoMode, OnClickListener, OnLong
         }
 
         if (mAttached) {
-            setTextColor(mColor);
+            setTextColor(color);
             updateClock();
         }
     }
