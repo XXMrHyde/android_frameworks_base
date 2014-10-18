@@ -21,9 +21,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.Spannable;
@@ -68,52 +66,8 @@ public class Clock extends TextView implements DemoMode {
     private boolean mIs24 = true;
     private Locale mLocale;
 
-    protected boolean mShowClock;
-    protected boolean mShowDate;
-    protected boolean mCenterClock;
-    protected int mClockColor = 0xffffffff;
-    protected boolean mDateSizeSmall;
-
-    private SettingsObserver mSettingsObserver;
-
-    protected class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_CLOCK),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_DATE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_POSITION),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CLOCK_DATE_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_AM_PM),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_SIZE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_STYLE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DATE_FORMAT),
-                    false, this, UserHandle.USER_ALL);
-        }
-
-        @Override public void onChange(boolean selfChange) {
-            updateSettings();
-        }
-    }
+    private boolean mShowDate;
+    private boolean mDateSizeSmall;
 
     public Clock(Context context) {
         this(context, null);
@@ -149,13 +103,6 @@ public class Clock extends TextView implements DemoMode {
 
         // The time zone may have changed while the receiver wasn't registered, so update the Time
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
-
-        // Make sure we update to the current time
-        if (mSettingsObserver == null) {
-            mSettingsObserver = new SettingsObserver(new Handler());
-        }
-        mSettingsObserver.observe();
-        updateSettings();
     }
 
     @Override
@@ -163,7 +110,6 @@ public class Clock extends TextView implements DemoMode {
         super.onDetachedFromWindow();
         if (mAttached) {
             getContext().unregisterReceiver(mIntentReceiver);
-            getContext().getContentResolver().unregisterContentObserver(mSettingsObserver);
             mAttached = false;
         }
     }
@@ -332,28 +278,21 @@ public class Clock extends TextView implements DemoMode {
         Context context = getContext();
 
         mIs24 = DateFormat.is24HourFormat(context);
-
-        mShowClock = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_SHOW_CLOCK, 1,
-                UserHandle.USER_CURRENT) == 1;
         mShowDate = Settings.System.getIntForUser(resolver,
 			    Settings.System.STATUS_BAR_SHOW_DATE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mCenterClock = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_CLOCK_POSITION, 0,
-                UserHandle.USER_CURRENT) == 1;
-        mClockColor = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, 0xffffffff,
-                UserHandle.USER_CURRENT);
         int amPmStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE,
-                UserHandle.USER_CURRENT);
-        mDateStyle = Settings.System.getIntForUser(resolver,
-			    Settings.System.STATUS_BAR_DATE_STYLE, DATE_STYLE_UPPERCASE,
                 UserHandle.USER_CURRENT);
         mDateSizeSmall = Settings.System.getIntForUser(resolver,
 			    Settings.System.STATUS_BAR_DATE_SIZE, 0,
                 UserHandle.USER_CURRENT) == 1;
+        mDateStyle = Settings.System.getIntForUser(resolver,
+			    Settings.System.STATUS_BAR_DATE_STYLE,
+                DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
+        int color = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
 
         if (mIs24) {
             mAmPmStyle = AM_PM_STYLE_GONE;
@@ -365,17 +304,8 @@ public class Clock extends TextView implements DemoMode {
         }
 
         if (mAttached) {
-            setTextColor(mClockColor);
-            updateClockVisibility(true);
+            setTextColor(color);
             updateClock();
-        }
-    }
-
-    public void updateClockVisibility(boolean show) {
-        if (mShowClock && !mCenterClock) {
-            setVisibility(show ? View.VISIBLE : View.GONE);
-        } else {
-            setVisibility(View.GONE);
         }
     }
 }
