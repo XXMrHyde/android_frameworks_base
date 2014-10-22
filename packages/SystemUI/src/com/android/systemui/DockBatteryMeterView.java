@@ -137,8 +137,26 @@ public class DockBatteryMeterView extends BatteryMeterView {
     }
 
     @Override
+    public void setMode(boolean force) {
+        super.setMode(mMeterMode, force);
+        int visibility = getVisibility();
+        if (visibility == View.VISIBLE && !mSupported) {
+            setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void setMode(BatteryMeterMode mode) {
-        super.setMode(mode);
+        super.setMode(mode, false);
+        int visibility = getVisibility();
+        if (visibility == View.VISIBLE && !mSupported) {
+            setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void setMode(BatteryMeterMode mode, boolean force) {
+        super.setMode(mode, force);
         int visibility = getVisibility();
         if (visibility == View.VISIBLE && !mSupported) {
             setVisibility(View.GONE);

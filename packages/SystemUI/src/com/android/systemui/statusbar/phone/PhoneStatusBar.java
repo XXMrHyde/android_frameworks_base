@@ -415,10 +415,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_SHOW_PERCENT), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SIGNAL_TEXT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_OPAQUE_COLOR), false, this);
@@ -428,22 +424,32 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.NAVIGATION_BAR_GRADIENT_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this);
-            updateSettings();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_ANIMATION_SPEED), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOTTED), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), false, this);
             updateClock();
+            updateBattery();
+            updateSettings();
         }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_SEMI_TRANS_COLOR))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_GRADIENT_COLOR))) {
-                if (mNavigationBarView != null) {
-                    mNavigationBarView.getBarTransitions().setBarBackground();
-                }
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_CLOCK))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_POSITION))
@@ -468,6 +474,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_GRADIENT_COLOR))) {
                 if (mStatusBarView != null) {
                     mStatusBarView.getBarTransitions().setBarBackground();
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_ANIMATION_SPEED))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOTTED))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_LENGTH))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CIRCLE_DOT_INTERVAL))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
+                updateBattery();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SEMI_TRANS_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_GRADIENT_COLOR))) {
+                if (mNavigationBarView != null) {
+                    mNavigationBarView.getBarTransitions().setBarBackground();
                 }
             } else {
                 updateSettings();
@@ -3300,23 +3330,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         int batteryStyle = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY, 0, mCurrentUserId);
-        BatteryMeterMode mode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_STYLE, 2, mCurrentUserId);
+        BatteryMeterMode mode = BatteryMeterMode.BATTERY_METER_CIRCLE;
         switch (batteryStyle) {
-            case 2:
-                mode = BatteryMeterMode.BATTERY_METER_CIRCLE;
+            case 0:
+                mode = BatteryMeterMode.BATTERY_METER_ICON_PORTRAIT;
+                break;
+
+            case 1:
+                mode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
+                break;
+
+            case 3:
+                mode = BatteryMeterMode.BATTERY_METER_TEXT;
                 break;
 
             case 4:
                 mode = BatteryMeterMode.BATTERY_METER_GONE;
-                break;
-
-            case 5:
-                mode = BatteryMeterMode.BATTERY_METER_ICON_LANDSCAPE;
-                break;
-
-            case 6:
-                mode = BatteryMeterMode.BATTERY_METER_TEXT;
                 break;
 
             default:
@@ -3324,7 +3354,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         boolean showPercent = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_BATTERY_SHOW_PERCENT, 0, mCurrentUserId) == 1;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 1, mCurrentUserId) == 1;
 
         mBatteryView.setMode(mode);
         mBatteryController.onBatteryMeterModeChanged(mode);
@@ -3353,6 +3383,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mSignalTextView.setStyle(signalStyle);
             }
         }
+    }
+
+    private void updateBattery() {
+        mBatteryView.setMode(true);
+        mDockBatteryView.setMode(true);
     }
 
     private void resetUserSetupObserver() {

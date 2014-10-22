@@ -3792,6 +3792,74 @@ public final class Settings {
          */
         public static final String NAVIGATION_BAR_GRADIENT_COLOR = "navigation_bar_gradient_color";
 
+        /**
+         * Display style of the battery status
+         * 0: Icon portrait
+         * 1: Icon landscape
+         * 2: Circle
+         * 3: Percentage
+         * 4: hidden
+         * default : 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "battery_status_style";
+
+        /**
+         * Whether to show a battery status text
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "battery_status_show_text";
+
+        /**
+         * Battery animation speed during charge
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_ANIMATION_SPEED = "battery_status_text_animation_speed";
+
+        /**
+         * Whether to show the Circle battery status dotted
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOTTED = "battery_circle_dotted";
+
+        /**
+         * Length of the Circle battery status dots
+         *
+         * Values 0 - 10
+         * default : 3
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOT_LENGTH = "battery_circle_dot_length";
+
+        /**
+         * Interval of the Circle battery status dots
+         *
+         * Values 0 - 10
+         * default : 2
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CIRCLE_DOT_INTERVAL = "battery_circle_dot_interval";
+
+        /**
+         *Battery fill color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_COLOR = "battery_status_color";
+
+        /**
+         * Battery text color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "battery_text_color";
+
+        /**
+         * Battery text charging color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR = "battery_text_charging_color";
+
         // DarkKat additions end
 
          /**
