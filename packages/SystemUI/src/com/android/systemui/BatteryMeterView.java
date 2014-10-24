@@ -650,6 +650,7 @@ public class BatteryMeterView extends View implements DemoMode {
     }
 
     private void updateBattery() {
+        final int lowColor = 0xffff3300;
         mTextOnly = false;
         SHOW_100_PERCENT = false;
         Typeface font = Typeface.create("sans-serif", Typeface.BOLD);
@@ -672,15 +673,15 @@ public class BatteryMeterView extends View implements DemoMode {
         BatteryTracker tracker = mDemoMode ? mDemoTracker : mTracker;
 
         if (tracker.level <= mWarningLevel && !tracker.plugged) {
-            mBatteryPaint.setColor(Color.RED);
-            mFramePaint.setColor(Color.RED);
-            mFramePaint.setAlpha(51);
-            mTextPaint.setColor(Color.RED);
+            mBatteryPaint.setColor(lowColor);
+            mFramePaint.setColor(lowColor);
+            mFramePaint.setAlpha(102);
+            mTextPaint.setColor(lowColor);
         } else {
             mBatteryPaint.setColor(mBatteryColor);
             if (!mCustomFrameColor) {
                 mFramePaint.setColor(mBatteryPaint.getColor());
-                mFramePaint.setAlpha(51);
+                mFramePaint.setAlpha(102);
             } else {
                 mFramePaint.setColor(mFrameColor);
             }
@@ -698,7 +699,7 @@ public class BatteryMeterView extends View implements DemoMode {
                 mBoltPaint.setColor(mBatteryTextChargingColor);
                 mTextPaint.setColor(mBatteryTextChargingColor);
                 mTextFramePaint.setColor(mBatteryTextChargingColor);
-                mTextFramePaint.setAlpha(51);
+                mTextFramePaint.setAlpha(102);
             }
         }
 

@@ -367,14 +367,15 @@ public class CircleBatteryMeterView extends ImageView {
 
     private void updateColors() {
 
+        final int lowColor = 0xffff3300;
         int thinRingColor = mThinRingColor;
         int statusColor = mCircleColor;
         int textColor = mCircleTextColor;
 
         if (mLevel <= mWarningLevel && !mIsCharging) {
-            thinRingColor = Color.RED;
-            statusColor = Color.RED;
-            textColor = Color.RED;
+            thinRingColor = lowColor;
+            statusColor = lowColor;
+            textColor = lowColor;
         } else if (mLevel >= 90 && !mIsCharging) {
             if (mCustomHightColor) {
                 textColor = mCircleTextHightColor;
@@ -388,7 +389,7 @@ public class CircleBatteryMeterView extends ImageView {
         }
 
         mPaintThinRing.setColor(thinRingColor);
-        mPaintThinRing.setAlpha(51);
+        mPaintThinRing.setAlpha(102);
         mPaintStatus.setColor(statusColor);
         mPaintFont.setColor(textColor);
     }
