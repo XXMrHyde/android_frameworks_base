@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.UserHandle;
@@ -73,6 +74,12 @@ public class BatteryBarController extends LinearLayout {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_SHOW_FRAME),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -116,6 +123,7 @@ public class BatteryBarController extends LinearLayout {
                 mBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                 mBatteryCharging = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0) == BatteryManager.BATTERY_STATUS_CHARGING;
                 Prefs.setLastBatteryLevel(context, mBatteryLevel);
+                updateSettings();
             }
         }
     };
@@ -195,16 +203,35 @@ public class BatteryBarController extends LinearLayout {
     }
 
     public void updateSettings() {
-        mShowBatteryBar = Settings.System.getIntForUser(getContext().getContentResolver(),
+        final ContentResolver resolver = getContext().getContentResolver();
+        final int LOW = 15;
+
+        mShowBatteryBar = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_BAR, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mStyle = Settings.System.getIntForUser(getContext().getContentResolver(),
+        mStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mLocation = Settings.System.getIntForUser(getContext().getContentResolver(),
+        mLocation = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_POSITION, 1,
                 UserHandle.USER_CURRENT);
+        boolean showFrame = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_BAR_SHOW_FRAME, 0,
+                UserHandle.USER_CURRENT) == 1;
+        final int lowColor = 0xffff3300;
+        int fullColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xffffffff,
+                UserHandle.USER_CURRENT);
 
+        if (showFrame) {
+            if (mBatteryLevel <= LOW && !mBatteryCharging) {
+                ((View)this).setBackgroundColor(getFrameColor(lowColor));
+            } else {
+                ((View)this).setBackgroundColor(getFrameColor(fullColor));
+            }
+        } else {
+                ((View)this).setBackgroundColor(0x00000000);
+        }
         if (mShowBatteryBar) {
             if (isLocationValid(mLocation)) {
                 updateBars();
@@ -224,5 +251,14 @@ public class BatteryBarController extends LinearLayout {
 
     protected boolean isLocationValid(int location) {
         return mLocationToLookFor == location;
+    }
+
+    public int getFrameColor(int color) {
+        int a = 102;
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        int frameColor = (a << 24) + (r << 16) + (g << 8) + b;
+        return frameColor;
     }
 }

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
-import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.os.BatteryManager;
 import android.os.Handler;
@@ -76,6 +75,9 @@ public class BatteryBar extends RelativeLayout implements Animatable {
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
                     false, this, UserHandle.USER_ALL);
         }
 
@@ -191,16 +193,16 @@ public class BatteryBar extends RelativeLayout implements Animatable {
     };
 
     private void updateSettings() {
-        ContentResolver resolver = getContext().getContentResolver();
-        int color = Settings.System.getIntForUser(resolver,
+        final ContentResolver resolver = getContext().getContentResolver();
+        final int LOW = 15;
+
+        final int lowColor = 0xffff3300;
+        int fullColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xffffffff,
                 UserHandle.USER_CURRENT);
-
         shouldAnimateCharging = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_ANIMATE, 0,
                 UserHandle.USER_CURRENT) == 1;
-
-        int warningLevel = mContext.getResources().getInteger(com.android.internal.R.integer.config_lowBatteryWarningLevel);
 
         if (mBatteryCharging && mBatteryLevel < 100 && shouldAnimateCharging) {
             start();
@@ -208,12 +210,12 @@ public class BatteryBar extends RelativeLayout implements Animatable {
             stop();
         }
 
-        if (!mBatteryCharging && mBatteryLevel <= warningLevel) {
-            mBatteryBar.setBackgroundColor(Color.RED);
+        if (!mBatteryCharging && mBatteryLevel <= LOW) {
+            mBatteryBar.setBackgroundColor(lowColor);
         } else {
-            mBatteryBar.setBackgroundColor(color);
+            mBatteryBar.setBackgroundColor(fullColor);
         }
-        mCharger.setBackgroundColor(color);
+        mCharger.setBackgroundColor(fullColor);
         setProgress(mBatteryLevel);
     }
 

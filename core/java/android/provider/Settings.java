@@ -3338,12 +3338,6 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_BAR_ANIMATE = "statusbar_battery_bar_animate";
 
         /**
-         * Color of the additional battery bar
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
-
-        /**
          * Thickness of the additional battery bar
          * 0: 1dp
          * 1: 2dp
@@ -3353,6 +3347,18 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
+
+        /**
+         * Whether to show the background of the battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_SHOW_FRAME = "statusbar_battery_show_frame";
+
+        /**
+         * Color of the additional battery bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_COLOR = "statusbar_battery_bar_color";
 
         /**
          * Show when WiFi or data mobile is sending/receiving data
