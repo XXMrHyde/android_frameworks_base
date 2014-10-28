@@ -125,6 +125,7 @@ import com.android.systemui.statusbar.policy.MSimNetworkController;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
+import com.android.systemui.statusbar.policy.Traffic;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -448,6 +449,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_INDICATOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_SHOW_ICON), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_SUMMARY), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_BIT_BYTE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_HIDE_INDICATOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_TEXT_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_ICON_COLOR), false, this);
             updateSettings();
         }
 
@@ -492,7 +507,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
+                    Settings.System.STATUS_BAR_TRAFFIC_ICON_COLOR))) {
                 updateBattery();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR))
@@ -501,6 +516,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR))) {
                 updateSignalClusterViews();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_INDICATOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_SHOW_ICON))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_SUMMARY))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_BIT_BYTE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_HIDE_INDICATOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_TRAFFIC_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
+                updateTraffic();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -3410,6 +3440,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mSignalTextView != null) {
             mSignalTextView.updateColors();
+        }
+    }
+
+    private void updateTraffic() {
+        if (mStatusBarView == null) return;
+
+        Traffic traffic = (Traffic) mStatusBarView.findViewById(R.id.traffic);
+        if (traffic != null) {
+            traffic.updateSettings();
         }
     }
 

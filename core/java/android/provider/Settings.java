@@ -3918,6 +3918,53 @@ public final class Settings {
          */
         public static final String STATUS_BAR_AIRPLANE_MODE_ICON_COLOR = "status_bar_airplane_mode_icon_color";
 
+        /**
+         * Indicator of traffic on statusbar
+         * 0: disabled
+         * 1: download
+         * 2: upload
+         * 3: download and upload
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_INDICATOR = "status_bar_traffic_indicator";
+
+        /**
+         * Show/hide the traffic icon
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SHOW_ICON = "status_bar_traffic_show_icon";
+
+        /**
+         * Show the summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
+
+        /**
+         * Display the traffic value as bit/byte
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_BIT_BYTE = "status_bar_traffic_bit_byte";
+
+        /**
+         * Show/hide the indicator on no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_HIDE_INDICATOR = "status_bar_traffic_hide_indicator";
+
+        /**
+         * Color of the traffic text
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_TEXT_COLOR = "status_bar_traffic_text_color";
+
+        /**
+         * Color of the traffic icon
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_ICON_COLOR = "status_bar_traffic_icon_color";
+
         // DarkKat additions end
 
          /**
