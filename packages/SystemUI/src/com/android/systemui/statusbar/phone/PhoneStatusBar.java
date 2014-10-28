@@ -507,7 +507,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_TRAFFIC_ICON_COLOR))) {
+                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
                 updateBattery();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR))
@@ -529,7 +529,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_TRAFFIC_TEXT_COLOR))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
+                    Settings.System.STATUS_BAR_TRAFFIC_ICON_COLOR))) {
                 updateTraffic();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
