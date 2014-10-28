@@ -182,9 +182,9 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
     private UpdateUIListener mUpdateUIListener = null;
 
     public interface SignalCluster {
-        void setWifiIndicators(boolean visible, int strengthIcon, int activityIcon,
+        void setWifiIndicators(boolean visible, int strengthIcon, int inetCondition, int activityIcon,
                 String contentDescription);
-        void setMobileDataIndicators(boolean visible, int strengthIcon, int activityIcon,
+        void setMobileDataIndicators(boolean visible, int strengthIcon, int inetCondition, int activityIcon,
                 int typeIcon, String contentDescription, String typeContentDescription,
                 int noSimIcon);
         void setIsAirplaneMode(boolean is, int airplaneIcon);
@@ -192,10 +192,10 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
     }
 
     public interface NetworkSignalChangedCallback {
-        void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
+        void onWifiSignalChanged(boolean enabled, int wifiSignalIconId, int inetCondition,
                 boolean activityIn, boolean activityOut,
                 String wifiSignalContentDescriptionId, String description);
-        void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId,
+        void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId, int inetCondition,
                 String mobileSignalContentDescriptionId, int dataTypeIconId,
                 boolean activityIn, boolean activityOut,
                 String dataTypeContentDescriptionId, String description);
@@ -367,6 +367,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
                 // only show wifi in the cluster if connected or if wifi-only
                 mWifiEnabled && (mWifiConnected || !mHasMobileDataFeature),
                 mWifiIconId,
+                mInetCondition,
                 mWifiActivityIconId,
                 mContentDescriptionWifi);
 
@@ -381,6 +382,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
             cluster.setMobileDataIndicators(
                     true,
                     mAlwaysShowCdmaRssi ? mPhoneSignalIconId : mWimaxIconId,
+                    mInetCondition,
                     mMobileActivityIconId,
                     mDataTypeIconId,
                     mContentDescriptionWimax,
@@ -391,6 +393,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
             cluster.setMobileDataIndicators(
                     mHasMobileDataFeature,
                     mShowPhoneRSSIForData ? mPhoneSignalIconId : mDataSignalIconId,
+                    mInetCondition,
                     mMobileActivityIconId,
                     mDataTypeIconId,
                     mContentDescriptionPhoneSignal,
@@ -411,7 +414,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         boolean wifiOut = wifiEnabled && mWifiSsid != null
                 && (mWifiActivity == WifiManager.DATA_ACTIVITY_INOUT
                 || mWifiActivity == WifiManager.DATA_ACTIVITY_OUT);
-        cb.onWifiSignalChanged(wifiEnabled, mQSWifiIconId, wifiIn, wifiOut,
+        cb.onWifiSignalChanged(wifiEnabled, mQSWifiIconId, mInetCondition, wifiIn, wifiOut,
                 mContentDescriptionWifi, wifiDesc);
 
         boolean mobileIn = mDataConnected && (mDataActivity == TelephonyManager.DATA_ACTIVITY_INOUT
@@ -419,18 +422,18 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         boolean mobileOut = mDataConnected && (mDataActivity == TelephonyManager.DATA_ACTIVITY_INOUT
                 || mDataActivity == TelephonyManager.DATA_ACTIVITY_OUT);
         if (isEmergencyOnly()) {
-            cb.onMobileDataSignalChanged(false, mQSPhoneSignalIconId,
+            cb.onMobileDataSignalChanged(false, mQSPhoneSignalIconId, mInetCondition,
                     mContentDescriptionPhoneSignal, mQSDataTypeIconId, mobileIn, mobileOut,
                     mContentDescriptionDataType, null);
         } else {
             if (mIsWimaxEnabled && mWimaxConnected) {
                 // Wimax is special
-                cb.onMobileDataSignalChanged(true, mQSPhoneSignalIconId,
+                cb.onMobileDataSignalChanged(true, mQSPhoneSignalIconId, mInetCondition,
                         mContentDescriptionPhoneSignal, mQSDataTypeIconId, mobileIn, mobileOut,
                         mContentDescriptionDataType, mNetworkName);
             } else {
                 // Normal mobile data
-                cb.onMobileDataSignalChanged(mHasMobileDataFeature, mQSPhoneSignalIconId,
+                cb.onMobileDataSignalChanged(mHasMobileDataFeature, mQSPhoneSignalIconId, mInetCondition,
                         mContentDescriptionPhoneSignal, mQSDataTypeIconId, mobileIn, mobileOut,
                         mContentDescriptionDataType, mNetworkName);
             }
@@ -1749,6 +1752,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
                     cluster.setWifiIndicators(
                             show,
                             iconId,
+                            mInetCondition,
                             mWifiActivityIconId,
                             "Demo");
                 }
@@ -1782,6 +1786,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
                     cluster.setMobileDataIndicators(
                             show,
                             iconId,
+                            mInetCondition,
                             mMobileActivityIconId,
                             mDemoDataTypeIconId,
                             "Demo",

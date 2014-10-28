@@ -3900,6 +3900,24 @@ public final class Settings {
          */
         public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "statusbar_battery_bar_thickness";
 
+        /**
+         * Color of the signal and wifi icons on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR = "status_bar_network_icons_normal_color";
+
+        /**
+         * Color of the signal and wifi icons on statusbar while fully connected
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_FULLY_COLOR = "status_bar_network_icons_fully_color";
+
+       /**
+         * Color of the airplane mode icon on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_AIRPLANE_MODE_ICON_COLOR = "status_bar_airplane_mode_icon_color";
+
         // DarkKat additions end
 
          /**

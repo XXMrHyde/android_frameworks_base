@@ -16,10 +16,15 @@
 
 package com.android.systemui.statusbar;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.PorterDuff.Mode;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.telephony.SignalStrength;
 
@@ -31,10 +36,12 @@ public class SignalClusterTextView extends LinearLayout implements
         NetworkController.SignalStrengthChangedCallback {
 
     private boolean mAirplaneMode;
+    private int mInetCondition = 0;
     private int mDBm = 0;
     private int mSignalClusterStyle = SignalClusterView.STYLE_NORMAL;
 
     private TextView mMobileSignalText;
+    private ImageView mMobileSignalTextIcon;
 
     public SignalClusterTextView(Context context) {
         this(context, null);
@@ -52,7 +59,9 @@ public class SignalClusterTextView extends LinearLayout implements
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mMobileSignalText = (TextView) findViewById(R.id.mobile_signal_text);
+        mMobileSignalTextIcon = (ImageView) findViewById(R.id.mobile_signal_text_icon);
         updateSignalText();
+        updateColors();
     }
 
     public void setStyle(int style) {
@@ -82,27 +91,60 @@ public class SignalClusterTextView extends LinearLayout implements
     }
 
     @Override
-    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
+    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId, int inetCondition,
             boolean activityIn, boolean activityOut,
             String wifiSignalContentDescriptionId, String description) {
+        mInetCondition = inetCondition;
+        updateColors();
     }
 
     @Override
-    public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId,
+    public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId, int inetCondition,
             String mobileSignalContentDescriptionId, int dataTypeIconId,
             boolean activityIn, boolean activityOut,
             String dataTypeContentDescriptionId, String description) {
+        mInetCondition = inetCondition;
+        updateColors();
     }
 
     @Override
     public void onAirplaneModeChanged(boolean enabled) {
         mAirplaneMode = enabled;
         updateSignalText();
+        updateColors();
     }
 
     @Override
     public void onPhoneSignalStrengthChanged(int dbm) {
         mDBm = dbm;
         updateSignalText();
+    }
+
+    public void updateColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int defaultColor = 0xffffffff;
+        int defaultTextColor = mContext.getResources().getColor(
+                    R.color.status_bar_clock_color);
+        int normalColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int fullyColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int currentStateColor = mInetCondition == 1 ?
+                fullyColor : normalColor;
+
+        if (mMobileSignalText != null) {
+            mMobileSignalText.setTextColor(currentStateColor == defaultColor ?
+                    defaultTextColor : currentStateColor);
+        }
+        if (mMobileSignalTextIcon != null) {
+            if (currentStateColor == defaultColor) {
+                mMobileSignalTextIcon.setColorFilter(null);
+            } else {
+                mMobileSignalTextIcon.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
     }
 }

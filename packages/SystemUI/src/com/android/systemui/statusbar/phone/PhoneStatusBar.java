@@ -442,8 +442,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR), false, this);
-            updateClock();
-            updateBattery();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR), false, this);
             updateSettings();
         }
 
@@ -490,6 +494,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_CHARGING_COLOR))) {
                 updateBattery();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR))) {
+                updateSignalClusterViews();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_OPAQUE_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -3388,6 +3399,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateBattery() {
         mBatteryView.setMode(true);
         mDockBatteryView.setMode(true);
+    }
+
+    private void updateSignalClusterViews() {
+        if (mSignalClusterView != null) {
+            mSignalClusterView.updateColors();
+        }
+        if (mMSimSignalClusterView != null) {
+            mMSimSignalClusterView.updateColors();
+        }
+        if (mSignalTextView != null) {
+            mSignalTextView.updateColors();
+        }
     }
 
     private void resetUserSetupObserver() {

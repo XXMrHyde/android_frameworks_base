@@ -472,7 +472,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     }
     // NetworkSignalChanged callback
     @Override
-    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
+    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId, int inetCondition,
             boolean activityIn, boolean activityOut,
             String wifiSignalContentDescription, String enabledDesc) {
         // TODO: If view is in awaiting state, disable
@@ -513,7 +513,7 @@ class QuickSettingsModel implements BluetoothStateChangeCallback,
     // NetworkSignalChanged callback
     @Override
     public void onMobileDataSignalChanged(
-            boolean enabled, int mobileSignalIconId, String signalContentDescription,
+            boolean enabled, int mobileSignalIconId, int inetCondition, String signalContentDescription,
             int dataTypeIconId, boolean activityIn, boolean activityOut,
             String dataContentDescription,String enabledDesc) {
         if (deviceHasMobileData()) {

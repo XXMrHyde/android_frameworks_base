@@ -64,7 +64,7 @@ public class WiFiTile extends NetworkTile {
     }
 
     @Override
-    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
+    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId, int inetCondition,
             boolean activityIn, boolean activityOut,
             String wifiSignalContentDescriptionId, String description) {
         mWifiConnected = enabled && wifiSignalIconId > 0 && description != null;
@@ -76,7 +76,7 @@ public class WiFiTile extends NetworkTile {
     }
 
     @Override
-    public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId,
+    public void onMobileDataSignalChanged(boolean enabled, int mobileSignalIconId, int inetCondition,
             String mobileSignalContentDescriptionId, int dataTypeIconId,
             boolean activityIn, boolean activityOut,
             String dataTypeContentDescriptionId, String description) {

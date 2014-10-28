@@ -18,7 +18,11 @@
 
 package com.android.systemui.statusbar;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.PorterDuff.Mode;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.telephony.MSimTelephonyManager;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
@@ -51,6 +55,7 @@ public class MSimSignalClusterView
     public static final int STYLE_HIDDEN = 2;
 
     private int mSignalClusterStyle = STYLE_NORMAL;
+    private int mInetCondition = 0;
     private boolean mWifiVisible = false;
     private int mWifiStrengthId = 0, mWifiActivityId = 0;
     private boolean mMobileVisible = false;
@@ -161,20 +166,22 @@ public class MSimSignalClusterView
     }
 
     @Override
-    public void setWifiIndicators(boolean visible, int strengthIcon, String contentDescription) {
+    public void setWifiIndicators(boolean visible, int strengthIcon, int inetCondition, String contentDescription) {
         mWifiVisible = visible;
         mWifiStrengthId = strengthIcon;
+        mInetCondition = inetCondition;
         mWifiDescription = contentDescription;
 
         applySubscription(MSimTelephonyManager.getDefault().getDefaultSubscription());
     }
 
     @Override
-    public void setMobileDataIndicators(boolean visible, int strengthIcon,
+    public void setMobileDataIndicators(boolean visible, int strengthIcon, int inetCondition,
             int typeIcon, String contentDescription, String typeContentDescription,
             int noSimIcon, int subscription) {
         mMobileVisible = visible;
         mMobileStrengthId[subscription] = strengthIcon;
+        mInetCondition = inetCondition;
         mMobileTypeId[subscription] = typeIcon;
         mMobileDescription[subscription] = contentDescription;
         mMobileTypeDescription = typeContentDescription;
@@ -253,10 +260,56 @@ public class MSimSignalClusterView
                 mSpacer.setVisibility(View.GONE);
             }
         }
+        updateColors();
     }
 
     public void setStyle(int style) {
         mSignalClusterStyle = style;
+    }
+
+    public void updateColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int defaultColor = 0xffffffff;
+        int normalColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int fullyColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int airplaneModeIconColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int currentStateColor = mInetCondition == 1 ?
+                    fullyColor : normalColor;
+
+        if (mWifi != null) {
+            if (currentStateColor == defaultColor) {
+                mWifi.setColorFilter(null);
+            } else {
+                mWifi.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
+        for (int i = 0; i < mNumPhones; i++) {
+            if (mMobile[i] != null) {
+                if (currentStateColor == defaultColor) {
+                    mMobile[i].setColorFilter(null);
+                } else {
+                    mMobile[i].setColorFilter(currentStateColor, Mode.MULTIPLY);
+                }
+            }
+            if (mMobileType[i] != null) {
+                if (currentStateColor == defaultColor) {
+                    mMobileType[i].setColorFilter(null);
+                } else {
+                    mMobileType[i].setColorFilter(currentStateColor, Mode.MULTIPLY);
+                }
+            }
+        }
+        if (mAirplane != null) {
+            mAirplane.setColorFilter(airplaneModeIconColor == defaultColor ?
+                    null : airplaneModeIconColor, Mode.MULTIPLY);
+        }
     }
 }
 

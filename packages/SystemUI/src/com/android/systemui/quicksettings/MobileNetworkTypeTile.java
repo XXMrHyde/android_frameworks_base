@@ -219,14 +219,14 @@ public class MobileNetworkTypeTile extends QuickSettingsTile implements
     }
 
     @Override
-    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId,
+    public void onWifiSignalChanged(boolean enabled, int wifiSignalIconId, int inetCondition,
             boolean activityIn, boolean activityOut,
             String wifiSignalContentDescriptionId, String description) {
     }
 
     @Override
     public void onMobileDataSignalChanged(boolean enabled,
-            int mobileSignalIconId, String mobileSignalContentDescriptionId,
+            int mobileSignalIconId, int inetCondition, String mobileSignalContentDescriptionId,
             int dataTypeIconId, boolean activityIn, boolean activityOut,
             String dataTypeContentDescriptionId, String description) {
         updateResources();

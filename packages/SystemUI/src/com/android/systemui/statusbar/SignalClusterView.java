@@ -18,7 +18,11 @@
 
 package com.android.systemui.statusbar;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.PorterDuff.Mode;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +49,7 @@ public class SignalClusterView
     public static final int STYLE_HIDDEN = 2;
 
     private int mSignalClusterStyle = STYLE_NORMAL;
+    private int mInetCondition = 0;
     private boolean mWifiVisible = false;
     private int mWifiStrengthId = 0, mWifiActivityId = 0;
     private boolean mMobileVisible = false;
@@ -116,10 +121,11 @@ public class SignalClusterView
     }
 
     @Override
-    public void setWifiIndicators(boolean visible, int strengthIcon, int activityIcon,
+    public void setWifiIndicators(boolean visible, int strengthIcon, int inetCondition, int activityIcon,
             String contentDescription) {
         mWifiVisible = visible;
         mWifiStrengthId = strengthIcon;
+        mInetCondition = inetCondition;
         mWifiActivityId = activityIcon;
         mWifiDescription = contentDescription;
 
@@ -127,11 +133,12 @@ public class SignalClusterView
     }
 
     @Override
-    public void setMobileDataIndicators(boolean visible, int strengthIcon, int activityIcon,
+    public void setMobileDataIndicators(boolean visible, int strengthIcon, int inetCondition, int activityIcon,
             int typeIcon, String contentDescription, String typeContentDescription,
             int noSimIcon) {
         mMobileVisible = visible;
         mMobileStrengthId = strengthIcon;
+        mInetCondition = inetCondition;
         mMobileActivityId = activityIcon;
         mMobileTypeId = typeIcon;
         mMobileDescription = contentDescription;
@@ -264,6 +271,7 @@ public class SignalClusterView
                 !mWifiVisible ? View.VISIBLE : View.GONE);
 
         updateVisibilityForStyle();
+        updateColors();
     }
 
     public void setStyle(int style) {
@@ -275,6 +283,59 @@ public class SignalClusterView
         if (!mIsAirplaneMode && mMobileGroup != null) {
             mMobileGroup.setVisibility(mSignalClusterStyle != STYLE_NORMAL
                     ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public void updateColors() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int defaultColor = 0xffffffff;
+        int normalColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_NORMAL_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int fullyColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_NETWORK_ICONS_FULLY_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int airplaneModeIconColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
+                defaultColor, UserHandle.USER_CURRENT);
+        int currentStateColor = mInetCondition == 1 ?
+                fullyColor : normalColor;
+
+        if (mWifi != null) {
+            if (currentStateColor == defaultColor) {
+                mWifi.setColorFilter(null);
+            } else {
+                mWifi.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
+        if (mMobile != null) {
+            if (currentStateColor == defaultColor) {
+                mMobile.setColorFilter(null);
+            } else {
+                mMobile.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
+        if (mMobileType != null) {
+            if (currentStateColor == defaultColor) {
+                mMobileType.setColorFilter(null);
+            } else {
+                mMobileType.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
+        if (mEthernet != null) {
+            if (currentStateColor == defaultColor) {
+                mEthernet.setColorFilter(null);
+            } else {
+                mEthernet.setColorFilter(currentStateColor, Mode.MULTIPLY);
+            }
+        }
+        if (mAirplane != null) {
+            if (airplaneModeIconColor == defaultColor) {
+                mAirplane.setColorFilter(null);
+            } else {
+                mAirplane.setColorFilter(airplaneModeIconColor, Mode.MULTIPLY);
+            }
         }
     }
 }

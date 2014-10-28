@@ -103,8 +103,8 @@ public class MSimNetworkController extends NetworkController {
     ArrayList<TextView> mSubsLabelViews = new ArrayList<TextView>();
 
     public interface MSimSignalCluster {
-        void setWifiIndicators(boolean visible, int strengthIcon, String contentDescription);
-        void setMobileDataIndicators(boolean visible, int strengthIcon,
+        void setWifiIndicators(boolean visible, int strengthIcon, int inetCondition, String contentDescription);
+        void setMobileDataIndicators(boolean visible, int strengthIcon, int inetCondition,
                 int typeIcon, String contentDescription, String typeContentDescription,
                 int noSimIcon, int subscription);
         void setIsAirplaneMode(boolean is, int airplaneIcon);
@@ -227,10 +227,12 @@ public class MSimNetworkController extends NetworkController {
                 // only show wifi in the cluster if connected or if wifi-only
                 mWifiEnabled && (mWifiConnected || !mHasMobileDataFeature),
                 mWifiIconId,
+                mInetCondition,
                 mContentDescriptionWifi);
         cluster.setMobileDataIndicators(
                 mHasMobileDataFeature,
                 mMSimPhoneSignalIconId[subscription],
+                mInetCondition,
                 mMSimDataTypeIconId[subscription],
                 mMSimContentDescriptionPhoneSignal[subscription],
                 mMSimContentDescriptionDataType[subscription],
@@ -241,6 +243,7 @@ public class MSimNetworkController extends NetworkController {
                     true,
                     mAlwaysShowCdmaRssi ? mPhoneSignalIconId : mWimaxIconId,
                     mMSimDataTypeIconId[subscription],
+                    mInetCondition,
                     mContentDescriptionWimax,
                     mMSimContentDescriptionDataType[subscription],
                     mNoMSimIconId[subscription], subscription);
@@ -250,6 +253,7 @@ public class MSimNetworkController extends NetworkController {
                     mHasMobileDataFeature,
                     mShowPhoneRSSIForData ? mMSimPhoneSignalIconId[subscription]
                         : mMSimDataSignalIconId[subscription],
+                    mInetCondition,
                     mMSimDataTypeIconId[subscription],
                     mMSimContentDescriptionPhoneSignal[subscription],
                     mMSimContentDescriptionDataType[subscription],
