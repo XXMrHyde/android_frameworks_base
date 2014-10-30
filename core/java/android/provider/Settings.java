@@ -3965,6 +3965,36 @@ public final class Settings {
          */
         public static final String STATUS_BAR_TRAFFIC_ICON_COLOR = "status_bar_traffic_icon_color";
 
+        /**
+         * Wether to colorize the notification icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_COLORIZE_NOTIF_ICONS = "status_bar_colorize_notif_icons";
+
+        /**
+         * Color of the status bar notification icons
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR = "status_bar_notif_system_icon_color";
+
+        /**
+         * Color of the status bar notification text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_TEXT_COLOR = "status_bar_notif_text_color";
+
+        /**
+         * Color of the status bar notification count icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_ICON_COLOR = "status_bar_notif_count_icon_color";
+
+        /**
+         * Color of the status bar notification count text
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
+
         // DarkKat additions end
 
          /**

@@ -16,10 +16,15 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.DrawableContainer;
+import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
+import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
@@ -31,6 +36,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.slim.ImageHelper;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusBarIconView;
 
@@ -47,6 +53,9 @@ public abstract class Ticker {
     private ImageSwitcher mIconSwitcher;
     private TextSwitcher mTextSwitcher;
     private float mIconScale;
+    private int mNotifTextColor;
+
+    private ContentResolver mResolver;
 
     public static boolean isGraphicOrEmoji(char c) {
         int gc = Character.getType(c);
@@ -153,6 +162,7 @@ public abstract class Ticker {
     public Ticker(Context context, View sb) {
         mContext = context;
         final Resources res = context.getResources();
+        mResolver = context.getContentResolver();
         final int outerBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_size);
         final int imageBounds = res.getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
         mIconScale = (float)imageBounds / (float)outerBounds;
@@ -176,12 +186,12 @@ public abstract class Ticker {
         // Copy the paint style of one of the TextSwitchers children to use later for measuring
         TextView text = (TextView)mTextSwitcher.getChildAt(0);
         mPaint = text.getPaint();
+        updateTextColor();
     }
 
 
     public void addEntry(StatusBarNotification n) {
         int initialCount = mSegments.size();
-
         // If what's being displayed has the same text and icon, just drop it
         // (which will let the current one finish, this happens when apps do
         // a notification storm).
@@ -202,6 +212,12 @@ public abstract class Ticker {
         final CharSequence text = n.getNotification().tickerText;
         final Segment newSegment = new Segment(n, icon, text);
 
+        boolean colorizeNotifIcons = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_COLORIZE_NOTIF_ICONS, 0) == 1;
+        int iconColor = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR,
+                0xffffffff);
+
         // If there's already a notification schedule for this package and id, remove it.
         for (int i=0; i<mSegments.size(); i++) {
             Segment seg = mSegments.get(i);
@@ -219,11 +235,25 @@ public abstract class Ticker {
 
             mIconSwitcher.setAnimateFirstView(false);
             mIconSwitcher.reset();
-            mIconSwitcher.setImageDrawable(seg.icon);
+            if (colorizeNotifIcons) {
+                if (seg.icon instanceof AnimationDrawable) {
+                    ((DrawableContainer)seg.icon).setColorFilter(iconColor,
+                           Mode.MULTIPLY);
+
+                    mIconSwitcher.setImageDrawable(seg.icon);
+                } else {
+                    mIconSwitcher.setImageBitmap(ImageHelper
+                            .getColoredBitmap(seg.icon, iconColor));
+                }
+            } else {
+                mIconSwitcher.setImageDrawable(seg.icon);
+            }
 
             mTextSwitcher.setAnimateFirstView(false);
             mTextSwitcher.reset();
             mTextSwitcher.setText(seg.getText());
+            updateTextColor();
+            mTextSwitcher.setTextColor(mNotifTextColor);
 
             tickerStarting();
             scheduleAdvance();
@@ -264,6 +294,8 @@ public abstract class Ticker {
             Segment seg = mSegments.get(0);
             CharSequence text = seg.getText();
             mTextSwitcher.setCurrentText(text);
+            updateTextColor();
+            mTextSwitcher.setTextColor(mNotifTextColor);
         }
     }
 
@@ -284,6 +316,8 @@ public abstract class Ticker {
                     continue;
                 }
                 mTextSwitcher.setText(text);
+                updateTextColor();
+                mTextSwitcher.setTextColor(mNotifTextColor);
 
                 scheduleAdvance();
                 break;
@@ -296,6 +330,12 @@ public abstract class Ticker {
 
     private void scheduleAdvance() {
         mHandler.postDelayed(mAdvanceTicker, TICKER_SEGMENT_DELAY);
+    }
+
+    public void updateTextColor() {
+        mNotifTextColor = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_NOTIF_TEXT_COLOR,
+                0xffffffff);
     }
 
     public abstract void tickerStarting();
