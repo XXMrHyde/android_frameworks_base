@@ -45,6 +45,7 @@ import com.android.internal.util.darkkat.ImageHelper;
 import com.android.systemui.R;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class StatusBarIconView extends AnimatedImageView {
     private static final String TAG = "StatusBarIconView";
@@ -62,6 +63,7 @@ public class StatusBarIconView extends AnimatedImageView {
     private int mIconColor;
     private int mNotifCountColor;
     private int mNotifCountTextColor;
+    private GlobalSettingsObserver mObserver;
 
     public StatusBarIconView(Context context, String slot, Notification notification) {
         super(context);
@@ -76,10 +78,9 @@ public class StatusBarIconView extends AnimatedImageView {
         mNumberPaint.setTextSize(scaledPx);
         mNotification = notification;
         setContentDescription(notification);
-        updateNotifCount();
+        updateIconsAndText();
 
-        SettingsObserver observer = new SettingsObserver(new Handler());
-        observer.observe();
+        mObserver = GlobalSettingsObserver.getInstance(context);
         // We do not resize and scale system icons (on the right), only notification icons (on the
         // left).
         if (notification != null) {
@@ -276,6 +277,24 @@ public class StatusBarIconView extends AnimatedImageView {
     }
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if (mObserver != null) {
+            mObserver.attach(this);
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        if (mObserver != null) {
+            mObserver.detach(this);
+        }
+    }
+
+    @Override
     protected void debug(int depth) {
         super.debug(depth);
         Log.d("View", debugIndent(depth) + "slot=" + mSlot);
@@ -329,10 +348,37 @@ public class StatusBarIconView extends AnimatedImageView {
             + " notification=" + mNotification + ")";
     }
 
-    class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
+    static class GlobalSettingsObserver extends ContentObserver {
+        private static GlobalSettingsObserver sInstance;
+        private ArrayList<StatusBarIconView> mIconViews = new ArrayList<StatusBarIconView>();
+        private Context mContext;
+
+        GlobalSettingsObserver(Handler handler, Context context) {
             super(handler);
+            mContext = context.getApplicationContext();
         }
+
+        static GlobalSettingsObserver getInstance(Context context) {
+            if (sInstance == null) {
+                sInstance = new GlobalSettingsObserver(new Handler(), context);
+            }
+            return sInstance;
+        }
+
+        void attach(StatusBarIconView sbiv) {
+            if (mIconViews.isEmpty()) {
+                observe();
+            }
+            mIconViews.add(sbiv);
+        }
+
+        void detach(StatusBarIconView sbiv) {
+            mIconViews.remove(sbiv);
+            if (mIconViews.isEmpty()) {
+                unobserve();
+            }
+        }
+
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
 
@@ -357,12 +403,14 @@ public class StatusBarIconView extends AnimatedImageView {
         }
         @Override
         public void onChange(boolean selfChange) {
-            updateNotifCount();
-            set(mIcon, true);
+            for (StatusBarIconView sbiv : mIconViews) {
+                sbiv.updateIconsAndText();
+                sbiv.set(sbiv.mIcon, true);
+            }
         }
     }
 
-    public void updateNotifCount() {
+    public void updateIconsAndText() {
         ContentResolver resolver = mContext.getContentResolver();
 
         mColorizeNotifIcons = Settings.System.getInt(resolver,
