@@ -3995,6 +3995,36 @@ public final class Settings {
          */
         public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
 
+        /**
+         * Color of the status bar expanded background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BACKGROUND_COLOR = "status_bar_expanded_background_color";
+
+        /**
+         * Wether to show the settings button at the status bar expanded header
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_SETTINGS_BUTTON = "status_bar_expanded_header_settings_button";
+
+        /**
+         * Color of the status bar expanded header background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_BACKGROUND_COLOR = "status_bar_expanded_header_background_color";
+
+        /**
+         * Color of the status bar expanded clock and date
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_CLOCK_DATE_COLOR = "status_bar_expanded_header_clock_date_color";
+
+        /**
+         * Color of the status bar expanded header buttons
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR = "status_bar_expanded_header_buttons_color";
+
         // DarkKat additions end
 
          /**
