@@ -4025,6 +4025,18 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_HEADER_BUTTONS_COLOR = "status_bar_expanded_header_buttons_color";
 
+        /**
+         * Close handle background color on expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR = "status_bar_expanded_close_handle_background_color";
+
+        /**
+         * Close handle bar color on expanded status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_CLOSE_HANDLE_BAR_COLOR = "status_bar_expanded_close_handle_bar_color";
+
         // DarkKat additions end
 
          /**

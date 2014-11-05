@@ -19,7 +19,11 @@ package com.android.systemui.statusbar.phone;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.EventLog;
 import android.view.MotionEvent;
@@ -38,10 +42,15 @@ import com.android.systemui.statusbar.policy.RotationLockController;
 public class SettingsPanelView extends PanelView {
     public static final boolean DEBUG_GESTURES = true;
 
+    private static final int FULLY_OPAQUE = 255;
+
     private QuickSettingsController mQS;
     private QuickSettingsContainerView mQSContainer;
 
-    Drawable mHandleBar;
+    private Drawable mHandleBarBackground;
+    private Drawable mHandleBar;
+    private int mHandleBackgroundColor;
+    private int mHandleBarColor;
     int mHandleBarHeight;
     View mHandleView;
 
@@ -56,6 +65,7 @@ public class SettingsPanelView extends PanelView {
         mQSContainer = (QuickSettingsContainerView) findViewById(R.id.quick_settings_container);
 
         Resources resources = getContext().getResources();
+        mHandleBarBackground = resources.getDrawable(R.drawable.status_bar_close_background);
         mHandleBar = resources.getDrawable(R.drawable.status_bar_close);
         mHandleBarHeight = resources.getDimensionPixelSize(R.dimen.close_handle_height);
         mHandleView = findViewById(R.id.handle);
@@ -134,6 +144,7 @@ public class SettingsPanelView extends PanelView {
         if (changed) {
             final int pl = getPaddingLeft();
             final int pr = getPaddingRight();
+            mHandleBarBackground.setBounds(pl, 0, getWidth() - pr, (int) mHandleBarHeight);
             mHandleBar.setBounds(pl, 0, getWidth() - pr, (int) mHandleBarHeight);
         }
     }
@@ -143,7 +154,13 @@ public class SettingsPanelView extends PanelView {
         super.draw(canvas);
         final int off = (int) (getHeight() - mHandleBarHeight - getPaddingBottom());
         canvas.translate(0, off);
+        setCloseHandleDrawablesColor();
+        mHandleBarBackground.setColorFilter(null);
+        mHandleBarBackground.setColorFilter(mHandleBackgroundColor, Mode.MULTIPLY);
+        mHandleBarBackground.draw(canvas);
         mHandleBar.setState(mHandleView.getDrawableState());
+        mHandleBar.setColorFilter(null);
+        mHandleBar.setColorFilter(mHandleBarColor, Mode.MULTIPLY);
         mHandleBar.draw(canvas);
         canvas.translate(0, -off);
     }
@@ -157,5 +174,16 @@ public class SettingsPanelView extends PanelView {
             }
         }
         return super.onTouchEvent(event);
+    }
+
+    private void setCloseHandleDrawablesColor() {
+        mHandleBackgroundColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BACKGROUND_COLOR,
+                0xff0d0d0d, UserHandle.USER_CURRENT);
+        mHandleBarColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_CLOSE_HANDLE_BAR_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
     }
 }
