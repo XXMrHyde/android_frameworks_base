@@ -43,8 +43,6 @@ public class NotificationPanelView extends PanelView {
     private static final float STATUS_BAR_SWIPE_VERTICAL_MAX_PERCENTAGE = 0.025f;
     private static final float STATUS_BAR_SWIPE_MOVE_PERCENTAGE = 0.2f;
 
-    private static final int FULLY_OPAQUE = 255;
-
     private Drawable mHandleBarBackground;
     private Drawable mHandleBar;
     private int mHandleBackgroundColor;
