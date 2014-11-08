@@ -2633,6 +2633,15 @@ public final class Settings {
          */
         public static final String EGG_MODE = "egg_mode";
 
+        // DarkKat additions start
+
+        /**
+         * Whether to include options in power menu for 
+         * quick rebooting, rebooting into recovery and rebooting into bootloader
+         * @hide
+         */
+        public static final String ADVANCED_REBOOT = "advanced_reboot";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
