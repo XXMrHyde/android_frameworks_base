@@ -17,17 +17,21 @@
 package com.android.systemui.statusbar.policy;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.CharacterStyle;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.systemui.DemoMode;
@@ -35,6 +39,7 @@ import com.android.systemui.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -44,17 +49,28 @@ import libcore.icu.LocaleData;
  * Digital clock for the status bar.
  */
 public class Clock extends TextView implements DemoMode {
-    private boolean mAttached;
-    private Calendar mCalendar;
-    private String mClockFormatString;
-    private SimpleDateFormat mClockFormat;
-    private Locale mLocale;
-
     private static final int AM_PM_STYLE_NORMAL  = 0;
     private static final int AM_PM_STYLE_SMALL   = 1;
     private static final int AM_PM_STYLE_GONE    = 2;
 
-    private final int mAmPmStyle;
+    private int mAmPmStyle = AM_PM_STYLE_GONE;
+
+    public static final int DATE_STYLE_REGULAR = 0;
+    public static final int DATE_STYLE_LOWERCASE = 1;
+    public static final int DATE_STYLE_UPPERCASE = 2;
+
+    protected int mDateStyle = DATE_STYLE_UPPERCASE;
+
+    private boolean mAttached;
+    private boolean mReceiverRegistered;
+    private Calendar mCalendar;
+    private String mClockFormatString;
+    private SimpleDateFormat mClockFormat;
+    private boolean mIs24 = true;
+    private Locale mLocale;
+
+    private boolean mShowDate;
+    private boolean mDateSizeSmall;
 
     public Clock(Context context) {
         this(context, null);
@@ -77,12 +93,9 @@ public class Clock extends TextView implements DemoMode {
         }
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-
-        if (!mAttached) {
-            mAttached = true;
+    private void updateReceiverState() {
+        boolean shouldBeRegistered = mAttached && getVisibility() != GONE;
+        if (shouldBeRegistered && !mReceiverRegistered) {
             IntentFilter filter = new IntentFilter();
 
             filter.addAction(Intent.ACTION_TIME_TICK);
@@ -92,7 +105,19 @@ public class Clock extends TextView implements DemoMode {
             filter.addAction(Intent.ACTION_USER_SWITCHED);
 
             getContext().registerReceiver(mIntentReceiver, filter, null, getHandler());
+            mReceiverRegistered = true;
+        } else if (!shouldBeRegistered && mReceiverRegistered) {
+            getContext().unregisterReceiver(mIntentReceiver);
+            mReceiverRegistered = false;
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        mAttached = true;
+        updateReceiverState();
 
         // NOTE: It's safe to do these after registering the receiver since the receiver always runs
         // in the main thread, therefore the receiver can't run before this method returns.
@@ -104,14 +129,25 @@ public class Clock extends TextView implements DemoMode {
         updateClock();
     }
 
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mAttached) {
-            getContext().unregisterReceiver(mIntentReceiver);
-            mAttached = false;
+        mAttached = false;
+        updateReceiverState();
+    }
+
+    @Override
+    protected void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        boolean wasRegistered = mReceiverRegistered;
+        updateReceiverState();
+        if (!wasRegistered && mReceiverRegistered) {
+            mCalendar = Calendar.getInstance(TimeZone.getDefault());
+            updateClock();
         }
     }
+
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -130,7 +166,7 @@ public class Clock extends TextView implements DemoMode {
                     mClockFormatString = ""; // force refresh
                 }
             }
-            updateClock();
+            updateSettings();
         }
     };
 
@@ -142,14 +178,13 @@ public class Clock extends TextView implements DemoMode {
 
     private final CharSequence getSmallTime() {
         Context context = getContext();
-        boolean is24 = DateFormat.is24HourFormat(context);
         LocaleData d = LocaleData.get(context.getResources().getConfiguration().locale);
 
         final char MAGIC1 = '\uEF00';
         final char MAGIC2 = '\uEF01';
 
         SimpleDateFormat sdf;
-        String format = is24 ? d.timeFormat24 : d.timeFormat12;
+        String format = mIs24 ? d.timeFormat24 : d.timeFormat12;
         if (!format.equals(mClockFormatString)) {
             /*
              * Search for an unquoted "a" in the format string, so we can
@@ -186,13 +221,39 @@ public class Clock extends TextView implements DemoMode {
         } else {
             sdf = mClockFormat;
         }
+
+        CharSequence dateString = null;
+
         String result = sdf.format(mCalendar.getTime());
+
+        if (mShowDate) {
+            Date now = new Date();
+
+            String dateFormat = Settings.System.getStringForUser(getContext().getContentResolver(),
+                    Settings.System.STATUS_BAR_DATE_FORMAT, UserHandle.USER_CURRENT);
+
+            if (dateFormat == null || dateFormat.isEmpty()) {
+                // Set dateString to short uppercase Weekday (Default for AOKP) if empty
+                dateString = DateFormat.format("EEE", now) + " ";
+            } else {
+                dateString = DateFormat.format(dateFormat, now) + " ";
+            }
+            if (mDateStyle == DATE_STYLE_LOWERCASE) {
+                // When Date style is small, convert date to uppercase
+                result = dateString.toString().toLowerCase() + result;
+            } else if (mDateStyle == DATE_STYLE_UPPERCASE) {
+                result = dateString.toString().toUpperCase() + result;
+            } else {
+                result = dateString.toString() + result;
+            }
+        }
+
+        SpannableStringBuilder formatted = new SpannableStringBuilder(result);
 
         if (mAmPmStyle != AM_PM_STYLE_NORMAL) {
             int magic1 = result.indexOf(MAGIC1);
             int magic2 = result.indexOf(MAGIC2);
             if (magic1 >= 0 && magic2 > magic1) {
-                SpannableStringBuilder formatted = new SpannableStringBuilder(result);
                 if (mAmPmStyle == AM_PM_STYLE_GONE) {
                     formatted.delete(magic1, magic2+1);
                 } else {
@@ -204,11 +265,22 @@ public class Clock extends TextView implements DemoMode {
                     formatted.delete(magic2, magic2 + 1);
                     formatted.delete(magic1, magic1 + 1);
                 }
-                return formatted;
             }
         }
 
-        return result;
+        if (mDateSizeSmall) {
+            if (dateString != null) {
+                int dateStringLen = dateString.length();
+                if (!mShowDate) {
+                    formatted.delete(0, dateStringLen);
+                } else {
+                    CharacterStyle style = new RelativeSizeSpan(0.7f);
+                    formatted.setSpan(style, 0, dateStringLen,
+                                      Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                }
+            }
+        }
+        return formatted; 
 
     }
 
@@ -233,6 +305,42 @@ public class Clock extends TextView implements DemoMode {
                 mCalendar.set(Calendar.MINUTE, mm);
             }
             setText(getSmallTime());
+        }
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+        Context context = getContext();
+
+        mIs24 = DateFormat.is24HourFormat(context);
+        mShowDate = Settings.System.getIntForUser(resolver,
+			    Settings.System.STATUS_BAR_SHOW_DATE, 0,
+                UserHandle.USER_CURRENT) == 1;
+        int amPmStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE,
+                UserHandle.USER_CURRENT);
+        mDateSizeSmall = Settings.System.getIntForUser(resolver,
+			    Settings.System.STATUS_BAR_DATE_SIZE, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mDateStyle = Settings.System.getIntForUser(resolver,
+			    Settings.System.STATUS_BAR_DATE_STYLE,
+                DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
+        int color = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+
+        if (mIs24) {
+            mAmPmStyle = AM_PM_STYLE_GONE;
+        } else {
+            if (mAmPmStyle != amPmStyle) {
+                mAmPmStyle = amPmStyle;
+                mClockFormatString = "";
+            }
+        }
+
+        if (mAttached) {
+            setTextColor(color);
+            updateClock();
         }
     }
 }
