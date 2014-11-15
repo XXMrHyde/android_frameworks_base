@@ -93,9 +93,22 @@
                 android:singleLine="true"
                 android:paddingStart="7dp"
                 android:gravity="center_vertical|start"
+                android:visibility="gone"
                 />
         </com.android.keyguard.AlphaOptimizedLinearLayout>
     </LinearLayout>
+
+    <com.android.systemui.statusbar.policy.Clock
+        android:id="@+id/center_clock"
+        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:singleLine="true"
+        android:paddingStart="7dp"
+        android:layout_gravity="center"
+	    android:gravity="center"
+        android:visibility="gone"
+        />
 
     <ViewStub
         android:id="@+id/ticker_stub"
