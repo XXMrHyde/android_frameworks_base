@@ -324,7 +324,7 @@ public class Clock extends TextView implements DemoMode {
                 UserHandle.USER_CURRENT) == 1;
         mDateStyle = Settings.System.getIntForUser(resolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE,
-                DATE_STYLE_UPPERCASE, UserHandle.USER_CURRENT);
+                DATE_STYLE_REGULAR, UserHandle.USER_CURRENT);
         int color = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
