@@ -16,6 +16,8 @@
      limitations under the License.
 -->
 
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/ic_lock_power_off_alpha"
-    android:tint="?attr/colorControlNormal" />
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@color/ripple_material_dark">
+    <item android:id="@id/mask"
+          android:drawable="@drawable/btn_default_mtrl_shape" />
+</ripple>
