@@ -339,7 +339,8 @@ public class SignalClusterView
                     (mMobileVisible ? "VISIBLE" : "GONE"),
                     mMobileStrengthId, mMobileActivityId, mMobileTypeId));
 
-        mMobileType.setVisibility((mRoaming || mMobileTypeId != 0) ? View.VISIBLE : View.GONE);
+        mMobileType.setVisibility(
+                ((mRoaming || mMobileTypeId != 0) && !mWifiVisible) ? View.VISIBLE : View.GONE);
     }
 
     public void updateSettings() {
