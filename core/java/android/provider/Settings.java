@@ -2738,6 +2738,12 @@ public final class Settings {
         public static final String STATUS_BAR_AIRPLANE_MODE_ICON_COLOR = "status_bar_airplane_mode_icon_color";
 
         /**
+         * Volume rocker wake
+         * @hide
+         */
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
+
+        /**
          * Whether to include options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide
