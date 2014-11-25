@@ -2733,6 +2733,12 @@ public final class Settings {
 
 
         /**
+         * Volume rocker wake
+         * @hide
+         */
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
+
+        /**
          * Whether to include options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide
