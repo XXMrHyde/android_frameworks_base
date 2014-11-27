@@ -2746,6 +2746,42 @@ public final class Settings {
 
 
         /**
+         * Whether to show reboot in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_REBOOT = "power_menu_reboot";
+
+        /**
+         * Whether to show airplane mode in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_AIRPLANE = "power_menu_airplane";
+
+        /**
+         * Whether to show users in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_USERS = "power_menu_users";
+
+        /**
+         * Whether to show settings in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_SETTINGS = "power_menu_settings";
+
+        /**
+         * Whether to show lockdown in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_LOCKDOWN = "power_menu_lockdown";
+
+        /**
+         * Whether to show silent mode in power menu 
+         * @hide
+         */
+        public static final String POWER_MENU_SILENT = "power_menu_silent";
+
+        /**
          * Volume rocker wake
          * @hide
          */
@@ -2757,7 +2793,6 @@ public final class Settings {
          * @hide
          */
         public static final String WAKE_WHEN_PLUGGED_OR_UNPLUGGED = "wake_when_plugged_or_unplugged";
-
 
         /**
          * Whether to include options in power menu for 
