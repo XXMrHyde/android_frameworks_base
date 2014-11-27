@@ -2636,6 +2636,13 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * Whether to control brightness from status bar
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
          *  Enable statusbar double tap gesture on to put device to sleep
          * @hide
          */
