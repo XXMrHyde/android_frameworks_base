@@ -17,6 +17,7 @@
 package com.android.systemui;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -29,6 +30,8 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
@@ -50,18 +53,25 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private final int[] mColors;
 
-    boolean mShowPercent = true;
+    private boolean mAttached;
+    private boolean mShowText;
+    private boolean mShowAnimation;
+    private boolean mIsCharging;
+    private boolean mIsAnimating;
     private float mButtonHeightFraction;
     private float mSubpixelSmoothingLeft;
     private float mSubpixelSmoothingRight;
     private final Paint mFramePaint, mBatteryPaint, mWarningTextPaint, mTextPaint, mBoltPaint;
+    private int mCurrentBatteryYTop;
     private float mTextHeight, mWarningTextHeight;
+
+    private int mBatteryColor;
+    private int mBatteryTextColor;
 
     private int mHeight;
     private int mWidth;
     private String mWarningString;
     private final int mCriticalLevel;
-    private final int mChargeColor;
     private final float[] mBoltPoints;
     private final Path mBoltPath = new Path();
 
@@ -74,6 +84,7 @@ public class BatteryMeterView extends View implements DemoMode,
     private final Path mTextPath = new Path();
 
     private BatteryController mBatteryController;
+    private Handler mHandler;
     private boolean mPowerSaveEnabled;
 
     private class BatteryTracker extends BroadcastReceiver {
@@ -110,10 +121,20 @@ public class BatteryMeterView extends View implements DemoMode,
                 technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY);
                 voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0);
                 temperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+                mIsCharging = plugged;
 
                 setContentDescription(
                         context.getString(R.string.accessibility_battery_level, level));
-                postInvalidate();
+                updateSettings();
+
+                if (mAttached) {
+                    if (mIsCharging && mShowAnimation) {
+                        startChargingAnimation();
+                    } else {
+                        stopChargingAnimation();
+                    }
+                    postInvalidate();
+                }
             } else if (action.equals(ACTION_LEVEL_TEST)) {
                 testmode = true;
                 post(new Runnable() {
@@ -151,27 +172,43 @@ public class BatteryMeterView extends View implements DemoMode,
 
     BatteryTracker mTracker = new BatteryTracker();
 
+    // runnable to invalidate view via mHandler.postDelayed() call
+    private final Runnable mPostInvalidate = new Runnable() {
+        public void run() {
+            if(mAttached) {
+                postInvalidate();
+            }
+        }
+    };
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        filter.addAction(ACTION_LEVEL_TEST);
-        final Intent sticky = getContext().registerReceiver(mTracker, filter);
-        if (sticky != null) {
-            // preload the battery level
-            mTracker.onReceive(getContext(), sticky);
+        if (!mAttached) {
+            mAttached = true;
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+            filter.addAction(ACTION_LEVEL_TEST);
+            final Intent sticky = getContext().registerReceiver(mTracker, filter);
+            if (sticky != null) {
+                // preload the battery level
+                mTracker.onReceive(getContext(), sticky);
+            }
+            mBatteryController.addStateChangedCallback(this);
+            mHandler.postDelayed(mPostInvalidate, 250);
         }
-        mBatteryController.addStateChangedCallback(this);
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        getContext().unregisterReceiver(mTracker);
-        mBatteryController.removeStateChangedCallback(this);
+        if (mAttached) {
+            stopChargingAnimation();
+            mAttached = false;
+            getContext().unregisterReceiver(mTracker);
+            mBatteryController.removeStateChangedCallback(this);
+        }
     }
 
     public BatteryMeterView(Context context) {
@@ -185,6 +222,7 @@ public class BatteryMeterView extends View implements DemoMode,
     public BatteryMeterView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        mHandler = new Handler();
         final Resources res = context.getResources();
         TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,
                 defStyle, 0);
@@ -202,8 +240,6 @@ public class BatteryMeterView extends View implements DemoMode,
         levels.recycle();
         colors.recycle();
         atts.recycle();
-        mShowPercent = ENABLE_PERCENT && 0 != Settings.System.getInt(
-                context.getContentResolver(), "status_bar_show_battery_percent", 0);
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
         mCriticalLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
@@ -215,7 +251,6 @@ public class BatteryMeterView extends View implements DemoMode,
                 R.fraction.battery_subpixel_smoothing_right, 1, 1);
 
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mFramePaint.setColor(frameColor);
         mFramePaint.setDither(true);
         mFramePaint.setStrokeWidth(0);
         mFramePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -236,11 +271,10 @@ public class BatteryMeterView extends View implements DemoMode,
         mWarningTextPaint.setTypeface(font);
         mWarningTextPaint.setTextAlign(Paint.Align.CENTER);
 
-        mChargeColor = getResources().getColor(R.color.batterymeter_charge_color);
-
         mBoltPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBoltPaint.setColor(res.getColor(R.color.batterymeter_bolt_color));
         mBoltPoints = loadBoltPoints(res);
+
+        updateSettings();
     }
 
     public void setBatteryController(BatteryController batteryController) {
@@ -304,7 +338,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
         if (level == BatteryTracker.UNKNOWN_LEVEL) return;
 
-        float drawFrac = (float) level / 100f;
         final int pt = getPaddingTop();
         final int pl = getPaddingLeft();
         final int pr = getPaddingRight();
@@ -335,13 +368,25 @@ public class BatteryMeterView extends View implements DemoMode,
         mFrame.right -= mSubpixelSmoothingRight;
         mFrame.bottom -= mSubpixelSmoothingRight;
 
-        // set the battery charging color
-        mBatteryPaint.setColor(tracker.plugged ? mChargeColor : getColorForLevel(level));
+        float drawFrac;
 
-        if (level >= FULL) {
-            drawFrac = 1f;
-        } else if (level <= mCriticalLevel) {
-            drawFrac = 0f;
+        if (mIsAnimating) {
+            drawFrac = (float) mCurrentBatteryYTop / 100f;
+
+            if (mCurrentBatteryYTop >= FULL) {
+                drawFrac = 1f;
+            } else if (mCurrentBatteryYTop <= mCriticalLevel) {
+                drawFrac = 0f;
+            }
+        } else {
+            mCurrentBatteryYTop = 0;
+            drawFrac = (float) level / 100f;
+
+            if (level >= FULL) {
+                drawFrac = 1f;
+            } else if (level <= mCriticalLevel) {
+                drawFrac = 0f;
+            }
         }
 
         final float levelTop = drawFrac == 1f ? mButtonFrame.top
@@ -381,39 +426,6 @@ public class BatteryMeterView extends View implements DemoMode,
                         mBoltFrame.left + mBoltPoints[0] * mBoltFrame.width(),
                         mBoltFrame.top + mBoltPoints[1] * mBoltFrame.height());
             }
-
-            float boltPct = (mBoltFrame.bottom - levelTop) / (mBoltFrame.bottom - mBoltFrame.top);
-            boltPct = Math.min(Math.max(boltPct, 0), 1);
-            if (boltPct <= BOLT_LEVEL_THRESHOLD) {
-                // draw the bolt if opaque
-                c.drawPath(mBoltPath, mBoltPaint);
-            } else {
-                // otherwise cut the bolt out of the overall shape
-                mShapePath.op(mBoltPath, Path.Op.DIFFERENCE);
-            }
-        }
-
-        // compute percentage text
-        boolean pctOpaque = false;
-        float pctX = 0, pctY = 0;
-        String pctText = null;
-        if (!tracker.plugged && level > mCriticalLevel && mShowPercent
-                && !(tracker.level == 100 && !SHOW_100_PERCENT)) {
-            mTextPaint.setColor(getColorForLevel(level));
-            mTextPaint.setTextSize(height *
-                    (SINGLE_DIGIT_PERCENT ? 0.75f
-                            : (tracker.level == 100 ? 0.38f : 0.5f)));
-            mTextHeight = -mTextPaint.getFontMetrics().ascent;
-            pctText = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
-            pctX = mWidth * 0.5f;
-            pctY = (mHeight + mTextHeight) * 0.47f;
-            pctOpaque = levelTop > pctY;
-            if (!pctOpaque) {
-                mTextPath.reset();
-                mTextPaint.getTextPath(pctText, 0, pctText.length(), pctX, pctY, mTextPath);
-                // cut the percentage text out of the overall shape
-                mShapePath.op(mTextPath, Path.Op.DIFFERENCE);
-            }
         }
 
         // draw the battery shape background
@@ -426,16 +438,33 @@ public class BatteryMeterView extends View implements DemoMode,
         mShapePath.op(mClipPath, Path.Op.INTERSECT);
         c.drawPath(mShapePath, mBatteryPaint);
 
-        if (!tracker.plugged) {
-            if (level <= mCriticalLevel) {
-                // draw the warning text
-                final float x = mWidth * 0.5f;
-                final float y = (mHeight + mWarningTextHeight) * 0.48f;
-                c.drawText(mWarningString, x, y, mWarningTextPaint);
-            } else if (pctOpaque) {
-                // draw the percentage text
-                c.drawText(pctText, pctX, pctY, mTextPaint);
-            }
+        // battery text
+        if (!tracker.plugged && level <= mCriticalLevel) {
+            // draw the warning text
+            final float x = mWidth * 0.5f;
+            final float y = (mHeight + mWarningTextHeight) * 0.48f;
+            c.drawText(mWarningString, x, y, mWarningTextPaint);
+        } else if (tracker.plugged && (!mShowText || !mIsAnimating)) {
+            // draw the bolt
+            c.drawPath(mBoltPath, mBoltPaint);
+        } else if (mShowText && !(tracker.level == 100
+                && !SHOW_100_PERCENT)) {
+            // compute percentage text
+            mTextPaint.setTextSize(height *
+                    (SINGLE_DIGIT_PERCENT ? 0.75f
+                            : (tracker.level == 100 ? 0.38f : 0.5f)));
+            mTextHeight = -mTextPaint.getFontMetrics().ascent;
+            String pctText = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
+            float pctX = mWidth * 0.5f;
+            float pctY = (mHeight + mTextHeight) * 0.47f;
+            mTextPath.reset();
+            mTextPaint.getTextPath(pctText, 0, pctText.length(), pctX, pctY, mTextPath);
+            // draw the percentage text
+            c.drawText(pctText, pctX, pctY, mTextPaint);
+        }
+
+        if (mIsAnimating) {
+            updateChargingAnimation();
         }
     }
 
@@ -466,6 +495,83 @@ public class BatteryMeterView extends View implements DemoMode,
                mDemoTracker.plugged = Boolean.parseBoolean(plugged);
            }
            postInvalidate();
+        }
+    }
+
+    public void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+        BatteryTracker tracker = mDemoMode ? mDemoTracker : mTracker;
+        final int level = tracker.level;
+        final int warningLevel = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_lowBatteryWarningLevel);
+
+        mShowText = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mShowAnimation = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CHARGING_ANIMATION, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mBatteryColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+        mBatteryTextColor = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR,
+                0xff000000, UserHandle.USER_CURRENT);
+
+        if (mFramePaint != null) {
+            mFramePaint.setColor(mBatteryColor);
+            mFramePaint.setAlpha(77);
+        }
+        if (mBoltPaint != null) {
+            mBoltPaint.setColor(mBatteryTextColor);
+        }
+
+        if (!tracker.plugged && level <= warningLevel) {
+            mBatteryColor = mColors[1];
+            mBatteryTextColor = mColors[1];
+        }
+
+        if (mBatteryPaint != null) {
+            mBatteryPaint.setColor(mBatteryColor);
+        }
+        if (mTextPaint != null) {
+            mTextPaint.setColor(mBatteryTextColor);
+        }
+
+        if (mIsCharging) {
+            if (mShowAnimation && !mIsAnimating) {
+                startChargingAnimation();
+            } else if (!mShowAnimation && mIsAnimating) {
+                stopChargingAnimation();
+            }
+        }
+        postInvalidate();
+    }
+
+    private void startChargingAnimation() {
+        if (!mIsAnimating) {
+            mIsAnimating = true;
+            mHandler.removeCallbacks(mPostInvalidate);
+            mCurrentBatteryYTop = 0;
+            updateChargingAnimation();
+        }
+    }
+
+    private void updateChargingAnimation() {
+        mCurrentBatteryYTop += 2;
+        if (mCurrentBatteryYTop > 100) {
+            mCurrentBatteryYTop = 0;
+        }
+        mHandler.removeCallbacks(mPostInvalidate);
+        mHandler.postDelayed(mPostInvalidate, 50);
+    }
+
+    private void stopChargingAnimation() {
+        if (mIsAnimating) {
+            mIsAnimating = false;
+            mHandler.removeCallbacks(mPostInvalidate);
+            mCurrentBatteryYTop = 0;
+            mHandler.post(mPostInvalidate);
         }
     }
 }
