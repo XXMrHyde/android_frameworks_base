@@ -15,13 +15,11 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <style name="TextAppearance.Material.Large.DarkKat">
-        <item name="textSize">@dimen/text_size_large_material</item>
+    <style name="TextAppearance.Material.Large.DarkKat" parent="TextAppearance.Material.Large">
         <item name="textColor">@color/primary_text_material_dark</item>
     </style>
 
-    <style name="TextAppearance.Material.Small.DarkKat">
-        <item name="textSize">@dimen/text_size_small_material</item>
+    <style name="TextAppearance.Material.Small.DarkKat" parent="TextAppearance.Material.Small">
         <item name="textColor">@color/secondary_text_material_dark</item>
     </style>
 
