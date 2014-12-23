@@ -2782,7 +2782,7 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
         /**
-         * Whether to show the weather info on the header of the expanded status bar
+         * Color of the weather info on the header of the expanded status bar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_HEADER_WEATHER_COLOR = "status_bar_expanded_header_weather_color";
