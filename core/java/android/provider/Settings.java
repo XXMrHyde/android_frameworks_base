@@ -2770,6 +2770,58 @@ public final class Settings {
 
 
         /**
+         * Show/hide network speed indicator
+         * @hide
+         */
+        public static final String STATUS_BAR_ENABLE_NETWORK_SPEED_INDICATOR = "status_bar_enable_network_speed_indicator";
+
+        /**
+         * Show/hide network speed indicator on no traffic
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_HIDE_TRAFFIC = "status_bar_network_speed_hide_traffic";
+
+        /**
+         * Show summary of traffic.
+         * @hide
+         */
+        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary"; 
+
+        /**
+         * Wether to show network speed indicators
+         * 0: download
+         * 1: upload
+         * 2: download and upload
+         * default: 2
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_INDICATOR = "status_bar_network_speed_indicator";
+
+        /**
+         * Show/hide network speed indicator icon
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_SHOW_ICON = "status_bar_network_speed_show_icon";
+
+        /**
+         * Display network speed indicator value as bit/byte
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_BIT_BYTE = "status_bar_network_speed_bit_byte";
+
+        /**
+         * Color of the network speed indicator text
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_TEXT_COLOR = "status_bar_network_speed_text_color";
+
+        /**
+         * Color of the network speed indicator icons
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_SPEED_ICON_COLOR = "status_bar_network_speed_icon_color";
+
+        /**
          * Whether to show the (default) battery status text on the header of the expanded status bar
          * @hide
          */
