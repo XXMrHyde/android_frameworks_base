@@ -149,8 +149,8 @@ class TelephonyIcons {
     };
 
     static final int[] QS_DATA_HP = {
-                R.drawable.ic_qs_signal_full_hp,
-                R.drawable.ic_qs_signal_full_hp
+                R.drawable.ic_qs_signal_hp,
+                R.drawable.ic_qs_signal_hp
 
     };
 
