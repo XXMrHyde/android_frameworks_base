@@ -42,4 +42,8 @@
   <java-symbol type="color" name="global_actions_icon_color_selected" />
   <java-symbol type="color" name="global_actions_icon_color_enabled" />
 
+  <!-- First boot install dialog -->
+  <java-symbol type="string" name="android_installing_apk" />
+  <java-symbol type="string" name="android_installing_title" />
+
 </resources>
