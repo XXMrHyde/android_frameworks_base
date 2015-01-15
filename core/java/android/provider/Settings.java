@@ -2709,28 +2709,75 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_DATE_COLOR = "status_bar_clock_date_color";
 
         /**
-         * Whether to show a battery status text
+         * Battery status style on the status bar
+         * 0 - Icon portrait
+         * 1 - Icon landscape
+         * 2 - Circle
+         * 3 - Text only
+         * 4 - Hidden
+         * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "battery_status_show_text";
+        public static final String STATUS_BAR_BATTERY_STATUS_STYLE = "status_bar_battery_status_style";
 
         /**
-         * Whether to show the charging animation
+         * Battery status (text) style on the status bar
+         * 0 - Inside the icon/circle
+         * 1 - Next to the icon/circle
+         * 2 - Hidden
+         * default: 2
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGING_ANIMATION = "battery_status_show_charging_animation";
+        public static final String STATUS_BAR_BATTERY_STATUS_PERCENT_STYLE = "status_bar_battery_status_percent_style";
 
         /**
-         *Battery color
+         * Battery charging animation speed on the status bar
+         * 0 - Disabled
+         * 1 - Slow
+         * 3 - Normal (default)
+         * 5 - fast
+         * default: 3
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_COLOR = "battery_status_battery_color";
+        public static final String STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED = "status_bar_battery_status_charging_animation_speed";
 
         /**
-         * Battery text color
+         * Whether to show the Circle battery status dotted on the status bar
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "battery_status_text_color";
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CIRCLE_DOTTED = "status_bar_battery_status_show_circle_dotted";
+
+        /**
+         * Length of the Circle battery status dots on the status bar
+         *
+         * Values 0 - 10
+         * default : 3
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
+
+        /**
+         * Interval of the Circle battery status dots on the status bar
+         *
+         * Values 0 - 10
+         * default : 2
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
+
+        /**
+         *Battery status fill color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_COLOR = "status_bar_battery_status_color";
+
+        /**
+         * Battery status text color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR = "status_bar_battery_status_text_color";
 
         /**
          * Show when WiFi or data mobile is sending/receiving data
@@ -2862,12 +2909,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_NOTIF_COUNT_TEXT_COLOR = "status_bar_notif_count_text_color";
-
-        /**
-         * Whether to show the (default) battery status text on the header of the expanded status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_BATTERY_STATUS_TEXT = "status_bar_expanded_header_show_battery_status_text";
 
         /**
          * Whether to show the weather info on the header of the expanded status bar
