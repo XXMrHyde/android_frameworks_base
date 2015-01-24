@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 The Android Open Source Project
+<!-- Copyright (C) 2015 DarkKat
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,10 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:insetTop="@dimen/notification_material_rounded_rect_radius_negative">
-    <shape>
-        <solid android:color="@color/qs_background_drawable_color"/>
-        <corners android:radius="@dimen/notification_material_rounded_rect_radius"/>
-    </shape>
-</inset>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <color name="qs_background_drawable_color">#FFFFFFFF</color>
+</resources>

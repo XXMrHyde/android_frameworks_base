@@ -53,11 +53,6 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public boolean supportsDualTargets() {
-        return true;
-    }
-
-    @Override
     protected SignalState newTileState() {
         return new SignalState();
     }
@@ -100,6 +95,11 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
             mState.enabled = true;
         }
         showDetail(true);
+    }
+
+    @Override
+    protected void handleLongClick() {
+        mHost.startSettingsActivity(WIFI_SETTINGS);
     }
 
     @Override

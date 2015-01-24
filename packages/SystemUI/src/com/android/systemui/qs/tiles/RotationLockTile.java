@@ -16,7 +16,11 @@
 
 package com.android.systemui.qs.tiles;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.drawable.AnimationDrawable;
+import android.provider.Settings;
 
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
@@ -34,7 +38,7 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
             = new AnimationIcon(R.drawable.ic_landscape_to_auto_rotate_animation);
     private final AnimationIcon mAutoToLandscape
             = new AnimationIcon(R.drawable.ic_landscape_from_auto_rotate_animation);
-
+    private static final Intent DISPLAY_SETTINGS = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
     private final RotationLockController mController;
 
     public RotationLockTile(Host host) {
@@ -65,6 +69,11 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
+    protected void handleLongClick() {
+        mHost.startSettingsActivity(DISPLAY_SETTINGS);
+    }
+
+    @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         if (mController == null) return;
         final boolean rotationLocked = arg != null ? ((UserBoolean) arg).value
@@ -90,7 +99,7 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
                 R.string.accessibility_rotation_lock_on_portrait,
                 R.string.accessibility_rotation_lock_on_landscape,
                 R.string.accessibility_rotation_lock_off);
-    }
+        }
 
     /**
      * Get the correct accessibility string based on the state
