@@ -2220,6 +2220,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mBatteryLevel != null) {
             mBatteryLevel.setTextColor(false);
         }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.setBatteryLevelTextColor();
+        }
     }
 
     private int adjustDisableFlags(int state) {
