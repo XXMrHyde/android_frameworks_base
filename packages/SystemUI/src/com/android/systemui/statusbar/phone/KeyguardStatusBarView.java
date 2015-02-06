@@ -237,4 +237,8 @@ public class KeyguardStatusBarView extends RelativeLayout
     public void updateCarrierLabelColor(int color) {
         mCarrierLabel.setTextColor(color);
     }
+
+    public void setBatteryLevelTextColor() {
+        mBatteryLevel.setTextColor(false);
+    }
 }
