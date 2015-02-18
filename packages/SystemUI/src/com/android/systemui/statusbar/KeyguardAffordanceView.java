@@ -22,25 +22,32 @@ import android.animation.ArgbEvaluator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.provider.Settings;
+import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
+
 import com.android.systemui.R;
 
 /**
  * An ImageView which does not have overlapping renderings commands and therefore does not need a
  * layer when alpha is changed.
  */
-public class KeyguardAffordanceView extends ImageView {
+public class KeyguardAffordanceView extends ImageView implements Palette.PaletteAsyncListener {
 
     private static final long CIRCLE_APPEAR_DURATION = 80;
     private static final long CIRCLE_DISAPPEAR_MAX_DURATION = 200;
@@ -52,8 +59,12 @@ public class KeyguardAffordanceView extends ImageView {
     private final Paint mCirclePaint;
     private final Interpolator mAppearInterpolator;
     private final Interpolator mDisappearInterpolator;
-    private int mInverseColor;
-    private int mNormalColor;
+    private boolean mIsTargetCustom = false;
+    private int mNormalIconColor; 
+    private int mInverseIconColor;
+    private int mCircleColor;
+    private int mCirclePaletteColor; 
+    private boolean mColorizeCustomIcons;
     private final ArgbEvaluator mColorInterpolator;
     private final FlingAnimationUtils mFlingAnimationUtils;
     private final Drawable mArrowDrawable;
@@ -69,7 +80,7 @@ public class KeyguardAffordanceView extends ImageView {
     private boolean mCircleWillBeHidden;
     private int[] mTempPoint = new int[2];
     private float mImageScale;
-    private int mCircleColor;
+
     private boolean mIsLeft;
     private float mArrowAlpha = 0.0f;
     private View mPreviewView;
@@ -125,8 +136,6 @@ public class KeyguardAffordanceView extends ImageView {
         mCirclePaint = new Paint();
         mCirclePaint.setAntiAlias(true);
 
-        int iconColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
         mMinBackgroundRadius = mContext.getResources().getDimensionPixelSize(
                 R.dimen.keyguard_affordance_min_background_radius);
         mHintChevronPadding = mContext.getResources().getDimensionPixelSize(
@@ -141,7 +150,7 @@ public class KeyguardAffordanceView extends ImageView {
         mArrowDrawable.setBounds(0, 0, mArrowDrawable.getIntrinsicWidth(),
                 mArrowDrawable.getIntrinsicHeight());
 
-        updateColorSettings(iconColor);
+        updateColorSettings();
     }
 
     @Override
@@ -162,10 +171,32 @@ public class KeyguardAffordanceView extends ImageView {
         canvas.restore();
     }
 
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+        super.setImageDrawable(drawable);
+        doPaletteIfNecessary();
+    }
+
+    private void doPaletteIfNecessary() {
+        if (getDrawable() instanceof BitmapDrawable) {
+            Palette.generateAsync(((BitmapDrawable) getDrawable()).getBitmap(), this);
+        }
+    }
+
     public void setPreviewView(View v) {
         mPreviewView = v;
         if (mPreviewView != null) {
             mPreviewView.setVisibility(INVISIBLE);
+            addOverlay();
+        }
+    }
+
+    private void addOverlay() {
+        if (mPreviewView != null) {
+            mPreviewView.getOverlay().clear();
+            ColorDrawable d = new ColorDrawable(mCircleColor);
+            d.setBounds(0, 0, mPreviewView.getWidth(), mPreviewView.getHeight());
+            mPreviewView.getOverlay().add(d);
         }
     }
 
@@ -189,8 +220,12 @@ public class KeyguardAffordanceView extends ImageView {
         Drawable drawable = getDrawable().mutate();
         float alpha = mCircleRadius / mMinBackgroundRadius;
         alpha = Math.min(1.0f, alpha);
-        int color = (int) mColorInterpolator.evaluate(alpha, mNormalColor, mInverseColor);
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        int color = (int) mColorInterpolator.evaluate(alpha, mNormalIconColor, mInverseIconColor);
+        if (!mIsTargetCustom) {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        } else {
+           drawable.setColorFilter(color, PorterDuff.Mode.DST_IN);
+        }
     }
 
     private void drawBackgroundCircle(Canvas canvas) {
@@ -508,18 +543,24 @@ public class KeyguardAffordanceView extends ImageView {
         }
     }
 
-    public void updateColorSettings() {
-        updateColorSettings(mNormalColor);
+    @Override
+    public void onGenerated(Palette palette) {
+        mCirclePaletteColor = palette.getDarkVibrantColor(mNormalIconColor);
+        setCircleColor();
     }
 
-    public void updateColorSettings(int color) {
-        mCircleColor = color;
-        mNormalColor = color;
-        mInverseColor = isColorDark(color) ? 0xffffffff : 0xff000000;
-
-        mCirclePaint.setColor(mCircleColor);
-        mArrowDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+    public void setIsTargetCustom(boolean isCustom) {
+        mIsTargetCustom = isCustom;
         updateIconColor();
+        setCircleColor();
+    }
+
+    public void updateColorSettings() {
+        mNormalIconColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
+        mInverseIconColor = isColorDark(mNormalIconColor) ? 0xffffffff : 0xff000000;
+        updateIconColor();
+        setCircleColor();
     }
 
     private boolean isColorDark(int color) {
@@ -531,5 +572,19 @@ public class KeyguardAffordanceView extends ImageView {
         } else {
             return true;
         }
+    }
+
+    private void setCircleColor() {
+        if (!mColorizeCustomIcons && mIsTargetCustom) {
+            mCircleColor = mCirclePaletteColor;
+        } else {
+            mCircleColor = mNormalIconColor;
+        }
+        mArrowDrawable.setColorFilter(mCircleColor, PorterDuff.Mode.SRC_ATOP);
+        addOverlay();
+    }
+
+    public void setColorizeCustomIcons(boolean colorize) {
+        mColorizeCustomIcons = colorize;
     }
 }
