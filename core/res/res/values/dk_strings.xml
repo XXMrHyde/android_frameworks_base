@@ -43,4 +43,10 @@
     <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system install. -->
     <string name="android_installing_title">Android is installing\u2026</string>
 
+    <!-- ADB over network notification -->
+    <string name="adb_net_active_notification_title">ADB over network enabled</string>
+    <!-- ADB over USB and network notification -->
+    <string name="adb_both_active_notification_title">ADB over USB &amp; network enabled</string>
+    <!-- ADB notification message-->
+    <string name="adb_active_generic_notification_message">Touch to disable debugging.</string>
 </resources>

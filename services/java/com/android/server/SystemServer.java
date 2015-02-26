@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.media.AudioService;
 import android.media.tv.TvInputManager;
 import android.os.Build;
@@ -44,6 +45,7 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.service.dreams.DreamService;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
@@ -173,6 +175,16 @@ public final class SystemServer {
     public SystemServer() {
         // Check for factory test mode.
         mFactoryTestMode = FactoryTest.getMode();
+    }
+
+    private class AdbPortObserver extends ContentObserver {
+        public AdbPortObserver() {
+            super(null);
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            updateAdbTcpPort();
+        }
     }
 
     private void run() {
@@ -953,6 +965,15 @@ public final class SystemServer {
             mSystemServiceManager.startService(MediaProjectionManagerService.class);
         }
 
+        // make sure the ADB_ENABLED setting value matches the secure property value
+        Settings.Global.putInt(mContentResolver, Settings.Global.ADB_PORT,
+                Integer.parseInt(SystemProperties.get("service.adb.tcp.port", "-1")));
+
+        // register observer to listen for settings changes
+        mContentResolver.registerContentObserver(
+            Settings.Global.getUriFor(Settings.Global.ADB_PORT),
+            false, new AdbPortObserver());
+
         // Before things start rolling, be sure we have decided whether
         // we are in safe mode.
         final boolean safeMode = wm.detectSafeMode();
@@ -1193,5 +1214,15 @@ public final class SystemServer {
                     "com.android.systemui.SystemUIService"));
         //Slog.d(TAG, "Starting service: " + intent);
         context.startServiceAsUser(intent, UserHandle.OWNER);
+    }
+
+    private void updateAdbTcpPort() {
+        int adbPort = Settings.Global.getInt(mContentResolver,
+            Settings.Global.ADB_PORT, 0);
+        // setting this will control whether ADB runs on TCP/IP or USB
+        SystemProperties.set("service.adb.tcp.port", Integer.toString(adbPort));
+        String property = SystemProperties.get("service.adb.tcp.port");
+        Log.d(TAG, "ADB port set to: " + Integer.toString(adbPort));
+        Log.d(TAG, "ADB port property is: " + property);
     }
 }
