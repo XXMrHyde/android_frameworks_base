@@ -35,5 +35,11 @@
     <string name="reboot_confirm" product="tablet">Ihr Tablet wird neu gestartet.</string>
     <string name="reboot_confirm" product="default">Ihr Telefon wird neu gestartet.</string>
 
+    <!-- ADB over network notification -->
+    <string name="adb_net_active_notification_title">ADB über Netzwerk aktiviert</string>
+    <!-- ADB over USB and network notification -->
+    <string name="adb_both_active_notification_title">ADB über USB &amp;  Netzwerk aktiviert</string>
+    <!-- ADB notification message-->
+    <string name="adb_active_generic_notification_message">berühren um Debbuging zu deaktivieren.</string>
 </resources>
 
