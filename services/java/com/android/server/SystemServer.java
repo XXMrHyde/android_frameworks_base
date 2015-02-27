@@ -1227,6 +1227,5 @@ public final class SystemServer {
             Settings.Global.ADB_PORT, 0);
         // setting this will control whether ADB runs on TCP/IP or USB
         SystemProperties.set("service.adb.tcp.port", Integer.toString(adbPort));
-        String property = SystemProperties.get("service.adb.tcp.port");
     }
 }
