@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2015 DarkKat
+<!--
+     Copyright (C) 2012-2014 The CyanogenMod Project
+
+     Copyright (C) 2015 DarkKat
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,7 +18,16 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- Quick settings -->
-    <color name="qs_background_drawable_color">#FFFFFFFF</color>
-    <color name="visualizer_fill_color">#96FFFFFF</color>
+    <!-- Cardinal directions for the compass tile -->
+    <string-array name="cardinal_directions">
+        <item>N</item>  <!-- North -->
+        <item>NE</item> <!-- North east -->
+        <item>E</item>  <!-- East -->
+        <item>SE</item> <!-- South east -->
+        <item>S</item>  <!-- South -->
+        <item>SW</item> <!-- South west -->
+        <item>W</item>  <!-- West -->
+        <item>NW</item> <!-- North west -->
+    </string-array>
 </resources>
+
