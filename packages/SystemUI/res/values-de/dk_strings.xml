@@ -51,4 +51,12 @@
     <string name="quick_settings_location_detail_mode_battery_saving_description">GPS, und Wi\u2011Fi nutzen um den Standort abzufragen</string>
     <!-- [CHAR LIMIT=130] Location detail panel, description for sensors only mode -->
     <string name="quick_settings_location_detail_mode_sensors_only_description">Nur GPS nutzen um den Standort abzufragen</string>
+
+    <string name="quick_settings_network_adb_label">ADB über Netzwerk</string>
+    <string name="quick_settings_nfc_label">NFC</string>
+    <string name="quick_settings_lockscreen_label">Bildschirm sperren</string>
+    <string name="quick_settings_lockscreen_label_enforced">Bildschirm sperren erzwungen</string>
+    <string name="quick_settings_screen_timeout_detail_title">Bildschirm Zeitlimit</string>
+    <string name="quick_settings_compass_label">Kompass</string>
+    <string name="quick_settings_compass_init">Initialisieren\u2026</string>
 </resources>
