@@ -27,6 +27,10 @@
     <string name="accessibility_quick_settings_location_gps_only">Standortbericht: Nur GPS Sensoren.</string>
     <!-- Content description of the location tile in quick settings when on, high accuracy mode (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_location_high_accuracy">Standortbericht: Hohe Genauigkeit.</string>
+    <!-- Content description of the mobile data tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_data_off">Mobile Daten aus.</string>
+    <!-- Content description of the mobile data tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_data_on">Mobile Daten an.</string>
 
     <!-- QuickSettings: Location (On, low-power) [CHAR LIMIT=NONE] -->
     <string name="quick_settings_location_battery_saving_label">Energie sparen</string>
@@ -60,6 +64,7 @@
     <string name="quick_settings_compass_label">Kompass</string>
     <string name="quick_settings_compass_init">Initialisieren\u2026</string>
     <string name="quick_settings_lte_label">LTE</string>
+    <string name="quick_settings_mobile_data_label">Mobile Daten</string>
 
     <!-- Screenshot delete -->
   <string name="screenshot_delete_action">Löschen</string>
