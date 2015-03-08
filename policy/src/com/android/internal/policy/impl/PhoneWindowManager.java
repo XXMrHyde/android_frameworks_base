@@ -1864,10 +1864,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // XXX right now the app process has complete control over
                 // this...  should introduce a token to let the system
                 // monitor/control what they are doing.
-
-                // Bypass this to allow any activity to show toast even if
-                // it runs in a different process than its package.
-                //outAppOp[0] = AppOpsManager.OP_TOAST_WINDOW;
+                outAppOp[0] = AppOpsManager.OP_TOAST_WINDOW;
                 break;
             case TYPE_DREAM:
             case TYPE_INPUT_METHOD:
@@ -5110,13 +5107,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     boolean mayChangeVolume = false;
 
                     if (isMusicActive()) {
-                        if (mVolBtnMusicControls && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
+                        if (mVolBtnMusicControls) {
                             // Detect long key presses.
                             if (down) {
                                 mIsLongPress = false;
-                                // TODO: Long press of MUTE could be mapped to KEYCODE_MEDIA_PLAY_PAUSE
-                                int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
-                                        KeyEvent.KEYCODE_MEDIA_NEXT : KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+                                // Map MUTE key to MEDIA_PLAY_PAUSE
+                                int newKeyCode = KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
+                                switch (keyCode) {
+                                    case KeyEvent.KEYCODE_VOLUME_DOWN:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+                                        break;
+                                    case KeyEvent.KEYCODE_VOLUME_UP:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_NEXT;
+                                        break;
+                                }
                                 scheduleLongPressKeyEvent(event, newKeyCode);
                                 // Consume key down events of all presses.
                                 break;

@@ -18,4 +18,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="keyguard_perso_locked_message">SIM/RUIM-kort er operatørlåst</string>
+  <string name="keyguard_accessibility_status">"Status"</string>
+  <string name="kg_dismiss">Annullér</string>
+  <string name="kg_slot_name">Slot <xliff:g id="number">%d</xliff:g>: Nyt SIM-kort\u0020</string>
+  <string name="lockscreen_sim_error_message_short">Ugyldigt SIM-kort.</string>
 </resources>

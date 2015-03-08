@@ -30,13 +30,14 @@ import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.QSTileView;
+import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.pheelicks.visualizer.AudioData;
 import com.pheelicks.visualizer.FFTData;
 import com.pheelicks.visualizer.VisualizerView;
@@ -47,28 +48,37 @@ import java.util.List;
 import java.util.Map;
 
 public class VisualizerTile extends QSTile<QSTile.State>
-        implements MediaSessionManager.OnActiveSessionsChangedListener {
+        implements MediaSessionManager.OnActiveSessionsChangedListener, KeyguardMonitor.Callback {
 
     private Map<MediaSession.Token, CallbackInfo> mCallbacks = new HashMap<>();
     private MediaSessionManager mMediaSessionManager;
+    private KeyguardMonitor mKeyguardMonitor;
     private VisualizerView mVisualizer;
+    private ImageView mStaticVisualizerIcon;
     private boolean mLinked;
-    private boolean mTileVisible;
+    private boolean mIsAnythingPlaying;
     private boolean mListening;
 
     public VisualizerTile(Host host) {
         super(host);
         mMediaSessionManager = (MediaSessionManager)
                 mContext.getSystemService(Context.MEDIA_SESSION_SERVICE);
+        mKeyguardMonitor = host.getKeyguardMonitor();
+        mKeyguardMonitor.addCallback(this);
 
         // initialize state
         List<MediaController> activeSessions = mMediaSessionManager.getActiveSessions(null);
         for (MediaController activeSession : activeSessions) {
             PlaybackState playbackState = activeSession.getPlaybackState();
             if (playbackState != null && playbackState.getState() == PlaybackState.STATE_PLAYING) {
-                mTileVisible = true;
+                mIsAnythingPlaying = true;
                 break;
             }
+        }
+        if (mIsAnythingPlaying && !mLinked) {
+            AsyncTask.execute(mLinkVisualizer);
+        } else if (!mIsAnythingPlaying && mLinked) {
+            AsyncTask.execute(mUnlinkVisualizer);
         }
     }
 
@@ -77,10 +87,13 @@ public class VisualizerTile extends QSTile<QSTile.State>
         return new QSTileView(context) {
             @Override
             protected View createIcon() {
+                Resources r = mContext.getResources();
+
                 mVisualizer = new VisualizerView(mContext);
                 mVisualizer.setEnabled(false);
+                mVisualizer.setVisibility(View.VISIBLE);
+                mVisualizer.setAlpha(1.f);
 
-                Resources r = mContext.getResources();
                 Paint paint = new Paint();
                 paint.setStrokeWidth(r.getDimensionPixelSize(
                         R.dimen.visualizer_path_stroke_width));
@@ -96,10 +109,24 @@ public class VisualizerTile extends QSTile<QSTile.State>
                         r.getInteger(R.integer.visualizer_db_fuzz),
                         r.getInteger(R.integer.visualizer_db_fuzz_factor))
                 );
+
+                mStaticVisualizerIcon = new ImageView(mContext);
+                mStaticVisualizerIcon.setId(android.R.id.icon);
+                mStaticVisualizerIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                mStaticVisualizerIcon.setImageResource(R.drawable.ic_qs_visualizer_static);
+                mStaticVisualizerIcon.setVisibility(View.VISIBLE);
+                mStaticVisualizerIcon.setAlpha(0.f);
+
                 FrameLayout visualizerContainer = new FrameLayout(mContext);
                 visualizerContainer.addView(mVisualizer, new FrameLayout.LayoutParams(
-                        r.getDimensionPixelSize(R.dimen.qs_tile_icon_size_visualizer),
-                        FrameLayout.LayoutParams.MATCH_PARENT, Gravity.RIGHT
+                        r.getDimensionPixelSize(R.dimen.qs_tile_icon_size_visualizer_width),
+                        r.getDimensionPixelSize(R.dimen.qs_tile_icon_size_visualizer_height),
+                        Gravity.TOP | Gravity.CENTER_HORIZONTAL
+                ));
+                visualizerContainer.addView(mStaticVisualizerIcon, new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        Gravity.CENTER
                 ));
                 return visualizerContainer;
             }
@@ -119,8 +146,10 @@ public class VisualizerTile extends QSTile<QSTile.State>
 
     @Override
     protected void handleUpdateState(State state, Object arg) {
-        state.visible = mTileVisible;
+        state.visible = true;
         state.label = mContext.getString(R.string.quick_settings_visualizer_label);
+
+        mUiHandler.post(mUpdateVisibilities);
     }
 
     @Override
@@ -129,12 +158,8 @@ public class VisualizerTile extends QSTile<QSTile.State>
         mListening = listening;
         if (listening) {
             mMediaSessionManager.addOnActiveSessionsChangedListener(this, null);
-            if (mTileVisible) {
-                AsyncTask.execute(mLinkVisualizer);
-            }
         } else {
             mMediaSessionManager.removeOnActiveSessionsChangedListener(this);
-            AsyncTask.execute(mUnlinkVisualizer);
         }
     }
 
@@ -156,13 +181,77 @@ public class VisualizerTile extends QSTile<QSTile.State>
             entry.getValue().unregister();
         }
         mCallbacks.clear();
+        mKeyguardMonitor.removeCallback(this);
     }
+
+
+    private void checkIfPlaying() {
+        boolean anythingPlaying = false;
+        for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
+            if (entry.getValue().isPlaying()) {
+                anythingPlaying = true;
+                break;
+            }
+        }
+        if (anythingPlaying != mIsAnythingPlaying) {
+            mIsAnythingPlaying = anythingPlaying;
+            if (mIsAnythingPlaying && !mLinked) {
+                AsyncTask.execute(mLinkVisualizer);
+            } else if (!mIsAnythingPlaying && mLinked) {
+                AsyncTask.execute(mUnlinkVisualizer);
+            }
+
+            mHandler.removeCallbacks(mRefreshStateRunnable);
+            mHandler.postDelayed(mRefreshStateRunnable, 50);
+        }
+    }
+
+    @Override
+    public void onKeyguardChanged() {
+        if (mKeyguardMonitor.isShowing()) {
+            if (mLinked) {
+                // explicitly unlink
+                AsyncTask.execute(mUnlinkVisualizer);
+            }
+        } else {
+            // no keyguard, relink if there's something playing
+            if (mIsAnythingPlaying && !mLinked) {
+                AsyncTask.execute(mLinkVisualizer);
+            } else if (!mIsAnythingPlaying && mLinked) {
+                AsyncTask.execute(mUnlinkVisualizer);
+            }
+        }
+        refreshState();
+    }
+
+    private final Runnable mRefreshStateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshState();
+        }
+    };
+
+    private final Runnable mUpdateVisibilities = new Runnable() {
+        @Override
+        public void run() {
+            boolean showVz = mIsAnythingPlaying && !mKeyguardMonitor.isShowing();
+            mVisualizer.animate().cancel();
+            mVisualizer.animate()
+                    .setDuration(200)
+                    .alpha(showVz ? 1.f : 0.f);
+
+            mStaticVisualizerIcon.animate().cancel();
+            mStaticVisualizerIcon.animate()
+                    .setDuration(200)
+                    .alpha(showVz ? 0.f : 1.f);
+        }
+    };
 
     private final Runnable mLinkVisualizer = new Runnable() {
         @Override
         public void run() {
             if (mVisualizer != null) {
-                if (!mLinked) {
+                if (!mLinked && !mKeyguardMonitor.isShowing()) {
                     mVisualizer.link(0);
                     mLinked = true;
                 }
@@ -181,20 +270,6 @@ public class VisualizerTile extends QSTile<QSTile.State>
             }
         }
     };
-
-    private void checkIfPlaying() {
-        boolean anythingPlaying = false;
-        for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
-            if (entry.getValue().isPlaying()) {
-                anythingPlaying = true;
-                break;
-            }
-        }
-        if (anythingPlaying != mTileVisible) {
-            mTileVisible = anythingPlaying;
-            refreshState();
-        }
-    }
 
     private class CallbackInfo {
         MediaController.Callback mCallback;
