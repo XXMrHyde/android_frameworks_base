@@ -27,6 +27,10 @@
     <string name="accessibility_quick_settings_location_gps_only">Modo sólo dispositivo.</string>
     <!-- Content description of the location tile in quick settings when on, high accuracy mode (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_location_high_accuracy">Modo alta precisión.</string>
+    <!-- Content description of the mobile data tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_data_off">Deshabilitar datos.</string>
+    <!-- Content description of the mobile data tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_data_on">Habilitar datos.</string>
 
     <!-- QuickSettings: Location (On, low-power) [CHAR LIMIT=NONE] -->
     <string name="quick_settings_location_battery_saving_label">Ahorro de batería</string>
