@@ -15,7 +15,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-  <string name="global_action_reboot">Neu starten</string>
+    <string name="global_action_reboot">Neu starten</string>
     <!-- Button to reboot the phone, within the Phone Options dialog -->
     <string name="reboot_system" product="tablet">Tablet neu starten</string>
     <string name="reboot_system" product="default">Telefon neu starten</string>

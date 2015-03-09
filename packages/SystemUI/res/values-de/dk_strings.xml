@@ -67,6 +67,6 @@
     <string name="quick_settings_mobile_data_label">Mobile Daten</string>
 
     <!-- Screenshot delete -->
-  <string name="screenshot_delete_action">Löschen</string>
-  <string name="screenshot_delete_confirmation">Bildschirmfoto wurde gelöscht</string>
+    <string name="screenshot_delete_action">Löschen</string>
+    <string name="screenshot_delete_confirmation">Bildschirmfoto wurde gelöscht</string>
 </resources>
