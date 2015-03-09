@@ -35,4 +35,10 @@
     <string name="reboot_confirm" product="tablet">Tu tablet se reiniciará.</string>
     <string name="reboot_confirm" product="default">Tu teléfono se reiniciará.</string>
 
+    <!-- ADB over network notification -->
+    <string name="adb_net_active_notification_title">Conexión compartida a internet habilitada</string>
+    <!-- ADB over USB and network notification -->
+    <string name="adb_both_active_notification_title">Conexión compartida a internet a través de USB habilitada</string>
+    <!-- ADB notification message-->
+    <string name="adb_active_generic_notification_message">Toca para deshabilitar la depuración USB.</string>
 </resources>
