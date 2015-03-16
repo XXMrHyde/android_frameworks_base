@@ -482,7 +482,7 @@ public class SignalClusterView
                         (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId,
                         mMobileActivityId, mMobileTypeId));
 
-            mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
+            mMobileType.setVisibility(mMobileTypeId != 0 && mWifiVisible ? View.VISIBLE : View.GONE);
 
             return mMobileVisible;
         }
