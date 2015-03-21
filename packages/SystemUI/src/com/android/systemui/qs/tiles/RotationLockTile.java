@@ -29,16 +29,16 @@ import com.android.systemui.statusbar.policy.RotationLockController.RotationLock
 
 /** Quick settings tile: Rotation **/
 public class RotationLockTile extends QSTile<QSTile.BooleanState> {
-    private final AnimationIcon mPortraitToAuto
-            = new AnimationIcon(R.drawable.ic_portrait_to_auto_rotate_animation);
-    private final AnimationIcon mAutoToPortrait
-            = new AnimationIcon(R.drawable.ic_portrait_from_auto_rotate_animation);
-
-    private final AnimationIcon mLandscapeToAuto
-            = new AnimationIcon(R.drawable.ic_landscape_to_auto_rotate_animation);
-    private final AnimationIcon mAutoToLandscape
-            = new AnimationIcon(R.drawable.ic_landscape_from_auto_rotate_animation);
     private static final Intent DISPLAY_SETTINGS = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
+
+//    private final AnimationIcon mPortraitToAuto
+//            = new AnimationIcon(R.drawable.ic_portrait_to_auto_rotate_animation);
+//    private final AnimationIcon mAutoToPortrait
+//            = new AnimationIcon(R.drawable.ic_portrait_from_auto_rotate_animation);
+//    private final AnimationIcon mLandscapeToAuto
+//            = new AnimationIcon(R.drawable.ic_landscape_to_auto_rotate_animation);
+//    private final AnimationIcon mAutoToLandscape
+//            = new AnimationIcon(R.drawable.ic_landscape_from_auto_rotate_animation);
     private final RotationLockController mController;
 
     public RotationLockTile(Host host) {
@@ -83,18 +83,17 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
         state.value = rotationLocked;
         final boolean portrait = mContext.getResources().getConfiguration().orientation
                 != Configuration.ORIENTATION_LANDSCAPE;
-        final AnimationIcon icon;
+
         if (rotationLocked) {
             final int label = portrait ? R.string.quick_settings_rotation_locked_portrait_label
                     : R.string.quick_settings_rotation_locked_landscape_label;
             state.label = mContext.getString(label);
-            icon = portrait ? mAutoToPortrait : mAutoToLandscape;
+            state.icon = ResourceIcon.get(portrait ? R.drawable.ic_qs_rotation_portrait
+                    : R.drawable.ic_qs_rotation_landscape);
         } else {
             state.label = mContext.getString(R.string.quick_settings_rotation_unlocked_label);
-            icon = portrait ? mPortraitToAuto : mLandscapeToAuto;
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_rotation_01);
         }
-        icon.setAllowAnimation(userInitiated);
-        state.icon = icon;
         state.contentDescription = getAccessibilityString(rotationLocked,
                 R.string.accessibility_rotation_lock_on_portrait,
                 R.string.accessibility_rotation_lock_on_landscape,

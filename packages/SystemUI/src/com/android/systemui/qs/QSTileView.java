@@ -228,6 +228,7 @@ public class QSTileView extends ViewGroup {
         }
         if (mDualLabel != null) {
             mDualLabel.setTextColor(mLabelColor);
+            mDualLabel.setFirstLineCaretColor(mLabelColor);
         }
     }
 

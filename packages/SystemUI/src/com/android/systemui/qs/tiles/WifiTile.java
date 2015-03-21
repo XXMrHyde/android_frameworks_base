@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.tiles;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -45,11 +46,23 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     private final WifiDetailAdapter mDetailAdapter;
     private final QSTile.SignalState mStateBeforeClick = newTileState();
 
+    private boolean mForceToggleState = false;
+
     public WifiTile(Host host) {
         super(host);
         mController = host.getNetworkController();
         mWifiController = mController.getAccessPointController();
         mDetailAdapter = new WifiDetailAdapter();
+    }
+
+    @Override
+    public boolean supportsDualTargets() {
+        return true;
+    }
+
+    @Override
+    protected void setForceToggleState(boolean force) {
+        mForceToggleState = force;
     }
 
     @Override
@@ -80,8 +93,20 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
 
     @Override
     protected void handleClick() {
-        mState.copyTo(mStateBeforeClick);
-        mController.setWifiEnabled(!mState.enabled);
+        if (!isAdvancedSettingsEnabled() || mForceToggleState) {
+            mState.copyTo(mStateBeforeClick);
+            mController.setWifiEnabled(!mState.enabled);
+        } else {
+            if (!mWifiController.canConfigWifi()) {
+                mHost.startSettingsActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                return;
+            }
+            if (!mState.enabled) {
+                mController.setWifiEnabled(true);
+                mState.enabled = true;
+            }
+            showDetail(true);
+        }
     }
 
     @Override
@@ -171,6 +196,11 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
             return string.substring(1, length - 1);
         }
         return string;
+    }
+
+    private boolean isAdvancedSettingsEnabled() {
+        return  Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_WIFI_ADVANCED, 0, ActivityManager.getCurrentUser()) == 1;
     }
 
     private static final class CallbackInfo {

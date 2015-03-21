@@ -19,6 +19,7 @@ package com.android.systemui.qs;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
@@ -103,6 +104,10 @@ public class QSDualTileLabel extends LinearLayout {
             mFirstLine.setMinHeight(h);
             mFirstLine.setPadding(mHorizontalPaddingPx, 0, 0, 0);
         }
+    }
+
+    public void setFirstLineCaretColor(int color) {
+        mFirstLineCaret.setColorFilter(color, Mode.MULTIPLY);
     }
 
     private TextView initTextView() {

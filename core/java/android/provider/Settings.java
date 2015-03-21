@@ -2934,17 +2934,23 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_HEADER_ICON_COLOR = "status_bar_expanded_header_icon_color";
 
+        /**
+         * List of QS tile names
+         * @hide
+         */
+        public static final String QS_TILES = "qs_tiles";
+
         /** Whether to allow one finger quick settings expansion on the right side of the statusbar.
          *
          * @hide
          */
         public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
-        /**
-         * List of QS tile names
+        /** Whether to show the brightness slider in quick settings panel.
+         *
          * @hide
          */
-        public static final String QS_TILES = "qs_tiles";
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
 
         /**
          * Use "main" tiles on the first row of the quick settings panel
@@ -2956,14 +2962,17 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String QS_LOCATION_ADVANCED = "qs_location_advanced";
+        public static final String QS_BLUETOOTH_ADVANCED = "qs_bluetooth_advanced";
 
-        /** Whether to show the brightness slider in quick settings panel.
-         *
+        /**
          * @hide
          */
-        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
+        public static final String QS_LOCATION_ADVANCED = "qs_location_advanced";
 
+        /**
+         * @hide
+         */
+        public static final String QS_WIFI_ADVANCED = "qs_wifi_advanced";
 
         /**
          * Color of the quick settings panel background

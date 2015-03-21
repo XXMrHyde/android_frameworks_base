@@ -34,21 +34,32 @@ import com.android.systemui.statusbar.policy.LocationController.LocationSettings
 public class LocationTile extends QSTile<QSTile.BooleanState> {
     private static final Intent LOCATION_SETTINGS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-    private final AnimationIcon mEnable =
-            new AnimationIcon(R.drawable.ic_signal_location_enable_animation);
-    private final AnimationIcon mDisable =
-            new AnimationIcon(R.drawable.ic_signal_location_disable_animation);
-
+//    private final AnimationIcon mEnable =
+//            new AnimationIcon(R.drawable.ic_signal_location_enable_animation);
+//    private final AnimationIcon mDisable =
+//            new AnimationIcon(R.drawable.ic_signal_location_disable_animation);
     private final LocationController mController;
     private final LocationDetailAdapter mDetailAdapter;
     private final KeyguardMonitor mKeyguard;
     private final Callback mCallback = new Callback();
+
+    private boolean mForceToggleState = false;
 
     public LocationTile(Host host) {
         super(host);
         mController = host.getLocationController();
         mDetailAdapter = new LocationDetailAdapter();
         mKeyguard = host.getKeyguardMonitor();
+    }
+
+    @Override
+    public boolean supportsDualTargets() {
+        return true;
+    }
+
+    @Override
+    protected void setForceToggleState(boolean force) {
+        mForceToggleState = force;
     }
 
     @Override
@@ -74,15 +85,22 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleClick() {
-        if (mController.isAdvancedSettingsEnabled()) {
-            mEnable.setAllowAnimation(false);
-            mDisable.setAllowAnimation(false);
-            showDetail(true);
-        } else {
+        if (!mController.isAdvancedSettingsEnabled() || mForceToggleState) {
             mController.setLocationEnabled(!mController.isLocationEnabled());
-            mEnable.setAllowAnimation(true);
-            mDisable.setAllowAnimation(true);
+//            mEnable.setAllowAnimation(true);
+//            mDisable.setAllowAnimation(true);
+        } else {
+//            mEnable.setAllowAnimation(false);
+//            mDisable.setAllowAnimation(false);
+            showDetail(true);
         }
+    }
+
+    @Override
+    protected void handleSecondaryClick() {
+//        mEnable.setAllowAnimation(false);
+//        mDisable.setAllowAnimation(false);
+        showDetail(true);
     }
 
     @Override
@@ -101,16 +119,30 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
         state.visible = !mKeyguard.isShowing();
         state.value = locationEnabled;
 
-        if (locationEnabled) {
-            state.icon = mEnable;
-            state.label = mContext.getString(R.string.quick_settings_location_label);
-            state.contentDescription = mContext.getString(
-                    R.string.accessibility_quick_settings_location_on);
-        } else {
-            state.icon = mDisable;
-            state.label = mContext.getString(R.string.quick_settings_location_label);
-            state.contentDescription = mContext.getString(
-                    R.string.accessibility_quick_settings_location_off);
+        switch (currentState) {
+            case Settings.Secure.LOCATION_MODE_OFF:
+                state.label = mContext.getString(R.string.quick_settings_location_off_label);
+                state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_off);
+                state.icon = ResourceIcon.get(R.drawable.ic_qs_location_off);
+                break;
+            case Settings.Secure.LOCATION_MODE_BATTERY_SAVING:
+                state.label = mContext.getString(R.string.quick_settings_location_battery_saving_label);
+                state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_battery_saving);
+                state.icon = ResourceIcon.get(R.drawable.ic_qs_location_battery_saving);
+                break;
+            case Settings.Secure.LOCATION_MODE_SENSORS_ONLY:
+                state.label = mContext.getString(R.string.quick_settings_location_gps_only_label);
+                state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_gps_only);
+                state.icon = ResourceIcon.get(R.drawable.ic_qs_location_on);
+                break;
+            case Settings.Secure.LOCATION_MODE_HIGH_ACCURACY:
+                state.label = mContext.getString(R.string.quick_settings_location_high_accuracy_label);
+                state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_high_accuracy);
+                state.icon = ResourceIcon.get(R.drawable.ic_qs_location_on);
+                break;
+            default:
+                state.label = mContext.getString(R.string.quick_settings_location_label);
+                state.contentDescription = mContext.getString(R.string.accessibility_quick_settings_location_on);
         }
     }
 

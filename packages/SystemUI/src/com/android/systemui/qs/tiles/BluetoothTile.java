@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.tiles;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
@@ -39,10 +40,22 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
     private final BluetoothController mController;
     private final BluetoothDetailAdapter mDetailAdapter;
 
+    private boolean mForceToggleState = false;
+
     public BluetoothTile(Host host) {
         super(host);
         mController = host.getBluetoothController();
         mDetailAdapter = new BluetoothDetailAdapter();
+    }
+
+    @Override
+    public boolean supportsDualTargets() {
+        return true;
+    }
+
+    @Override
+    protected void setForceToggleState(boolean force) {
+        mForceToggleState = force;
     }
 
     @Override
@@ -66,8 +79,16 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
 
     @Override
     protected void handleClick() {
-        final boolean isEnabled = (Boolean)mState.value;
-        mController.setBluetoothEnabled(!isEnabled);
+        if (!isAdvancedSettingsEnabled() || mForceToggleState) {
+            final boolean isEnabled = (Boolean)mState.value;
+            mController.setBluetoothEnabled(!isEnabled);
+        } else {
+            if (!mState.value) {
+                mState.value = true;
+                mController.setBluetoothEnabled(true);
+            }
+            showDetail(true);
+        }
     }
 
     @Override
@@ -135,6 +156,11 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
         } else {
             return mContext.getString(R.string.accessibility_quick_settings_bluetooth_changed_off);
         }
+    }
+
+    private boolean isAdvancedSettingsEnabled() {
+        return  Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_BLUETOOTH_ADVANCED, 0, ActivityManager.getCurrentUser()) == 1;
     }
 
     private final BluetoothController.Callback mCallback = new BluetoothController.Callback() {

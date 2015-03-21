@@ -238,12 +238,11 @@ public class QSPanel extends ViewGroup {
                 Settings.System.QS_USE_MAIN_TILES, 1, UserHandle.myUserId()) == 1;
         for (int i = 0; i < mRecords.size(); i++) {
             TileRecord r = mRecords.get(i);
-
-            if (r.tileView.setDual(r.tile.supportsDualTargets() && mUseMainTiles && i < 2)) {
-                r.tileView.handleStateChanged(r.tile.getState());
-            }
+            boolean useDual = (r.tile.supportsDualTargets() && mUseMainTiles && i < 2);
+            r.tileView.setDual(useDual);
             r.tileView.setLabelColor();
             r.tileView.setIconColor();
+            r.tile.setForceToggleState(useDual);
             r.tile.refreshState();
         }
         mFooter.refreshState();
@@ -459,7 +458,14 @@ public class QSPanel extends ViewGroup {
             rows = r + 1;
         }
 
-        for (TileRecord record : mRecords) {
+        mUseMainTiles = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_USE_MAIN_TILES, 1, UserHandle.myUserId()) == 1;
+        for (int i = 0; i < mRecords.size(); i++) {
+            TileRecord record = mRecords.get(i);
+            boolean useDual = (record.tile.supportsDualTargets() && mUseMainTiles && i < 2);
+            if (record.tileView.setDual(useDual)) {
+                record.tileView.handleStateChanged(record.tile.getState());
+            }
             if (record.tileView.getVisibility() == GONE) continue;
             final int cw = (mUseMainTiles && record.row == 0) ? mLargeCellWidth : mCellWidth;
             final int ch = (mUseMainTiles && record.row == 0) ? mLargeCellHeight : mCellHeight;
