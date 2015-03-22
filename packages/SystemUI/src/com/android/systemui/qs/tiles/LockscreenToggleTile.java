@@ -100,9 +100,9 @@ public class LockscreenToggleTile extends QSTile<QSTile.BooleanState>
         state.label = mContext.getString(lockscreenEnforced
                 ? R.string.quick_settings_lockscreen_label_enforced
                 : R.string.quick_settings_lockscreen_label);
-        state.iconId = lockscreenEnabled
+        state.icon = ResourceIcon.get(lockscreenEnabled
                 ? R.drawable.ic_qs_lock_screen_on
-                : R.drawable.ic_qs_lock_screen_off;
+                : R.drawable.ic_qs_lock_screen_off);
     }
 
     @Override

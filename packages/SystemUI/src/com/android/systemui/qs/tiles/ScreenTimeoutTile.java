@@ -21,8 +21,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.ContentObserver;
-import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.Settings;
 import android.view.View;
@@ -36,7 +34,6 @@ import com.android.systemui.R;
 import com.android.systemui.qs.QSDetailItemsList;
 import com.android.systemui.qs.QSTile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
@@ -45,9 +42,6 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
     private static final String TIMEOUT_VALUES_NAME = "screen_timeout_values";
     private static final String SETTINGS_PACKAGE_NAME = "com.android.settings";
     private String[] mEntries, mValues;
-    private boolean mShowingDetail;
-    ArrayList<Drawable> mAnimationList
-            = new ArrayList<Drawable>();
 
     public ScreenTimeoutTile(Host host) {
         super(host);
@@ -111,8 +105,6 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
     @Override
     protected void handleClick() {
         if (mEntries.length > 0) {
-            mShowingDetail = true;
-            mAnimationList.clear();
             showDetail(true);
         }
     }
@@ -150,113 +142,16 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
         int previousTimeout;
     }
 
-    private enum Bucket {
-        SMALL(0, 30000),
-        MEDIUM(60000,300000),
-        LARGE(600000, 1800000);
-        private final int start;
-        private final int stop;
-
-        Bucket(int start, int stop) {
-            this.start = start;
-            this.stop = stop;
-        }
-
-        public static Bucket getBucket(int value) {
-            for (Bucket item : Bucket.values()) {
-                if (value >= item.start && value <= item.stop) {
-                    return item;
-                }
-            }
-            return null;
-        }
-
-    }
     @Override
     protected void handleUpdateState(final TimeoutState state, Object arg) {
-        if (mAnimationList.isEmpty() && mShowingDetail && arg == null) {
-            return;
-        }
-
         int newTimeout = getScreenTimeout();
 
-        int drawableId = 0;
-        Resources resources = mContext.getResources();
-        Bucket nextBucket = Bucket.getBucket(newTimeout);
-        Bucket previousBucket = Bucket.getBucket(state.previousTimeout);
-
-        switch (state.previousTimeout) {
-            case 0:
-            case 15000:
-            case 30000:
-                // Default
-                drawableId = R.drawable.ic_qs_screen_timeout_med_reverse_avd;
-                if (nextBucket == Bucket.MEDIUM) {
-                    // Medium
-                    drawableId = R.drawable.ic_qs_screen_timeout_short_avd;
-                } else if (nextBucket == Bucket.LARGE) {
-                    // Large
-                    drawableId = R.drawable.ic_qs_screen_timeout_short_reverse_avd;
-                }
-                break;
-            case 60000:
-            case 120000:
-            case 300000:
-                // Default
-                drawableId = R.drawable.ic_qs_screen_timeout_short_avd;
-                if (nextBucket == Bucket.SMALL) {
-                    // Small
-                    drawableId = R.drawable.ic_qs_screen_timeout_med_reverse_avd;
-                } else if (nextBucket == Bucket.LARGE) {
-                    // Large
-                    drawableId = R.drawable.ic_qs_screen_timeout_med_avd;
-                }
-                break;
-            case 600000:
-            case 1800000:
-                drawableId = R.drawable.ic_qs_screen_timeout_med_avd;
-                if (nextBucket == Bucket.MEDIUM) {
-                    // Small
-                    drawableId = R.drawable.ic_qs_screen_timeout_long_reverse_avd;
-                } else if (nextBucket == Bucket.SMALL) {
-                    // Large
-                    drawableId = R.drawable.ic_qs_screen_timeout_long_avd;
-                }
-                break;
-        }
-
-        if (state.icon == null || previousBucket != nextBucket) {
-            final Drawable d = resources.getDrawable(drawableId);
-            if (d instanceof AnimatedVectorDrawable) {
-                mUiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((AnimatedVectorDrawable) d).start();
-                    }
-                });
-            }
-            state.icon = d;
-        }
-
-        runNextAnimation(state);
+        state.icon = ResourceIcon.get(state.previousTimeout == 0
+                    ? R.drawable.ic_qs_screen_timeout_off
+                    : R.drawable.ic_qs_screen_timeout_on);
         state.visible = true;
         state.label = makeTimeoutSummaryString(newTimeout);
         state.previousTimeout = newTimeout;
-    }
-
-    private void runNextAnimation(final TimeoutState state) {
-        if (mAnimationList.isEmpty()) {
-            return;
-        }
-        state.icon = mAnimationList.remove(0);
-        if (state.icon instanceof AnimatedVectorDrawable) {
-            mUiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    ((AnimatedVectorDrawable) state.icon).start();
-                }
-            });
-        }
     }
 
     private class RadioAdapter extends ArrayAdapter<String> {
@@ -331,7 +226,6 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
                     mUiHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mShowingDetail = false;
                             refreshState(true);
                         }
                     }, 100);
