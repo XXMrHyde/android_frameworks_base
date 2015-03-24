@@ -288,7 +288,7 @@ public class BatteryMeterView extends View implements DemoMode,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL, 2,
                 currentUserId);
         int chargeAnimSpeed = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED, 3,
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED, 0,
                 currentUserId);
 
         if (chargeAnimSpeed == 0) {
