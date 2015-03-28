@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 DarkKat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="global_action_reboot">Redémarrer</string>
+    <!-- Button to reboot the phone, within the Phone Options dialog -->
+    <string name="reboot_system" product="tablet">Redémarrage de la tablette</string>
+    <string name="reboot_system" product="default">Redémarrage du téléphone</string>
+
+    <!-- Button to reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_reboot">Redémarrage</string>
+    <!-- Button to soft reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_quick_reboot">Redémarrage rapide</string>
+    <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
+    <string name="reboot_recovery">Recovery</string>
+    <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
+    <string name="reboot_bootloader">Bootloader</string>
+
+    <!-- Reboot Progress Dialog. This is shown if the user chooses to reboot the phone. -->
+    <string name="reboot_progress">Redémarrage\u2026</string>
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the phone, there will be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="tablet">Votre tablette va redémarrer.</string>
+    <string name="reboot_confirm" product="default">Votre téléphone va redémarrer.</string>
+
+    <!-- [CHAR LIMIT=NONE] Message shown in dialog on first boot after clean install for each .apk that is optimized. -->
+    <string name="android_installing_apk">Installation de l'application
+        <xliff:g id="number" example="123">%1$d</xliff:g> of
+        <xliff:g id="number" example="123">%2$d</xliff:g>.</string>
+
+    <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system install. -->
+    <string name="android_installing_title">Android s'installe\u2026</string>
+
+    <!-- ADB over network notification -->
+    <string name="adb_net_active_notification_title">ADB par le réseau activé</string>
+    <!-- ADB over USB and network notification -->
+    <string name="adb_both_active_notification_title">ADB par USB &amp; réseau activé</string>
+    <!-- ADB notification message-->
+    <string name="adb_active_generic_notification_message">Touchez pour désactiver le débogage.</string>
+</resources>
