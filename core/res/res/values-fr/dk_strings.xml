@@ -36,12 +36,12 @@
     <string name="reboot_confirm" product="default">Votre téléphone va redémarrer.</string>
 
     <!-- [CHAR LIMIT=NONE] Message shown in dialog on first boot after clean install for each .apk that is optimized. -->
-    <string name="android_installing_apk">Installation de l'application
+    <string name="android_installing_apk">Installation de l\'application
         <xliff:g id="number" example="123">%1$d</xliff:g> of
         <xliff:g id="number" example="123">%2$d</xliff:g>.</string>
 
     <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system install. -->
-    <string name="android_installing_title">Android s'installe\u2026</string>
+    <string name="android_installing_title">Android s\'installe\u2026</string>
 
     <!-- ADB over network notification -->
     <string name="adb_net_active_notification_title">ADB par le réseau activé</string>

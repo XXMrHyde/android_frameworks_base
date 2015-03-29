@@ -53,18 +53,18 @@
     <!-- [CHAR LIMIT=30] Location detail panel, device only location mode -->
     <string name="quick_settings_location_detail_mode_sensors_only_title">Appareil uniquement</string>
     <!-- [CHAR LIMIT=130] Location detail panel, description for high accuracy mode -->
-    <string name="quick_settings_location_detail_mode_high_accuracy_description">Utiliser le GPS, Wi\u2011Fi, et les réseaux cellulaires pour déterminer l'emplacement </string>
+    <string name="quick_settings_location_detail_mode_high_accuracy_description">Utiliser le GPS, Wi\u2011Fi, et les réseaux cellulaires pour déterminer l\'emplacement </string>
     <!-- [CHAR LIMIT=130] Location detail panel, description for battery saving mode -->
-    <string name="quick_settings_location_detail_mode_battery_saving_description">Utiliser le Wi\u2011Fi et les réseaux cellulaires pour déterminer l'emplacement</string>
+    <string name="quick_settings_location_detail_mode_battery_saving_description">Utiliser le Wi\u2011Fi et les réseaux cellulaires pour déterminer l\'emplacement</string>
     <!-- [CHAR LIMIT=130] Location detail panel, description for sensors only mode -->
-    <string name="quick_settings_location_detail_mode_sensors_only_description">Utiliser le GPS pour déterminer l'emplacement</string>
+    <string name="quick_settings_location_detail_mode_sensors_only_description">Utiliser le GPS pour déterminer l\'emplacement</string>
 
     <string name="quick_settings_network_adb_label">ADB sur le réseau</string>
     <string name="quick_settings_nfc_label">NFC</string>
     <string name="quick_settings_visualizer_label" translatable="false">AudioFX</string>
     <string name="quick_settings_lockscreen_label">Écran de verrouillage</string>
     <string name="quick_settings_lockscreen_label_enforced">Écran de verrouillage forcé</string>
-    <string name="quick_settings_screen_timeout_detail_title">Veille de l'écran</string>
+    <string name="quick_settings_screen_timeout_detail_title">Veille de l\'écran</string>
     <string name="quick_settings_compass_label">Boussole</string>
     <string name="quick_settings_compass_value" translatable="false"><xliff:g id="degrees">%1$.0f</xliff:g>\u00b0 <xliff:g id="direction">%2$s</xliff:g></string>
     <string name="quick_settings_compass_init">Initialisation\u2026</string>
@@ -73,5 +73,5 @@
 
     <!-- Screenshot delete -->
     <string name="screenshot_delete_action">Effacer</string>
-    <string name="screenshot_delete_confirmation">Capture d'écran supprimé.</string>
+    <string name="screenshot_delete_confirmation">Capture d\'écran supprimé.</string>
 </resources>
