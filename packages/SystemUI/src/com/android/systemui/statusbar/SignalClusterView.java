@@ -80,10 +80,6 @@ public class SignalClusterView
     private int mEndPadding;
     private int mEndPaddingNothingVisible;
 
-    private int mNetworkColor;
-    private int mNetworkActivityColor;
-    private int mAirplaneModeColor;
-
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
@@ -402,37 +398,37 @@ public class SignalClusterView
         int networkActivityFullyColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_NETWORK_ACTIVITY_ICONS_FULLY_COLOR,
                 networkActivityNormalColor, UserHandle.USER_CURRENT);
-        mAirplaneModeColor = Settings.System.getIntForUser(resolver,
+        int airplaneModeColor = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_AIRPLANE_MODE_ICON_COLOR,
                 networkNormalColor, UserHandle.USER_CURRENT);
 
-        mNetworkColor =
+        int networkColor =
                 mInetCondition == 0 ? networkNormalColor : networkFullyColor;
-        mNetworkActivityColor =
+        int networkActivityColor =
                 mInetCondition == 0 ? networkActivityNormalColor : networkActivityFullyColor;
 
         if (mWifi != null) {
-            mWifi.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+            mWifi.setColorFilter(networkColor, Mode.MULTIPLY);
         }
         if (mWifiActivity != null) {
-            mWifiActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
+            mWifiActivity.setColorFilter(networkActivityColor, Mode.MULTIPLY);
         }
         for (PhoneState state : mPhoneStates) {
             if (state.mMobile != null) {
-                state.mMobile.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+                state.mMobile.setColorFilter(networkColor, Mode.MULTIPLY);
             }
             if (state.mMobileActivity != null) {
-                state.mMobileActivity.setColorFilter(mNetworkActivityColor, Mode.MULTIPLY);
+                state.mMobileActivity.setColorFilter(networkActivityColor, Mode.MULTIPLY);
             }
             if (state.mMobileType != null) {
-                state.mMobileType.setColorFilter(mNetworkColor, Mode.MULTIPLY);
+                state.mMobileType.setColorFilter(networkColor, Mode.MULTIPLY);
             }
         }
         if(mAirplane != null) {
-            mAirplane.setColorFilter(mAirplaneModeColor, Mode.MULTIPLY);
+            mAirplane.setColorFilter(airplaneModeColor, Mode.MULTIPLY);
         }
         if(mNoSims != null) {
-            mNoSims.setColorFilter(networkNormalColor, Mode.MULTIPLY);
+            mNoSims.setColorFilter(networkColor, Mode.MULTIPLY);
         }
     }
 
