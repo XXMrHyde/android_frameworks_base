@@ -48,8 +48,8 @@ public class ViewInvertHelper {
     }
 
     public void fade(final boolean invert, long delay) {
-        float startIntensity = invert ? 0f : 1f;
-        float endIntensity = invert ? 1f : 0f;
+        float startIntensity = 1f;
+        float endIntensity = 0f;
         ValueAnimator animator = ValueAnimator.ofFloat(startIntensity, endIntensity);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -61,9 +61,7 @@ public class ViewInvertHelper {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (!invert) {
-                    mTarget.setLayerType(View.LAYER_TYPE_NONE, null);
-                }
+                mTarget.setLayerType(View.LAYER_TYPE_NONE, null);
             }
         });
         animator.setDuration(mFadeDuration);
@@ -73,12 +71,7 @@ public class ViewInvertHelper {
     }
 
     public void update(boolean invert) {
-        if (invert) {
-            updateInvertPaint(1f);
-            mTarget.setLayerType(View.LAYER_TYPE_HARDWARE, mDarkPaint);
-        } else {
-            mTarget.setLayerType(View.LAYER_TYPE_NONE, null);
-        }
+        mTarget.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
     public View getTarget() {
