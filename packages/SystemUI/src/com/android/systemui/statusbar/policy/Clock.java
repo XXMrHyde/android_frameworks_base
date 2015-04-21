@@ -128,7 +128,7 @@ public class Clock extends TextView implements DemoMode {
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         // Make sure we update to the current time
-        updateClock();
+        updateSettings();
     }
 
 
