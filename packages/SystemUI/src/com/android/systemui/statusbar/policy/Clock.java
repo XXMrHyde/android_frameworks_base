@@ -16,13 +16,15 @@
 
 package com.android.systemui.statusbar.policy;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -34,6 +36,8 @@ import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import com.android.internal.util.darkkat.ColorHelper;
 
 import com.android.systemui.DemoMode;
 import com.android.systemui.R;
@@ -73,6 +77,12 @@ public class Clock extends TextView implements DemoMode {
     private boolean mShowDate;
     private boolean mDateSizeSmall;
 
+    private int mNewColor;
+    private int mOldColor;
+    private Animator mColorTransitionAnimator;
+
+    private ContentResolver mResolver;
+
     public Clock(Context context) {
         this(context, null);
     }
@@ -83,16 +93,37 @@ public class Clock extends TextView implements DemoMode {
 
     public Clock(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.Clock,
-                0, 0);
-        try {
-            mAmPmStyle = a.getInt(R.styleable.Clock_amPmStyle, AM_PM_STYLE_GONE);
-        } finally {
-            a.recycle();
-        }
+
+        setUp();
     }
+
+    private void setUp() {
+        mResolver = mContext.getContentResolver();
+
+        mIs24 = DateFormat.is24HourFormat(getContext());
+        mShowDate = Settings.System.getIntForUser(mResolver,
+			    Settings.System.STATUS_BAR_SHOW_DATE, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mAmPmStyle = mIs24 ?
+                AM_PM_STYLE_GONE : Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE,
+                UserHandle.USER_CURRENT);
+        mDateSizeSmall = Settings.System.getIntForUser(mResolver,
+			    Settings.System.STATUS_BAR_DATE_SIZE, 0,
+                UserHandle.USER_CURRENT) == 1;
+        mDateStyle = Settings.System.getIntForUser(mResolver,
+			    Settings.System.STATUS_BAR_DATE_STYLE,
+                DATE_STYLE_REGULAR, UserHandle.USER_CURRENT);
+        int color = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+
+        setTextColor(color);
+        mOldColor = color;
+    }
+
 
     private void updateReceiverState() {
         boolean shouldBeRegistered = mAttached && getVisibility() != GONE;
@@ -128,7 +159,7 @@ public class Clock extends TextView implements DemoMode {
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
 
         // Make sure we update to the current time
-        updateSettings();
+        updateClock();
     }
 
 
@@ -168,7 +199,7 @@ public class Clock extends TextView implements DemoMode {
                     mClockFormatString = ""; // force refresh
                 }
             }
-            updateSettings();
+            updateClock();
         }
     };
 
@@ -231,7 +262,7 @@ public class Clock extends TextView implements DemoMode {
         if (mShowDate) {
             Date now = new Date();
 
-            String dateFormat = Settings.System.getStringForUser(getContext().getContentResolver(),
+            String dateFormat = Settings.System.getStringForUser(mResolver,
                     Settings.System.STATUS_BAR_DATE_FORMAT, UserHandle.USER_CURRENT);
 
             if (dateFormat == null || dateFormat.isEmpty()) {
@@ -311,25 +342,19 @@ public class Clock extends TextView implements DemoMode {
     }
 
     public void updateSettings() {
-        ContentResolver resolver = mContext.getContentResolver();
-        Context context = getContext();
-
-        mIs24 = DateFormat.is24HourFormat(context);
-        mShowDate = Settings.System.getIntForUser(resolver,
+        mIs24 = DateFormat.is24HourFormat(getContext());
+        mShowDate = Settings.System.getIntForUser(mResolver,
 			    Settings.System.STATUS_BAR_SHOW_DATE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        int amPmStyle = Settings.System.getIntForUser(resolver,
+        int amPmStyle = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_AM_PM, AM_PM_STYLE_GONE,
                 UserHandle.USER_CURRENT);
-        mDateSizeSmall = Settings.System.getIntForUser(resolver,
+        mDateSizeSmall = Settings.System.getIntForUser(mResolver,
 			    Settings.System.STATUS_BAR_DATE_SIZE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mDateStyle = Settings.System.getIntForUser(resolver,
+        mDateStyle = Settings.System.getIntForUser(mResolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE,
                 DATE_STYLE_REGULAR, UserHandle.USER_CURRENT);
-        int color = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
 
         if (mIs24) {
             mAmPmStyle = AM_PM_STYLE_GONE;
@@ -341,9 +366,37 @@ public class Clock extends TextView implements DemoMode {
         }
 
         if (mAttached) {
-            setTextColor(color);
             updateClock();
         }
+    }
+
+    public void updateClockColor() {
+        mNewColor = Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+        if (mOldColor != mNewColor) {
+            mColorTransitionAnimator.start();
+        }
+    }
+
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                int blended = ColorHelper.getBlendColor(mOldColor, mNewColor, position);
+                setTextColor(blended);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mOldColor = mNewColor;
+            }
+        });
+        return animator;
     }
 }
 
