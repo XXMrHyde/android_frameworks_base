@@ -2914,6 +2914,11 @@ public final class Settings {
          */
         public static final String STATUS_BAR_AIRPLANE_MODE_ICON_COLOR = "status_bar_airplane_mode_icon_color";
 
+        /**
+         * Color of the vpn icon on statusbar
+         * @hide
+         */
+        public static final String STATUS_BAR_VPN_ICON_COLOR = "status_bar_vpn_icon_color";
 
         /**
          * Show/hide network speed indicator
