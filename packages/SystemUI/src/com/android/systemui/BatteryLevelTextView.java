@@ -16,6 +16,9 @@
 
 package com.android.systemui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -28,6 +31,9 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+
+import com.android.internal.util.darkkat.ColorHelper;
+
 import com.android.systemui.statusbar.policy.BatteryController;
 
 import java.text.NumberFormat;
@@ -47,6 +53,10 @@ public class BatteryLevelTextView extends TextView implements
     private boolean mAttached;
     private int mRequestedVisibility;
 
+    private int mNewColor;
+    private int mOldColor;
+    private Animator mColorTransitionAnimator;
+
     private ContentResolver mResolver;
 
     private ContentObserver mObserver = new ContentObserver(new Handler()) {
@@ -59,6 +69,12 @@ public class BatteryLevelTextView extends TextView implements
         super(context, attrs);
         mResolver = context.getContentResolver();
         mRequestedVisibility = getVisibility();
+
+        mNewColor = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, 0xffffffff);
+        mOldColor = mNewColor;
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+
         loadShowBatteryTextSetting();
     }
 
@@ -141,12 +157,37 @@ public class BatteryLevelTextView extends TextView implements
     public void setTextColor(boolean isHeader) {
         int headerColor = Settings.System.getInt(mResolver,
                 Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR, 0xffffffff);
-        int color = Settings.System.getInt(mResolver,
+        mNewColor = Settings.System.getInt(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, 0xff000000);
 
-        super.setTextColor(isHeader ? headerColor : color);
+        if (isHeader) {
+            setTextColor(headerColor);
+        } else {
+            if (mOldColor != mNewColor) {
+                mColorTransitionAnimator.start();
+            }
+        }
     }
 
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                int blended = ColorHelper.getBlendColor(mOldColor, mNewColor, position);
+                setTextColor(blended);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mOldColor = mNewColor;
+            }
+        });
+        return animator;
+    }
 
     private void loadShowBatteryTextSetting() {
         int currentUserId = ActivityManager.getCurrentUser();
