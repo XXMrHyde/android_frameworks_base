@@ -48,6 +48,7 @@ public class BatteryLevelTextView extends TextView implements
 
     private BatteryController mBatteryController;
     private boolean mBatteryCharging;
+    private int mBatteryLevel = 0;
     private boolean mShow;
     private boolean mForceShow;
     private boolean mAttached;
@@ -107,7 +108,8 @@ public class BatteryLevelTextView extends TextView implements
 
     @Override
     public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-        String percentage = NumberFormat.getPercentInstance().format((double) level / 100.0);
+        mBatteryLevel = level;
+        String percentage = NumberFormat.getPercentInstance().format((double) mBatteryLevel / 100.0);
         setText(percentage);
         boolean changed = mBatteryCharging != charging;
         mBatteryCharging = charging;
@@ -163,8 +165,12 @@ public class BatteryLevelTextView extends TextView implements
         if (isHeader) {
             setTextColor(headerColor);
         } else {
-            if (mOldColor != mNewColor) {
-                mColorTransitionAnimator.start();
+            if (!mBatteryCharging && mBatteryLevel > 16) {
+                if (mOldColor != mNewColor) {
+                    mColorTransitionAnimator.start();
+                }
+            } else {
+                setTextColor(mNewColor);
             }
         }
     }
