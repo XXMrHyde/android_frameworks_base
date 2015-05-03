@@ -3027,6 +3027,12 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
         /**
+         * Color of the expanded status bar header background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_HEADER_BG_COLOR = "status_bar_expanded_header_bg_color";
+
+        /**
          * Color of the text on the header of the expanded status bar
          * @hide
          */

@@ -183,6 +183,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateVisibilities();
         updateClockScale();
         updateAvatarScale();
+        updateBackgroundColor();
         updateTextColorSettings();
         updateIconColorSettings();
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -339,6 +340,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateAvatarScale();
         updateClockLp();
         requestCaptureValues();
+        updateBackgroundColor();
         updateTextColorSettings();
         updateIconColorSettings();
     }
@@ -925,6 +927,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION))) {
                 updateWeatherSettings();
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR))) {
+                updateBackgroundColor();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR))) {
                 updateTextColorSettings();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -937,6 +942,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         public void updateSettings() {
             updateBatteryPercentageSettings();
             updateWeatherSettings();
+            updateBackgroundColor();
             updateTextColorSettings();
             updateIconColorSettings();
         }
@@ -970,6 +976,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateWeatherVisibility();
     }
 
+    private void updateBackgroundColor() {
+        ContentResolver resolver = mContext.getContentResolver();
+        int backgroundColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_HEADER_BG_COLOR, 0xff384248);
+
+        getBackground().setColorFilter(backgroundColor, Mode.MULTIPLY);
+    }
+
     private void updateTextColorSettings() {
         ContentResolver resolver = mContext.getContentResolver();
         mTextColor = Settings.System.getInt(resolver,
@@ -998,6 +1012,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         alarmIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
         mAlarmStatus.setCompoundDrawablesWithIntrinsicBounds(alarmIcon, null, null, null);
     }
+
 
     private int getTransparentColor(int color, int alpha) {
         int r = Color.red(color);
