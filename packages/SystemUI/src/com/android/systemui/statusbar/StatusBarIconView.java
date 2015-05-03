@@ -425,7 +425,7 @@ public class StatusBarIconView extends AnimatedImageView {
                 0xffffffff);
         mNotifCountColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NOTIF_COUNT_ICON_COLOR,
-                0xffE5350D);
+                0xfff4511e);
         mNotifCountTextColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NOTIF_COUNT_TEXT_COLOR,
                 0xffffffff);
