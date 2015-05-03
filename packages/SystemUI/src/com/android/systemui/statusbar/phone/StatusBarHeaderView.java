@@ -1013,7 +1013,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmStatus.setCompoundDrawablesWithIntrinsicBounds(alarmIcon, null, null, null);
     }
 
-
     private int getTransparentColor(int color, int alpha) {
         int r = Color.red(color);
         int g = Color.green(color);
