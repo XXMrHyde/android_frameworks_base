@@ -3102,6 +3102,11 @@ public final class Settings {
          */
         public static final String QS_TEXT_COLOR = "qs_text_color";
 
+        /**
+         * Color of the clear all icon in the notification drawer
+         * @hide
+         */
+        public static final String NOTIFICATION_DRAWER_CLEAR_ALL_ICON_COLOR = "nd_clear_all_icon_color";
 
         /**
          * Whether to show reboot in power menu 
