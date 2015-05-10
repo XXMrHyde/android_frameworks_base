@@ -80,6 +80,10 @@ public class NotificationPanelView extends PanelView implements
 
     public static final long DOZE_ANIMATION_DURATION = 700;
 
+    private static final int ONE_FINGER_QS_INTERCEPT_OFF   = 0;
+    private static final int ONE_FINGER_QS_INTERCEPT_END   = 1;
+    private static final int ONE_FINGER_QS_INTERCEPT_START = 2;
+
     private KeyguardAffordanceHelper mAfforanceHelper;
     private StatusBarHeaderView mHeader;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
@@ -189,7 +193,7 @@ public class NotificationPanelView extends PanelView implements
 
     private Handler mHandler = new Handler();
     private SettingsObserver mSettingsObserver;
-    private boolean mOneFingerQuickSettingsIntercept;
+    private int mOneFingerQuickSettingsInterceptMode;
 
     private boolean mDoubleTapToSleepEnabled;
     private int mStatusBarHeaderHeight;
@@ -723,7 +727,8 @@ public class NotificationPanelView extends PanelView implements
         boolean twoFingerQsEvent = mTwoFingerQsExpandPossible
                 && (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
                 && event.getPointerCount() == 2);
-        boolean oneFingerQsOverride = mOneFingerQuickSettingsIntercept
+        boolean oneFingerQsOverride =
+                mOneFingerQuickSettingsInterceptMode > ONE_FINGER_QS_INTERCEPT_OFF
                 && event.getActionMasked() == MotionEvent.ACTION_DOWN
                 && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
         if ((twoFingerQsEvent || oneFingerQsOverride)
@@ -1352,13 +1357,18 @@ public class NotificationPanelView extends PanelView implements
 
         final float w = getMeasuredWidth();
         float region = (w * (1.f/3.f)); // TODO overlay region fraction?
-        boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
-        showQsOverride = showQsOverride && mStatusBarState == StatusBarState.SHADE;
+        boolean showQsOverride = false;
+
+        if (mOneFingerQuickSettingsInterceptMode == ONE_FINGER_QS_INTERCEPT_END) {
+            showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
+        } else if (mOneFingerQuickSettingsInterceptMode == ONE_FINGER_QS_INTERCEPT_START) {
+            showQsOverride = isLayoutRtl() ? (w - region < x) : (x < region);
+        }
 
         if (mQsExpanded) {
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
-            return onHeader || showQsOverride;
+            return onHeader || (showQsOverride && mStatusBarState == StatusBarState.SHADE);
         }
     }
 
@@ -2089,8 +2099,9 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.QS_QUICK_PULLDOWN))) {
                 mDoubleTapToSleepEnabled = Settings.System.getInt(
                         resolver, Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP, 0) == 1;
-                mOneFingerQuickSettingsIntercept = Settings.System.getInt(
-                        resolver, Settings.System.QS_QUICK_PULLDOWN, 0) == 1;
+                mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
+                        resolver, Settings.System.QS_QUICK_PULLDOWN,
+                        ONE_FINGER_QS_INTERCEPT_OFF);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR))) {
                 mQSBackgroundColor = Settings.System.getInt(
@@ -2108,8 +2119,9 @@ public class NotificationPanelView extends PanelView implements
             ContentResolver resolver = mContext.getContentResolver();
             mDoubleTapToSleepEnabled = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP, 0) == 1;
-            mOneFingerQuickSettingsIntercept = Settings.System.getInt(
-                    resolver, Settings.System.QS_QUICK_PULLDOWN, 0) == 1;
+            mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
+                    resolver, Settings.System.QS_QUICK_PULLDOWN,
+                    ONE_FINGER_QS_INTERCEPT_OFF);
             mQSBackgroundColor = Settings.System.getInt(
                     resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
             setQSBackgroundColor();
