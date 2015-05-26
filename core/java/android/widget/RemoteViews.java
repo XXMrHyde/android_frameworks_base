@@ -32,8 +32,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -54,6 +52,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.android.internal.util.darkkat.ColorHelper;
+
 import libcore.util.Objects;
 
 import java.lang.annotation.ElementType;
@@ -1583,23 +1584,8 @@ public class RemoteViews implements Parcelable, Filter {
             Drawable d = drawables[index];
             if (d != null) {
                 d.mutate();
-                d.setColorFilter(getColorFilter());
+                d.setColorFilter(ColorHelper.getColorFilter(color));
             }
-        }
-
-        private ColorMatrixColorFilter getColorFilter() {
-            float r = Color.red(color) / 255f;
-            float g = Color.green(color) / 255f;
-            float b = Color.blue(color) / 255f;
-
-            ColorMatrix cm = new ColorMatrix(new float[] {
-                    r, g, b, 0, 0,
-                    r, g, b, 0, 0,
-                    r, g, b, 0, 0,
-                    0, 0, 0, 1, 0,
-            });
-            ColorMatrixColorFilter cf = new ColorMatrixColorFilter(cm);
-            return cf;
         }
 
         public String getActionName() {
