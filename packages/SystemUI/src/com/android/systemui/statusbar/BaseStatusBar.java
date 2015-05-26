@@ -38,7 +38,6 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.database.ContentObserver;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;

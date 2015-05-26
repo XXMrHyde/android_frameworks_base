@@ -106,7 +106,7 @@ public class NotificationGuts extends FrameLayout {
     }
 
     public void updateBgColor() {
-        color = Settings.System.getInt(mContext.getContentResolver(),
+        final int color = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NOTIFICATION_GUTS_BG_COLOR, 0xff384248);
         if (mBackground != null) {
             mBackground.setColorFilter(color, Mode.SRC_ATOP);
