@@ -71,6 +71,25 @@ public class NotificationColorHelper {
         }
     }
 
+    public static int getdividerColor(Context context) {
+        if (ColorHelper.isColorDark(getCustomNotificationBgColor(context))) {
+            return 0x6f222222;
+        } else {
+            return 0x6fdddddd;
+        }
+    }
+
+    private static boolean colorizeIconBackground(Context context, int notificationColor) {
+        final int legacyBgMode = getLegacyBgMode(context);
+        if (legacyBgMode == 0) {
+            return false;
+        } else if (legacyBgMode == 1) {
+            return notificationColor == Notification.COLOR_DEFAULT;
+        } else {
+            return true;
+        }
+    }
+
     public static boolean colorizeIcon(Context context, Drawable d) {
         if (d == null) {
             return false;
@@ -84,17 +103,6 @@ public class NotificationColorHelper {
             return false;
         } else if (iconColorMode == 1) {
             return isGreyscale;
-        } else {
-            return true;
-        }
-    }
-
-    private static boolean colorizeIconBackground(Context context, int notificationColor) {
-        final int legacyBgMode = getLegacyBgMode(context);
-        if (legacyBgMode == 0) {
-            return false;
-        } else if (legacyBgMode == 1) {
-            return notificationColor == Notification.COLOR_DEFAULT;
         } else {
             return true;
         }
@@ -122,16 +130,16 @@ public class NotificationColorHelper {
 
     private static int getCustomLegacyBgColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4d33b5e5);
+                Settings.System.NOTIFICATION_APP_ICON_BG_COLOR, 0x4dffffff);
     }
 
     public static int getCustomTextColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.NOTIFICATION_TEXT_COLOR, 0xff33b5e5);
+                Settings.System.NOTIFICATION_TEXT_COLOR, 0xffffffff);
     }
 
     public static int getCustomIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.NOTIFICATION_ICON_COLOR, 0xff33b5e5);
+                Settings.System.NOTIFICATION_ICON_COLOR, 0xffffffff);
     }
 }

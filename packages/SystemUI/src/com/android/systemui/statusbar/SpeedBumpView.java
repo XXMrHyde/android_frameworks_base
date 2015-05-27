@@ -25,6 +25,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
 import com.android.internal.util.darkkat.ColorHelper;
+import com.android.internal.util.darkkat.NotificationColorHelper;
 
 import com.android.systemui.R;
 
@@ -172,13 +173,8 @@ public class SpeedBumpView extends ExpandableView {
     }
 
     private void updateDividerColor() {
-        int normalBgColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.NOTIFICATION_BG_COLOR, 0xff1b1f23);
-        int dividerColor = ColorHelper.isColorDark(normalBgColor) ?
-                0x6f222222 : 0x6fdddddd;
-
         if (mLine != null) {
-            mLine.setBackgroundColor(dividerColor);
+            mLine.setBackgroundColor(NotificationColorHelper.getdividerColor(mContext));
         }
     }
 }
