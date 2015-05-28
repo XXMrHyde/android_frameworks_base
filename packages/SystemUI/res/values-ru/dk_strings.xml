@@ -18,7 +18,7 @@
     <!-- Content description of the data connection type HSPA+ for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_data_connection_HP">HSPA+</string>
 
-    <string name="weather_info_not_available">Информация о погоде недоступна</string>
+    <string name="weather_info_not_available">Информация о погоде недоступна </string>
 
     <string name="left_shortcut_hint">Смах вправо для %1$s</string>
     <string name="right_shortcut_hint">Смах влево для %1$s</string>
