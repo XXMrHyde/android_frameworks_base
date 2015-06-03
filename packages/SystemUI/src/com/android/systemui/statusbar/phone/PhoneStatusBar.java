@@ -158,6 +158,7 @@ import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.phone.UnlockMethodCache.OnUnlockMethodChangedListener;
 import com.android.systemui.statusbar.policy.AccessibilityController;
+import com.android.systemui.statusbar.policy.BatteryBarLayout;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
 import com.android.systemui.statusbar.policy.BluetoothControllerImpl;
@@ -360,6 +361,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // battery
     private BatteryMeterView mBatteryView;
     private BatteryLevelTextView mBatteryLevel;
+    private BatteryBarLayout mBatteryBarLayout;
 
     // position
     int[] mPositionTmp = new int[2];
@@ -512,6 +514,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_INDICATOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -561,6 +575,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
                 updateBatteryLevelTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_INDICATOR))) {
+                final boolean forceHide;
+                if (mState == StatusBarState.KEYGUARD) {
+                    forceHide = true;
+                } else {
+                    forceHide = false;
+                }
+                mBatteryBarLayout.updateVisibility(true, forceHide);
+           } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS))) {
+                mBatteryBarLayout.updateThickness(true);
+           } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED))) {
+                mBatteryBarLayout.updateAnimationSpeed();
+           } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_BAR_COLOR))) {
+                mBatteryBarLayout.updateColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER))) {
                 mTickerEnabled = Settings.System.getIntForUser(
                         mContext.getContentResolver(),
@@ -568,7 +600,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mContext.getResources().getBoolean(R.bool.enable_ticker)
                         ? 1 : 0, UserHandle.USER_CURRENT) == 1;
                 initTickerView();
-
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_CLEAR_ALL_ICON_COLOR))) {
                 UpdateNotifPanelClearAllIconColor();
@@ -895,6 +926,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
         mBatteryView = (BatteryMeterView) mStatusBarView.findViewById(R.id.battery);
         mBatteryLevel = (BatteryLevelTextView) mStatusBarView.findViewById(R.id.battery_level_text);
+        mBatteryBarLayout = (BatteryBarLayout) mStatusBarView.findViewById(R.id.battery_bar_layout);
         mCenterClockLayout = (LinearLayout)mStatusBarView.findViewById(R.id.center_clock_layout);
 
         mStackScroller = (NotificationStackScrollLayout) mStatusBarWindow.findViewById(
@@ -1093,6 +1125,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mHeader.setBatteryController(mBatteryController);
         mBatteryView.setBatteryController(mBatteryController);
         mBatteryLevel.setBatteryController(mBatteryController);
+        mBatteryBarLayout.setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
         mHeader.setNextAlarmController(mNextAlarmController);
         mHeader.setWeatherController(mWeatherController);
@@ -4160,10 +4193,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mKeyguardIndicationController.setVisible(true);
             mNotificationPanel.resetViews();
             mKeyguardUserSwitcher.setKeyguard(true, fromShadeLocked);
+            mBatteryBarLayout.updateVisibility(false, true);
         } else {
             mKeyguardIndicationController.setVisible(false);
             mKeyguardUserSwitcher.setKeyguard(false,
                     goingToFullShade || mState == StatusBarState.SHADE_LOCKED || fromShadeLocked);
+            mBatteryBarLayout.updateVisibility(false, false);
         }
         if (mState == StatusBarState.KEYGUARD || mState == StatusBarState.SHADE_LOCKED) {
             mScrimController.setKeyguardShowing(true);

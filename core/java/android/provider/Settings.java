@@ -2879,6 +2879,44 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR = "status_bar_battery_status_text_color";
 
         /**
+         * Battery bar indicator
+         * 0 - Disabled
+         * 1 - Fill only
+         * 2 - Normal
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_INDICATOR = "status_bar_battery_bar_indicator";
+
+        /**
+         * Battery bar thickness in dp
+         * 1 - 1 dp
+         * 2 - 2 dp
+         * 3 - 3 dp
+         * 4 - 4 dp
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "status_bar_battery_bar_thickness";
+
+        /**
+         * Battery bar charging animation speed
+         * 0 - Disabled
+         * 1 - Slow
+         * 2 - Normal (default)
+         * 3 - Fast
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED = "status_bar_battery_bar_charging_animation_speed";
+
+        /**
+         *Battery bar color
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_BAR_COLOR = "status_bar_battery_bar_color";
+
+        /**
          * Show when WiFi or data mobile is sending/receiving data
          * @hide
          */
