@@ -41,4 +41,7 @@
     <string name="adb_both_active_notification_title">ADB по USB &amp; сети включен</string>
     <!-- ADB notification message-->
     <string name="adb_active_generic_notification_message">Нажмите, чтобы отключить отладку.</string>
+
+    <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
+    <string name="usb_charging_notification_title">Connected in charging mode</string> <!-- Needs translation -->
 </resources>

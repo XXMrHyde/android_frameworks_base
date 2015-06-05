@@ -35,18 +35,13 @@
     <string name="reboot_confirm" product="tablet">Votre tablette va redémarrer.</string>
     <string name="reboot_confirm" product="default">Votre téléphone va redémarrer.</string>
 
-    <!-- [CHAR LIMIT=NONE] Message shown in dialog on first boot after clean install for each .apk that is optimized. -->
-    <string name="android_installing_apk">Installation de l\'application
-        <xliff:g id="number" example="123">%1$d</xliff:g> of
-        <xliff:g id="number" example="123">%2$d</xliff:g>.</string>
-
-    <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system install. -->
-    <string name="android_installing_title">Android s\'installe\u2026</string>
-
     <!-- ADB over network notification -->
     <string name="adb_net_active_notification_title">ADB par le réseau activé</string>
     <!-- ADB over USB and network notification -->
     <string name="adb_both_active_notification_title">ADB par USB &amp; réseau activé</string>
     <!-- ADB notification message-->
     <string name="adb_active_generic_notification_message">Touchez pour désactiver le débogage.</string>
+
+    <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
+    <string name="usb_charging_notification_title">Connected in charging mode</string> <!-- Needs translation -->
 </resources>
