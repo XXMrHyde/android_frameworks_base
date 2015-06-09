@@ -53,4 +53,7 @@
         android:layout_gravity="center_horizontal|bottom"
         android:scaleType="fitXY"
         android:src="@drawable/recents_lower_gradient" />
+
+    <!-- Clear Recents layout -->
+    <include layout="@layout/fab_layout" />
 </FrameLayout>
