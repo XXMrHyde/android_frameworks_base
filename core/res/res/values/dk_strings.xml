@@ -44,4 +44,9 @@
 
     <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
     <string name="usb_charging_notification_title">Connected in charging mode</string>
+
+    <!-- SlimRoms additions -->
+
+    <!-- SlimSeekBarPreference -->
+    <string name="default_string">Default</string>
 </resources>

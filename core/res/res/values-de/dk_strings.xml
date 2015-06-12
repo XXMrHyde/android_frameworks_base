@@ -44,5 +44,9 @@
 
     <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
   <string name="usb_charging_notification_title">Verbunden im Lademodus</string>
-</resources>
 
+    <!-- SlimRoms additions -->
+
+    <!-- SlimSeekBarPreference -->
+    <string name="default_string">Standard</string>
+</resources>
