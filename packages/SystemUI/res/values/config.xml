@@ -295,5 +295,8 @@
 
     <!-- Enable the default volume dialog -->
     <bool name="enable_volume_ui">true</bool>
+
+    <!-- Default value how much apps show the app screenshot on recents view entry -->
+    <integer name="expanded_items_default">2</integer>
 </resources>
 

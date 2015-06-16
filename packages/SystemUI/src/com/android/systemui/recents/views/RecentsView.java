@@ -370,13 +370,13 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
             int marginSide =  (width / 2) - (taskViewWidth / 2);
 
             int positionHorizontal = Settings.System.getInt(resolver,
-                    Settings.System.RECENT_APPS_CLEAR_ALL_POSITION_HORIZONTAL, 2);
+                    Settings.System.ANDROID_RECENTS_CLEAR_ALL_POSITION_HORIZONTAL, 2);
             int positionVertical = Settings.System.getInt(resolver,
-                    Settings.System.RECENT_APPS_CLEAR_ALL_POSITION_VERTICAL, 0);
+                    Settings.System.ANDROID_RECENTS_CLEAR_ALL_POSITION_VERTICAL, 0);
             int bgColor = Settings.System.getInt(resolver,
-                    Settings.System.RECENT_APPS_CLEAR_ALL_BG_COLOR, 0xff009688);
+                    Settings.System.ANDROID_RECENTS_CLEAR_ALL_BG_COLOR, 0xff009688);
             int iconColor = Settings.System.getInt(resolver,
-                    Settings.System.RECENT_APPS_CLEAR_ALL_ICON_COLOR, 0xffffffff);
+                    Settings.System.ANDROID_RECENTS_CLEAR_ALL_ICON_COLOR, 0xffffffff);
 
             int gravityHorizontal;
             int gravityVertical;

@@ -3141,16 +3141,131 @@ public final class Settings {
         public static final String QS_TEXT_COLOR = "qs_text_color";
 
         /**
+         * Whether to use slim recents
+         * @hide
+         */
+        public static final String USE_SLIM_RECENTS = "use_slim_recents";
+
+        /**
+         * Size of recent panel view in percent (default = 100).
+         * @hide
+         */
+        public static final String SLIM_RECENTS_SCALE_FACTOR = "slim_recents_scale_factor";
+
+        /**
+         * Recent panel expanded mode (auto = 0, always = 1, never = 2).
+         * default = 0.
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_EXPANDED_MODE = "slim_recents_expanded_mode";
+
+        /**
+         * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
+         * @hide
+         */
+        public static final String SLIM_RECENTS_GRAVITY = "slim_recents_gravity";
+
+        /**
+         * Recent card popup theme mode (auto = 0, dark = 1, light = 2).
+         * default = 1.
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_POPUP_THEME_MODE = "slim_recents_popup_theme_mode";
+
+        /**
+         * Whether to only show actually running tasks
+         * @hide
+         */
+        public static final String SLIM_RECENTS_ONLY_SHOW_RUNNING_TASKS = "slim_recents_only_show_running_tasks";
+
+        /**
+         * Recent panel: Show topmost task
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_SHOW_TOPMOST = "slim_recents_show_topmost";
+
+        /**
+         * Amount of apps to show in recents
+         * @hide
+         */
+        public static final String SLIM_RECENTS_MAX_APPS = "slim_recents_max_apps";
+
+        /**
+         * User favorite tasks for recent panel.
+         * @hide
+         */
+        public static final String SLIM_RECENTS_FAVORITES = "slim_recents_favorites";
+
+        /**
+         * Wether to use a custom color for the text on recents
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_USE_TEXT_COLOR = "slim_recents_use_text_color";
+
+        /**
+         * Wether to use a custom color for the expand button icon
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_USE_EXPAND_ICON_COLOR = "slim_recents_use_expand_icon_color";
+
+        /**
+         * Wether to use a custom color for the icon on empty recents
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_USE_EMPTY_ICON_COLOR = "slim_recents_use_empty_icon_color";
+
+        /**
+         * Recent panel background color
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_BG_COLOR = "slim_recents_bg_color";
+
+        /**
+         * Recent card background color
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_CARD_BG_COLOR = "slim_recents_card_bg_color";
+
+        /**
+         * Recent card text color
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_TEXT_COLOR = "slim_recents_text_color";
+
+        /**
+         * Icon color on empty recents
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_EXPAND_ICON_COLOR = "slim_recents_expand_icon_color";
+
+        /**
+         * Icon color on empty recents
+         *
+         * @hide
+         */
+        public static final String SLIM_RECENTS_EMPTY_ICON_COLOR = "slim_recents_empty_icon_color";
+
+        /**
          * Whether to show the search bar in the recent apps panel
          * @hide
          */
-        public static final String RECENT_APPS_SHOW_SEARCH_BAR = "recent_apps_show_search_bar";
+        public static final String ANDROID_RECENTS_SHOW_SEARCH_BAR = "android_recents_show_search_bar";
 
         /**
          * Whether to show the clear all button in the recent apps panel
          * @hide
          */
-        public static final String RECENT_APPS_SHOW_CLEAR_ALL = "recent_apps_show_clear_all";
+        public static final String ANDROID_RECENTS_SHOW_CLEAR_ALL = "android_recents_show_clear_all";
 
         /**
          * Horizontal position of the clear all button in the recent apps panel
@@ -3160,7 +3275,7 @@ public final class Settings {
          * default: 2
          * @hide
          */
-        public static final String RECENT_APPS_CLEAR_ALL_POSITION_HORIZONTAL = "recent_apps_clear_all_position_horizontal";
+        public static final String ANDROID_RECENTS_CLEAR_ALL_POSITION_HORIZONTAL = "android_recents_clear_all_position_horizontal";
 
         /**
          * Vertical position of the clear all button in the recent apps panel
@@ -3170,19 +3285,19 @@ public final class Settings {
          * default: 0
          * @hide
          */
-        public static final String RECENT_APPS_CLEAR_ALL_POSITION_VERTICAL = "recent_apps_clear_all_position_vertical";
+        public static final String ANDROID_RECENTS_CLEAR_ALL_POSITION_VERTICAL = "android_recents_clear_all_position_vertical";
 
         /**
          * Color of the clear all button background in the recent apps panel
          * @hide
          */
-        public static final String RECENT_APPS_CLEAR_ALL_BG_COLOR = "recent_apps_clear_all_bg_color";
+        public static final String ANDROID_RECENTS_CLEAR_ALL_BG_COLOR = "android_recents_clear_all_bg_color";
 
         /**
          * Color of the clear all button icon in the recent apps panel
          * @hide
          */
-        public static final String RECENT_APPS_CLEAR_ALL_ICON_COLOR = "recent_apps_clear_all_icon_color";
+        public static final String ANDROID_RECENTS_CLEAR_ALL_ICON_COLOR = "android_recents_clear_all_icon_color";
 
         /**
          * Colorize the media notifications background

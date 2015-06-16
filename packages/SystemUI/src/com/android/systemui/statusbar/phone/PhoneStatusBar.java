@@ -534,6 +534,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_SLIM_RECENTS), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_USE_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_USE_EXPAND_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_CARD_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_EXPAND_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -612,6 +630,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mContext.getResources().getColor(
                         com.android.internal.R.color.battery_saver_mode_color),
                         UserHandle.USER_CURRENT);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.USE_SLIM_RECENTS))) {
+                updateRecents();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_USE_TEXT_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_USE_EXPAND_ICON_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_CARD_BG_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_TEXT_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.SLIM_RECENTS_EXPAND_ICON_COLOR))) {
+                rebuildRecentsScreen();
             }
         }
     }
