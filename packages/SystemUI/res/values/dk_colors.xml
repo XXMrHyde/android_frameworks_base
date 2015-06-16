@@ -15,13 +15,21 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- Quick settings -->
+    <color name="qs_background_drawable_color">#FFFFFFFF</color>
+    <color name="visualizer_fill_color">#96FFFFFF</color>
+
+    <!-- Android Recents -->
+
     <!-- fab -->
     <color name="fab_background_color">#ffffffff</color>
     <color name="fab_ripple_color">#4dffffff</color>
 
-    <!-- Quick settings -->
-    <color name="qs_background_drawable_color">#FFFFFFFF</color>
-    <color name="visualizer_fill_color">#96FFFFFF</color>
+    <!-- The default color of the clear recents button icon on dark background  -->
+    <color name="fab_icon_light_color">#ffffffff</color>
+
+    <!-- The default color for the clear recents button icon on light background  -->
+    <color name="fab_icon_dark_color">#8a000000</color>
 
     <!-- Slim Recents -->
 

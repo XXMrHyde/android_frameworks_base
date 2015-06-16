@@ -3288,6 +3288,13 @@ public final class Settings {
         public static final String ANDROID_RECENTS_CLEAR_ALL_POSITION_VERTICAL = "android_recents_clear_all_position_vertical";
 
         /**
+         * Wether to use a custom color for the clear all button icon
+         *
+         * @hide
+         */
+        public static final String ANDROID_RECENTS_CLEAR_ALL_USE_ICON_COLOR = "android_recents_clear_all_use_icon_color";
+
+        /**
          * Color of the clear all button background in the recent apps panel
          * @hide
          */

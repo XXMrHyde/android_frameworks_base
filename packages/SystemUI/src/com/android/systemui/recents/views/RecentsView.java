@@ -38,6 +38,9 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
+
+import com.android.internal.util.darkkat.ColorHelper;
+
 import com.android.systemui.recents.Constants;
 import com.android.systemui.recents.RecentsConfiguration;
 import com.android.systemui.recents.misc.SystemServicesProxy;
@@ -375,8 +378,6 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
                     Settings.System.ANDROID_RECENTS_CLEAR_ALL_POSITION_VERTICAL, 0);
             int bgColor = Settings.System.getInt(resolver,
                     Settings.System.ANDROID_RECENTS_CLEAR_ALL_BG_COLOR, 0xff009688);
-            int iconColor = Settings.System.getInt(resolver,
-                    Settings.System.ANDROID_RECENTS_CLEAR_ALL_ICON_COLOR, 0xffffffff);
 
             int gravityHorizontal;
             int gravityVertical;
@@ -421,10 +422,30 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
             mClearRecentsLayout.setLayoutParams(params);
 
             mClearRecentsLayout.getBackground().setColorFilter(bgColor, Mode.MULTIPLY);
-            mClearRecents.setColorFilter(iconColor, Mode.MULTIPLY);
+            mClearRecents.getDrawable().setTint(getClearRecentsIconColor(bgColor));
         }
 
         setMeasuredDimension(width, height);
+    }
+
+    private int getClearRecentsIconColor(int bgColor) {
+        ContentResolver resolver = mContext.getContentResolver();
+        Resources res = mContext.getResources();
+
+        boolean useIconColor = Settings.System.getInt(resolver,
+                Settings.System.ANDROID_RECENTS_CLEAR_ALL_USE_ICON_COLOR, 0) == 1;
+        int iconColorLight = res.getColor(R.color.fab_icon_light_color);
+        int iconColorDark = res.getColor(R.color.fab_icon_dark_color);
+        int defaultIconColor = ColorHelper.isColorDark(bgColor) ?
+                iconColorLight : iconColorDark;
+        int iconColor = Settings.System.getInt(resolver,
+                Settings.System.ANDROID_RECENTS_CLEAR_ALL_ICON_COLOR, defaultIconColor);
+
+        if (useIconColor) {
+            return iconColor;
+        } else {
+            return defaultIconColor;
+        }
     }
 
     @Override
