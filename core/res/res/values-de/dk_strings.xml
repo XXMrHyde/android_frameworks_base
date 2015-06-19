@@ -43,10 +43,25 @@
     <string name="adb_active_generic_notification_message">berühren um Debbuging zu deaktivieren.</string>
 
     <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
-  <string name="usb_charging_notification_title">Verbunden im Lademodus</string>
+    <string name="usb_charging_notification_title">Verbunden im Lademodus</string>
 
     <!-- SlimRoms additions -->
 
     <!-- SlimSeekBarPreference -->
     <string name="default_string">Standard</string>
+
+    <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permgrouplab_security">Sicherheit</string>
+    <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permgroupdesc_security">Berechtigungen welche die Gerätesicherheit betreffen.</string>
+
+    <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_readPhoneBlacklist">Sperrliste lesen</string>
+    <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_readPhoneBlacklist">Ermöglicht der App, gesperrte Telefonnummern für eingehende Anrufe oder Nachrichten zu lesen.</string>
+
+    <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_changePhoneBlacklist">Sperrliste ändern</string>
+    <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_changePhoneBlacklist">Ermöglicht der App, gesperrte Telefonnummern für eingehende Anrufe oder Nachrichten zu ändern.</string>
 </resources>

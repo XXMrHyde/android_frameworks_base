@@ -180,6 +180,11 @@ public class DisconnectCause {
      * {@hide}
      */
     public static final int DIAL_MODIFIED_TO_DIAL          = 48;
+    /**
+     * Call was rejected due to number being blacklisted by user.
+     * {@@hide}
+     */
+    public static final int CALL_BLACKLISTED = 400;
 
     //*********************************************************************************************
     // When adding a disconnect type:
@@ -302,6 +307,8 @@ public class DisconnectCause {
             return "OUTGOING_CANCELED";
         case IMS_MERGED_SUCCESSFULLY:
             return "IMS_MERGED_SUCCESSFULLY";
+        case CALL_BLACKLISTED:
+            return "CALL_BLACKLISTED";
         default:
             return "INVALID: " + cause;
         }
