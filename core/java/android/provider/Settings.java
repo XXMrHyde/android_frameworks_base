@@ -2890,6 +2890,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED = "status_bar_battery_status_charging_animation_speed";
 
         /**
+         * Whether to use a fill animation fore the Circle battery status on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CHARGING_USE_CIRCE_FILL = "status_bar_battery_status_use_circle_fill_animation";
+
+        /**
          * Whether to show the Circle battery status dotted on the status bar
          * @hide
          */
