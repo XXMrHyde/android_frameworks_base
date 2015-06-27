@@ -2726,6 +2726,16 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * Colors used for the color picker panel puttons
+         * 0: DarkKat colors
+         * 1: Material colors
+         * 2: RGB colors
+         * default: 0
+         * @hide
+         */
+        public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
+
+        /**
          * Whether to show the weather info on the lock screen
          * @hide
          */
