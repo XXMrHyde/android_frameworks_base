@@ -176,7 +176,7 @@ public class BatteryBarLayout extends RelativeLayout implements
         mThickness = Settings.System.getInt(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS, 1);
         int animationSpeed = Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED, 0);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED, 0);
         mNewColor = Settings.System.getInt(mResolver,
                 Settings.System.STATUS_BAR_BATTERY_BAR_COLOR, 0xffffffff);
         mNewFrameColor = (102 << 24) | (mNewColor & 0x00ffffff);
@@ -231,7 +231,7 @@ public class BatteryBarLayout extends RelativeLayout implements
 
     public void updateAnimationSpeed() {
         int animationSpeed = Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED, 0);
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED, 0);
         if (animationSpeed == 0) {
             mAnimationDisabled = true;
         } else {

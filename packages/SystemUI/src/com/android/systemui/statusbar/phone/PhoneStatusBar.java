@@ -520,7 +520,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED),
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
@@ -605,7 +605,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS))) {
                 mBatteryBarLayout.updateThickness(true);
            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED))) {
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED))) {
                 mBatteryBarLayout.updateAnimationSpeed();
            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_COLOR))) {

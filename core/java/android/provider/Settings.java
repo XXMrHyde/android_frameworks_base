@@ -2891,9 +2891,11 @@ public final class Settings {
         /**
          * Battery charging animation speed on the status bar
          * 0 - Disabled
-         * 1 - Slow
+         * 1 - Very slow
+         * 2 - Slow
          * 3 - Normal (default)
-         * 5 - fast
+         * 4 - Fast
+         * 5 - Very fast
          * default: 3
          * @hide
          */
@@ -2963,17 +2965,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_BAR_THICKNESS = "status_bar_battery_bar_thickness";
-
-        /**
-         * Battery bar charging animation speed
-         * 0 - Disabled
-         * 1 - Slow
-         * 2 - Normal (default)
-         * 3 - Fast
-         * default: 0
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_BAR_CHARGING_ANIMATION_SPEED = "status_bar_battery_bar_charging_animation_speed";
 
         /**
          *Battery bar color
