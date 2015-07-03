@@ -43,25 +43,25 @@
     <string name="adb_active_generic_notification_message">Toca para deshabilitar la depuración USB.</string>
 
     <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
-    <string name="usb_charging_notification_title">Connected in charging mode</string> <!-- Needs translation -->
+    <string name="usb_charging_notification_title">Conectado en modo de carga</string>
 
     <!-- SlimRoms additions -->
 
     <!-- SlimSeekBarPreference -->
-    <string name="default_string">Default</string> <!-- Needs translation -->
+    <string name="default_string">Predeterminado</string>
 
     <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permgrouplab_security">Security</string> <!-- Needs translation -->
+    <string name="permgrouplab_security">Seguridad</string>
     <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permgroupdesc_security">Permissions related to device security information.</string> <!-- Needs translation -->
+    <string name="permgroupdesc_security">Permisos relativos a la información de seguridad del dispositivo.</string>
 
     <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permlab_readPhoneBlacklist">read phone blacklist</string> <!-- Needs translation -->
+    <string name="permlab_readPhoneBlacklist">Leer la lista negra</string>
     <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permdesc_readPhoneBlacklist">Allows an app to read information about phone numbers that are blocked for incoming calls or messages.</string> <!-- Needs translation -->
+    <string name="permdesc_readPhoneBlacklist">Permite a una app leer infomración acerca de números de teléfono bloqueados para llamadas o mensajes entrantes.</string>
 
     <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permlab_changePhoneBlacklist">change phone blacklist</string> <!-- Needs translation -->
+    <string name="permlab_changePhoneBlacklist">Modificar la lista negra</string>
     <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permdesc_changePhoneBlacklist">Allows an app to change the phone numbers that are blocked for incoming calls or messages.</string> <!-- Needs translation -->
+    <string name="permdesc_changePhoneBlacklist">Permite a una app modificar los números de teléfono bloqueados para llamadas o mensajes entrantes.</string>
 </resources>
