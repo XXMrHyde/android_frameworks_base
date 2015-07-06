@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -61,8 +62,8 @@ public class NotificationOverflowIconsView extends IconMerger {
         StatusBarIconView v = new StatusBarIconView(getContext(), "",
                 notification.notification.getNotification());
         v.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        addView(v, mIconSize, mIconSize);
         v.set(notification.icon.getStatusBarIcon());
+        addView(v, mIconSize, mIconSize);
         applyColor(notification.notification.getNotification(), v);
         updateMoreText();
     }
@@ -94,5 +95,17 @@ public class NotificationOverflowIconsView extends IconMerger {
             }
             mMoreText.getBackground().setAlpha(bgAlpha);
         }
+    }
+
+    @Override
+    public void setMoreIconColor() {
+        // Do nothing here
+    }
+
+    public void setOverflowMoreIconColor() {
+        int iconColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NOTIFICATION_ICON_COLOR,
+                0xffffffff);
+        ((ImageView) mMoreView).setColorFilter(iconColor, Mode.MULTIPLY);
     }
 }

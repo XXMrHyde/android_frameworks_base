@@ -526,6 +526,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_BAR_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICONS_COLOR_MODE),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -551,6 +557,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SLIM_RECENTS_EXPAND_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
         }
 
@@ -601,15 +610,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     forceHide = false;
                 }
                 mBatteryBarLayout.updateVisibility(true, forceHide);
-           } else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_THICKNESS))) {
                 mBatteryBarLayout.updateThickness(true);
-           } else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_CHARGING_ANIMATION_SPEED))) {
                 mBatteryBarLayout.updateAnimationSpeed();
-           } else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_BAR_COLOR))) {
                 mBatteryBarLayout.updateColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICONS_COLOR_MODE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR))) {
+                updateMoreIconColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_TICKER))) {
                 mTickerEnabled = Settings.System.getIntForUser(
@@ -644,6 +658,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     || uri.equals(Settings.System.getUriFor(
                     Settings.System.SLIM_RECENTS_EXPAND_ICON_COLOR))) {
                 rebuildRecentsScreen();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_ICON_COLOR))) {
+                updateOverflowMoreIconColor();
             }
         }
     }
@@ -1185,6 +1202,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateClockStyle();
         updateBatteryLevelTextColor();
         UpdateNotifPanelClearAllIconColor();
+        updateMoreIconColor();
+        updateOverflowMoreIconColor();
         return mStatusBarView;
     }
 
@@ -2308,6 +2327,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mKeyguardStatusBar != null) {
             mKeyguardStatusBar.setBatteryLevelTextColor();
+        }
+    }
+
+    private void updateMoreIconColor() {
+        if (mNotificationIcons != null) {
+            mNotificationIcons.setMoreIconColor();
+        }
+    }
+
+    private void updateOverflowMoreIconColor() {
+        if (mKeyguardIconOverflowContainer != null) {
+            mKeyguardIconOverflowContainer.updateOverflowMoreIconColor();
         }
     }
 

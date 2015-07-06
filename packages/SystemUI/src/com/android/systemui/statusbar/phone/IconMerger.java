@@ -16,9 +16,13 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.PorterDuff.Mode;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.systemui.R;
@@ -28,7 +32,7 @@ public class IconMerger extends LinearLayout {
     private static final boolean DEBUG = false;
 
     private int mIconSize;
-    private View mMoreView;
+    protected View mMoreView;
     private boolean mCenteredClock = false;
 
     public IconMerger(Context context, AttributeSet attrs) {
@@ -93,5 +97,23 @@ public class IconMerger extends LinearLayout {
 
     public void setCenteredClock(boolean centered) {
         mCenteredClock = centered;
+    }
+
+    public void setMoreIconColor() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        // The more icon is always a greyscale icon,
+        // so only check if the icon should be colorized at all
+        boolean colorizeIcon = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICONS_COLOR_MODE, 1) != 0;
+        int iconColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR,
+                0xffffffff);
+
+        if (colorizeIcon) {
+            ((ImageView) mMoreView).setColorFilter(iconColor, Mode.MULTIPLY);
+        } else {
+            ((ImageView) mMoreView).setColorFilter(null);
+        }
     }
 }

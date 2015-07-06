@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.darkkat.ImageHelper;
+import com.android.internal.util.NotificationColorUtil;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusBarIconView;
 
@@ -211,8 +212,8 @@ public abstract class Ticker {
                         n.getNotification().tickerText));
         final CharSequence text = n.getNotification().tickerText;
         final Segment newSegment = new Segment(n, icon, text);
-        boolean colorizeNotifIcons = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_COLORIZE_NOTIF_ICONS, 0) == 1;
+        int iconsColorMode = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICONS_COLOR_MODE, 0);
         int iconColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_NOTIF_SYSTEM_ICON_COLOR,
                 0xffffffff);
@@ -234,7 +235,7 @@ public abstract class Ticker {
 
             mIconSwitcher.setAnimateFirstView(false);
             mIconSwitcher.reset();
-            if (colorizeNotifIcons) {
+            if (colorizeIcon(iconsColorMode, seg.icon)) {
                 if (seg.icon instanceof AnimationDrawable) {
                     ((DrawableContainer)seg.icon).setColorFilter(iconColor,
                            Mode.MULTIPLY);
@@ -259,6 +260,23 @@ public abstract class Ticker {
 
             tickerStarting();
             scheduleAdvance();
+        }
+    }
+
+    private boolean colorizeIcon(int colorMode, Drawable d) {
+        if (d == null) {
+            return false;
+        }
+
+        NotificationColorUtil cu = NotificationColorUtil.getInstance(mContext);
+        final boolean isGreyscale = cu.isGrayscaleIcon(d);
+
+        if (colorMode == 0) {
+            return false;
+        } else if (colorMode == 1) {
+            return isGreyscale;
+        } else {
+            return true;
         }
     }
 

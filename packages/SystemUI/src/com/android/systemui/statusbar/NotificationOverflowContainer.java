@@ -62,4 +62,8 @@ public class NotificationOverflowContainer extends ActivatableNotificationView {
     public NotificationOverflowIconsView getIconsView() {
         return mIconsView;
     }
+
+    public void updateOverflowMoreIconColor() {
+        mIconsView.setOverflowMoreIconColor();
+    }
 }
