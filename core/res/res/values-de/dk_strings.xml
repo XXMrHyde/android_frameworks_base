@@ -64,4 +64,13 @@
     <string name="permlab_changePhoneBlacklist">Sperrliste ändern</string>
     <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_changePhoneBlacklist">Ermöglicht der App, gesperrte Telefonnummern für eingehende Anrufe oder Nachrichten zu ändern.</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_accessTorchService">Zugriff auf Taschenlampe</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_accessTorchService">Ermöglicht einer App, auf die Taschenlampe zuzugreifen. Dies sollte niemals für normale Apps benötigt werden.</string>
+
+    <!-- Flashlight notification -->
+    <string name="notification_flashlight_on_title">Taschenlampe ist an</string>
+    <string name="notification_flashlight_on_summary">Tippen um zu deaktivieren</string>
 </resources>

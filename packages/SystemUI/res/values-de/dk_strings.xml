@@ -71,4 +71,10 @@
     <!-- Screenshot delete -->
     <string name="screenshot_delete_action">Löschen</string>
     <string name="screenshot_delete_confirmation">Bildschirmfoto wurde gelöscht</string>
+
+    <!-- Kill app toast -->
+    <string name="app_killed_message">App beendet</string>
+
+    <!-- Screenshot -->
+    <string name="shortcut_screenshot">Bildschirmfoto</string>
 </resources>

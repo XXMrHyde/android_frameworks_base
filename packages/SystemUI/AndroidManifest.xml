@@ -77,6 +77,7 @@
     <uses-permission android:name="android.permission.GET_TOP_ACTIVITY_INFO" />
     <uses-permission android:name="android.permission.MANAGE_ACTIVITY_STACKS" />
     <uses-permission android:name="android.permission.START_TASKS_FROM_RECENTS" />
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
 
     <!-- WindowManager -->
     <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
@@ -110,7 +111,8 @@
     <!-- Wifi Display -->
     <uses-permission android:name="android.permission.CONFIGURE_WIFI_DISPLAY" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Torch tile -->
+    <uses-permission android:name="android.permission.ACCESS_TORCH_SERVICE" />
 
     <!-- Screen Capturing -->
     <uses-permission android:name="android.permission.MANAGE_MEDIA_PROJECTION" />
@@ -228,6 +230,21 @@
                 <action android:name="com.android.systemui.recents.action.CONFIG_CHANGED_FOR_USER" />
             </intent-filter>
         </receiver>
+
+        <!-- Screenshot Activity -->
+        <activity
+            android:name="com.android.systemui.shortcuts.Screenshot"
+            android:label="@string/shortcut_screenshot"
+            android:icon="@drawable/ic_sysbar_screenshot"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.android.systemui.SHORTCUT" />
+                <category android:name="com.android.systemui.SHORTCUT_EXTRA" />
+            </intent-filter>
+        </activity>
 
         <!-- started from UsbDeviceSettingsManager -->
         <activity android:name=".usb.UsbConfirmActivity"

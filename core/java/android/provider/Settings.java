@@ -3232,6 +3232,95 @@ public final class Settings {
         public static final String QS_TEXT_COLOR = "qs_text_color";
 
         /**
+         * Custom navigation bar intent and action configuration
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_CONFIG = "navigation_bar_config";
+
+        /**
+         * Wether navigation bar is on landscape on the bottom or on the right
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_CAN_MOVE = "navigation_bar_can_move";
+
+        /**
+         * Navigation bar height when it is on protrait
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+
+        /**
+         * Navigation bar height when it is on landscape at the bottom
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
+
+        /**
+         * Navigation bar height when it is on landscape at the right
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
+
+        /**
+         * Whether to show the IME arrows in the navigation bar
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW_IME_ARROWS = "navigation_bar_show_ime_arrows";
+
+        /**
+         * Visibility of the navigation bar menu button
+         * 0: On request
+         * 1: Always
+         * 2: Never
+         * default: 0
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MENU_VISIBILITY = "navigation_bar_menu_visibility";
+
+        /**
+         * Location of the navigation bar menu button
+         * 0: Right
+         * 1: Left
+         * 2: Right and left
+         * default: 0
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MENU_LOCATION = "navigation_bar_menu_location";
+
+        /**
+         * Colorize the navigation bar buttons
+         * 0: All
+         * 1: System icons
+         * 2: System icons and custom user icons
+         * 3: Disabled
+         * default: 0
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ICON_COLOR_MODE = "navigation_bar_icon_color_mode";
+
+        /**
+         * How to colorize the navigation bar button ripple
+         * 0: Auto
+         * 1: Custom color
+         * 2: Disabled
+         * default: 2
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_BUTTON_RIPPLE_COLOR_MODE = "navigation_bar_button_ripple_color_mode";
+
+        /**
+         * Navigation bar button color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ICON_COLOR = "navigation_bar_icon_color";
+
+        /**
+         * Navigation bar button ripple color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_BUTTON_RIPPLE_COLOR = "navigation_bar_button_ripple_color";
+
+        /**
          * Whether to use slim recents
          * @hide
          */

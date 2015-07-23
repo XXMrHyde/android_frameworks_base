@@ -57,7 +57,6 @@ import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.CastController;
-import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NetworkController;
@@ -94,7 +93,6 @@ public class QSTileHost implements QSTile.Host {
     private final CastController mCast;
     private final Looper mLooper;
     private final CurrentUserTracker mUserTracker;
-    private final FlashlightController mFlashlight;
     private final UserSwitcherController mUserSwitcherController;
     private final KeyguardMonitor mKeyguard;
     private final SecurityController mSecurity;
@@ -105,9 +103,8 @@ public class QSTileHost implements QSTile.Host {
             BluetoothController bluetooth, LocationController location,
             RotationLockController rotation, NetworkController network,
             ZenModeController zen, HotspotController hotspot,
-            CastController cast, FlashlightController flashlight,
-            UserSwitcherController userSwitcher, KeyguardMonitor keyguard,
-            SecurityController security) {
+            CastController cast, UserSwitcherController userSwitcher,
+            KeyguardMonitor keyguard, SecurityController security) {
         mContext = context;
         mStatusBar = statusBar;
         mBluetooth = bluetooth;
@@ -117,7 +114,6 @@ public class QSTileHost implements QSTile.Host {
         mZen = zen;
         mHotspot = hotspot;
         mCast = cast;
-        mFlashlight = flashlight;
         mUserSwitcherController = userSwitcher;
         mKeyguard = keyguard;
         mSecurity = security;
@@ -217,11 +213,6 @@ public class QSTileHost implements QSTile.Host {
     @Override
     public CastController getCastController() {
         return mCast;
-    }
-
-    @Override
-    public FlashlightController getFlashlightController() {
-        return mFlashlight;
     }
 
     @Override

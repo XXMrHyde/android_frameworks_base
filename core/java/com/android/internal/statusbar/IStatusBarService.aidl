@@ -16,6 +16,8 @@
 
 package com.android.internal.statusbar;
 
+import android.content.Intent;
+
 import com.android.internal.statusbar.IStatusBar;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusBarIconList;
@@ -61,4 +63,8 @@ interface IStatusBarService
     void toggleRecentApps();
     void preloadRecentApps();
     void cancelPreloadRecentApps();
+    void showCustomIntentAfterKeyguard(inout Intent intent);
+    void toggleScreenshot();
+    void toggleLastApp();
+    void toggleKillApp();
 }
