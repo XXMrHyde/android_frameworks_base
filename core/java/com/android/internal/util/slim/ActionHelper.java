@@ -81,6 +81,32 @@ public class ActionHelper {
                     config);
     }
 
+    // get and set the lockcreen button bar configs from provider and return propper arraylist objects
+    // @ActionConfig
+    public static ArrayList<ActionConfig> getLockscreenButtonBarConfig(Context context) {
+        String config = Settings.System.getStringForUser(
+                    context.getContentResolver(),
+                    Settings.System.LOCK_SCREEN_BUTTON_BAR_ACTIONS,
+                    UserHandle.USER_CURRENT);
+        if (config == null) {
+            config = "";
+        }
+
+        return (ConfigSplitHelper.getActionConfigValues(context, config, null, null, true));
+    }
+
+    public static void setLockscreenButtonBarConfig(Context context,
+            ArrayList<ActionConfig> actionConfig, boolean reset) {
+        String config;
+        if (reset) {
+            config = "";
+        } else {
+            config = ConfigSplitHelper.setActionConfig(actionConfig, true);
+        }
+        Settings.System.putString(context.getContentResolver(),
+                    Settings.System.LOCK_SCREEN_BUTTON_BAR_ACTIONS, config);
+    }
+
     // General methods to retrieve the correct icon for the respective action.
     public static Drawable getActionIconImage(Context context,
             String clickAction, String customIcon) {

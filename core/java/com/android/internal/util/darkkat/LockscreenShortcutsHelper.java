@@ -56,7 +56,7 @@ public class LockscreenShortcutsHelper {
             mListener = listener;
             mContext.getContentResolver().registerContentObserver(
                     Settings.System.getUriFor(
-                    Settings.System.LOCKSCREEN_TARGETS), false, mObserver);
+                    Settings.System.LOCK_SCREEN_BUTTONS_DEFAULT_ACTIONS), false, mObserver);
             mContext.getContentResolver().registerContentObserver(
                     Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_SHORTCUTS_COLORIZE_CUSTOM_ICONS),
@@ -91,7 +91,7 @@ public class LockscreenShortcutsHelper {
 
     private void fetchTargets() {
         mTargetActivities = Settings.System.getDelimitedStringAsList(mContext.getContentResolver(),
-                Settings.System.LOCKSCREEN_TARGETS, DELIMITER);
+                Settings.System.LOCK_SCREEN_BUTTONS_DEFAULT_ACTIONS, DELIMITER);
         ContentResolver resolver = mContext.getContentResolver();
         int itemsToPad = Shortcuts.values().length - mTargetActivities.size();
         if (itemsToPad > 0) {
@@ -228,6 +228,6 @@ public class LockscreenShortcutsHelper {
 
     public void saveTargets(ArrayList<String> targets) {
         Settings.System.putListAsDelimitedString(mContext.getContentResolver(),
-                Settings.System.LOCKSCREEN_TARGETS, DELIMITER, targets);
+                Settings.System.LOCK_SCREEN_BUTTONS_DEFAULT_ACTIONS, DELIMITER, targets);
     }
 }
