@@ -35,6 +35,15 @@
     <string name="reboot_confirm" product="tablet">Your tablet will reboot.</string>
     <string name="reboot_confirm" product="default">Your phone will reboot.</string>
 
+    <!-- Title of the button to change the expanded desktop state, within the global actions dialog -->
+    <string name="global_actions_toggle_expanded_desktop_mode">Exp. deskt.</string>
+    <!-- On state of the expanded desktop button -->
+    <string name="global_actions_expanded_desktop_mode_on_status">Enabled for all apps</string>
+    <!-- Off state of the expanded desktop button -->
+    <string name="global_actions_expanded_desktop_mode_off_status">User configuration</string>
+    <!-- Title of the button to take a screenshot, within the global actions dialog -->
+    <string name="global_action_screenshot">Screenshot</string>
+
     <!-- ADB over network notification -->
     <string name="adb_net_active_notification_title">ADB over network enabled</string>
     <!-- ADB over USB and network notification -->

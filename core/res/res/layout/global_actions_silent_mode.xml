@@ -25,7 +25,7 @@
         android:id="@+id/option1"
         android:layout_width="64dp"
         android:layout_height="match_parent"
-        android:background="@drawable/item_background_borderless_material_dk"
+        android:background="@drawable/global_actions_silent_mode_item_bg"
         android:contentDescription="@string/silent_mode_silent"
         android:focusable="true"
         >
@@ -52,7 +52,7 @@
         android:id="@+id/option2"
         android:layout_width="64dp"
         android:layout_height="match_parent"
-        android:background="@drawable/item_background_borderless_material_dk"
+        android:background="@drawable/global_actions_silent_mode_item_bg"
         android:contentDescription="@string/silent_mode_vibrate"
         android:focusable="true"
         >
@@ -80,7 +80,7 @@
         android:id="@+id/option3"
         android:layout_width="64dp"
         android:layout_height="match_parent"
-        android:background="@drawable/item_background_borderless_material_dk"
+        android:background="@drawable/global_actions_silent_mode_item_bg"
         android:contentDescription="@string/silent_mode_ring"
         android:focusable="true"
         >

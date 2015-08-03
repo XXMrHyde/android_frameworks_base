@@ -13,13 +13,6 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <color name="darkkat_blue_grey">#ff1b1f23</color>
-    <drawable name="darkkat_bg_blue_grey">@color/darkkat_blue_grey</drawable>
-    <color name="global_actions_color_normal">@color/white</color>
-    <color name="global_actions_icon_color_normal">@color/global_actions_color_normal</color>
-    <color name="global_actions_icon_color_enabled_selected">@color/material_deep_teal_500</color>
-    <color name="global_actions_ripple_color">@color/ripple_material_dark</color>
-    <color name="global_actions_text_color">@color/global_actions_color_normal</color>
 
-</resources>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_material_dark" />

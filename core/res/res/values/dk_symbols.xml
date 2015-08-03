@@ -30,17 +30,28 @@
   <java-symbol type="id" name="option1_icon" />
   <java-symbol type="id" name="option2_icon" />
   <java-symbol type="id" name="option3_icon" />
+  <java-symbol type="drawable" name="global_actions_button_bg" />
+  <java-symbol type="drawable" name="global_actions_silent_mode_item_bg" />
   <java-symbol type="drawable" name="ic_lock_reboot" />
+  <java-symbol type="drawable" name="ic_lock_users" />
   <java-symbol type="drawable" name="ic_lock_settings" />
-  <java-symbol type="string" name="global_action_reboot" />
+  <java-symbol type="drawable" name="ic_lock_expanded_desktop" />
+  <java-symbol type="drawable" name="ic_lock_screenshot" />
   <java-symbol type="array" name="shutdown_reboot_options" />
   <java-symbol type="array" name="shutdown_reboot_actions" />
+  <java-symbol type="string" name="global_actions" />
+  <java-symbol type="string" name="global_action_reboot" />
   <java-symbol type="string" name="reboot_system" />
   <java-symbol type="string" name="reboot_progress" />
   <java-symbol type="string" name="reboot_confirm" />
+  <java-symbol type="string" name="global_actions_toggle_expanded_desktop_mode" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_on_status" />
+  <java-symbol type="string" name="global_actions_expanded_desktop_mode_off_status" />
+  <java-symbol type="string" name="global_action_screenshot" />
   <java-symbol type="color" name="global_actions_icon_color_normal" />
-  <java-symbol type="color" name="global_actions_icon_color_selected" />
-  <java-symbol type="color" name="global_actions_icon_color_enabled" />
+  <java-symbol type="color" name="global_actions_icon_color_enabled_selected" />
+  <java-symbol type="color" name="global_actions_ripple_color" />
+  <java-symbol type="color" name="global_actions_text_color" />
 
   <!-- ADB notification -->
   <java-symbol type="string" name="adb_net_active_notification_title" />

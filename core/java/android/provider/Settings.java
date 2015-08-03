@@ -3633,40 +3633,35 @@ public final class Settings {
         public static final String NOTIFICATION_CLEAR_ALL_ICON_COLOR = "notification_clear_all_icon_color";
 
         /**
-         * Whether to show reboot in power menu 
+         * Buttons in the power menu
+         *
          * @hide
          */
-        public static final String POWER_MENU_REBOOT = "power_menu_reboot";
+        public static final String POWER_MENU_BUTTONS = "power_menu_buttons";
 
         /**
-         * Whether to show airplane mode in power menu 
+         * Color of the icons on the lock screen (normal state)
          * @hide
          */
-        public static final String POWER_MENU_AIRPLANE = "power_menu_airplane";
+        public static final String POWER_MENU_ICON_NORMAL_COLOR = "power_menu_icon_normal_color";
 
         /**
-         * Whether to show users in power menu 
+         * Color of the icons on the lock screen (enabled/selected state)
          * @hide
          */
-        public static final String POWER_MENU_USERS = "power_menu_users";
+        public static final String POWER_MENU_ICON_ENABLED_SELECTED_COLOR = "power_menu_icon_enabled_selected_color";
 
         /**
-         * Whether to show settings in power menu 
+         * Lockscreen buttons bar ripple color
          * @hide
          */
-        public static final String POWER_MENU_SETTINGS = "power_menu_settings";
+        public static final String POWER_MENU_RIPPLE_COLOR = "power_menu_ripple_color";
 
         /**
-         * Whether to show lockdown in power menu 
+         * Color of the text on the lock screen
          * @hide
          */
-        public static final String POWER_MENU_LOCKDOWN = "power_menu_lockdown";
-
-        /**
-         * Whether to show silent mode in power menu 
-         * @hide
-         */
-        public static final String POWER_MENU_SILENT = "power_menu_silent";
+        public static final String POWER_MENU_TEXT_COLOR = "power_menu_text_color";
 
         /**
          * Control the type of rotation which can be performed using the accelerometer
