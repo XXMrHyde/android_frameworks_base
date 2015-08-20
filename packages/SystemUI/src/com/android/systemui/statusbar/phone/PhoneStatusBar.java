@@ -143,6 +143,7 @@ import com.android.systemui.R;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
+import com.android.systemui.qs.QSBar;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.recent.ScreenPinningRequest;
 import com.android.systemui.statusbar.ActivatableNotificationView;
@@ -334,6 +335,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // settings
     View mFlipSettingsView;
     private QSPanel mQSPanel;
+    private QSBar mQSBar;
 
     // top bar
     StatusBarHeaderView mHeader;
@@ -1209,6 +1211,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             });
         }
+
+        // Set up the quick settings button bar
+        mQSBar = (QSBar) mStatusBarWindow.findViewById(R.id.quick_settings_bar);
+        if (mQSBar != null) {
+            mQSBar.setUp(this, mBluetoothController, mNetworkController, mRotationLockController,
+            mLocationController, mHotspotController);
+        }
+
 
         // User info. Trigger first load.
         mHeader.setUserInfoController(mUserInfoController);

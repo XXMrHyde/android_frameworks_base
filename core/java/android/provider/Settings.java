@@ -3255,7 +3255,23 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_ICON_COLOR = "status_bar_expanded_header_icon_color";
 
         /**
-         * List of QS tile names
+         * Type of QS
+         * 0: Panel
+         * 1: Bar
+         * 2: Hidden
+         * default: 0
+         * @hide
+         */
+        public static final String QS_TYPE = "qs_type";
+
+        /**
+         * List of QS bar button names
+         * @hide
+         */
+        public static final String QS_BUTTONS = "qs_buttons";
+
+        /**
+         * List of QS panel tile names
          * @hide
          */
         public static final String QS_TILES = "qs_tiles";
@@ -3305,6 +3321,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_ICON_COLOR = "qs_icons_color";
+
+        /**
+         * Color of the quick settings icon background ripple effect
+         * @hide
+         */
+        public static final String QS_RIPPLE_COLOR = "qs_ripple_color";
 
         /**
          * Color of the quick settings text

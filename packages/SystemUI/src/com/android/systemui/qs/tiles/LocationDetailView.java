@@ -29,6 +29,8 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.android.internal.util.darkkat.QSColorHelper;
+
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.LocationController;
 
@@ -110,8 +112,7 @@ public class LocationDetailView extends LinearLayout {
     }
 
     private void setTextColor(boolean isEnabled) {
-        int textColor = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.QS_TEXT_COLOR, 0xffffffff);
+        int textColor = QSColorHelper.getTextColor(mContext);
         int textColorDisabled = (66 << 24) | (textColor & 0x00ffffff);
 
         mMenuTitle.setTextColor(isEnabled ? textColor : textColorDisabled);

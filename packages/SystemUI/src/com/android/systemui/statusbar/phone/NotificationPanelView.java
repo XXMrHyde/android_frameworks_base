@@ -52,6 +52,7 @@ import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.R;
+import com.android.systemui.qs.QSBar;
 import com.android.systemui.qs.QSContainer;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.ExpandableView;
@@ -88,6 +89,7 @@ public class NotificationPanelView extends PanelView implements
     private StatusBarHeaderView mHeader;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private KeyguardStatusBarView mKeyguardStatusBar;
+    private QSBar mQSBar;
     private QSContainer mQsContainer;
     private QSPanel mQsPanel;
     private KeyguardStatusView mKeyguardStatusView;
@@ -199,7 +201,7 @@ public class NotificationPanelView extends PanelView implements
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
-    private int mQSBackgroundColor;
+    private int mQSType;
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -228,6 +230,7 @@ public class NotificationPanelView extends PanelView implements
         mHeader.setOnClickListener(this);
         mKeyguardStatusBar = (KeyguardStatusBarView) findViewById(R.id.keyguard_header);
         mKeyguardStatusView = (KeyguardStatusView) findViewById(R.id.keyguard_status_view);
+        mQSBar = (QSBar) findViewById(R.id.quick_settings_bar);
         mQsContainer = (QSContainer) findViewById(R.id.quick_settings_container);
         mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mClockView = (TextView) findViewById(R.id.clock_view);
@@ -326,8 +329,10 @@ public class NotificationPanelView extends PanelView implements
 
         // Calculate quick setting heights.
         int oldMaxHeight = mQsMaxExpansionHeight;
-        mQsMinExpansionHeight = mKeyguardShowing ? 0 : mHeader.getCollapsedHeight() + mQsPeekHeight;
-        mQsMaxExpansionHeight = mHeader.getExpandedHeight() + mQsContainer.getDesiredHeight();
+        mQsMinExpansionHeight = mKeyguardShowing ?
+                0 : mHeader.getCollapsedHeight() + (mQSType == 2 ? 0 : mQsPeekHeight);
+        mQsMaxExpansionHeight = mQSType == 2 ?
+                mHeader.getExpandedHeight() : mHeader.getExpandedHeight() + mQsContainer.getDesiredHeight();
         positionClockAndNotifications();
         if (mQsExpanded && mQsFullyExpanded) {
             mQsExpansionHeight = mQsMaxExpansionHeight;
@@ -1143,9 +1148,11 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setScrollingEnabled(
                 mStatusBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
-        mQsPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
-        mQsContainer.setVisibility(
-                mKeyguardShowing && !expandVisually ? View.INVISIBLE : View.VISIBLE);
+        if (mQSType != 2) {
+            mQsContainer.setQSTypeVisibility(expandVisually);
+            mQsContainer.setVisibility(
+                    mKeyguardShowing && !expandVisually ? View.INVISIBLE : View.VISIBLE);
+        }
         mScrollView.setTouchEnabled(mQsExpanded);
         updateEmptyShadeView();
         mQsNavbarScrim.setVisibility(mStatusBarState == StatusBarState.SHADE && mQsExpanded
@@ -1641,7 +1648,7 @@ public class NotificationPanelView extends PanelView implements
     private void setListening(boolean listening) {
         mHeader.setListening(listening);
         mKeyguardStatusBar.setListening(listening);
-        mQsPanel.setListening(listening);
+        mQsContainer.setListening(listening);
     }
 
     @Override
@@ -2076,11 +2083,15 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TYPE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_QUICK_PULLDOWN), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_ICON_COLOR), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_RIPPLE_COLOR), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TEXT_COLOR), false, this);
             update();
@@ -2103,12 +2114,15 @@ public class NotificationPanelView extends PanelView implements
                         resolver, Settings.System.QS_QUICK_PULLDOWN,
                         ONE_FINGER_QS_INTERCEPT_OFF);
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_TYPE))) {
+                setQSType();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR))) {
-                mQSBackgroundColor = Settings.System.getInt(
-                        resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
                 setQSBackgroundColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_ICON_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_RIPPLE_COLOR))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_TEXT_COLOR))) {
                 setQSColors();
@@ -2122,27 +2136,36 @@ public class NotificationPanelView extends PanelView implements
             mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
                     resolver, Settings.System.QS_QUICK_PULLDOWN,
                     ONE_FINGER_QS_INTERCEPT_OFF);
-            mQSBackgroundColor = Settings.System.getInt(
-                    resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+            setQSType();
             setQSBackgroundColor();
             setQSColors();
         }
     }
 
+    private void setQSType() {
+        mQSType = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_TYPE, 0);
+        if (mQsContainer != null) {
+            mQsContainer.setQSType(mQSType);
+        }
+    }
+
     private void setQSBackgroundColor() {
-        ContentResolver resolver = mContext.getContentResolver();
-        mQSBackgroundColor = Settings.System.getInt(
-                resolver, Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
+        final int bgColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_BACKGROUND_COLOR, 0xff263238);
         if (mQsContainer != null) {
             mQsContainer.getBackground().setColorFilter(
-                    mQSBackgroundColor, Mode.MULTIPLY);
+                    bgColor, Mode.MULTIPLY);
         }
         if (mQsPanel != null) {
-            mQsPanel.setDetailBackgroundColor(mQSBackgroundColor);
+            mQsPanel.setDetailBackgroundColor(bgColor);
         }
     }
 
     private void setQSColors() {
+        if (mQSBar != null) {
+            mQSBar.setColors();
+        }
         if (mQsPanel != null) {
             mQsPanel.setColors();
         }

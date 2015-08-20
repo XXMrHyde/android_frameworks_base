@@ -17,8 +17,10 @@
 package com.android.systemui.settings;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -27,6 +29,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import com.android.internal.util.darkkat.QSColorHelper;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
@@ -120,6 +124,19 @@ public class ToggleSlider extends RelativeLayout {
         mSlider.setProgress(value);
         if (mMirror != null) {
             mMirror.setValue(value);
+        }
+    }
+
+    public void setColors() {
+        final int iconColor = QSColorHelper.getIconColor(mContext);
+        final int progressBarBgColor = (179 << 24) | (iconColor & 0x00ffffff); // Icon color with a transparency of 70%
+        mSlider.getThumb().setColorFilter(iconColor, Mode.MULTIPLY);
+        mSlider.setProgressBackgroundTintList(
+                ColorStateList.valueOf(progressBarBgColor));
+        if (mMirror != null) {
+            mMirror.mSlider.getThumb().setColorFilter(iconColor, Mode.MULTIPLY);
+            mMirror.mSlider.setProgressBackgroundTintList(
+                    ColorStateList.valueOf(progressBarBgColor));
         }
     }
 

@@ -16,9 +16,7 @@
 
 package com.android.internal.util.darkkat;
 
-import android.app.Notification;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
 import com.android.internal.R;

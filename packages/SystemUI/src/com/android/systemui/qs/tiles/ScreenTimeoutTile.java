@@ -30,6 +30,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.internal.util.darkkat.QSColorHelper;
+
 import com.android.systemui.R;
 import com.android.systemui.qs.QSDetailItemsList;
 import com.android.systemui.qs.QSTile;
@@ -173,9 +175,7 @@ public class ScreenTimeoutTile extends QSTile<ScreenTimeoutTile.TimeoutState> {
                     R.dimen.qs_detail_item_height));
 
             TextView tv = (TextView) view.findViewById(android.R.id.text1);
-            int textColor = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.QS_TEXT_COLOR, 0xffffffff);
-            tv.setTextColor(textColor);
+            tv.setTextColor(QSColorHelper.getTextColor(mContext));
 
             return view;
         }

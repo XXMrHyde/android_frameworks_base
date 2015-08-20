@@ -36,6 +36,8 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.internal.util.darkkat.QSColorHelper;
+
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile.DetailAdapter;
@@ -141,12 +143,10 @@ public class QSPanel extends ViewGroup {
     }
 
     private void updateDetailText() {
-        int textColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.QS_TEXT_COLOR, 0xffffffff);
         mDetailDoneButton.setText(R.string.quick_settings_done);
         mDetailSettingsButton.setText(R.string.quick_settings_more_settings);
-        mDetailDoneButton.setTextColor(textColor);
-        mDetailSettingsButton.setTextColor(textColor);
+        mDetailDoneButton.setTextColor(QSColorHelper.getTextColor(mContext));
+        mDetailSettingsButton.setTextColor(QSColorHelper.getTextColor(mContext));
     }
 
     public void setBrightnessMirror(BrightnessMirrorController c) {
@@ -242,6 +242,7 @@ public class QSPanel extends ViewGroup {
             r.tileView.setDual(useDual);
             r.tileView.setLabelColor();
             r.tileView.setIconColor();
+            r.tileView.setRippleColor();
             r.tile.setForceToggleState(useDual);
             r.tile.refreshState();
         }
@@ -571,6 +572,7 @@ public class QSPanel extends ViewGroup {
 
     public void setColors() {
         refreshAllTiles();
+        mBrightnessController.setToggleSliderColors();
     }
 
     private class H extends Handler {

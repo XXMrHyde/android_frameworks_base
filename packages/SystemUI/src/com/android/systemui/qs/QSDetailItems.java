@@ -16,7 +16,6 @@
 
 package com.android.systemui.qs;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -35,6 +34,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.android.internal.util.darkkat.QSColorHelper;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -229,12 +230,10 @@ public class QSDetailItems extends FrameLayout {
     }
 
     private void updateColors() {
-        final ContentResolver resolver = mContext.getContentResolver();
-        mTextColor = Settings.System.getInt(resolver,
-                Settings.System.QS_TEXT_COLOR, 0xffffffff);
+        mIconColor = QSColorHelper.getIconColor(mContext);
+        mTextColor = QSColorHelper.getTextColor(mContext);
         mEmptyTextColor = (153 << 24) | (mTextColor & 0x00ffffff); // Text color with a transparency of 60%
-        mIconColor = Settings.System.getInt(resolver,
-                Settings.System.QS_ICON_COLOR, 0xffffffff);
+
     }
 
     private class H extends Handler {
