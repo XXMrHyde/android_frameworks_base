@@ -282,11 +282,6 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     }
 
     private void updateBatteryInfo(Intent intent) {
-        int level = (int)(100f
-                * intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
-                / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
-        String percentage = NumberFormat.getPercentInstance().format((double) level / 100.0);
-
         String batterylevel = getBatteryPercentageLevel(intent);
         String batteryStatus = getBatteryStatus(intent);
         mBatteryPercentageText.setText(batterylevel);
