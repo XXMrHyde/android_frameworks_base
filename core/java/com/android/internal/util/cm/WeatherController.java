@@ -32,6 +32,9 @@ public interface WeatherController {
         public String wind = null;
         public int conditionCode = 0;
         public Drawable conditionDrawable = null;
+        public Drawable conditionDrawableMonochrome = null;
+        public Drawable conditionDrawableColored = null;
+        public Drawable conditionDrawableVClouds = null;
         public String temp = null;
         public String humidity = null;
         public String condition = null;

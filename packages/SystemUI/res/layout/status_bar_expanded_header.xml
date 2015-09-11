@@ -23,158 +23,245 @@
     android:layout_width="@dimen/notification_panel_width"
     android:layout_height="@dimen/status_bar_header_height"
     android:layout_gravity="@integer/notification_panel_layout_gravity"
-    android:paddingStart="@dimen/notification_side_padding"
-    android:paddingEnd="@dimen/notification_side_padding"
     android:baselineAligned="false"
-    android:elevation="4dp"
-    android:background="@drawable/notification_header_bg"
-    android:clickable="true"
-    android:focusable="true"
-    >
+    android:elevation="@dimen/header_elevation">
+
+    <View
+        android:id="@+id/expanded_panel_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/notification_header_bg"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <com.android.systemui.statusbar.phone.StatusBarHeaderExpandedPanel
+        android:id="@+id/header_expanded_panel"
+        android:layout_height="124dp"
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/header_expanded_panel_padding_top_bottom"
+        android:paddingBottom="@dimen/header_expanded_panel_padding_top_bottom"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:id="@+id/expanded_panel_mobile_network"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="7dp">
+            <ImageView
+                android:id="@+id/expanded_panel_carrier_icon"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:padding="9dp"
+                android:scaleType="centerInside" />
+
+            <TextView
+                android:id="@+id/expanded_panel_carrier_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/header_expanded_panel_text_size"
+                android:importantForAccessibility="noHideDescendants"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expanded_panel_wifi_network"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp">
+            <ImageView
+                android:id="@+id/expanded_panel_wifi_icon"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:padding="9dp"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:id="@+id/expanded_panel_wifi_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/header_expanded_panel_text_size"
+                android:importantForAccessibility="noHideDescendants"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expanded_panel_battery"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="7dp"
+            android:layout_below="@id/expanded_panel_mobile_network">
+            <FrameLayout
+                android:id="@+id/expanded_panel_battery_icon_frame"
+                android:layout_width="36dp"
+                android:layout_height="match_parent">
+                <com.android.systemui.BatteryMeterView
+                    android:id="@+id/expanded_panel_battery_icon"
+                    android:layout_width="10dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity = "center" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/expanded_panel_battery_percentage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/header_expanded_panel_text_size"
+                android:importantForAccessibility="noHideDescendants"/>
+
+            <TextView
+                android:id="@+id/expanded_panel_battery_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/header_expanded_panel_text_size"
+                android:importantForAccessibility="noHideDescendants"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expanded_panel_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ripple_drawable_rectangle">
+            <TextView
+                android:id="@+id/expanded_panel_weather_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="6dp"
+                android:gravity="center_vertical"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/header_expanded_panel_text_size"
+                android:importantForAccessibility="noHideDescendants"/>
+        </LinearLayout>
+
+        <com.android.keyguard.AlphaOptimizedImageButton android:id="@+id/qs_settings_button"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/ripple_drawable_oval"
+            android:src="@drawable/ic_settings_qs"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/accessibility_desc_settings" />
+    </com.android.systemui.statusbar.phone.StatusBarHeaderExpandedPanel>
+
+    <View
+        android:id="@+id/collapsed_panel_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/status_bar_header_height"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/notification_header_bg"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <com.android.systemui.statusbar.phone.MultiUserSwitch android:id="@+id/multi_user_switch"
-        android:layout_width="@dimen/multi_user_switch_width_collapsed"
-        android:layout_height="@dimen/status_bar_header_height"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/ripple_drawable" >
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/ripple_drawable_oval" >
         <ImageView android:id="@+id/multi_user_avatar"
             android:layout_width="@dimen/multi_user_avatar_expanded_size"
             android:layout_height="@dimen/multi_user_avatar_expanded_size"
             android:layout_gravity="center"
-            android:scaleType="centerInside"/>
+            android:scaleType="centerInside" />
     </com.android.systemui.statusbar.phone.MultiUserSwitch>
 
     <com.android.keyguard.AlphaOptimizedImageButton android:id="@+id/settings_button"
         style="@android:style/Widget.Material.Button.Borderless"
-        android:layout_toStartOf="@id/multi_user_switch"
         android:layout_width="48dp"
-        android:layout_height="@dimen/status_bar_header_height"
-        android:background="@drawable/ripple_drawable"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/ripple_drawable_oval"
         android:src="@drawable/ic_settings"
+        android:scaleType="centerInside"
         android:contentDescription="@string/accessibility_desc_settings" />
 
-    <LinearLayout android:id="@+id/system_icons_super_container"
+    <com.android.keyguard.AlphaOptimizedImageButton android:id="@+id/header_settings_button"
+        style="@android:style/Widget.Material.Button.Borderless"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/settings_button"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/ripple_drawable_oval"
+        android:src="@drawable/ic_header_settings"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/accessibility_desc_settings" />
+
+    <LinearLayout android:id="@+id/clock_date_view"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/status_bar_header_height"
-        android:layout_toStartOf="@id/multi_user_switch"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_marginStart="16dp"
-        android:background="@drawable/ripple_drawable"
-        android:paddingEnd="4dp" >
-        <FrameLayout android:id="@+id/system_icons_container"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <include layout="@layout/split_clock_view"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/status_bar_height"
-            android:layout_gravity="center_vertical"
-            >
-            <include layout="@layout/system_icons" />
+            android:layout_height="wrap_content"
+            android:id="@+id/clock"
+            />
+
+        <FrameLayout
+            android:id="@+id/date_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_collapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
+                systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm"
+                />
+
+            <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_expanded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
+                systemui:datePattern="eeeeMMMMd"
+                />
         </FrameLayout>
-        <com.android.systemui.BatteryLevelTextView android:id="@+id/battery_level_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/header_battery_margin_expanded"
-            android:paddingEnd="@dimen/battery_level_padding_end"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/battery_level_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/header_emergency_calls_only"
-        android:layout_height="@dimen/status_bar_header_height"
-        android:layout_width="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@id/system_icons_super_container"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:visibility="gone"
-        android:textAppearance="@style/TextAppearance.StatusBar.Expanded.EmergencyCallsOnly"
-        android:text="@*android:string/emergency_calls_only"
-        android:singleLine="true"
-        android:gravity="center_vertical" />
-
-    <FrameLayout
-        android:id="@+id/date_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/clock_collapsed_bottom_margin"
-        android:layout_alignParentBottom="true">
-        <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_collapsed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
-            android:layout_below="@id/clock"
-            systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm"
-            />
-
-        <com.android.systemui.statusbar.policy.DateView android:id="@+id/date_expanded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
-            android:layout_below="@id/clock"
-            systemui:datePattern="eeeeMMMMd"
-            />
-    </FrameLayout>
-
-    <include layout="@layout/split_clock_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_above="@id/date_group"
-        android:id="@+id/clock"
-        />
 
     <Button android:id="@+id/alarm_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_toEndOf="@id/date_group"
-        android:layout_marginBottom="4dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:drawablePadding="6dp"
         android:drawableStart="@drawable/ic_access_alarms_small"
         android:textColor="#64ffffff"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
         android:paddingEnd="6dp"
         android:paddingStart="6dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
         android:background="?android:attr/selectableItemBackground"
-        android:visibility="gone"
         />
-
-    <LinearLayout
-        android:id="@+id/weather_container"
-        android:background="@drawable/ripple_drawable"
-        android:orientation="vertical"
-        android:layout_marginBottom="@dimen/clock_collapsed_bottom_margin"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content">
-    <TextView
-            android:id="@+id/weather_line_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingEnd="16dp"
-            android:gravity="right"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/weather_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
-    <TextView
-            android:id="@+id/weather_line_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingEnd="16dp"
-            android:gravity="right"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/weather_text_size"
-            android:importantForAccessibility="noHideDescendants"/>
-    </LinearLayout>
 
     <include
         android:id="@+id/qs_detail_header"

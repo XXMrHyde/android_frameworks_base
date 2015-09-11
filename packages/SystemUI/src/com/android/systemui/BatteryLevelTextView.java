@@ -56,10 +56,7 @@ public class BatteryLevelTextView extends TextView implements
 
     private String mPercentage;
     private int mBatteryLevel = 0;
-
     private boolean mShow;
-    private boolean mForceShow;
-    private int mRequestedVisibility;
 
     private boolean mPowerSaveEnabled = false;
 
@@ -108,7 +105,6 @@ public class BatteryLevelTextView extends TextView implements
         super(context, attrs);
         mResolver = context.getContentResolver();
         mHandler = new Handler();
-        mRequestedVisibility = getVisibility();
 
         Typeface font = Typeface.create("sans-serif", Typeface.NORMAL);
         mTextFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -232,22 +228,11 @@ public class BatteryLevelTextView extends TextView implements
         }
     }
 
-    @Override
-    public void setVisibility(int visibility) {
-        mRequestedVisibility = visibility;
-        updateVisibility();
-    }
-
-    public void setForceShown(boolean forceShow) {
-        mForceShow = forceShow;
-        updateVisibility();
-    }
-
     private void updateVisibility() {
-        if (mShow || mForceShow) {
-            super.setVisibility(mRequestedVisibility);
+        if (mShow) {
+            super.setVisibility(View.VISIBLE);
         } else {
-            super.setVisibility(GONE);
+            super.setVisibility(View.GONE);
         }
     }
 

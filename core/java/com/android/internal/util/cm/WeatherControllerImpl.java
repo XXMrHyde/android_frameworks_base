@@ -57,7 +57,8 @@ public class WeatherControllerImpl implements WeatherController {
     public static final String LOCK_CLOCK_PACKAGE_NAME = "com.cyanogenmod.lockclock";
 
     private static final int WEATHER_ICON_MONOCHROME = 0;
-    private static final int WEATHER_ICON_COLORED = 1;
+    private static final int WEATHER_ICON_COLORED    = 1;
+    private static final int WEATHER_ICON_VCLOUDS    = 2;
 
     private final ArrayList<Callback> mCallbacks = new ArrayList<Callback>();
     private final Receiver mReceiver = new Receiver();
@@ -90,6 +91,10 @@ public class WeatherControllerImpl implements WeatherController {
     private Drawable getIcon(int conditionCode) {
         int iconNameValue = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCK_SCREEN_WEATHER_CONDITION_ICON, 0);
+        return getIcon(conditionCode, iconNameValue);
+    }
+
+    private Drawable getIcon(int conditionCode, int iconNameValue) {
         String iconName;
 
         if (iconNameValue == WEATHER_ICON_MONOCHROME) {
@@ -128,6 +133,12 @@ public class WeatherControllerImpl implements WeatherController {
                 mCachedInfo.wind = c.getString(1);
                 mCachedInfo.conditionCode = c.getInt(2);
                 mCachedInfo.conditionDrawable = getIcon(mCachedInfo.conditionCode);
+                mCachedInfo.conditionDrawableMonochrome =
+                        getIcon(mCachedInfo.conditionCode, WEATHER_ICON_MONOCHROME);
+                mCachedInfo.conditionDrawableColored =
+                        getIcon(mCachedInfo.conditionCode, WEATHER_ICON_COLORED);
+                mCachedInfo.conditionDrawableVClouds =
+                        getIcon(mCachedInfo.conditionCode, WEATHER_ICON_VCLOUDS);
                 mCachedInfo.temp = c.getString(3);
                 mCachedInfo.humidity = c.getString(4);
                 mCachedInfo.condition = c.getString(5);

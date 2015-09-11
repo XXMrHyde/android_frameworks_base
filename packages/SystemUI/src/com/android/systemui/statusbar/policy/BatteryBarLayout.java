@@ -201,10 +201,12 @@ public class BatteryBarLayout extends RelativeLayout implements
         if (forceUpdate) {
             updateSettings();
         }
-        if (mShowFrame) {
-            mBatteryBarFrame.setVisibility(View.VISIBLE);
-        } else {
-            mBatteryBarFrame.setVisibility(View.GONE);
+        if (mBatteryBarFrame != null) {
+            if (mShowFrame) {
+                mBatteryBarFrame.setVisibility(View.VISIBLE);
+            } else {
+                mBatteryBarFrame.setVisibility(View.GONE);
+            }
         }
         if (mShowBar) {
             setVisibility(forceHide ? View.GONE : View.VISIBLE);

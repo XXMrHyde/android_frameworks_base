@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Clock"
+        android:textSize="@dimen/qs_time_expanded_size"
         />
     <TextClock
         android:id="@+id/am_pm_view"
@@ -34,16 +35,6 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Clock"
-        android:textSize="@dimen/qs_time_collapsed_size"
-        />
-
-    <!-- Empty text view so we have the same height when expanded/collapsed-->
-    <TextView
-        android:id="@+id/empty_time_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Clock"
+        android:textSize="@dimen/qs_time_expanded_size"
         />
 </com.android.systemui.statusbar.policy.SplitClockView>

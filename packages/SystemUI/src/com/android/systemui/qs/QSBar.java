@@ -189,7 +189,7 @@ public class QSBar extends LinearLayout {
         LinearLayout.LayoutParams lp =
                 new LinearLayout.LayoutParams(dimens, dimens);
         button.setLayoutParams(lp);
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        button.setScaleType(ImageView.ScaleType.CENTER);
         button.setClickable(true);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,7 +247,7 @@ public class QSBar extends LinearLayout {
     }
 
     private void setRippleColor(ImageView iv) {
-        RippleDrawable rd = (RippleDrawable) mContext.getDrawable(R.drawable.qs_button_ripple_drawable);
+        RippleDrawable rd = (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_oval);
         final int rippleColor = QSColorHelper.getRippleColor(mContext);
 
         int states[][] = new int[][] {
