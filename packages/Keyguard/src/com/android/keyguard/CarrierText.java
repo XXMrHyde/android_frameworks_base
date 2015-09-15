@@ -19,11 +19,16 @@ package com.android.keyguard;
 import java.util.List;
 import java.util.Locale;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.text.TextUtils;
@@ -36,6 +41,7 @@ import android.widget.TextView;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.telephony.TelephonyIntents;
+import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.widget.LockPatternUtils;
 
 public class CarrierText extends TextView {
@@ -46,6 +52,13 @@ public class CarrierText extends TextView {
 
     private LockPatternUtils mLockPatternUtils;
     private KeyguardUpdateMonitor mKeyguardUpdateMonitor;
+
+    private boolean mUseCustomLabel = false;
+    private String mCustomLabel = "";
+
+    private int mNewColor;
+    private int mOldColor;
+    private Animator mColorTransitionAnimator;
 
     private KeyguardUpdateMonitorCallback mCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -91,9 +104,18 @@ public class CarrierText extends TextView {
             a.recycle();
         }
         setTransformationMethod(new CarrierTextTransformationMethod(mContext, useAllCaps));
+
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR,
+                0xffffffff);
+        setTextColor(color);
+        mOldColor = color;
+
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
+        updateCarrierLabelSettings();
     }
 
-    protected void updateCarrierText() {
+    public void updateCarrierText() {
         boolean allSimsMissing = true;
         CharSequence displayText = null;
 
@@ -109,6 +131,9 @@ public class CarrierText extends TextView {
                 allSimsMissing = false;
                 displayText = concatenate(displayText, carrierTextForSimState);
             }
+        }
+        if (mUseCustomLabel && !mCustomLabel.isEmpty()) {
+            displayText = mCustomLabel;
         }
         if (allSimsMissing) {
             if (N != 0) {
@@ -331,6 +356,51 @@ public class CarrierText extends TextView {
         }
 
         return mContext.getText(carrierHelpTextId);
+    }
+
+    public void updateCarrierLabelSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        mUseCustomLabel = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM, 0) == 1;
+        mCustomLabel = Settings.System.getString(resolver,
+                Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL);
+        if (mCustomLabel == null || mCustomLabel.isEmpty()) {
+            mCustomLabel = mContext.getResources().getString(
+                    com.android.internal.R.string.default_custom_label);
+        }
+    }
+
+    public void updateColor(boolean animation) {
+        mNewColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR,
+                0xffffffff);
+        if (mOldColor != mNewColor && animation) {
+            mColorTransitionAnimator.start();
+        } else {
+            setTextColor(mNewColor);
+            mOldColor = mNewColor;
+        }
+    }
+
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                int blended = ColorHelper.getBlendColor(mOldColor, mNewColor, position);
+                setTextColor(blended);
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mOldColor = mNewColor;
+            }
+        });
+        return animator;
     }
 
     private class CarrierTextTransformationMethod extends SingleLineTransformationMethod {

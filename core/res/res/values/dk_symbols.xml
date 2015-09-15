@@ -69,6 +69,9 @@
   <!-- Notification usb charging -->
   <java-symbol type="string" name="usb_charging_notification_title" />
 
+  <!-- Default name of the custom carrier label -->
+  <java-symbol type="string" name="default_custom_label" />
+
   <!-- SlimRoms additions -->
 
   <!-- Slim recent app screen-->

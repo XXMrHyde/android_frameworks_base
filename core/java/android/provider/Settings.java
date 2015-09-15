@@ -2919,6 +2919,55 @@ public final class Settings {
         public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
 
         /**
+         *  Weather to use a custom label for the carrier name on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_USE_CUSTOM = "status_bar_carrier_label_use_custom";
+
+        /**
+         *  Name of the custom carrier label on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL = "status_bar_carrier_label_custom_label";
+
+        /**
+         *  Weather to show the (custom) carrier label on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_SHOW = "status_bar_carrier_label_show";
+
+        /**
+         *  Weather to show the (custom) carrier label on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN = "status_bar_carrier_label_show_on_lock_screen";
+
+        /**
+         * Wether to hide the carrier label on the status bar when the custom number of notifications is reached
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_HIDE_LABEL = "status_bar_carrier_label_hide_label";
+
+        /**
+         * Hide the carrier label on the status bar when the notification icons will reach this number
+         * 1: 1 notification icon (always)
+         * 2: 2 notification icons
+         * 3: 3 notification icons
+         * 4: 4 notification icons
+         * 5: 5 notification icons
+         * 6: 6 notification icons
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS = "status_bar_carrier_label_number_of_notification_icons";
+
+        /**
+         *  Color of the (custom) carrier label on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_COLOR = "status_bar_carrier_label_color";
+
+        /**
          * Clock and date position on the status bar
          * 0: Right clock
          * 1: Center clock
