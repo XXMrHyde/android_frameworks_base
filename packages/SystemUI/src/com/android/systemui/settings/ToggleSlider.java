@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.view.View;
@@ -130,23 +132,60 @@ public class ToggleSlider extends RelativeLayout {
     public void setColors() {
         final int iconColor = QSColorHelper.getIconColor(mContext);
         final int progressBarBgColor = (179 << 24) | (iconColor & 0x00ffffff); // Icon color with a transparency of 70%
+        final int rippleColor = QSColorHelper.getRippleColor(mContext);
+        final int textColor = QSColorHelper.getTextColor(mContext);
         mSlider.getThumb().setColorFilter(iconColor, Mode.MULTIPLY);
         mSlider.setProgressBackgroundTintList(
                 ColorStateList.valueOf(progressBarBgColor));
-        if (mMirror != null) {
-            mMirror.mSlider.getThumb().setColorFilter(iconColor, Mode.MULTIPLY);
-            mMirror.mSlider.setProgressBackgroundTintList(
-                    ColorStateList.valueOf(progressBarBgColor));
-        }
+        updateToggleIconColor(iconColor);
+        updateRippleColor(rippleColor);
+        mToggle.setTextColor(textColor);
+    }
+
+    private void updateToggleIconColor(int iconColor) {
+        int states[][] = new int[][] {
+            new int[] {com.android.internal.R.attr.state_checked},
+            new int[] {-com.android.internal.R.attr.state_checked}
+        };
+        int colors[] = new int[] {
+            0xff009688, // Material deep teal 500
+            iconColor
+        };
+        ColorStateList color = new ColorStateList(states, colors);
+
+        Drawable[] drawables = mToggle.getCompoundDrawables();
+        Drawable d = drawables[1];
+        d.setTintList(color);
+
+        mToggle.setCompoundDrawables(null, d, null, null);
+    }
+
+    private void updateRippleColor(int rippleColor) {
+        RippleDrawable toogleRipple = (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless);
+        RippleDrawable sliderRipple = (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless);
+
+        int states[][] = new int[][] {
+            new int[] {
+                com.android.internal.R.attr.state_enabled
+            }
+        };
+        int colors[] = new int[] {
+            rippleColor
+        };
+        ColorStateList color = new ColorStateList(states, colors);
+
+        toogleRipple.setColor(color);
+        sliderRipple.setColor(color);
+        mToggle.setBackground(toogleRipple);
+        mSlider.setBackground(sliderRipple);
     }
 
     private final OnCheckedChangeListener mCheckListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton toggle, boolean checked) {
-            mSlider.setEnabled(!checked);
 
             if (mListener != null) {
-                mListener.onChanged(
+                mListener.onChanged (
                         ToggleSlider.this, mTracking, checked, mSlider.getProgress());
             }
 
@@ -160,7 +199,7 @@ public class ToggleSlider extends RelativeLayout {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (mListener != null) {
-                mListener.onChanged(
+                mListener.onChanged (
                         ToggleSlider.this, mTracking, mToggle.isChecked(), progress);
             }
 
@@ -177,8 +216,6 @@ public class ToggleSlider extends RelativeLayout {
                 mListener.onChanged(
                         ToggleSlider.this, mTracking, mToggle.isChecked(), mSlider.getProgress());
             }
-
-            mToggle.setChecked(false);
 
             if (mMirror != null) {
                 mMirror.mSlider.setPressed(true);

@@ -19,6 +19,7 @@ package com.android.systemui.settings;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -30,11 +31,13 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.widget.ImageView;
 
+import com.android.internal.util.darkkat.QSColorHelper;
+
 import java.util.ArrayList;
 
 public class BrightnessController implements ToggleSlider.Listener {
     private static final String TAG = "StatusBar.BrightnessController";
-    private static final boolean SHOW_AUTOMATIC_ICON = false;
+    private static final boolean SHOW_AUTOMATIC_ICON = true;
 
     /**
      * {@link android.provider.Settings.System#SCREEN_AUTO_BRIGHTNESS_ADJ} uses the range [-1, 1].
@@ -196,7 +199,8 @@ public class BrightnessController implements ToggleSlider.Listener {
 
     @Override
     public void onChanged(ToggleSlider view, boolean tracking, boolean automatic, int value) {
-        updateIcon(mAutomatic);
+        mAutomatic = automatic;
+        setMode(mAutomatic);
         if (mExternalChange) return;
 
         if (!mAutomatic) {
@@ -230,7 +234,13 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
-    private void setMode(int mode) {
+    private void setMode(boolean automatic) {
+        int mode;
+        if (automatic) {
+            mode = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+        } else {
+            mode = Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
+        }
         Settings.System.putIntForUser(mContext.getContentResolver(),
                 Settings.System.SCREEN_BRIGHTNESS_MODE, mode,
                 mUserTracker.getCurrentUserId());
@@ -258,8 +268,11 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
-    public void setToggleSliderColors() {
+    public void setColors() {
         mControl.setColors();
+        if (mIcon != null) {
+            mIcon.setColorFilter(QSColorHelper.getIconColor(mContext), Mode.MULTIPLY);
+        }
     }
 
     /** Fetch the brightness mode from the system settings and update the icon */
@@ -272,6 +285,7 @@ public class BrightnessController implements ToggleSlider.Listener {
                     UserHandle.USER_CURRENT);
             mAutomatic = automatic != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
             updateIcon(mAutomatic);
+            mControl.setChecked(mAutomatic);
         } else {
             mControl.setChecked(false);
             updateIcon(false /*automatic*/);

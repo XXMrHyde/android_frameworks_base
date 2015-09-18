@@ -572,7 +572,7 @@ public class QSPanel extends ViewGroup {
 
     public void setColors() {
         refreshAllTiles();
-        mBrightnessController.setToggleSliderColors();
+        mBrightnessController.setColors();
     }
 
     private class H extends Handler {

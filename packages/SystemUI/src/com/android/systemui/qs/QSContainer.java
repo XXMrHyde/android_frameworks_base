@@ -23,6 +23,7 @@ import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 
 import com.android.systemui.R;
 
@@ -35,7 +36,7 @@ public class QSContainer extends FrameLayout {
     private static final int QS_TYPE_BAR    = 1;
     private static final int QS_TYPE_HIDDEN = 2;
 
-    private QSBarContainer mQSBarContainer;
+    private HorizontalScrollView mQSBarContainer;
     private QSBar mQSBar;
     private QSPanel mQSPanel;
 
@@ -62,7 +63,7 @@ public class QSContainer extends FrameLayout {
         super.onFinishInflate();
         mQSPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mQSBarContainer =
-                (QSBarContainer) findViewById(R.id.quick_settings_bar_container);
+                (HorizontalScrollView) findViewById(R.id.quick_settings_bar_container);
         mQSBar = (QSBar) findViewById(R.id.quick_settings_bar);
     }
 
