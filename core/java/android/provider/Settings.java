@@ -2919,6 +2919,30 @@ public final class Settings {
         public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
 
         /**
+         *  Weather to show a greeting on the status bar after unlocking the device
+         * @hide
+         */
+        public static final String STATUS_BAR_GREETING_SHOW_LABEL = "status_bar_greeting_show_label";
+
+        /**
+         *  Label used for the greeting on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_GREETING_CUSTOM_LABEL = "status_bar_greeting_custom_label";
+
+        /**
+         *  Timeout for the greeting on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_GREETING_TIMEOUT = "status_bar_greeting_timeout";
+
+        /**
+         *  Color of the greeting label on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_GREETING_COLOR = "status_bar_greeting_color";
+
+        /**
          *  Weather to use a custom label for the carrier name on the status bar
          * @hide
          */

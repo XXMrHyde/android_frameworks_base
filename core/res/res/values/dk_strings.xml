@@ -54,6 +54,8 @@
     <!-- USB_PREFERENCES: Notification for when the user connects the phone to a computer via USB in CHARGING mode.  This is the title -->
     <string name="usb_charging_notification_title">Connected in charging mode</string>
 
+    <string name="default_greeting_welcome">Welcome: DarkKat</string>
+
     <!-- SlimRoms additions -->
 
     <!-- SlimSeekBarPreference -->

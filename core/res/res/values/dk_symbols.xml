@@ -72,6 +72,8 @@
   <!-- Default name of the custom carrier label -->
   <java-symbol type="string" name="default_custom_label" />
 
+  <java-symbol type="string" name="default_greeting_welcome" />
+
   <!-- SlimRoms additions -->
 
   <!-- Slim recent app screen-->
