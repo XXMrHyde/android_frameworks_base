@@ -182,9 +182,12 @@
         android:layout_height="match_parent"
         />
 
-    <com.android.systemui.statusbar.policy.BatteryBarLayout
-        android:id="@+id/battery_bar_layout"
+    <com.android.systemui.statusbar.policy.BatteryBar
+        android:id="@+id/battery_bar"
+        style="@style/BatteryBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="4dp"
+        android:visibility="invisible"
         />
+
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>

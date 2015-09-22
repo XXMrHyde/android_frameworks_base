@@ -15,6 +15,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- battery bar -->
+    <color name="battery_bar_default_color">#FFFFFFFF</color>
+
     <!-- Quick settings -->
     <color name="qs_background_drawable_color">#FFFFFFFF</color>
     <color name="visualizer_fill_color">#96FFFFFF</color>

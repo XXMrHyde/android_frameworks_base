@@ -16,6 +16,14 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- Battery bar -->
+    <style name="BatteryBarStyle" parent="@android:style/Widget.Material.ProgressBar.Horizontal">
+        <item name="android:indeterminate">false</item>
+        <item name="android:progressDrawable">@drawable/battery_bar_horizontal</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:maxHeight">4dp</item>
+    </style>
+
     <!-- SlimRoms additions -->
 
     <!-- Slim recents -->
