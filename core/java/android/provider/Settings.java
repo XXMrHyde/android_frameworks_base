@@ -2919,16 +2919,20 @@ public final class Settings {
         public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
 
         /**
-         *  Weather to show a greeting on the status bar after unlocking the device
+         * When to show a greeting on the status bar after unlocking the device
+         * 0: Everytime the device gets unlocked
+         * 1: When the device gets unlocked the first time after a boot
+         * 2: Never
+         * default: 1
          * @hide
          */
-        public static final String STATUS_BAR_GREETING_SHOW_LABEL = "status_bar_greeting_show_label";
+        public static final String STATUS_BAR_GREETING_SHOW_GREETING = "status_bar_greeting_show_greeting";
 
         /**
-         *  Label used for the greeting on the status bar
+         *  Text used for the greeting on the status bar
          * @hide
          */
-        public static final String STATUS_BAR_GREETING_CUSTOM_LABEL = "status_bar_greeting_custom_label";
+        public static final String STATUS_BAR_GREETING_CUSTOM_TEXT = "status_bar_greeting_custom_text";
 
         /**
          *  Timeout for the greeting on the status bar
@@ -2937,7 +2941,7 @@ public final class Settings {
         public static final String STATUS_BAR_GREETING_TIMEOUT = "status_bar_greeting_timeout";
 
         /**
-         *  Color of the greeting label on the status bar
+         *  Color of the greeting text on the status bar
          * @hide
          */
         public static final String STATUS_BAR_GREETING_COLOR = "status_bar_greeting_color";
