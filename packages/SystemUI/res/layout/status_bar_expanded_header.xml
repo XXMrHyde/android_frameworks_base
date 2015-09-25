@@ -42,19 +42,19 @@
             android:layout_height="36dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="7dp">
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical">
             <ImageView
                 android:id="@+id/expanded_panel_carrier_icon"
-                android:layout_width="36dp"
-                android:layout_height="match_parent"
-                android:padding="9dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:scaleType="centerInside" />
 
             <TextView
                 android:id="@+id/expanded_panel_carrier_label"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:paddingStart="9dp"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/header_expanded_panel_text_size"
                 android:importantForAccessibility="noHideDescendants"/>
@@ -66,19 +66,20 @@
             android:layout_height="36dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp">
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical">
             <ImageView
                 android:id="@+id/expanded_panel_wifi_icon"
-                android:layout_width="36dp"
-                android:layout_height="match_parent"
-                android:padding="9dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_centerVertical="true"
                 android:scaleType="centerInside"/>
 
             <TextView
                 android:id="@+id/expanded_panel_wifi_label"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:paddingStart="9dp"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/header_expanded_panel_text_size"
                 android:importantForAccessibility="noHideDescendants"/>
@@ -86,26 +87,27 @@
 
         <LinearLayout
             android:id="@+id/expanded_panel_battery"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="7dp"
-            android:layout_below="@id/expanded_panel_mobile_network">
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/expanded_panel_wifi_network">
             <FrameLayout
                 android:id="@+id/expanded_panel_battery_icon_frame"
-                android:layout_width="36dp"
-                android:layout_height="match_parent">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingStart="6dp">
                 <com.android.systemui.BatteryMeterView
                     android:id="@+id/expanded_panel_battery_icon"
                     android:layout_width="10dp"
                     android:layout_height="15dp"
-                    android:layout_gravity = "center" />
+                    android:layout_gravity="center" />
             </FrameLayout>
 
             <TextView
                 android:id="@+id/expanded_panel_battery_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:paddingStart="9dp"
                 android:gravity="center_vertical"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/header_expanded_panel_text_size"
@@ -115,6 +117,7 @@
                 android:id="@+id/expanded_panel_battery_status"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:paddingEnd="6dp"
                 android:gravity="center_vertical"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/header_expanded_panel_text_size"
@@ -133,6 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:gravity="center_vertical"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/header_expanded_panel_text_size"

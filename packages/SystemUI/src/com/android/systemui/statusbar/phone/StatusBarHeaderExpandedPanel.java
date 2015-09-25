@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -159,6 +160,19 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
                 startQsSettingsActivity();
             }
         });
+        updateLayouts();
+    }
+
+    private void updateLayouts() {
+        if (!mSupportsMobileData) {
+            findViewById(R.id.expanded_panel_mobile_network).setVisibility(View.GONE);
+            LinearLayout wifiNetworkLayout = (LinearLayout) findViewById(R.id.expanded_panel_wifi_network);
+            RelativeLayout.LayoutParams lp = (LayoutParams) wifiNetworkLayout.getLayoutParams();
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_END);
+            lp.setMarginEnd(0);
+            lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            wifiNetworkLayout.setLayoutParams(lp);
+        }
     }
 
     public void setListening(boolean listening) {
@@ -177,9 +191,6 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     }
 
     public void updateVisibilities() {
-        if (!mSupportsMobileData) {
-            findViewById(R.id.expanded_panel_mobile_network).setVisibility(View.INVISIBLE);
-        }
         mWeatherView.setVisibility(showWeather() ? View.VISIBLE : View.INVISIBLE);
         mQsSettingsButton.setVisibility(showQsButton() ? View.VISIBLE : View.INVISIBLE);
     }
