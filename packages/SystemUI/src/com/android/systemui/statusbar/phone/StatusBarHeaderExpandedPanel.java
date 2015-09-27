@@ -66,22 +66,28 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     private NetworkController mNetworkController;
     private WeatherController mWeatherController;
 
-    private View mWeatherView;
-
-    private ImageView mCarrierIconView;
-    private ImageView mWifiIconView;
-    private BatteryMeterView mBatteryMeterView;
-
+    private ImageView mMobileSignalIconView;
+    private ImageView mMobileDataTypeIconView;
+    private ImageView mMobileActivityIconView;
+    private Drawable mMobileSignalIcon;
+    private Drawable mMobileDataTypeIcon;
+    private Drawable mMobileActivityIcon;
     private TextView mCarrierText;
+
+    private ImageView mWifiSignalIconView;
+    private ImageView mWifiActivityIconView;
+    private Drawable mWifiSignalIcon;
+    private Drawable mWifiActivityIcon;
     private TextView mWifiText;
+
+    private BatteryMeterView mBatteryMeterView;
     private TextView mBatteryPercentageText;
     private TextView mBatteryStatusText;
+
+    private View mWeatherView;
     private TextView mWeatherText;
 
     private ImageView mQsSettingsButton;
-
-    private Drawable mMobileSignalIcon;
-    private Drawable mWifiSignalIcon;
 
     private boolean mSupportsMobileData = true;
     private boolean mMobileNetworkEnabled = false;
@@ -133,8 +139,11 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         super.onFinishInflate();
         mWeatherView = findViewById(R.id.expanded_panel_weather);
 
-        mCarrierIconView = (ImageView) findViewById(R.id.expanded_panel_carrier_icon);
-        mWifiIconView = (ImageView) findViewById(R.id.expanded_panel_wifi_icon);
+        mMobileSignalIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_signal_icon);
+        mMobileDataTypeIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_data_type_icon);
+        mMobileActivityIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_activity_icon);
+        mWifiSignalIconView = (ImageView) findViewById(R.id.expanded_panel_wifi_signal_icon);
+        mWifiActivityIconView = (ImageView) findViewById(R.id.expanded_panel_wifi_activity_icon);
         mBatteryMeterView = (BatteryMeterView) findViewById(R.id.expanded_panel_battery_icon);
 
         mCarrierText = (TextView) findViewById(R.id.expanded_panel_carrier_label);
@@ -214,16 +223,34 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     public void onWifiSignalChanged(boolean enabled, boolean connected,
                 int wifiSignalIconId, boolean activityIn, boolean activityOut,
                 String wifiSignalContentDescriptionId, String description) {
-        Drawable icon = mContext.getResources().getDrawable(wifiSignalIconId);
+        Drawable activityIcon = null;
+        Drawable signalIcon = mContext.getResources().getDrawable(wifiSignalIconId);
+        if (activityIn && !activityOut) {
+            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_in);
+        } else if (!activityIn && activityOut) {
+            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_out);
+        } else if (activityIn && activityOut) {
+            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_inout);
+        }
         if (mWifiSignalIcon == null) {
-            mWifiSignalIcon = icon;
-            mWifiIconView.setImageDrawable(mWifiSignalIcon);
-        } else if (mWifiSignalIcon != icon) {
-            mWifiSignalIcon = icon;
-            mWifiIconView.setImageDrawable(mWifiSignalIcon);
+            mWifiSignalIcon = signalIcon;
+            mWifiSignalIconView.setImageDrawable(mWifiSignalIcon);
+        } else if (mWifiSignalIcon != signalIcon) {
+            mWifiSignalIcon = signalIcon;
+            mWifiSignalIconView.setImageDrawable(mWifiSignalIcon);
+        }
+        if (mWifiActivityIcon == null) {
+            mWifiActivityIcon = activityIcon;
+            mWifiActivityIconView.setImageDrawable(mWifiActivityIcon);
+        } else  if (mWifiActivityIcon != activityIcon) {
+            mWifiActivityIcon = activityIcon;
+            mWifiActivityIconView.setImageDrawable(mWifiActivityIcon);
         }
         mWifiEnabled = enabled;
-        mWifiConnected = connected;
+        if (mWifiConnected != connected) {
+            mWifiConnected = connected;
+            mMobileActivityIconView.setVisibility(mWifiConnected ? View.INVISIBLE : View.VISIBLE);
+        }
         updateWifiText(description);
     }
 
@@ -235,16 +262,55 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
                 boolean isDataTypeIconWide) {
         mMobileNetworkEnabled = enabled;
         if (mSupportsMobileData) {
-            Drawable icon = mContext.getResources().getDrawable(mobileSignalIconId);
-            if (mMobileSignalIcon == null) {
-                mMobileSignalIcon = icon;
-                mCarrierIconView.setImageDrawable(icon);
-            } else if (mMobileSignalIcon != icon) {
-                mMobileSignalIcon = icon;
-                mCarrierIconView.setImageDrawable(icon);
+            Drawable signalIcon = mContext.getResources().getDrawable(mobileSignalIconId);
+            Drawable dataTypeIcon = null;
+            Drawable activityIcon = null;
+            if (dataTypeIconId > 0) {
+                dataTypeIcon = mContext.getResources().getDrawable(dataTypeIconId);
             }
+            if (activityIn && !activityOut) {
+                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_in);
+            } else if (!activityIn && activityOut) {
+                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_out);
+            } else if (activityIn && activityOut) {
+                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_inout);
+            }
+            if (mMobileSignalIcon == null) {
+                mMobileSignalIcon = signalIcon;
+                mMobileSignalIconView.setImageDrawable(mMobileSignalIcon);
+            } else if (mMobileSignalIcon != signalIcon) {
+                mMobileSignalIcon = signalIcon;
+                mMobileSignalIconView.setImageDrawable(mMobileSignalIcon);
+            }
+            if (mMobileDataTypeIcon == null) {
+                mMobileDataTypeIcon = dataTypeIcon;
+                mMobileDataTypeIconView.setImageDrawable(mMobileDataTypeIcon);
+            } else if (mMobileDataTypeIcon != dataTypeIcon) {
+                mMobileDataTypeIcon = dataTypeIcon;
+                mMobileDataTypeIconView.setImageDrawable(mMobileDataTypeIcon);
+            }
+            if (mMobileActivityIcon == null) {
+                mMobileActivityIcon = activityIcon;
+                mMobileActivityIconView.setImageDrawable(mMobileActivityIcon);
+            } else if (mMobileActivityIcon != activityIcon) {
+                mMobileActivityIcon = activityIcon;
+                mMobileActivityIconView.setImageDrawable(mMobileActivityIcon);
+            }
+            setmMobileSignalIconPadding(mMobileDataTypeIcon, isDataTypeIconWide);
             updateCarrierlabel(description);
         }
+    }
+
+    private void setmMobileSignalIconPadding(Drawable icon, boolean isWide) {
+        int padding = mContext.getResources().getDimensionPixelSize(
+                R.dimen.mobil_data_type_icon_start_padding);
+        int paddingToUse = 0;
+        if (icon != null) {
+            if (!isWide) {
+                paddingToUse = padding;
+            }
+        }
+        mMobileDataTypeIconView.setPaddingRelative(paddingToUse, 0, 0, 0);
     }
 
     @Override
@@ -313,8 +379,11 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     }
 
     public void setIconColor(int color) {
-        mWifiIconView.setColorFilter(color, Mode.MULTIPLY);
-        mCarrierIconView.setColorFilter(color, Mode.MULTIPLY);
+        mMobileSignalIconView.setColorFilter(color, Mode.MULTIPLY);
+        mMobileDataTypeIconView.setColorFilter(color, Mode.MULTIPLY);
+        mMobileActivityIconView.setColorFilter(color, Mode.MULTIPLY);
+        mWifiSignalIconView.setColorFilter(color, Mode.MULTIPLY);
+        mWifiActivityIconView.setColorFilter(color, Mode.MULTIPLY);
         mQsSettingsButton.setColorFilter(color, Mode.MULTIPLY);
     }
 
