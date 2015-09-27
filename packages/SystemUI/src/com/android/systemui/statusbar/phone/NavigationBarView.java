@@ -33,7 +33,6 @@ import android.database.ContentObserver;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.os.Handler;
 import android.os.Message;
@@ -518,16 +517,15 @@ public class NavigationBarView extends LinearLayout {
             mAppIsBinded = true;
         }
 
-        Drawable d;
+        Drawable d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
         if (iconUri.startsWith(ActionConstants.SYSTEM_ICON_IDENTIFIER)
                 || !clickAction.startsWith("**")) {
-            d = ImageHelper.resize(mContext,
-                    ActionHelper.getActionIconImage(mContext, clickAction, iconUri), 24);
-        } else {
-            d = ActionHelper.getActionIconImage(mContext, clickAction, iconUri);
+            d = ImageHelper.resize(mContext, d, 24);
         }
-
-        if (d != null) {
+        if (clickAction.equals(ActionConstants.ACTION_BACK)) {
+            updateBackButtonDrawables(v, d);
+        } else if (d != null) {
+            d.mutate();
             setIconAndColors(v, d);
         }
         return v;
@@ -573,6 +571,40 @@ public class NavigationBarView extends LinearLayout {
             setIconAndColors(v, d);
         }
         return v;
+    }
+
+    private void updateBackButtonDrawables(KeyButtonView v, Drawable d) {
+        Drawable back;
+        Drawable backLand;
+        if (d == null) {
+            back = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
+            backLand = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back_land);
+        } else {
+            back = d;
+            backLand = back;
+        }
+        back.mutate();
+        backLand.mutate();
+        final int iconColor = NavigationBarColorHelper.getIconColor(mContext, back);
+        final int rippleColor = NavigationBarColorHelper.getRippleColor(mContext, back);
+
+        back.setTintMode(Mode.MULTIPLY);
+        backLand.setTintMode(Mode.MULTIPLY);
+
+        if (NavigationBarColorHelper.getIconColorMode(mContext) != 2) {
+            back.setTint(iconColor);
+            backLand.setTint(iconColor);
+        }
+
+        mBackIcon = new BackButtonDrawable(back);
+        mBackLandIcon = new BackButtonDrawable(backLand);
+
+        if (rippleColor != 0) {
+            v.setRippleColor(rippleColor);
+        } else {
+            Palette palette = Palette.generate(ImageHelper.drawableToBitmap(back));
+            v.setRippleColor(palette.getDarkVibrantColor(0xffffffff));
+        }
     }
 
     private void setIconAndColors(KeyButtonView v, Drawable d) {
@@ -671,14 +703,12 @@ public class NavigationBarView extends LinearLayout {
         }
 
         mNavigationIconHints = hints;
-
-        Drawable d;
-        if (!backAlt) {
-            d = res.getDrawable(R.drawable.ic_sysbar_back);
-        } else {
-            d = res.getDrawable(R.drawable.ic_sysbar_back_ime);
+        if (getBackButton() != null ) {
+            ((ImageView) getBackButton()).setImageDrawable(null);
+            ((ImageView) getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
         }
-        setIconAndColors((KeyButtonView) getBackButton(), d);
+        mBackLandIcon.setImeVisible(backAlt);
+        mBackIcon.setImeVisible(backAlt);
 
         final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
                     && !mImeArrowVisibility);
