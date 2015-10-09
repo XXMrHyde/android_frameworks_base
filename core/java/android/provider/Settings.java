@@ -3314,12 +3314,6 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER_LOCATION = "status_bar_expanded_header_show_weather_location";
 
         /**
-         * Whether to show the QS settings button on the header of the expanded status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_HEADER_SHOW_QS_BUTTON = "status_bar_expanded_header_show_qs_button";
-
-        /**
          * Color of the expanded status bar header background
          * @hide
          */

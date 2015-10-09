@@ -28,12 +28,17 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,8 +55,10 @@ import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.NetworkController;
+import com.android.systemui.statusbar.policy.StatusBarHeaderTraffic;
 
 import java.text.NumberFormat;
+import java.util.Date;
 
 public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         NetworkController.NetworkSignalChangedCallback,
@@ -65,39 +72,46 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     private ActivityStarter mActivityStarter;
     private NetworkController mNetworkController;
     private WeatherController mWeatherController;
+    private WifiManager mWifiManager;
 
+    private View mDevicePanel;
+    private View mWeatherPanel;
+
+    private View mMobileNetworkTextLayout;
+    private View mWifiNetworkTextLayout;
+    private View mBatteryTextLayout;
+
+    private TextView mCarrierTextView;
+    private TextView mNetworkTypeTextView;
     private ImageView mMobileSignalIconView;
-    private ImageView mMobileDataTypeIconView;
-    private ImageView mMobileActivityIconView;
     private Drawable mMobileSignalIcon;
-    private Drawable mMobileDataTypeIcon;
-    private Drawable mMobileActivityIcon;
-    private TextView mCarrierText;
 
+    private TextView mWifiNameTextView;
+    private TextView mWifiLinkSpeedTextView;
     private ImageView mWifiSignalIconView;
-    private ImageView mWifiActivityIconView;
     private Drawable mWifiSignalIcon;
-    private Drawable mWifiActivityIcon;
-    private TextView mWifiText;
 
+    private TextView mBatteryPercentageTextView;
+    private TextView mBatteryStatusTextView;
     private BatteryMeterView mBatteryMeterView;
-    private TextView mBatteryPercentageText;
-    private TextView mBatteryStatusText;
 
-    private View mWeatherView;
-    private TextView mWeatherText;
+    private StatusBarHeaderTraffic mTraffic;
+    private ImageView mActivityIconView;
+    private TextView mWeatherPanelNoWeatherText;
+    private View mWeatherPanelLayout;
+    private TextView mWeatherPanelCity;
+    private TextView mWeatherPanelWind;
+    private ImageView mWeatherPanelConditionImage;
+    private TextView mWeatherPanelTempCondition;
+    private TextView mWeatherPanelHumidity;
+    private TextView mWeatherPanelTimestamp;
 
-    private ImageView mQsSettingsButton;
-
+    private boolean mPanelDeviceInfoVisible = false;
     private boolean mSupportsMobileData = true;
     private boolean mMobileNetworkEnabled = false;
-
     private boolean mWifiEnabled = false;
     private boolean mWifiConnected = false;
-
     private boolean mWeatherAvailable = false;
-
-    private boolean mExpanded = false;
 
     private BroadcastReceiver mBatteryInfoReceiver = new BroadcastReceiver() {
 
@@ -130,6 +144,7 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         mActivityStarter = starter;
         mNetworkController = network;
         mWeatherController = weather;
+        mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
 
         mBatteryMeterView.setBatteryController(battery);
     }
@@ -137,50 +152,77 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mWeatherView = findViewById(R.id.expanded_panel_weather);
+        mDevicePanel = findViewById(R.id.expanded_panel_device_panel);
+        mWeatherPanel = findViewById(R.id.expanded_panel_weather_panel);
 
+        mMobileNetworkTextLayout = findViewById(R.id.mobile_network_text_layout);
+        mWifiNetworkTextLayout = findViewById(R.id.wifi_network_text_layout);
+        mBatteryTextLayout = findViewById(R.id.battery_text_layout);
+
+        mCarrierTextView = (TextView) findViewById(R.id.mobile_network_carrier_text_view);
+        mNetworkTypeTextView = (TextView) findViewById(R.id.mobile_network_type_text_view);
         mMobileSignalIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_signal_icon);
-        mMobileDataTypeIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_data_type_icon);
-        mMobileActivityIconView = (ImageView) findViewById(R.id.expanded_panel_mobile_activity_icon);
+
+        mWifiNameTextView = (TextView) findViewById(R.id.wifi_network_wifi_name_text_view);
+        mWifiLinkSpeedTextView = (TextView) findViewById(R.id.wifi_network_wifi_link_speed_text_view);
         mWifiSignalIconView = (ImageView) findViewById(R.id.expanded_panel_wifi_signal_icon);
-        mWifiActivityIconView = (ImageView) findViewById(R.id.expanded_panel_wifi_activity_icon);
+
+        mBatteryPercentageTextView = (TextView) findViewById(R.id.battery_percentage_text_view);
+        mBatteryStatusTextView = (TextView) findViewById(R.id.battery_status_text_view);
         mBatteryMeterView = (BatteryMeterView) findViewById(R.id.expanded_panel_battery_icon);
 
-        mCarrierText = (TextView) findViewById(R.id.expanded_panel_carrier_label);
-        mWifiText = (TextView) findViewById(R.id.expanded_panel_wifi_label);
-        mBatteryPercentageText = (TextView) findViewById(R.id.expanded_panel_battery_percentage);
-        mBatteryStatusText = (TextView) findViewById(R.id.expanded_panel_battery_status);
-        mWeatherText = (TextView) findViewById(R.id.expanded_panel_weather_text);
+        mTraffic = (StatusBarHeaderTraffic) findViewById(R.id.expanded_panel_traffic_layout);
 
-        mQsSettingsButton = (ImageView) findViewById(R.id.qs_settings_button);
+        mWeatherPanelNoWeatherText = (TextView) findViewById(R.id.weather_panel_no_weather_text);
+        mWeatherPanelLayout = findViewById(R.id.weather_panel_layout);
+        mWeatherPanelCity = (TextView) findViewById(R.id.weather_panel_city);
+        mWeatherPanelWind = (TextView) findViewById(R.id.weather_panel_wind);
+        mWeatherPanelConditionImage = (ImageView) findViewById(R.id.weather_panel_weather_image);
+        mWeatherPanelTempCondition = (TextView) findViewById(R.id.weather_panel_temp_condition);
+        mWeatherPanelHumidity = (TextView) findViewById(R.id.weather_panel_humidity);
+        mWeatherPanelTimestamp = (TextView) findViewById(R.id.weather_panel_timestamp);
 
-        mWeatherView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doHapticKeyClick(HapticFeedbackConstants.VIRTUAL_KEY);
-                startForecastActivity();
-            }
-        });
-
-        mQsSettingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doHapticKeyClick(HapticFeedbackConstants.VIRTUAL_KEY);
-                startQsSettingsActivity();
-            }
-        });
-        updateLayouts();
+        updateTrafficLayout();
+        swapPanels(false);
     }
 
-    private void updateLayouts() {
+    private void updateTrafficLayout() {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mTraffic.getLayoutParams();
+        lp.removeRule(RelativeLayout.ALIGN_TOP);
+        lp.removeRule(RelativeLayout.START_OF);
+        lp.removeRule(RelativeLayout.END_OF);
+        int ruleText = mWifiNetworkTextLayout.getId();
+        int ruleIcon = mWifiSignalIconView.getId();
+        if (mSupportsMobileData && !mWifiConnected) {
+            ruleText = mMobileNetworkTextLayout.getId();
+            ruleIcon = mMobileSignalIconView.getId();
+        }
+        lp.addRule(RelativeLayout.ALIGN_TOP, ruleText);
+        lp.addRule(RelativeLayout.START_OF, ruleIcon);
+        lp.addRule(RelativeLayout.END_OF, ruleText);
         if (!mSupportsMobileData) {
-            findViewById(R.id.expanded_panel_mobile_network).setVisibility(View.GONE);
-            LinearLayout wifiNetworkLayout = (LinearLayout) findViewById(R.id.expanded_panel_wifi_network);
-            RelativeLayout.LayoutParams lp = (LayoutParams) wifiNetworkLayout.getLayoutParams();
-            lp.removeRule(RelativeLayout.ALIGN_PARENT_END);
-            lp.setMarginEnd(0);
-            lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            wifiNetworkLayout.setLayoutParams(lp);
+            mMobileNetworkTextLayout.setVisibility(View.GONE);
+            mMobileSignalIconView.setVisibility(View.GONE);
+        }
+    }
+
+    public void swapPanels(boolean animate) {
+        if (!mPanelDeviceInfoVisible) {
+            mWeatherPanel.setVisibility(View.INVISIBLE);
+            mDevicePanel.setVisibility(View.VISIBLE);
+            if (animate) {
+                mDevicePanel.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.push_right_in));
+                mWeatherPanel.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.push_left_out));
+            }
+            mPanelDeviceInfoVisible = true;
+        } else {
+            mDevicePanel.setVisibility(View.INVISIBLE);
+            mWeatherPanel.setVisibility(View.VISIBLE);
+            if (animate) {
+                mWeatherPanel.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.push_left_in));
+                mDevicePanel.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.push_right_out));
+            }
+            mPanelDeviceInfoVisible = false;
         }
     }
 
@@ -189,49 +231,31 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
             mContext.registerReceiver(mBatteryInfoReceiver,
                     new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             mNetworkController.addNetworkSignalChangedCallback(this);
-            if (showWeather()) {
+//            if (showWeather()) {
                 mWeatherController.addCallback(this);
-            }
+//            }
         } else {
             mContext.unregisterReceiver(mBatteryInfoReceiver);
             mNetworkController.removeNetworkSignalChangedCallback(this);
             mWeatherController.removeCallback(this);
         }
+        mTraffic.setListening(listening);
     }
 
-    public void updateVisibilities() {
-        mWeatherView.setVisibility(showWeather() ? View.VISIBLE : View.INVISIBLE);
-        mQsSettingsButton.setVisibility(showQsButton() ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    public void updateClickTargets(boolean clickable) {
-        mWeatherView.setClickable(showWeather() && clickable);
-        mQsSettingsButton.setClickable(showQsButton() && clickable);
-    }
+//    public void updateClickTargets(boolean clickable) {
+//    }
 
     private boolean showWeather() {
-        return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER, 0) == 1;
-    }
-
-    private boolean showQsButton() {
-        return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_QS_BUTTON, 0) == 1;
+//        return Settings.System.getInt(mContext.getContentResolver(),
+//                Settings.System.STATUS_BAR_EXPANDED_HEADER_SHOW_WEATHER, 0) == 1;
+        return true;
     }
 
     @Override
     public void onWifiSignalChanged(boolean enabled, boolean connected,
                 int wifiSignalIconId, boolean activityIn, boolean activityOut,
                 String wifiSignalContentDescriptionId, String description) {
-        Drawable activityIcon = null;
         Drawable signalIcon = mContext.getResources().getDrawable(wifiSignalIconId);
-        if (activityIn && !activityOut) {
-            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_in);
-        } else if (!activityIn && activityOut) {
-            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_out);
-        } else if (activityIn && activityOut) {
-            activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_inout);
-        }
         if (mWifiSignalIcon == null) {
             mWifiSignalIcon = signalIcon;
             mWifiSignalIconView.setImageDrawable(mWifiSignalIcon);
@@ -239,19 +263,12 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
             mWifiSignalIcon = signalIcon;
             mWifiSignalIconView.setImageDrawable(mWifiSignalIcon);
         }
-        if (mWifiActivityIcon == null) {
-            mWifiActivityIcon = activityIcon;
-            mWifiActivityIconView.setImageDrawable(mWifiActivityIcon);
-        } else  if (mWifiActivityIcon != activityIcon) {
-            mWifiActivityIcon = activityIcon;
-            mWifiActivityIconView.setImageDrawable(mWifiActivityIcon);
-        }
         mWifiEnabled = enabled;
-        if (mWifiConnected != connected) {
-            mWifiConnected = connected;
-            mMobileActivityIconView.setVisibility(mWifiConnected ? View.INVISIBLE : View.VISIBLE);
-        }
+        mWifiConnected = connected;
         updateWifiText(description);
+        if (mSupportsMobileData) {
+            updateTrafficLayout();
+        }
     }
 
     @Override
@@ -263,18 +280,6 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         mMobileNetworkEnabled = enabled;
         if (mSupportsMobileData) {
             Drawable signalIcon = mContext.getResources().getDrawable(mobileSignalIconId);
-            Drawable dataTypeIcon = null;
-            Drawable activityIcon = null;
-            if (dataTypeIconId > 0) {
-                dataTypeIcon = mContext.getResources().getDrawable(dataTypeIconId);
-            }
-            if (activityIn && !activityOut) {
-                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_in);
-            } else if (!activityIn && activityOut) {
-                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_out);
-            } else if (activityIn && activityOut) {
-                activityIcon = mContext.getResources().getDrawable(R.drawable.stat_sys_signal_inout);
-            }
             if (mMobileSignalIcon == null) {
                 mMobileSignalIcon = signalIcon;
                 mMobileSignalIconView.setImageDrawable(mMobileSignalIcon);
@@ -282,35 +287,8 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
                 mMobileSignalIcon = signalIcon;
                 mMobileSignalIconView.setImageDrawable(mMobileSignalIcon);
             }
-            if (mMobileDataTypeIcon == null) {
-                mMobileDataTypeIcon = dataTypeIcon;
-                mMobileDataTypeIconView.setImageDrawable(mMobileDataTypeIcon);
-            } else if (mMobileDataTypeIcon != dataTypeIcon) {
-                mMobileDataTypeIcon = dataTypeIcon;
-                mMobileDataTypeIconView.setImageDrawable(mMobileDataTypeIcon);
-            }
-            if (mMobileActivityIcon == null) {
-                mMobileActivityIcon = activityIcon;
-                mMobileActivityIconView.setImageDrawable(mMobileActivityIcon);
-            } else if (mMobileActivityIcon != activityIcon) {
-                mMobileActivityIcon = activityIcon;
-                mMobileActivityIconView.setImageDrawable(mMobileActivityIcon);
-            }
-            setmMobileSignalIconPadding(mMobileDataTypeIcon, isDataTypeIconWide);
-            updateCarrierlabel(description);
+            updateCarrierlabel(description, dataTypeContentDescriptionId);
         }
-    }
-
-    private void setmMobileSignalIconPadding(Drawable icon, boolean isWide) {
-        int padding = mContext.getResources().getDimensionPixelSize(
-                R.dimen.mobil_data_type_icon_start_padding);
-        int paddingToUse = 0;
-        if (icon != null) {
-            if (!isWide) {
-                paddingToUse = padding;
-            }
-        }
-        mMobileDataTypeIconView.setPaddingRelative(paddingToUse, 0, 0, 0);
     }
 
     @Override
@@ -335,6 +313,13 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
 
     private void updateWifiText(String description) {
         String wifiName = removeDoubleQuotes(description);
+        String wifiLinkSpeed = "";
+        if (mWifiEnabled && mWifiConnected) {
+            WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+            if (wifiInfo != null) {
+                wifiLinkSpeed = "  (" + wifiInfo.getLinkSpeed() + WifiInfo.LINK_SPEED_UNITS + ")";
+            }
+        }
         if (!mWifiEnabled) {
             wifiName = mContext.getResources().getString(
                     R.string.accessibility_wifi_off);
@@ -344,65 +329,91 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         } else if (wifiName == null) {
             wifiName = "--";
         }
-        mWifiText.setText(wifiName);
+        mWifiNameTextView.setText(wifiName);
+        mWifiLinkSpeedTextView.setText(wifiLinkSpeed);
     }
 
-    private void updateCarrierlabel(String description) {
+    private void updateCarrierlabel(String description, String dataTypeContentDescription) {
         String carrierLabel = removeDoubleQuotes(description);
+        String networkType = "  (" + dataTypeContentDescription + ")";
         if (!mMobileNetworkEnabled) {
             carrierLabel = mContext.getResources().getString(
                     R.string.quick_settings_rssi_emergency_only);
         } else if (carrierLabel == null) {
             carrierLabel = "--";
         }
-        mCarrierText.setText(carrierLabel);
+        mCarrierTextView.setText(carrierLabel);
+        mNetworkTypeTextView.setText(networkType);
     }
 
     private void updateBatteryInfo(Intent intent) {
         String batterylevel = getBatteryPercentageLevel(intent);
         String batteryStatus = getBatteryStatus(intent);
-        mBatteryPercentageText.setText(batterylevel);
-        mBatteryStatusText.setText((batteryStatus.isEmpty() ? "" : " (" + batteryStatus + ")"));
+        mBatteryPercentageTextView.setText(batterylevel);
+        mBatteryStatusTextView.setText((batteryStatus.isEmpty() ? "" : "  (" + batteryStatus + ")"));
     }
 
     private void updateWeather(WeatherController.WeatherInfo info) {
         String weatherInfo = null;
         if (!mWeatherAvailable) {
             weatherInfo = mContext.getString(R.string.weather_info_not_available);
+            mWeatherPanelNoWeatherText.setVisibility(View.VISIBLE);
+            mWeatherPanelLayout.setVisibility(View.GONE);
+            mWeatherPanelTimestamp.setVisibility(View.GONE);
         } else {
-            String city = info.city + ", ";
-            String temp = info.temp;
-            String condition = info.condition;
-            weatherInfo = (showWeatherLocation() ? city : "") + temp + " - " + condition;
+            mWeatherPanelNoWeatherText.setVisibility(View.GONE);
+            mWeatherPanelLayout.setVisibility(View.VISIBLE);
+            mWeatherPanelCity.setVisibility(showWeatherLocation() ? View.VISIBLE : View.GONE);
+            mWeatherPanelTimestamp.setVisibility(View.VISIBLE);
+            mWeatherPanelCity.setText(info.city);
+            mWeatherPanelWind.setText(info.wind);
+            mWeatherPanelConditionImage.setImageDrawable(info.conditionDrawableMonochrome);
+            mWeatherPanelTempCondition.setText(info.temp + ", " + info.condition);
+            mWeatherPanelHumidity.setText(info.humidity);
+            mWeatherPanelTimestamp.setText(getCurrentDate());
         }
-        mWeatherText.setText(weatherInfo);
+    }
+
+    private String getCurrentDate() {
+        Date now = new Date();
+        long nowMillis = now.getTime();
+        StringBuilder sb = new StringBuilder();
+        sb.append(DateFormat.format("E", nowMillis));
+        sb.append(" ");
+        sb.append(DateFormat.getTimeFormat(getContext()).format(nowMillis));
+        return sb.toString();
     }
 
     public void setIconColor(int color) {
-        mMobileSignalIconView.setColorFilter(color, Mode.MULTIPLY);
-        mMobileDataTypeIconView.setColorFilter(color, Mode.MULTIPLY);
-        mMobileActivityIconView.setColorFilter(color, Mode.MULTIPLY);
+        if (mSupportsMobileData) {
+            mMobileSignalIconView.setColorFilter(color, Mode.MULTIPLY);
+        }
         mWifiSignalIconView.setColorFilter(color, Mode.MULTIPLY);
-        mWifiActivityIconView.setColorFilter(color, Mode.MULTIPLY);
-        mQsSettingsButton.setColorFilter(color, Mode.MULTIPLY);
-    }
-
-    public void setWeatherViewBackground(RippleDrawable background) {
-        mWeatherView.setBackground(background);
-    }
-
-    public void setQsSettingsBackground(RippleDrawable background) {
-        mQsSettingsButton.setBackground(background);
+        mTraffic.updateIconColor(color);
+        mWeatherPanelConditionImage.setColorFilter(color, Mode.MULTIPLY);
     }
 
     public void setTextColor(int color, boolean isOpaque) {
         if (isOpaque) {
-            mCarrierText.setTextColor(color);
-            mWifiText.setTextColor(color);
-            mBatteryPercentageText.setTextColor(color);
-            mWeatherText.setTextColor(color);
+            if (mSupportsMobileData) {
+                mCarrierTextView.setTextColor(color);
+            }
+            mWifiNameTextView.setTextColor(color);
+            mBatteryPercentageTextView.setTextColor(color);
+            mTraffic.updateTextColor(color, true);
+            mWeatherPanelNoWeatherText.setTextColor(color);
+            mWeatherPanelCity.setTextColor(color);
+            mWeatherPanelTempCondition.setTextColor(color);
         } else {
-            mBatteryStatusText.setTextColor(color);
+            if (mSupportsMobileData) {
+                mNetworkTypeTextView.setTextColor(color);
+            }
+            mWifiLinkSpeedTextView.setTextColor(color);
+            mBatteryStatusTextView.setTextColor(color);
+            mTraffic.updateTextColor(color, false);
+            mWeatherPanelHumidity.setTextColor(color);
+            mWeatherPanelWind.setTextColor(color);
+            mWeatherPanelTimestamp.setTextColor(color);
         }
     }
 
@@ -489,14 +500,6 @@ public class StatusBarHeaderExpandedPanel extends RelativeLayout implements
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(WeatherControllerImpl.COMPONENT_WEATHER_FORECAST);
-        mActivityStarter.startActivity(intent, true /* dismissShade */);
-    }
-
-    private void startQsSettingsActivity() {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName(
-                "com.android.settings",
-                "com.android.settings.Settings$StatusBarExpandedQsSettingsActivity"));
         mActivityStarter.startActivity(intent, true /* dismissShade */);
     }
 
