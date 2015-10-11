@@ -90,7 +90,6 @@ public final class ShutdownThread extends Thread {
     private static final String UNCRYPT_PACKAGE_FILE = "/cache/recovery/uncrypt_file";
 
     private static boolean mReboot;
-    private static boolean mQuickReboot;
     private static boolean mRebootSafeMode;
     private static boolean mRebootUpdate;
     private static String mRebootReason;
