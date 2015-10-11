@@ -3231,6 +3231,17 @@ public final class Settings {
             }
         };
 
+        // DarkKat additions start
+
+        /**
+         * Whether to include advanced reboot options in power menu for 
+         * quick rebooting, rebooting into recovery and rebooting into bootloader
+         * @hide
+         */
+        public static final String POWER_MENU_SHOW_ADVANCED_REBOOT = "power_menu_show_advanced_reboot";
+
+        // DarkKat additions end
+
         /**
          * IMPORTANT: If you add a new public settings you also have to add it to
          * PUBLIC_SETTINGS below. If the new setting is hidden you have to add

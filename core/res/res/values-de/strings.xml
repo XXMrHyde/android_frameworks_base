@@ -197,7 +197,7 @@
     <string name="shutdown_confirm" product="tablet" msgid="3385745179555731470">"Ihr Tablet wird heruntergefahren."</string>
     <string name="shutdown_confirm" product="tv" msgid="476672373995075359">"Ihr Fernseher wird ausgeschaltet."</string>
     <string name="shutdown_confirm" product="watch" msgid="3490275567476369184">"Ihre Uhr wird heruntergefahren."</string>
-    <string name="shutdown_confirm" product="default" msgid="649792175242821353">"Telefon wird heruntergefahren."</string>
+    <string name="shutdown_confirm" product="default" msgid="649792175242821353">"Ihr Telefon wird heruntergefahren."</string>
     <string name="shutdown_confirm_question" msgid="2906544768881136183">"Möchten Sie das Gerät herunterfahren?"</string>
     <string name="reboot_safemode_title" msgid="7054509914500140361">"Im abgesicherten Modus starten"</string>
     <string name="reboot_safemode_confirm" msgid="55293944502784668">"Möchten Sie im abgesicherten Modus neu starten? Dadurch werden alle Apps von Drittanbietern deaktiviert, die Sie installiert haben. Sie werden jedoch nach einem weiteren Neustart wiederhergestellt."</string>
