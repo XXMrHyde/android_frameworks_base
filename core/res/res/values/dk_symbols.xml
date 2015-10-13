@@ -16,10 +16,23 @@
 
 <resources>
 
+    <!-- DarkKat Theme -->
+    <java-symbol type="style" name="Theme.Material.Dialog.DarkKat" />
+    <java-symbol type="style" name="Theme.Material.Dialog.Alert.DarkKat" />
+    <java-symbol type="color" name="darkkat_blue_grey" />
+    <java-symbol type="drawable" name="darkkat_bg_blue_grey" />
+    <java-symbol type="drawable" name="dialog_background_material_dk" />
+
     <!-- Global actions -->
-    <java-symbol type="drawable" name="ic_lock_reboot" />
     <java-symbol type="array" name="shutdown_reboot_options" />
     <java-symbol type="array" name="shutdown_reboot_actions" />
+    <java-symbol type="color" name="global_actions_icon" />
+    <java-symbol type="drawable" name="ic_lock_reboot" />
+    <java-symbol type="drawable" name="ic_audio_ring_notif_dark" />
+    <java-symbol type="drawable" name="ic_audio_ring_notif_mute_dark" />
+    <java-symbol type="drawable" name="ic_audio_ring_notif_vibrate_dark" />
+    <java-symbol type="drawable" name="ic_audio_vol_mute_dark" />
+    <java-symbol type="drawable" name="ic_audio_vol_dark" />
     <java-symbol type="string" name="global_action_reboot" />
     <java-symbol type="string" name="shutdown_reboot_dlg_confirm_title" />
     <java-symbol type="string" name="shutdown_reboot_dlg_title" />

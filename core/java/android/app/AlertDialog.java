@@ -115,6 +115,8 @@ public class AlertDialog extends Dialog implements DialogInterface {
     @Deprecated
     public static final int THEME_DEVICE_DEFAULT_LIGHT = 5;
 
+    public static final int THEME_MATERIAL_DARK = 6;
+
     /**
      * No layout hint.
      * @hide
@@ -215,6 +217,8 @@ public class AlertDialog extends Dialog implements DialogInterface {
             return R.style.Theme_DeviceDefault_Dialog_Alert;
         } else if (themeResId == THEME_DEVICE_DEFAULT_LIGHT) {
             return R.style.Theme_DeviceDefault_Light_Dialog_Alert;
+        } else if (themeResId == THEME_MATERIAL_DARK) {
+            return com.android.internal.R.style.Theme_Material_Dialog_Alert_DarkKat;
         } else if (themeResId >= 0x01000000) {   // start of real resource IDs.
             return themeResId;
         } else {

@@ -13,7 +13,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/ic_lock_reboot_alpha"
-    android:tint="?attr/textColorPrimaryInverse" />
+    <color name="darkkat_blue_grey">#ff1b1f23</color>
+    <drawable name="darkkat_bg_blue_grey">@color/darkkat_blue_grey</drawable>
+</resources>
