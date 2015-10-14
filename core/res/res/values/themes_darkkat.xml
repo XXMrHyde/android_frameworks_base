@@ -19,6 +19,7 @@
         <item name="colorBackground">@drawable/darkkat_bg_blue_grey</item>
         <item name="windowBackground">@drawable/dialog_background_material_dk</item>
         <item name="colorControlActivated">@color/accent_material_light</item>
+        <item name="colorAccent">@color/accent_material_light</item>
     </style>
 
     <style name="Theme.Material.Dialog.Alert.DarkKat" parent="Theme.Material.Dialog.BaseAlert">
