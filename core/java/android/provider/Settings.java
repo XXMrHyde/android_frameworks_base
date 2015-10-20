@@ -3234,6 +3234,16 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * Colors used for the color picker panel puttons
+         * 0: DarkKat colors
+         * 1: Material colors
+         * 2: RGB colors
+         * default: 0
+         * @hide
+         */
+        public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
+
+        /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide
