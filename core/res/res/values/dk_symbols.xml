@@ -40,4 +40,7 @@
     <java-symbol type="string" name="shutdown_reboot_dlg_message_quick_reboot" />
     <java-symbol type="string" name="shutdown_reboot_dlg_message_recovery" />
     <java-symbol type="string" name="shutdown_reboot_dlg_message_bootloader" />
+
+  <!-- Default name of the custom carrier label -->
+  <java-symbol type="string" name="default_custom_label" />
 </resources>

@@ -28,6 +28,7 @@ import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -53,6 +54,7 @@ import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,6 +99,9 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.darkkat.DeviceUtils;
+
+import com.android.keyguard.CarrierText;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
@@ -306,6 +311,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     boolean mLeaveOpenOnKeyguardHide;
     KeyguardIndicationController mKeyguardIndicationController;
 
+    private CarrierText mStatusBarCarrierLabel;
+
     private boolean mKeyguardFadingAway;
     private long mKeyguardFadingAwayDelay;
     private long mKeyguardFadingAwayDuration;
@@ -395,6 +402,60 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
     };
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_HIDE_LABEL),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL))) {
+                updateCarrierLabel();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_HIDE_LABEL))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS))) {
+                setCarrierLabelVisibility();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN))) {
+                setLockScreenCarrierLabelVisibility();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR))) {
+                updateCarrierLabelColor();
+            }
+        }
+    }
 
     private int mInteractingWindows;
     private boolean mAutohideSuspended;
@@ -601,6 +662,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addNavigationBar();
 
+        // Status bar settings observer
+        SettingsObserver observer = new SettingsObserver(mHandler);
+        observer.observe();
+
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController,
                 mUserInfoController, mBluetoothController);
@@ -783,6 +848,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         R.id.keyguard_indication_text));
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
 
+        mStatusBarCarrierLabel = (CarrierText) mStatusBarView.findViewById(R.id.status_bar_carrier_text);
+
         // set the inital view visibility
         setAreThereNotifications();
 
@@ -922,6 +989,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
+
+        setCarrierLabelVisibility();
+        setLockScreenCarrierLabelVisibility();
 
         return mStatusBarView;
     }
@@ -1461,6 +1531,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateNotificationShade();
         mIconController.updateNotificationIcons(mNotificationData);
+        setCarrierLabelVisibility();
     }
 
     @Override
@@ -1763,6 +1834,77 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             .start();
                 }
             }
+        }
+    }
+
+    private void updateCarrierLabel() {
+        if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
+            if (mStatusBarCarrierLabel != null) {
+                mStatusBarCarrierLabel.setVisibility(View.GONE);
+            }
+            return;
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateCarrierLabel();
+        }
+        if (mStatusBarCarrierLabel != null) {
+            mStatusBarCarrierLabel.updateCarrierLabelSettings();
+            mStatusBarCarrierLabel.updateCarrierText();
+        }
+    }
+
+    private void setCarrierLabelVisibility() {
+        if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
+            mStatusBarCarrierLabel.setVisibility(View.GONE);
+            return;
+        }
+
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        final boolean show = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW, 0) == 1;
+
+        final boolean forceHide = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CARRIER_LABEL_HIDE_LABEL, 1) == 1;
+        final int maxAllowedIcons = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS, 1);
+        boolean forceHideByNumberOfIcons = false;
+        int currentVisibleNotificationIcons = 0;
+
+        if (mIconController != null) {
+            currentVisibleNotificationIcons = mIconController.getCurrentVisibleNotificationIcons();
+        }
+        if (forceHide && currentVisibleNotificationIcons >= maxAllowedIcons) {
+            forceHideByNumberOfIcons = true;
+        }
+
+        if (mStatusBarCarrierLabel != null) {
+            mStatusBarCarrierLabel.setVisibility(show && !forceHideByNumberOfIcons
+                    ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void setLockScreenCarrierLabelVisibility() {
+        if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
+            return;
+        }
+        final boolean showOnLockScreen = Settings.System.getInt(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN, 1) == 1;
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.setCarrierLabelVisibility(showOnLockScreen);
+        }
+    }
+
+    private void updateCarrierLabelColor() {
+        final boolean show = Settings.System.getInt(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW, 0) == 1;
+        if (mStatusBarCarrierLabel != null) {
+            mStatusBarCarrierLabel.updateColor(show ? true : false);
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateCarrierLabelColor();
         }
     }
 
