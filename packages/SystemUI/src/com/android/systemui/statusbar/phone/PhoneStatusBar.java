@@ -431,6 +431,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_DATE_POSITION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_DATE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_AM_PM),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_SIZE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_STYLE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_FORMAT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_DATE_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -453,6 +474,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR))) {
                 updateCarrierLabelColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_DATE_POSITION))) {
+                updateClockStyle();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_DATE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_AM_PM))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_SIZE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_STYLE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DATE_FORMAT))) {
+                updateClockSettings();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CLOCK_DATE_COLOR))) {
+                updateClockColor(true);
             }
         }
     }
@@ -992,7 +1030,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         setCarrierLabelVisibility();
         setLockScreenCarrierLabelVisibility();
-
+        updateClock();
         return mStatusBarView;
     }
 
@@ -1905,6 +1943,38 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mKeyguardStatusBar != null) {
             mKeyguardStatusBar.updateCarrierLabelColor();
+        }
+    }
+
+    private void updateClock() {
+        updateClockStyle();
+        updateClockSettings();
+        updateClockColor(false);
+    }
+
+    private void updateClockStyle() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+        int clockStyle = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_CLOCK_DATE_POSITION, 0, mCurrentUserId);
+
+        if (mIconController != null) {
+            mIconController.setClockStyle(clockStyle);
+            if (mNotificationData != null) {
+                mIconController.updateNotificationIcons(mNotificationData);
+            }
+        }
+    }
+
+    private void updateClockSettings() {
+        if (mIconController != null) {
+            mIconController.updateClockSettings();
+        }
+    }
+
+    private void updateClockColor(boolean animate) {
+        if (mIconController != null) {
+            mIconController.updateClockColor(animate);
         }
     }
 
@@ -3413,7 +3483,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mVolumeComponent.dispatchDemoCommand(command, args);
         }
         if (modeChange || command.equals(COMMAND_CLOCK)) {
-            dispatchDemoCommandToView(command, args, R.id.clock);
+            mIconController.dispatchClockDemoCommand(command, args);
         }
         if (modeChange || command.equals(COMMAND_BATTERY)) {
             dispatchDemoCommandToView(command, args, R.id.battery);

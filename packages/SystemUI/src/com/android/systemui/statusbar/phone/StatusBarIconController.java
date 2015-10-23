@@ -24,6 +24,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.view.View;
@@ -42,6 +44,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
+import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
 
@@ -74,7 +77,9 @@ public class StatusBarIconController implements Tunable {
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
     private BatteryMeterView mBatteryMeterView;
-    private TextView mClock;
+    private Clock mClockDefault;
+    private Clock mClockCentered;
+    private LinearLayout mCenterClockLayout;
 
     private int mIconSize;
     private int mIconHPadding;
@@ -89,6 +94,11 @@ public class StatusBarIconController implements Tunable {
 
     private int mDarkModeIconColorSingleTone;
     private int mLightModeIconColorSingleTone;
+
+    private static final int CLOCK_STYLE_DEFAULT  = 0;
+    private static final int CLOCK_STYLE_CENTERED = 1;
+    private static final int CLOCK_STYLE_HIDDEN   = 2;
+    private int mClockStyle;
 
     private final Handler mHandler;
     private boolean mTransitionDeferring;
@@ -118,7 +128,9 @@ public class StatusBarIconController implements Tunable {
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
         mStatusIconsKeyguard = (LinearLayout) keyguardStatusBar.findViewById(R.id.statusIcons);
         mBatteryMeterView = (BatteryMeterView) statusBar.findViewById(R.id.battery);
-        mClock = (TextView) statusBar.findViewById(R.id.clock);
+        mClockDefault = (Clock) statusBar.findViewById(R.id.clock);
+        mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
+        mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
         mLinearOutSlowIn = AnimationUtils.loadInterpolator(mContext,
                 android.R.interpolator.linear_out_slow_in);
         mFastOutSlowIn = AnimationUtils.loadInterpolator(mContext,
@@ -127,7 +139,6 @@ public class StatusBarIconController implements Tunable {
         mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
         mHandler = new Handler();
         updateResources();
-
         TunerService.get(mContext).addTunable(this, ICON_BLACKLIST);
     }
 
@@ -158,7 +169,8 @@ public class StatusBarIconController implements Tunable {
                 com.android.internal.R.dimen.status_bar_icon_size);
         mIconHPadding = mContext.getResources().getDimensionPixelSize(
                 R.dimen.status_bar_icon_padding);
-        FontSizeUtils.updateFontSize(mClock, R.dimen.status_bar_clock_size);
+        FontSizeUtils.updateFontSize(mClockDefault, R.dimen.status_bar_clock_size);
+        FontSizeUtils.updateFontSize(mClockCentered, R.dimen.status_bar_clock_size);
     }
 
     public void addSystemIcon(String slot, int index, int viewIndex, StatusBarIcon icon) {
@@ -247,10 +259,16 @@ public class StatusBarIconController implements Tunable {
 
     public void hideSystemIconArea(boolean animate) {
         animateHide(mSystemIconArea, animate);
+        if (mClockStyle == CLOCK_STYLE_CENTERED) {
+            animateHide(mCenterClockLayout, animate);
+        }
     }
 
     public void showSystemIconArea(boolean animate) {
         animateShow(mSystemIconArea, animate);
+        if (mClockStyle == CLOCK_STYLE_CENTERED) {
+            animateShow(mCenterClockLayout, animate);
+        }
     }
 
     public void hideNotificationIconArea(boolean animate) {
@@ -262,7 +280,12 @@ public class StatusBarIconController implements Tunable {
     }
 
     public void setClockVisibility(boolean visible) {
-        mClock.setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (mClockStyle == CLOCK_STYLE_DEFAULT) {
+            mClockDefault.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+        if (mClockStyle == CLOCK_STYLE_CENTERED) {
+            mClockCentered.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
     public void dump(PrintWriter pw) {
@@ -279,6 +302,15 @@ public class StatusBarIconController implements Tunable {
             mDemoStatusIcons = new DemoStatusIcons(mStatusIcons, mIconSize);
         }
         mDemoStatusIcons.dispatchDemoCommand(command, args);
+    }
+
+    public void dispatchClockDemoCommand(String command, Bundle args) {
+        if (mClockStyle == CLOCK_STYLE_DEFAULT) {
+            mClockDefault.dispatchDemoCommand(command, args);
+        }
+        if (mClockStyle == CLOCK_STYLE_CENTERED) {
+            mClockCentered.dispatchDemoCommand(command, args);
+        }
     }
 
     /**
@@ -372,6 +404,7 @@ public class StatusBarIconController implements Tunable {
         mDarkIntensity = darkIntensity;
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+
         applyIconTint();
     }
 
@@ -391,8 +424,6 @@ public class StatusBarIconController implements Tunable {
         mSignalCluster.setIconTint(mIconTint, mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
-        mClock.setTextColor(mIconTint);
-        applyNotificationIconsTint();
     }
 
     private void applyNotificationIconsTint() {
@@ -463,5 +494,38 @@ public class StatusBarIconController implements Tunable {
 
     public int getCurrentVisibleNotificationIcons() {
         return mNotificationIcons.getChildCount();
+    }
+
+    public void setClockStyle(int clockStyle) {
+        mClockStyle = clockStyle;
+
+        switch (mClockStyle) {
+            case CLOCK_STYLE_DEFAULT:
+                mClockCentered.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.GONE);
+                mClockDefault.setVisibility(View.VISIBLE);
+                break;
+            case CLOCK_STYLE_CENTERED:
+                mClockDefault.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.VISIBLE);
+                mClockCentered.setVisibility(View.VISIBLE);
+                break;
+            case CLOCK_STYLE_HIDDEN:
+                mClockDefault.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.GONE);
+                mClockCentered.setVisibility(View.GONE);
+                break;
+        }
+        mNotificationIcons.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
+    }
+
+    public void updateClockSettings() {
+        mClockDefault.updateSettings();
+        mClockCentered.updateSettings();
+    }
+
+    public void updateClockColor(boolean animate) {
+        mClockDefault.updateClockColor(animate);
+        mClockCentered.updateClockColor(animate);
     }
 }
