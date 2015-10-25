@@ -16,6 +16,7 @@
 package com.android.systemui.tuner;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -169,7 +170,7 @@ public class TunerService extends SystemUI {
     }
 
     public static final void showResetRequest(final Context context, final Runnable onDisabled) {
-        SystemUIDialog dialog = new SystemUIDialog(context);
+        SystemUIDialog dialog = new SystemUIDialog(context, AlertDialog.THEME_MATERIAL_DARK);
         dialog.setShowForAllUsers(true);
         dialog.setMessage(R.string.remove_from_settings_prompt);
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(R.string.cancel),
