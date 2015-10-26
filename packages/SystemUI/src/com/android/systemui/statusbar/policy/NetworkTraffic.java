@@ -36,13 +36,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import com.android.systemui.R;
 
-public class NetworkTraffic extends TextView {
+public class NetworkTraffic extends LinearLayout {
     private static final int TRAFFIC_DOWN           = 0;
     private static final int TRAFFIC_UP             = 1;
     private static final int TRAFFIC_UP_DOWN        = 2;
@@ -50,6 +52,9 @@ public class NetworkTraffic extends TextView {
     private static final int TRAFFIC_TYPE_TEXT      = 0;
     private static final int TRAFFIC_TYPE_ICON      = 1;
     private static final int TRAFFIC_TYPE_TEXT_ICON = 2;
+
+    private TextView mTextView;
+    private ImageView mIconView;
 
     private boolean mEnabled;
     private boolean mShowDl;
@@ -59,7 +64,6 @@ public class NetworkTraffic extends TextView {
     private boolean mIsBit;
     private boolean mIconShowing = false;
     private boolean mHide;
-    private int mIconColor;
 
     private boolean mAttached = false;
     private boolean mReceiverRegistered= false;
@@ -184,6 +188,13 @@ public class NetworkTraffic extends TextView {
         mPaddingEnd = mResources.getDimensionPixelSize(R.dimen.network_traffic_text_end_padding);
 
         updateSettings();
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mTextView = (TextView) findViewById(R.id.network_traffic_text);
+        mIconView = (ImageView) findViewById(R.id.network_traffic_icon);
     }
 
     @Override
@@ -316,13 +327,15 @@ public class NetworkTraffic extends TextView {
             output = outputUp + "\n" + outputDown;
             textSize = mTxtSizeDual;
         }
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)textSize);
-        setText(output);
+        if (mTextView != null) {
+            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)textSize);
+            mTextView.setText(output);
+        }
 
         if (mShowIcon) {
-            updateDrawable(mIconColor, state);
+            updateDrawable(state);
         } else if (!mShowIcon && mIconShowing) {
-            removeDrawable();
+            updateDrawable(TRAFFIC_NO_ACTIVITY);
         }
 
         mTotalRxBytes = currentRxBytes;
@@ -338,8 +351,10 @@ public class NetworkTraffic extends TextView {
             getHandler().removeCallbacks(mRunnable);
             mIsUpdating = false;
         }
-        setText("");
-        removeDrawable();
+        if (mTextView != null) {
+            mTextView.setText("");
+        }
+        updateDrawable(TRAFFIC_NO_ACTIVITY);
         if (getVisibility() != View.GONE) {
             setVisibility(View.GONE);
         }
@@ -380,7 +395,7 @@ public class NetworkTraffic extends TextView {
         mShowIcon = type == TRAFFIC_TYPE_ICON || type == TRAFFIC_TYPE_TEXT_ICON;
 
         if (!mShowIcon && mIconShowing) {
-            removeDrawable();
+            updateDrawable(TRAFFIC_NO_ACTIVITY);
         }
     }
 
@@ -400,14 +415,32 @@ public class NetworkTraffic extends TextView {
         int textColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
+        if (mTextView != null) {
+            mTextView.setTextColor(textColor);
+        }
+    }
 
-        setTextColor(textColor);
+    public void setTextColor(int color) {
+        if (mTextView != null) {
+            mTextView.setTextColor(color);
+        }
     }
 
     private void updateIconColor() {
-        mIconColor = Settings.System.getIntForUser(mResolver,
+        int iconColor = Settings.System.getIntForUser(mResolver,
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR,
                 0xffffffff, UserHandle.USER_CURRENT);
+        if (mIconView != null) {
+            mIconView.setColorFilter(iconColor, Mode.MULTIPLY);
+        }
+
+    }
+
+    public void setIconColor(int color) {
+        if (mIconView != null) {
+            mIconView.setColorFilter(color, Mode.MULTIPLY);
+        }
+
     }
 
     private boolean getConnectAvailable() {
@@ -440,7 +473,7 @@ public class NetworkTraffic extends TextView {
         }
     }
 
-    private void updateDrawable(int color, int state) {
+    private void updateDrawable(int state) {
         Drawable drawable = null;
         if (mShowIcon) {
             if (state == TRAFFIC_UP) {
@@ -450,25 +483,53 @@ public class NetworkTraffic extends TextView {
             } else if (state == TRAFFIC_UP_DOWN) {
                 drawable = mResources.getDrawable(R.drawable.stat_sys_signal_inout);
             }
-            if (drawable != null) {
-                drawable.setColorFilter(color, Mode.MULTIPLY);
-            }
         }
-        if (drawable == null && !mPaddingEndApplied
-                || drawable != null && mPaddingEndApplied) {
-            setPaddingRelative(0, 0, drawable == null ? mPaddingEnd : 0, 0);
-            mPaddingEndApplied = drawable == null;
+//        if (drawable == null && !mPaddingEndApplied
+//                || drawable != null && mPaddingEndApplied) {
+//            setPaddingRelative(0, 0, drawable == null ? mPaddingEnd : 0, 0);
+//            mPaddingEndApplied = drawable == null;
+//        }
+        if (mIconView != null) {
+            mIconView.setImageDrawable(drawable);
+            mIconShowing = true;
         }
-        setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-        mIconShowing = true;
+        
+
     }
 
     private void removeDrawable() {
-        if (!mPaddingEndApplied) {
-            setPaddingRelative(0, 0, mPaddingEnd, 0);
-            mPaddingEndApplied = true;
+//        if (!mPaddingEndApplied) {
+//            setPaddingRelative(0, 0, mPaddingEnd, 0);
+//            mPaddingEndApplied = true;
+//        }
+        if (mIconView != null) {
+            mIconView.setImageDrawable(null);
+            mIconShowing = false;
         }
-        setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        mIconShowing = false;
+
+    }
+
+    public int getTextColor() {
+        return Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+    }
+
+    public int getTextColorDarkMode() {
+        return Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR_DARK_MODE,
+                0x99000000);
+    }
+
+    public int getIconColor() {
+        return Settings.System.getIntForUser(mResolver,
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR,
+                0xffffffff, UserHandle.USER_CURRENT);
+    }
+
+    public int getIconColorDarkMode() {
+        return Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR_DARK_MODE,
+                0x99000000);
     }
 }

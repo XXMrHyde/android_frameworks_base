@@ -3293,6 +3293,12 @@ public final class Settings {
         public static final String STATUS_BAR_CARRIER_LABEL_COLOR = "status_bar_carrier_label_color";
 
         /**
+         * Color of the (custom) carrier label on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE = "status_bar_carrier_label_color_dark_mode";
+
+        /**
          * Clock and date position on the status bar
          * 0: Right clock
          * 1: Center clock
@@ -3353,6 +3359,12 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_DATE_COLOR = "status_bar_clock_date_color";
 
         /**
+         * Color of the Clock and date on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE = "status_bar_clock_date_color_dark_mode";
+
+        /**
          * Network traffic activity
          * 0: download
          * 1: upload
@@ -3393,10 +3405,22 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR = "status_bar_network_traffic_text_color";
 
         /**
+         * Color of the network traffic text, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR_DARK_MODE = "status_bar_network_traffic_text_color_dark_mode";
+
+        /**
          * Color of the network traffic icons
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR = "status_bar_network_traffic_icon_color";
+
+        /**
+         * Color of the network traffic icons, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR_DARK_MODE = "status_bar_network_traffic_icon_color_dark_mode";
 
         /**
          * Whether to include advanced reboot options in power menu for 

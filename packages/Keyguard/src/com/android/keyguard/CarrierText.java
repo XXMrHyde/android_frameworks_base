@@ -121,6 +121,7 @@ public class CarrierText extends TextView {
 
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
         updateCarrierLabelSettings();
+        updateColor(false);
     }
 
     public void updateCarrierText() {
@@ -456,5 +457,15 @@ public class CarrierText extends TextView {
             }
         });
         return animator;
+    }
+
+    public int getColor() {
+        return mNewColor;
+    }
+
+    public int getColorDarkMode() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE,
+                0x99000000);
     }
 }

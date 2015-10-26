@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
+import com.android.keyguard.CarrierText;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -45,6 +46,7 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.policy.Clock;
+import com.android.systemui.statusbar.policy.NetworkTraffic;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
 
@@ -73,6 +75,7 @@ public class StatusBarIconController implements Tunable {
     private LinearLayout mStatusIcons;
     private SignalClusterView mSignalCluster;
     private LinearLayout mStatusIconsKeyguard;
+    private CarrierText mStatusBarCarrierLabel;
     private IconMerger mNotificationIcons;
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
@@ -80,11 +83,16 @@ public class StatusBarIconController implements Tunable {
     private Clock mClockDefault;
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
+    private NetworkTraffic mNetworkTraffic;
 
     private int mIconSize;
     private int mIconHPadding;
 
     private int mIconTint = Color.WHITE;
+    private int mCarrierLabelColor;
+    private int mClockColor;
+    private int mNetworkTrafficTextColor;
+    private int mNetworkTrafficIconColor;
     private float mDarkIntensity;
 
     private boolean mTransitionPending;
@@ -123,6 +131,7 @@ public class StatusBarIconController implements Tunable {
         mStatusIcons = (LinearLayout) statusBar.findViewById(R.id.statusIcons);
         mSignalCluster = (SignalClusterView) statusBar.findViewById(R.id.signal_cluster);
         mNotificationIconArea = statusBar.findViewById(R.id.notification_icon_area_inner);
+        mStatusBarCarrierLabel = (CarrierText) statusBar.findViewById(R.id.status_bar_carrier_text);
         mNotificationIcons = (IconMerger) statusBar.findViewById(R.id.notificationIcons);
         mMoreIcon = (ImageView) statusBar.findViewById(R.id.moreIcon);
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
@@ -131,6 +140,7 @@ public class StatusBarIconController implements Tunable {
         mClockDefault = (Clock) statusBar.findViewById(R.id.clock);
         mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
         mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
+        mNetworkTraffic = (NetworkTraffic) statusBar.findViewById(R.id.network_traffic_layout);
         mLinearOutSlowIn = AnimationUtils.loadInterpolator(mContext,
                 android.R.interpolator.linear_out_slow_in);
         mFastOutSlowIn = AnimationUtils.loadInterpolator(mContext,
@@ -404,6 +414,14 @@ public class StatusBarIconController implements Tunable {
         mDarkIntensity = darkIntensity;
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+        mCarrierLabelColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mStatusBarCarrierLabel.getColor(), mStatusBarCarrierLabel.getColorDarkMode());
+        mClockColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mClockDefault.getColor(), mClockDefault.getColorDarkMode());
+        mNetworkTrafficTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mNetworkTraffic.getTextColor(), mNetworkTraffic.getTextColorDarkMode());
+        mNetworkTrafficIconColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mNetworkTraffic.getIconColor(), mNetworkTraffic.getIconColorDarkMode());
 
         applyIconTint();
     }
@@ -422,8 +440,13 @@ public class StatusBarIconController implements Tunable {
             v.setImageTintList(ColorStateList.valueOf(mIconTint));
         }
         mSignalCluster.setIconTint(mIconTint, mDarkIntensity);
+        mStatusBarCarrierLabel.setTextColor(mCarrierLabelColor);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
+        mClockDefault.setTextColor(mClockColor);
+        mClockCentered.setTextColor(mClockColor);
+        mNetworkTraffic.setTextColor(mNetworkTrafficTextColor);
+        mNetworkTraffic.setIconColor(mNetworkTrafficIconColor);
         applyNotificationIconsTint();
     }
 
