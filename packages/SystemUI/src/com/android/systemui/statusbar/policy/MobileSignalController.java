@@ -181,13 +181,15 @@ public class MobileSignalController extends SignalController<
         }
 
         MobileIconGroup hGroup = TelephonyIcons.THREE_G;
+        MobileIconGroup hpGroup = TelephonyIcons.THREE_G;
         if (mConfig.hspaDataDistinguishable) {
             hGroup = TelephonyIcons.H;
+            hpGroup = TelephonyIcons.HP;
         }
         mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSDPA, hGroup);
         mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSUPA, hGroup);
         mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPA, hGroup);
-        mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hGroup);
+        mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_HSPAP, hpGroup);
 
         if (mConfig.show4gForLte) {
             mNetworkToIconLookup.put(TelephonyManager.NETWORK_TYPE_LTE, TelephonyIcons.FOUR_G);

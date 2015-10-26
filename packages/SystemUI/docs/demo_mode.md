@@ -35,7 +35,7 @@ Command              | Subcommand                 | Argument       | Description
                      | ```wifi```                 |                | ```show``` to show icon, any other value to hide
                      |                            | ```level```    | Sets wifi level (null or 0-4)
                      | ```mobile```               |                | ```show``` to show icon, any other value to hide
-                     |                            | ```datatype``` | Values: ```1x```, ```3g```, ```4g```, ```e```, ```g```, ```h```, ```lte```, ```roam```, any other value to hide
+                     |                            | ```datatype``` | Values: ```1x```, ```3g```, ```4g```, ```e```, ```g```, ```h```, ```hp```, ```lte```, ```roam```, any other value to hide
                      |                            | ```level```    | Sets mobile signal strength level (null or 0-4)
                      | ```carriernetworkchange``` |                | Sets mobile signal icon to carrier network change UX when disconnected (```show``` to show icon, any other value to hide)
                      | ```sims```                 |                | Sets the number of sims (1-8)
