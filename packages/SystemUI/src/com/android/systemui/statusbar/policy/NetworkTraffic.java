@@ -484,11 +484,6 @@ public class NetworkTraffic extends LinearLayout {
                 drawable = mResources.getDrawable(R.drawable.stat_sys_signal_inout);
             }
         }
-//        if (drawable == null && !mPaddingEndApplied
-//                || drawable != null && mPaddingEndApplied) {
-//            setPaddingRelative(0, 0, drawable == null ? mPaddingEnd : 0, 0);
-//            mPaddingEndApplied = drawable == null;
-//        }
         if (mIconView != null) {
             mIconView.setImageDrawable(drawable);
             mIconShowing = true;
@@ -498,10 +493,6 @@ public class NetworkTraffic extends LinearLayout {
     }
 
     private void removeDrawable() {
-//        if (!mPaddingEndApplied) {
-//            setPaddingRelative(0, 0, mPaddingEnd, 0);
-//            mPaddingEndApplied = true;
-//        }
         if (mIconView != null) {
             mIconView.setImageDrawable(null);
             mIconShowing = false;
