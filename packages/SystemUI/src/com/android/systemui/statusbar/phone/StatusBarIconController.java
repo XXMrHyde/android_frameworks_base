@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
+import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.keyguard.CarrierText;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
@@ -414,8 +415,10 @@ public class StatusBarIconController implements Tunable {
         mDarkIntensity = darkIntensity;
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
-        mCarrierLabelColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mStatusBarCarrierLabel.getColor(), mStatusBarCarrierLabel.getColorDarkMode());
+        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+            mCarrierLabelColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                    mStatusBarCarrierLabel.getColor(), mStatusBarCarrierLabel.getColorDarkMode());
+        }
         mClockColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mClockDefault.getColor(), mClockDefault.getColorDarkMode());
         mNetworkTrafficTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
@@ -440,7 +443,9 @@ public class StatusBarIconController implements Tunable {
             v.setImageTintList(ColorStateList.valueOf(mIconTint));
         }
         mSignalCluster.setIconTint(mIconTint, mDarkIntensity);
-        mStatusBarCarrierLabel.setTextColor(mCarrierLabelColor);
+        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+            mStatusBarCarrierLabel.setTextColor(mCarrierLabelColor);
+        }
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryMeterView.setDarkIntensity(mDarkIntensity);
         mClockDefault.setTextColor(mClockColor);
