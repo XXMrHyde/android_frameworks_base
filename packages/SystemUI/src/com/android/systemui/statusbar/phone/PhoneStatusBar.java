@@ -452,6 +452,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -491,6 +506,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_COLOR))) {
                 updateClockColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY))) {
+                updateBatteryVisibility();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT))) {
+                updateBatteryTextVisibility();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT))) {
+                updateCutOutBatteryText();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR))) {
+                updateBatteryColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
+                updateBatteryTextColor();
             }
         }
     }
@@ -1031,6 +1061,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setCarrierLabelVisibility();
         setLockScreenCarrierLabelVisibility();
         updateClock();
+        updateBattery();
         return mStatusBarView;
     }
 
@@ -1978,6 +2009,60 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateClockColor(boolean animate) {
         if (mIconController != null) {
             mIconController.updateClockColor(animate);
+        }
+    }
+
+    private void updateBattery() {
+        if (mIconController != null) {
+            mIconController.updateBatterySettings();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateBatterySettings();
+        }
+    }
+
+    private void updateBatteryVisibility() {
+        if (mIconController != null) {
+            mIconController.updateBatteryVisibility();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateBatteryVisibility();
+        }
+    }
+
+    private void updateBatteryTextVisibility() {
+        if (mIconController != null) {
+            mIconController.updateBatteryTextVisibility();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateBatteryTextVisibility();
+        }
+    }
+
+    private void updateCutOutBatteryText() {
+        if (mIconController != null) {
+            mIconController.updateCutOutBatteryText();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateCutOutBatteryText();
+        }
+    }
+
+    private void updateBatteryColor() {
+        if (mIconController != null) {
+            mIconController.updateBatteryColor(true);
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateBatteryColor();
+        }
+    }
+
+    private void updateBatteryTextColor() {
+        if (mIconController != null) {
+            mIconController.updateBatteryTextColor(true);
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateBatteryTextColor();
         }
     }
 

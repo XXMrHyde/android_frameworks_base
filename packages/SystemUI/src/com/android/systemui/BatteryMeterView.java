@@ -53,8 +53,13 @@ public class BatteryMeterView extends View implements DemoMode,
     private static final float BOLT_LEVEL_THRESHOLD = 0.3f;  // opaque bolt below this fraction
 
     private final int[] mColors;
+    private int mBatteryColor = 0;
+    private int mBatteryTextColor = 0;
+    private final int mLowLevelColor = 0xfff4511e; // deep orange 600
 
+    private boolean mIgnoreSystemUITuner = false;
     private boolean mShowPercent;
+    private boolean mCutOutBatteryText = true;
     private float mButtonHeightFraction;
     private float mSubpixelSmoothingLeft;
     private float mSubpixelSmoothingRight;
@@ -64,6 +69,7 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private int mHeight;
     private int mWidth;
+    private final int mLowLevel;
     private String mWarningString;
     private final int mCriticalLevel;
     private int mChargeColor;
@@ -119,6 +125,8 @@ public class BatteryMeterView extends View implements DemoMode,
         colors.recycle();
         atts.recycle();
         updateShowPercent();
+        mLowLevel = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_lowBatteryWarningLevel);
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
         mCriticalLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
@@ -231,16 +239,66 @@ public class BatteryMeterView extends View implements DemoMode,
     }
 
     private void updateShowPercent() {
-        mShowPercent = 0 != Settings.System.getInt(getContext().getContentResolver(),
-                SHOW_PERCENT_SETTING, 0);
+        if (!mIgnoreSystemUITuner) {
+            mShowPercent = 0 != Settings.System.getInt(getContext().getContentResolver(),
+                    SHOW_PERCENT_SETTING, 0);
+        }
+    }
+
+    public void setTextVisibility(boolean show) {
+        if (!mIgnoreSystemUITuner) {
+            mIgnoreSystemUITuner = true;
+        }
+        mShowPercent = show;
+        invalidate();
+    }
+
+    public void setCutOutBatteryText(boolean cutOut) {
+        mCutOutBatteryText = cutOut;
+        invalidate();
+    }
+
+    public void setBatteryFrameColor(int color) {
+        mFramePaint.setColor(color);
+        invalidate();
+    }
+
+    public void setBatteryColor(int color) {
+        mBatteryColor = color;
+        invalidate();
+    }
+
+    public void setBatteryTextColor(int color) {
+        mBatteryTextColor = color;
+        mBoltPaint.setColor(color);
+        invalidate();
+    }
+
+    private int getBatteryColorForLevel(int percent) {
+        if (mBatteryColor != 0) {
+            if (percent <= mLowLevel && !mPowerSaveEnabled) {
+                return mLowLevelColor;
+            } else {
+                return mBatteryColor;
+            }
+        } else {
+            return getColorForLevel(percent);
+        }
+    }
+
+    private int getBatteryTextColorForLevel(int percent) {
+        if (mBatteryTextColor != 0) {
+            if (percent <= mLowLevel && !mPowerSaveEnabled) {
+                return mLowLevelColor;
+            } else {
+                return mBatteryTextColor;
+            }
+        } else {
+            return getColorForLevel(percent);
+        }
     }
 
     private int getColorForLevel(int percent) {
-
-        // If we are in power save mode, always use the normal color.
-        if (mPowerSaveEnabled) {
-            return mColors[mColors.length-1];
-        }
         int thresh, color = 0;
         for (int i=0; i<mColors.length; i+=2) {
             thresh = mColors[i];
@@ -321,7 +379,7 @@ public class BatteryMeterView extends View implements DemoMode,
         mFrame.bottom -= mSubpixelSmoothingRight;
 
         // set the battery charging color
-        mBatteryPaint.setColor(tracker.plugged ? mChargeColor : getColorForLevel(level));
+        mBatteryPaint.setColor(tracker.plugged ? getBatteryColorForLevel(50) : getBatteryColorForLevel(level));
 
         if (level >= FULL) {
             drawFrac = 1f;
@@ -369,21 +427,21 @@ public class BatteryMeterView extends View implements DemoMode,
 
             float boltPct = (mBoltFrame.bottom - levelTop) / (mBoltFrame.bottom - mBoltFrame.top);
             boltPct = Math.min(Math.max(boltPct, 0), 1);
-            if (boltPct <= BOLT_LEVEL_THRESHOLD) {
-                // draw the bolt if opaque
-                c.drawPath(mBoltPath, mBoltPaint);
-            } else {
-                // otherwise cut the bolt out of the overall shape
+            if (boltPct > BOLT_LEVEL_THRESHOLD && mCutOutBatteryText) {
+                // cut the bolt out of the overall shape if not opaque
                 mShapePath.op(mBoltPath, Path.Op.DIFFERENCE);
+            } else {
+                // otherwise draw the bolt
+                c.drawPath(mBoltPath, mBoltPaint);
             }
         }
 
         // compute percentage text
-        boolean pctOpaque = false;
+        boolean pctOpaque = true;
         float pctX = 0, pctY = 0;
         String pctText = null;
         if (!tracker.plugged && level > mCriticalLevel && mShowPercent) {
-            mTextPaint.setColor(getColorForLevel(level));
+            mTextPaint.setColor(getBatteryTextColorForLevel(level));
             mTextPaint.setTextSize(height *
                     (SINGLE_DIGIT_PERCENT ? 0.75f
                             : (tracker.level == 100 ? 0.38f : 0.5f)));
@@ -391,7 +449,9 @@ public class BatteryMeterView extends View implements DemoMode,
             pctText = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
             pctX = mWidth * 0.5f;
             pctY = (mHeight + mTextHeight) * 0.47f;
-            pctOpaque = levelTop > pctY;
+            if (mCutOutBatteryText) {
+                pctOpaque = levelTop > pctY && mCutOutBatteryText;
+            } 
             if (!pctOpaque) {
                 mTextPath.reset();
                 mTextPaint.getTextPath(pctText, 0, pctText.length(), pctX, pctY, mTextPath);
@@ -410,7 +470,7 @@ public class BatteryMeterView extends View implements DemoMode,
         mShapePath.op(mClipPath, Path.Op.INTERSECT);
         c.drawPath(mShapePath, mBatteryPaint);
 
-        if (!tracker.plugged) {
+        if (!tracker.plugged && mShowPercent) {
             if (level <= mCriticalLevel) {
                 // draw the warning text
                 final float x = mWidth * 0.5f;
@@ -535,8 +595,10 @@ public class BatteryMeterView extends View implements DemoMode,
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
-            updateShowPercent();
-            postInvalidate();
+            if (!mIgnoreSystemUITuner) {
+                updateShowPercent();
+                postInvalidate();
+            }
         }
     }
 

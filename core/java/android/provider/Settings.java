@@ -3365,6 +3365,48 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE = "status_bar_clock_date_color_dark_mode";
 
         /**
+         *  Weather to show the battery status on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY = "status_bar_battery_status_show_battery";
+
+        /**
+         *  Weather to show the battery status text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
+
+        /**
+         *  Weather to cut the battery percentage out of the battery status icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT = "status_bar_battery_status_cut_out_text";
+
+        /**
+         * Color of the battery status icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR = "status_bar_battery_status_battery_color";
+
+        /**
+         * Color of the battery status icon on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR_DARK_MODE = "status_bar_battery_status_battery_color_dark_mode";
+
+        /**
+         * Color of the battery status text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR = "status_bar_battery_status_text_color";
+
+        /**
+         * Color of the battery status text on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR_DARK_MODE = "status_bar_battery_status_text_color_dark_mode";
+
+        /**
          * Network traffic activity
          * 0: download
          * 1: upload
