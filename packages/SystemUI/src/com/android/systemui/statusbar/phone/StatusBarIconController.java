@@ -94,15 +94,15 @@ public class StatusBarIconController implements Tunable {
     private int mIconHPadding;
 
     private int mIconTint = Color.WHITE;
-    private int mCarrierLabelColor;
-    private int mClockColor;
+//    private int mCarrierLabelColor;
+//    private int mClockColor;
     private int mBatteryFrameColorOld;
     private int mBatteryColorOld;
 //    private int mBatteryTint;
     private int mBatteryTextColorOld;
 //    private int mBatteryTextTint;
-    private int mNetworkTrafficTextColor;
-    private int mNetworkTrafficIconColor;
+//    private int mNetworkTrafficTextColor;
+//    private int mNetworkTrafficIconColor;
     private float mDarkIntensity;
 
     private boolean mTransitionPending;
@@ -436,20 +436,20 @@ public class StatusBarIconController implements Tunable {
         mDarkIntensity = darkIntensity;
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
-        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mCarrierLabelColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                    mStatusBarCarrierLabel.getColor(), mStatusBarCarrierLabel.getColorDarkMode());
-        }
-        mClockColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mClockDefault.getColor(), mClockDefault.getColorDarkMode());
+//        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+//            mCarrierLabelColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+//                    mStatusBarCarrierLabel.getColor(), mStatusBarCarrierLabel.getColorDarkMode());
+//        }
+//        mClockColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+//                mClockDefault.getColor(), mClockDefault.getColorDarkMode());
 //        mBatteryTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
 //                StatusBarColorHelper.getBatteryColor(mContext), StatusBarColorHelper.getBatteryColorDarkMode(mContext));
 //        mBatteryTextTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
 //                StatusBarColorHelper.getBatteryTextColor(mContext), StatusBarColorHelper.getBatteryTextColorDarkMode(mContext));
-        mNetworkTrafficTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mNetworkTraffic.getTextColor(), mNetworkTraffic.getTextColorDarkMode());
-        mNetworkTrafficIconColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mNetworkTraffic.getIconColor(), mNetworkTraffic.getIconColorDarkMode());
+//        mNetworkTrafficTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+//                mNetworkTraffic.getTextColor(), mNetworkTraffic.getTextColorDarkMode());
+//        mNetworkTrafficIconColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+//                mNetworkTraffic.getIconColor(), mNetworkTraffic.getIconColorDarkMode());
 
         applyIconTint();
     }
@@ -468,9 +468,9 @@ public class StatusBarIconController implements Tunable {
             v.setImageTintList(ColorStateList.valueOf(mIconTint));
         }
         mSignalCluster.setIconTint(mIconTint, mDarkIntensity);
-        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mStatusBarCarrierLabel.setTextColor(mCarrierLabelColor);
-        }
+//        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+//            mStatusBarCarrierLabel.setTextColor(mCarrierLabelColor);
+//        }
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
 //        if (showBattery()) {
 //            mBatteryMeterView.setBatteryColor(mBatteryTint);
@@ -480,10 +480,10 @@ public class StatusBarIconController implements Tunable {
 //                mBatteryTextColorOld = mBatteryTextTint;
 //            }
 //        }
-        mClockDefault.setTextColor(mClockColor);
-        mClockCentered.setTextColor(mClockColor);
-        mNetworkTraffic.setTextColor(mNetworkTrafficTextColor);
-        mNetworkTraffic.setIconColor(mNetworkTrafficIconColor);
+//        mClockDefault.setTextColor(mClockColor);
+//        mClockCentered.setTextColor(mClockColor);
+//        mNetworkTraffic.setTextColor(mNetworkTrafficTextColor);
+//        mNetworkTraffic.setIconColor(mNetworkTrafficIconColor);
         applyNotificationIconsTint();
     }
 
