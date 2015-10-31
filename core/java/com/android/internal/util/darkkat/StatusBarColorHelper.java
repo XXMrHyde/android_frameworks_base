@@ -60,4 +60,41 @@ public class StatusBarColorHelper {
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK);
     }
+
+    public static int getNetworkSignalColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR, WHITE);
+    }
+
+    public static int getNetworkSignalColorDark(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+        return (153 << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getNoSimColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR, WHITE);
+    }
+
+    public static int getNoSimColorDark(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+        return (153 << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getAirplaneModeColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR,
+                WHITE);
+    }
+
+    public static int getAirplaneModeColorDark(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+        return (153 << 24) | (color & 0x00ffffff);
+    }
 }

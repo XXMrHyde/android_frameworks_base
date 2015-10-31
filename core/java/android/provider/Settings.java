@@ -3407,6 +3407,42 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_TEXT_COLOR_DARK_MODE = "status_bar_battery_status_text_color_dark_mode";
 
         /**
+         * Color of the signal icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR = "status_bar_network_icons_signal_color";
+
+        /**
+         * Color of the signal icons on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR_DARK_MODE = "status_bar_network_icons_signal_color_dark_mode";
+
+        /**
+         * Color of the no sim icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR = "status_bar_network_icons_no_sim_color";
+
+        /**
+         * Color of the no sim icon on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR_DARK_MODE = "status_bar_network_icons_no_sim_color_dark_mode";
+
+        /**
+         * Color of the airplane mode icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR = "status_bar_network_icons_airplane_mode_color";
+
+        /**
+         * Color of the airplane mode icon on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR_DARK_MODE = "status_bar_network_icons_airplane_mode_color_dark_mode";
+
+        /**
          * Network traffic activity
          * 0: download
          * 1: upload

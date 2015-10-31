@@ -467,6 +467,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -521,6 +530,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
                 updateBatteryTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR))) {
+                updateNetworkSignalColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR))) {
+                updateNoSimColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR))) {
+                updateAirplaneModeColor();
             }
         }
     }
@@ -1062,6 +1080,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setLockScreenCarrierLabelVisibility();
         updateClock();
         updateBattery();
+        updateNetworkIconColors();
         return mStatusBarView;
     }
 
@@ -2063,6 +2082,42 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mKeyguardStatusBar != null) {
             mKeyguardStatusBar.updateBatteryTextColor();
+        }
+    }
+
+    private void updateNetworkIconColors() {
+        if (mIconController != null) {
+            mIconController.updateNetworkIconColors();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNetworkIconColors();
+        }
+    }
+
+    private void updateNetworkSignalColor() {
+        if (mIconController != null) {
+            mIconController.updateNetworkSignalColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNetworkIconColors();
+        }
+    }
+
+    private void updateNoSimColor() {
+        if (mIconController != null) {
+            mIconController.updateNoSimColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateNoSimColor();
+        }
+    }
+
+    private void updateAirplaneModeColor() {
+        if (mIconController != null) {
+            mIconController.updateAirplaneModeColor();
+        }
+        if (mKeyguardStatusBar != null) {
+            mKeyguardStatusBar.updateAirplaneModeColor();
         }
     }
 
