@@ -484,7 +484,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL))) {
-                updateCarrierLabel();
+                updateCarrierLabelSettings();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW))
                 || uri.equals(Settings.System.getUriFor(
@@ -1943,7 +1943,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mStatusBarCarrierLabel.updateCarrierText();
         }
         if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateCarrierLabel();
+            mKeyguardStatusBar.updateCarrierLabelSettings();
         }
     }
 

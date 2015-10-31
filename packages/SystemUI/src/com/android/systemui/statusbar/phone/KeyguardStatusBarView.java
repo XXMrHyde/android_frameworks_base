@@ -257,7 +257,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         return false;
     }
 
-    public void updateCarrierLabel() {
+    public void updateCarrierLabelSettings() {
         mCarrierLabel.updateCarrierLabelSettings();
         mCarrierLabel.updateCarrierText();
     }
