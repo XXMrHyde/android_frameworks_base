@@ -262,12 +262,12 @@ public class KeyguardStatusBarView extends RelativeLayout
         mCarrierLabel.updateCarrierText();
     }
 
-    public void setCarrierLabelVisibility(boolean show) {
+    public void updateCarrierLabelVisibility(boolean show) {
         mCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void updateCarrierLabelColor() {
-        mCarrierLabel.updateColor(false);
+        mCarrierLabel.setTextColor(StatusBarColorHelper.getCarrierLabelColor(getContext()));
     }
 
     public void updateBatterySettings() {

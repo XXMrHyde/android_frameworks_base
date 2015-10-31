@@ -39,6 +39,17 @@ public class StatusBarColorHelper {
         return frameColor;
     }
 
+    public static int getCarrierLabelColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR, WHITE);
+    }
+
+    public static int getCarrierLabelColorDarkMode(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+    }
+
     public static int getBatteryColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR, WHITE);

@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,10 +57,6 @@ public class CarrierText extends TextView {
 
     private boolean mUseCustomLabel = false;
     private String mCustomLabel = "";
-
-    private int mNewColor;
-    private int mOldColor;
-    private Animator mColorTransitionAnimator;
 
     private KeyguardUpdateMonitorCallback mCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -113,15 +106,7 @@ public class CarrierText extends TextView {
 
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-        int color = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR,
-                0xffffffff);
-        setTextColor(color);
-        mOldColor = color;
-
-        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
         updateCarrierLabelSettings();
-        updateColor(false);
     }
 
     public void updateCarrierText() {
@@ -425,47 +410,5 @@ public class CarrierText extends TextView {
             mCustomLabel = mContext.getResources().getString(
                     com.android.internal.R.string.default_custom_label);
         }
-    }
-
-    public void updateColor(boolean animation) {
-        mNewColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR,
-                0xffffffff);
-        if (mOldColor != mNewColor && animation) {
-            mColorTransitionAnimator.start();
-        } else {
-            setTextColor(mNewColor);
-            mOldColor = mNewColor;
-        }
-    }
-
-    private ValueAnimator createColorTransitionAnimator(float start, float end) {
-        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
-
-        animator.setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
-            @Override public void onAnimationUpdate(ValueAnimator animation) {
-                float position = animation.getAnimatedFraction();
-                int blended = ColorHelper.getBlendColor(mOldColor, mNewColor, position);
-                setTextColor(blended);
-            }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mOldColor = mNewColor;
-            }
-        });
-        return animator;
-    }
-
-    public int getColor() {
-        return mNewColor;
-    }
-
-    public int getColorDarkMode() {
-        return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE,
-                0x99000000);
     }
 }
