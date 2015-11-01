@@ -135,12 +135,6 @@ public class NetworkTraffic extends LinearLayout {
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC))) {
                 updateHideTraffic();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR))) {
-                updateTextColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR))) {
-                updateIconColor();
             }
         }
 
@@ -365,8 +359,6 @@ public class NetworkTraffic extends LinearLayout {
         updateType();
         updateBitByte();
         updateHideTraffic();
-        updateTextColor();
-        updateIconColor();
     }
 
     private void updateTrafficActivity() {
@@ -411,29 +403,10 @@ public class NetworkTraffic extends LinearLayout {
                 UserHandle.USER_CURRENT) == 1;
     }
 
-    private void updateTextColor() {
-        int textColor = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-        if (mTextView != null) {
-            mTextView.setTextColor(textColor);
-        }
-    }
-
     public void setTextColor(int color) {
         if (mTextView != null) {
             mTextView.setTextColor(color);
         }
-    }
-
-    private void updateIconColor() {
-        int iconColor = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-        if (mIconView != null) {
-            mIconView.setColorFilter(iconColor, Mode.MULTIPLY);
-        }
-
     }
 
     public void setIconColor(int color) {
@@ -500,27 +473,7 @@ public class NetworkTraffic extends LinearLayout {
 
     }
 
-    public int getTextColor() {
-        return Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-    }
-
-    public int getTextColorDarkMode() {
-        return Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR_DARK_MODE,
-                0x99000000);
-    }
-
-    public int getIconColor() {
-        return Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-    }
-
-    public int getIconColorDarkMode() {
-        return Settings.System.getInt(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR_DARK_MODE,
-                0x99000000);
+    public boolean isUpdating() {
+        return mIsUpdating;
     }
 }
