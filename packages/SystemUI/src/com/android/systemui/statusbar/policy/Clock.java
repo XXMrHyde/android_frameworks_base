@@ -16,9 +16,6 @@
 
 package com.android.systemui.statusbar.policy;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -78,10 +75,6 @@ public class Clock extends TextView implements DemoMode {
     private boolean mShowDate;
     private boolean mDateSizeSmall;
 
-    private int mNewColor;
-    private int mOldColor;
-    private Animator mColorTransitionAnimator;
-
     private ContentResolver mResolver;
 
     public Clock(Context context) {
@@ -115,14 +108,6 @@ public class Clock extends TextView implements DemoMode {
         mDateStyle = Settings.System.getIntForUser(mResolver,
 			    Settings.System.STATUS_BAR_DATE_STYLE,
                 DATE_STYLE_REGULAR, UserHandle.USER_CURRENT);
-        int color = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-
-        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
-
-        setTextColor(color);
-        mOldColor = color;
     }
 
     private void updateReceiverState() {
@@ -372,50 +357,6 @@ public class Clock extends TextView implements DemoMode {
         if (mAttached) {
             updateClock();
         }
-    }
-
-    public void updateClockColor(boolean animate) {
-        mNewColor = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR,
-                0xffffffff, UserHandle.USER_CURRENT);
-        if (animate) {
-            if (mOldColor != mNewColor) {
-                mColorTransitionAnimator.start();
-            }
-        } else {
-            setTextColor(mNewColor);
-            mOldColor = mNewColor;
-        }
-    }
-
-    private ValueAnimator createColorTransitionAnimator(float start, float end) {
-        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
-
-        animator.setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
-            @Override public void onAnimationUpdate(ValueAnimator animation) {
-                float position = animation.getAnimatedFraction();
-                int blended = ColorHelper.getBlendColor(mOldColor, mNewColor, position);
-                setTextColor(blended);
-            }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mOldColor = mNewColor;
-            }
-        });
-        return animator;
-    }
-
-    public int getColor() {
-        return mNewColor;
-    }
-
-    public int getColorDarkMode() {
-        return Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE,
-                0x99000000, UserHandle.USER_CURRENT);
     }
 }
 

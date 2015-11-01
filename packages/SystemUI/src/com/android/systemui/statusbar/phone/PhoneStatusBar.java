@@ -2017,7 +2017,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Settings.System.STATUS_BAR_CLOCK_DATE_POSITION, 0, mCurrentUserId);
 
         if (mIconController != null) {
-            mIconController.setClockStyle(clockStyle);
+            mIconController.updateClockStyle(clockStyle);
             if (mNotificationData != null) {
                 mIconController.updateNotificationIcons(mNotificationData);
             }

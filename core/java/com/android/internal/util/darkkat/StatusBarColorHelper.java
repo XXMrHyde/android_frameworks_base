@@ -72,6 +72,17 @@ public class StatusBarColorHelper {
                 TRANSLUCENT_BLACK);
     }
 
+    public static int getClockColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, WHITE);
+    }
+
+    public static int getClockColorDarkMode(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+    }
+
     public static int getNetworkSignalColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR, WHITE);

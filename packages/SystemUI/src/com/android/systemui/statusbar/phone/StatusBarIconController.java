@@ -97,12 +97,14 @@ public class StatusBarIconController implements Tunable {
     private int mCarrierLabelColor;
     private int mCarrierLabelColorOld;
     private int mCarrierLabelColorTint;
-//    private int mClockColor;
     private int mBatteryFrameColorOld;
     private int mBatteryColorOld;
 //    private int mBatteryTint;
     private int mBatteryTextColorOld;
 //    private int mBatteryTextTint;
+    private int mClockColor;
+    private int mClockColorOld;
+    private int mClockColorTint;
 //    private int mNetworkTrafficTextColor;
 //    private int mNetworkTrafficIconColor;
     private int mNetworkSignalColor;
@@ -132,9 +134,10 @@ public class StatusBarIconController implements Tunable {
     private static final int CARRIER_LABEL_COLOR  = 0;
     private static final int BATTERY_COLOR        = 1;
     private static final int BATTERY_TEXT_COLOR   = 2;
-    private static final int NETWORK_SIGNAL_COLOR = 3;
-    private static final int NO_SIM_COLOR         = 4;
-    private static final int AIRPLANE_MODE_COLOR  = 5;
+    private static final int CLOCK_COLOR          = 3;
+    private static final int NETWORK_SIGNAL_COLOR = 4;
+    private static final int NO_SIM_COLOR         = 5;
+    private static final int AIRPLANE_MODE_COLOR  = 6;
     private int mColorToChange;
 
     private final Handler mHandler;
@@ -192,6 +195,9 @@ public class StatusBarIconController implements Tunable {
         mBatteryFrameColorOld = StatusBarColorHelper.getBatteryFrameColor(mContext);
         mBatteryColorOld = StatusBarColorHelper.getBatteryColor(mContext);
         mBatteryTextColorOld = StatusBarColorHelper.getBatteryTextColor(mContext);
+        mClockColor = StatusBarColorHelper.getClockColor(mContext);;
+        mClockColorOld = mClockColor;
+        mClockColorTint = mClockColor;
         mNetworkSignalColor = StatusBarColorHelper.getNetworkSignalColor(mContext);
         mNetworkSignalColorOld = mNetworkSignalColor;
         mNetworkSignalColorTint = mNetworkSignalColor;
@@ -471,12 +477,12 @@ public class StatusBarIconController implements Tunable {
             mCarrierLabelColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                     mCarrierLabelColor, StatusBarColorHelper.getCarrierLabelColorDarkMode(mContext));
         }
-//        mClockColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-//                mClockDefault.getColor(), mClockDefault.getColorDarkMode());
 //        mBatteryTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
 //                StatusBarColorHelper.getBatteryColor(mContext), StatusBarColorHelper.getBatteryColorDarkMode(mContext));
 //        mBatteryTextTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
 //                StatusBarColorHelper.getBatteryTextColor(mContext), StatusBarColorHelper.getBatteryTextColorDarkMode(mContext));
+        mClockColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mClockColor, StatusBarColorHelper.getClockColorDarkMode(mContext));
 //        mNetworkTrafficTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
 //                mNetworkTraffic.getTextColor(), mNetworkTraffic.getTextColorDarkMode());
 //        mNetworkTrafficIconColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
@@ -518,8 +524,12 @@ public class StatusBarIconController implements Tunable {
 //                mBatteryTextColorOld = mBatteryTextTint;
 //            }
 //        }
-//        mClockDefault.setTextColor(mClockColor);
-//        mClockCentered.setTextColor(mClockColor);
+        if (mClockStyle == CLOCK_STYLE_DEFAULT) {
+            mClockDefault.setTextColor(mClockColorTint);
+        }
+        if (mClockStyle == CLOCK_STYLE_CENTERED) {
+            mClockCentered.setTextColor(mClockColorTint);
+        }
 //        mNetworkTraffic.setTextColor(mNetworkTrafficTextColor);
 //        mNetworkTraffic.setIconColor(mNetworkTrafficIconColor);
         applyNotificationIconsTint();
@@ -615,6 +625,15 @@ public class StatusBarIconController implements Tunable {
                     blended = ColorHelper.getBlendColor(
                             mBatteryTextColorOld, StatusBarColorHelper.getBatteryTextColor(mContext), position);
                     mBatteryMeterView.setBatteryTextColor(blended);
+                } else if (mColorToChange == CLOCK_COLOR) {
+                    blended = ColorHelper.getBlendColor(
+                            mClockColorOld, mClockColor, position);
+                    if (mClockStyle == CLOCK_STYLE_DEFAULT) {
+                        mClockDefault.setTextColor(blended);
+                    }
+                    if (mClockStyle == CLOCK_STYLE_CENTERED) {
+                        mClockCentered.setTextColor(blended);
+                    }
                 } else if (mColorToChange == NETWORK_SIGNAL_COLOR) {
                     blended = ColorHelper.getBlendColor(
                             mNetworkSignalColorOld, mNetworkSignalColor, position);
@@ -641,6 +660,9 @@ public class StatusBarIconController implements Tunable {
                     mBatteryColorOld = StatusBarColorHelper.getBatteryColor(mContext);
                 } else if (mColorToChange == BATTERY_TEXT_COLOR) {
                     mBatteryTextColorOld = StatusBarColorHelper.getBatteryTextColor(mContext);
+                } else if (mColorToChange == CLOCK_COLOR) {
+                    mClockColorOld = mClockColor;
+                    mClockColorTint = mClockColor;
                 } else if (mColorToChange == NETWORK_SIGNAL_COLOR) {
                     mNetworkSignalColorOld = mNetworkSignalColor;
                     mNetworkSignalColorTint = mNetworkSignalColor;
@@ -670,39 +692,6 @@ public class StatusBarIconController implements Tunable {
             mCarrierLabelColorOld = mCarrierLabelColor;
             mCarrierLabelColorTint = mCarrierLabelColor;
         }
-    }
-
-    public void setClockStyle(int clockStyle) {
-        mClockStyle = clockStyle;
-
-        switch (mClockStyle) {
-            case CLOCK_STYLE_DEFAULT:
-                mClockCentered.setVisibility(View.GONE);
-                mCenterClockLayout.setVisibility(View.GONE);
-                mClockDefault.setVisibility(View.VISIBLE);
-                break;
-            case CLOCK_STYLE_CENTERED:
-                mClockDefault.setVisibility(View.GONE);
-                mCenterClockLayout.setVisibility(View.VISIBLE);
-                mClockCentered.setVisibility(View.VISIBLE);
-                break;
-            case CLOCK_STYLE_HIDDEN:
-                mClockDefault.setVisibility(View.GONE);
-                mCenterClockLayout.setVisibility(View.GONE);
-                mClockCentered.setVisibility(View.GONE);
-                break;
-        }
-        mNotificationIcons.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
-    }
-
-    public void updateClockSettings() {
-        mClockDefault.updateSettings();
-        mClockCentered.updateSettings();
-    }
-
-    public void updateClockColor(boolean animate) {
-        mClockDefault.updateClockColor(animate);
-        mClockCentered.updateClockColor(animate);
     }
 
     public void updateBatterySettings() {
@@ -763,6 +752,53 @@ public class StatusBarIconController implements Tunable {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT, 1,
                 UserHandle.USER_CURRENT) == 1;
+    }
+
+    public void updateClockStyle(int clockStyle) {
+        mClockStyle = clockStyle;
+
+        switch (mClockStyle) {
+            case CLOCK_STYLE_DEFAULT:
+                mClockCentered.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.GONE);
+                mClockDefault.setVisibility(View.VISIBLE);
+                break;
+            case CLOCK_STYLE_CENTERED:
+                mClockDefault.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.VISIBLE);
+                mClockCentered.setVisibility(View.VISIBLE);
+                break;
+            case CLOCK_STYLE_HIDDEN:
+                mClockDefault.setVisibility(View.GONE);
+                mCenterClockLayout.setVisibility(View.GONE);
+                mClockCentered.setVisibility(View.GONE);
+                break;
+        }
+        mNotificationIcons.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
+    }
+
+    public void updateClockSettings() {
+        mClockDefault.updateSettings();
+        mClockCentered.updateSettings();
+    }
+
+    public void updateClockColor(boolean animate) {
+        mClockColor = StatusBarColorHelper.getClockColor(mContext);
+        if (animate) {
+            mColorToChange = CLOCK_COLOR;
+            mColorTransitionAnimator.start();
+            if (mClockStyle == CLOCK_STYLE_DEFAULT) {
+                mClockCentered.setTextColor(mClockColor);
+            }
+            if (mClockStyle == CLOCK_STYLE_CENTERED) {
+                mClockDefault.setTextColor(mClockColor);
+            }
+        } else {
+            mClockCentered.setTextColor(mClockColor);
+            mClockDefault.setTextColor(mClockColor);
+            mClockColorOld = mClockColor;
+            mClockColorTint = mClockColor;
+        }
     }
 
     public void updateNetworkIconColors() {
