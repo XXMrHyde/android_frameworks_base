@@ -293,8 +293,8 @@ public class KeyguardStatusBarView extends RelativeLayout
     }
 
     public void updateBatteryColor() {
-        mBatteryMeterView.setBatteryFrameColor(StatusBarColorHelper.getBatteryFrameColor(getContext()));
-        mBatteryMeterView.setBatteryColor(StatusBarColorHelper.getBatteryColor(getContext()));
+        mBatteryMeterView.setBatteryColor(StatusBarColorHelper.getBatteryFrameColor(getContext()),
+                StatusBarColorHelper.getBatteryColor(getContext()));
     }
 
     public void updateBatteryTextColor() {

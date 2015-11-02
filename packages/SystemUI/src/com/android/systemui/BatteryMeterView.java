@@ -16,13 +16,11 @@
 
 package com.android.systemui;
 
-import android.animation.ArgbEvaluator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -52,9 +50,8 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private static final float BOLT_LEVEL_THRESHOLD = 0.3f;  // opaque bolt below this fraction
 
-    private final int[] mColors;
-    private int mBatteryColor = 0;
-    private int mBatteryTextColor = 0;
+    private int mBatteryColor = Color.WHITE;
+    private int mBatteryTextColor = Color.WHITE;
     private final int mLowLevelColor = 0xfff4511e; // deep orange 600
 
     private boolean mIgnoreSystemUITuner = false;
@@ -65,14 +62,12 @@ public class BatteryMeterView extends View implements DemoMode,
     private float mSubpixelSmoothingRight;
     private final Paint mFramePaint, mBatteryPaint, mWarningTextPaint, mTextPaint, mBoltPaint;
     private float mTextHeight, mWarningTextHeight;
-    private int mIconTint = Color.WHITE;
 
     private int mHeight;
     private int mWidth;
     private final int mLowLevel;
     private String mWarningString;
     private final int mCriticalLevel;
-    private int mChargeColor;
     private final float[] mBoltPoints;
     private final Path mBoltPath = new Path();
 
@@ -86,12 +81,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
     private BatteryController mBatteryController;
     private boolean mPowerSaveEnabled;
-
-    private int mDarkModeBackgroundColor;
-    private int mDarkModeFillColor;
-
-    private int mLightModeBackgroundColor;
-    private int mLightModeFillColor;
 
     private BatteryTracker mTracker = new BatteryTracker();
     private final SettingObserver mSettingObserver = new SettingObserver();
@@ -108,23 +97,7 @@ public class BatteryMeterView extends View implements DemoMode,
         super(context, attrs, defStyle);
 
         final Resources res = context.getResources();
-        TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,
-                defStyle, 0);
-        final int frameColor = atts.getColor(R.styleable.BatteryMeterView_frameColor,
-                context.getColor(R.color.batterymeter_frame_color));
-        TypedArray levels = res.obtainTypedArray(R.array.batterymeter_color_levels);
-        TypedArray colors = res.obtainTypedArray(R.array.batterymeter_color_values);
-
-        final int N = levels.length();
-        mColors = new int[2*N];
-        for (int i=0; i<N; i++) {
-            mColors[2*i] = levels.getInt(i, 0);
-            mColors[2*i+1] = colors.getColor(i, 0);
-        }
-        levels.recycle();
-        colors.recycle();
-        atts.recycle();
-        updateShowPercent();
+        final int frameColor = (77 << 24) | (mBatteryColor & 0x00ffffff);
         mLowLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_lowBatteryWarningLevel);
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
@@ -154,23 +127,16 @@ public class BatteryMeterView extends View implements DemoMode,
         mTextPaint.setTextAlign(Paint.Align.CENTER);
 
         mWarningTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mWarningTextPaint.setColor(mColors[1]);
+        mWarningTextPaint.setColor(mLowLevelColor);
         font = Typeface.create("sans-serif", Typeface.BOLD);
         mWarningTextPaint.setTypeface(font);
         mWarningTextPaint.setTextAlign(Paint.Align.CENTER);
 
-        mChargeColor = context.getColor(R.color.batterymeter_charge_color);
-
         mBoltPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBoltPaint.setColor(context.getColor(R.color.batterymeter_bolt_color));
+        mBoltPaint.setColor(mBatteryTextColor);
         mBoltPoints = loadBoltPoints(res);
 
-        mDarkModeBackgroundColor =
-                context.getColor(R.color.dark_mode_icon_color_dual_tone_background);
-        mDarkModeFillColor = context.getColor(R.color.dark_mode_icon_color_dual_tone_fill);
-        mLightModeBackgroundColor =
-                context.getColor(R.color.light_mode_icon_color_dual_tone_background);
-        mLightModeFillColor = context.getColor(R.color.light_mode_icon_color_dual_tone_fill);
+        updateShowPercent();
     }
 
     @Override
@@ -258,13 +224,9 @@ public class BatteryMeterView extends View implements DemoMode,
         invalidate();
     }
 
-    public void setBatteryFrameColor(int color) {
-        mFramePaint.setColor(color);
-        invalidate();
-    }
-
-    public void setBatteryColor(int color) {
-        mBatteryColor = color;
+    public void setBatteryColor(int frameColor, int fillColor) {
+        mFramePaint.setColor(frameColor);
+        mBatteryColor = fillColor;
         invalidate();
     }
 
@@ -275,69 +237,19 @@ public class BatteryMeterView extends View implements DemoMode,
     }
 
     private int getBatteryColorForLevel(int percent) {
-        if (mBatteryColor != 0) {
-            if (percent <= mLowLevel && !mPowerSaveEnabled) {
-                return mLowLevelColor;
-            } else {
-                return mBatteryColor;
-            }
+        if (percent <= mLowLevel && !mPowerSaveEnabled) {
+            return mLowLevelColor;
         } else {
-            return getColorForLevel(percent);
+            return mBatteryColor;
         }
     }
 
     private int getBatteryTextColorForLevel(int percent) {
-        if (mBatteryTextColor != 0) {
-            if (percent <= mLowLevel && !mPowerSaveEnabled) {
-                return mLowLevelColor;
-            } else {
-                return mBatteryTextColor;
-            }
+        if (percent <= mLowLevel && !mPowerSaveEnabled) {
+            return mLowLevelColor;
         } else {
-            return getColorForLevel(percent);
+            return mBatteryTextColor;
         }
-    }
-
-    private int getColorForLevel(int percent) {
-        int thresh, color = 0;
-        for (int i=0; i<mColors.length; i+=2) {
-            thresh = mColors[i];
-            color = mColors[i+1];
-            if (percent <= thresh) {
-
-                // Respect tinting for "normal" level
-                if (i == mColors.length-2) {
-                    return mIconTint;
-                } else {
-                    return color;
-                }
-            }
-        }
-        return color;
-    }
-
-    public void setDarkIntensity(float darkIntensity) {
-        int backgroundColor = getBackgroundColor(darkIntensity);
-        int fillColor = getFillColor(darkIntensity);
-        mIconTint = fillColor;
-        mFramePaint.setColor(backgroundColor);
-        mBoltPaint.setColor(fillColor);
-        mChargeColor = fillColor;
-        invalidate();
-    }
-
-    private int getBackgroundColor(float darkIntensity) {
-        return getColorForDarkIntensity(
-                darkIntensity, mLightModeBackgroundColor, mDarkModeBackgroundColor);
-    }
-
-    private int getFillColor(float darkIntensity) {
-        return getColorForDarkIntensity(
-                darkIntensity, mLightModeFillColor, mDarkModeFillColor);
-    }
-
-    private int getColorForDarkIntensity(float darkIntensity, int lightColor, int darkColor) {
-        return (int) ArgbEvaluator.getInstance().evaluate(darkIntensity, lightColor, darkColor);
     }
 
     @Override
