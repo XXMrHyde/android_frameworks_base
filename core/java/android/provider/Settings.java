@@ -3443,6 +3443,18 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR_DARK_MODE = "status_bar_network_icons_airplane_mode_color_dark_mode";
 
         /**
+         * Color of the status icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_STATUS_ICONS_COLOR = "status_bar_status_icons_status_color";
+
+        /**
+         * Color of the status icons on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE = "status_bar_status_icons_status_color_color_dark_mode";
+
+        /**
          * Network traffic activity
          * 0: download
          * 1: upload

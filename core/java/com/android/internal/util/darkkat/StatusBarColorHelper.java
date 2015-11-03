@@ -136,4 +136,17 @@ public class StatusBarColorHelper {
                 TRANSLUCENT_BLACK);
         return (153 << 24) | (color & 0x00ffffff);
     }
+
+    public static int getStatusIconsColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_STATUS_ICONS_COLOR,
+                WHITE);
+    }
+
+    public static int getStatusIconsColorDark(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+        return (153 << 24) | (color & 0x00ffffff);
+    }
 }
