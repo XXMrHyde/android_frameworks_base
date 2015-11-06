@@ -133,7 +133,6 @@ public class BatteryMeterView extends View implements DemoMode,
         mWarningTextPaint.setTextAlign(Paint.Align.CENTER);
 
         mBoltPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBoltPaint.setColor(mBatteryTextColor);
         mBoltPoints = loadBoltPoints(res);
 
         updateShowPercent();
@@ -232,7 +231,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
     public void setBatteryTextColor(int color) {
         mBatteryTextColor = color;
-        mBoltPaint.setColor(color);
         invalidate();
     }
 
@@ -314,12 +312,15 @@ public class BatteryMeterView extends View implements DemoMode,
         mShapePath.lineTo(mButtonFrame.left, mFrame.top);
         mShapePath.lineTo(mButtonFrame.left, mButtonFrame.top);
 
+        // define the bolt
+        boolean boltOpaque = true;
         if (tracker.plugged) {
             // define the bolt shape
             final float bl = mFrame.left + mFrame.width() / 4.5f;
             final float bt = mFrame.top + mFrame.height() / 6f;
             final float br = mFrame.right - mFrame.width() / 7f;
             final float bb = mFrame.bottom - mFrame.height() / 10f;
+            mBoltPaint.setColor(getBatteryTextColorForLevel(50));
             if (mBoltFrame.left != bl || mBoltFrame.top != bt
                     || mBoltFrame.right != br || mBoltFrame.bottom != bb) {
                 mBoltFrame.set(bl, bt, br, bb);
@@ -337,14 +338,13 @@ public class BatteryMeterView extends View implements DemoMode,
                         mBoltFrame.top + mBoltPoints[1] * mBoltFrame.height());
             }
 
-            float boltPct = (mBoltFrame.bottom - levelTop) / (mBoltFrame.bottom - mBoltFrame.top);
-            boltPct = Math.min(Math.max(boltPct, 0), 1);
-            if (boltPct > BOLT_LEVEL_THRESHOLD && mCutOutBatteryText) {
-                // cut the bolt out of the overall shape if not opaque
+            if (mCutOutBatteryText) {
+                float boltPct = (mBoltFrame.bottom - levelTop) / (mBoltFrame.bottom - mBoltFrame.top);
+                boltPct = Math.min(Math.max(boltPct, 0), 1);
+                boltOpaque = boltPct <= BOLT_LEVEL_THRESHOLD;
+            }
+            if (!boltOpaque) {
                 mShapePath.op(mBoltPath, Path.Op.DIFFERENCE);
-            } else {
-                // otherwise draw the bolt
-                c.drawPath(mBoltPath, mBoltPaint);
             }
         }
 
@@ -362,7 +362,7 @@ public class BatteryMeterView extends View implements DemoMode,
             pctX = mWidth * 0.5f;
             pctY = (mHeight + mTextHeight) * 0.47f;
             if (mCutOutBatteryText) {
-                pctOpaque = levelTop > pctY && mCutOutBatteryText;
+                pctOpaque = levelTop > pctY;
             } 
             if (!pctOpaque) {
                 mTextPath.reset();
@@ -382,7 +382,11 @@ public class BatteryMeterView extends View implements DemoMode,
         mShapePath.op(mClipPath, Path.Op.INTERSECT);
         c.drawPath(mShapePath, mBatteryPaint);
 
-        if (!tracker.plugged && mShowPercent) {
+        if (tracker.plugged) {
+            if (boltOpaque) {
+                c.drawPath(mBoltPath, mBoltPaint);
+            }
+        } else if (mShowPercent) {
             if (level <= mCriticalLevel) {
                 // draw the warning text
                 final float x = mWidth * 0.5f;

@@ -537,32 +537,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT))) {
                 updateCutOutBatteryText();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR))) {
-                updateBatteryColor();
-            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR))
+                || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR))) {
-                updateBatteryTextColor();
+                updateBatteryColors(true);
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR))) {
-                updateNetworkSignalColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR))) {
-                updateNoSimColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR))) {
-                updateAirplaneModeColor();
-            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR))
+                || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_STATUS_ICONS_COLOR))) {
-                updateStatusIconsColor();
+                updateStatusNetworkIconColors(true);
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR))) {
-                updateNetworkTrafficTextColor();
-            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR))) {
-                updateNetworkTrafficIconColor();
+                updateNetworkTrafficColors(true);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR))) {
-                updateNotificationIconsColor();
+                updateNotificationIconColor();
             }
         }
     }
@@ -1100,11 +1095,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
 
-        updateCarrierLabel();
-        updateClock();
-        updateBattery();
-        updateNetworkIconColors();
-        updateNetworkTrafficColors();
+        updateSettings();
         return mStatusBarView;
     }
 
@@ -1949,26 +1940,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void updateCarrierLabel() {
-        if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mStatusBarCarrierLabel.setVisibility(View.GONE);
-            return;
-        }
+    private void updateSettings() {
         updateCarrierLabelVisibility();
         updateLockScreenCarrierLabelVisibility();
         updateCarrierLabelColor(false);
+        updateClockStyle();
+        updateClockSettings();
+        updateClockColor(false);
+        updateBatteryVisibility();
+        updateBatteryTextVisibility();
+        updateCutOutBatteryText();
+        updateBatteryColors(false);
+        updateStatusNetworkIconColors(false);
+        updateNetworkTrafficColors(false);
     }
 
     private void updateCarrierLabelSettings() {
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
-        if (mStatusBarCarrierLabel != null) {
-            mStatusBarCarrierLabel.updateCarrierLabelSettings();
-            mStatusBarCarrierLabel.updateCarrierText();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateCarrierLabelSettings();
+        if (mIconController != null) {
+            mIconController.updateCarrierLabelSettings();
         }
     }
 
@@ -1976,29 +1968,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
-
         final ContentResolver resolver = mContext.getContentResolver();
 
         final boolean show = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW, 0) == 1;
-
         final boolean forceHide = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_HIDE_LABEL, 1) == 1;
         final int maxAllowedIcons = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS, 1);
-        boolean forceHideByNumberOfIcons = false;
-        int currentVisibleNotificationIcons = 0;
-
         if (mIconController != null) {
-            currentVisibleNotificationIcons = mIconController.getCurrentVisibleNotificationIcons();
-        }
-        if (forceHide && currentVisibleNotificationIcons >= maxAllowedIcons) {
-            forceHideByNumberOfIcons = true;
-        }
-
-        if (mStatusBarCarrierLabel != null) {
-            mStatusBarCarrierLabel.setVisibility(show && !forceHideByNumberOfIcons
-                    ? View.VISIBLE : View.GONE);
+            mIconController.updateCarrierLabelVisibility(show, forceHide, maxAllowedIcons);
         }
     }
 
@@ -2006,11 +1985,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
-        final boolean showOnLockScreen = Settings.System.getInt(
-                mContext.getContentResolver(),
+        final boolean showOnLockScreen = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN, 1) == 1;
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateCarrierLabelVisibility(showOnLockScreen);
+        if (mIconController != null) {
+            mIconController.updateCarrierLabelKeyguardVisibility(showOnLockScreen);
         }
     }
 
@@ -2018,29 +1996,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
-        final boolean show = Settings.System.getInt(
-                mContext.getContentResolver(),
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW, 0) == 1;
         if (mIconController != null) {
             mIconController.updateCarrierLabelColor(animate && show ? true : false);
         }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateCarrierLabelColor();
-        }
-    }
-
-    private void updateClock() {
-        updateClockStyle();
-        updateClockSettings();
-        updateClockColor(false);
     }
 
     private void updateClockStyle() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        int clockStyle = Settings.System.getIntForUser(resolver,
+        final int clockStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_CLOCK_DATE_POSITION, 0, mCurrentUserId);
-
         if (mIconController != null) {
             mIconController.updateClockStyle(clockStyle);
             if (mNotificationData != null) {
@@ -2061,123 +2028,51 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void updateBattery() {
-        if (mIconController != null) {
-            mIconController.updateBatterySettings();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateBatterySettings();
-        }
-    }
-
     private void updateBatteryVisibility() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY, 1) == 1;
         if (mIconController != null) {
-            mIconController.updateBatteryVisibility();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateBatteryVisibility();
+            mIconController.updateBatteryVisibility(show);
         }
     }
 
     private void updateBatteryTextVisibility() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 0) == 1;
         if (mIconController != null) {
-            mIconController.updateBatteryTextVisibility();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateBatteryTextVisibility();
+            mIconController.updateBatteryTextVisibility(show);
         }
     }
 
     private void updateCutOutBatteryText() {
+        final boolean cutOut = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT, 1) == 1;
         if (mIconController != null) {
-            mIconController.updateCutOutBatteryText();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateCutOutBatteryText();
+            mIconController.updateCutOutBatteryText(cutOut);
         }
     }
 
-    private void updateBatteryColor() {
+    private void updateBatteryColors(boolean animate) {
         if (mIconController != null) {
-            mIconController.updateBatteryColor(true);
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateBatteryColor();
+            mIconController.updateBatteryColors(animate);
         }
     }
 
-    private void updateBatteryTextColor() {
+    private void updateStatusNetworkIconColors(boolean animate) {
         if (mIconController != null) {
-            mIconController.updateBatteryTextColor(true);
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateBatteryTextColor();
+            mIconController.updateStatusNetworkIconColors(animate);
         }
     }
 
-    private void updateNetworkIconColors() {
+    private void updateNetworkTrafficColors(boolean animate) {
         if (mIconController != null) {
-            mIconController.updateNetworkIconColors();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateNetworkIconColors();
+            mIconController.updateNetworkTrafficColors(animate);
         }
     }
 
-    private void updateNetworkSignalColor() {
+    private void updateNotificationIconColor() {
         if (mIconController != null) {
-            mIconController.updateNetworkSignalColor();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateNetworkIconColors();
-        }
-    }
-
-    private void updateNoSimColor() {
-        if (mIconController != null) {
-            mIconController.updateNoSimColor();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateNoSimColor();
-        }
-    }
-
-    private void updateAirplaneModeColor() {
-        if (mIconController != null) {
-            mIconController.updateAirplaneModeColor();
-        }
-        if (mKeyguardStatusBar != null) {
-            mKeyguardStatusBar.updateAirplaneModeColor();
-        }
-    }
-
-    private void updateStatusIconsColor() {
-        if (mIconController != null) {
-            mIconController.updateStatusIconsColor();
-        }
-    }
-
-    private void updateNetworkTrafficColors() {
-        if (mIconController != null) {
-            mIconController.updateNetworkTrafficColors();
-        }
-    }
-
-    private void updateNetworkTrafficTextColor() {
-        if (mIconController != null) {
-            mIconController.updateNetworkTrafficTextColor(true);
-        }
-    }
-
-    private void updateNetworkTrafficIconColor() {
-        if (mIconController != null) {
-            mIconController.updateNetworkTrafficIconColor(true);
-        }
-    }
-
-    private void updateNotificationIconsColor() {
-        if (mIconController != null) {
-            mIconController.updateNotificationIconsColor();
+            mIconController.updateNotificationIconColor();
         }
     }
 

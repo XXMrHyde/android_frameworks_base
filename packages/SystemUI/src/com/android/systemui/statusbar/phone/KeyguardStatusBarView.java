@@ -37,7 +37,6 @@ import com.android.keyguard.CarrierText;
 
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
@@ -55,13 +54,10 @@ public class KeyguardStatusBarView extends RelativeLayout
     private boolean mKeyguardUserSwitcherShowing;
     private boolean mBatteryListening;
 
-    private CarrierText mCarrierLabel;
     private View mSystemIconsSuperContainer;
-    private SignalClusterView mSignalCluster;
     private MultiUserSwitch mMultiUserSwitch;
     private ImageView mMultiUserAvatar;
     private TextView mBatteryLevel;
-    private BatteryMeterView mBatteryMeterView;
 
     private BatteryController mBatteryController;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
@@ -77,12 +73,9 @@ public class KeyguardStatusBarView extends RelativeLayout
     protected void onFinishInflate() {
         super.onFinishInflate();
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
-        mSignalCluster = (SignalClusterView) findViewById(R.id.signal_cluster);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
         mBatteryLevel = (TextView) findViewById(R.id.battery_level);
-        mBatteryMeterView = (BatteryMeterView) findViewById(R.id.battery);
-        mCarrierLabel = (CarrierText) findViewById(R.id.keyguard_carrier_text);
         loadDimens();
         mFastOutSlowInInterpolator = AnimationUtils.loadInterpolator(getContext(),
                 android.R.interpolator.fast_out_slow_in);
@@ -94,8 +87,8 @@ public class KeyguardStatusBarView extends RelativeLayout
         super.onConfigurationChanged(newConfig);
 
         // Respect font size setting.
-        mCarrierLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimensionPixelSize(
+        ((CarrierText) findViewById(R.id.keyguard_carrier_text)).setTextSize(
+                TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(
                         com.android.internal.R.dimen.text_size_small_material));
         mBatteryLevel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.battery_level_text_size));
@@ -115,7 +108,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         } else if (mMultiUserSwitch.getParent() == this && mKeyguardUserSwitcherShowing) {
             removeView(mMultiUserSwitch);
         }
-        mBatteryLevel.setVisibility(showBattery() && mBatteryCharging && !showBatteryText() ? View.VISIBLE : View.GONE);
+        updateBatteryLevelVisibility();
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -149,7 +142,7 @@ public class KeyguardStatusBarView extends RelativeLayout
 
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
-        mBatteryMeterView.setBatteryController(batteryController);
+        ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
     }
 
     public void setUserSwitcherController(UserSwitcherController controller) {
@@ -257,49 +250,8 @@ public class KeyguardStatusBarView extends RelativeLayout
         return false;
     }
 
-    public void updateCarrierLabelSettings() {
-        mCarrierLabel.updateCarrierLabelSettings();
-        mCarrierLabel.updateCarrierText();
-    }
-
-    public void updateCarrierLabelVisibility(boolean show) {
-        mCarrierLabel.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    public void updateCarrierLabelColor() {
-        mCarrierLabel.setTextColor(StatusBarColorHelper.getCarrierLabelColor(getContext()));
-    }
-
-    public void updateBatterySettings() {
-        updateBatteryVisibility();
-        updateBatteryTextVisibility();
-        updateCutOutBatteryText();
-        updateBatteryColor();
-        updateBatteryTextColor();
-    }
-
-    public void updateBatteryVisibility() {
-        mBatteryMeterView.setVisibility(showBattery() ? View.VISIBLE : View.GONE);
+    public void updateBatteryLevelVisibility() {
         mBatteryLevel.setVisibility(showBattery() && mBatteryCharging && !showBatteryText() ? View.VISIBLE : View.GONE);
-    }
-
-    public void updateBatteryTextVisibility() {
-        mBatteryMeterView.setTextVisibility(showBatteryText() ? true : false);
-        mBatteryLevel.setVisibility(showBattery() && mBatteryCharging && !showBatteryText() ? View.VISIBLE : View.GONE);
-    }
-
-    public void updateCutOutBatteryText() {
-        mBatteryMeterView.setCutOutBatteryText(cutOutBatteryText() ? true : false);
-    }
-
-    public void updateBatteryColor() {
-        mBatteryMeterView.setBatteryColor(StatusBarColorHelper.getBatteryFrameColor(getContext()),
-                StatusBarColorHelper.getBatteryColor(getContext()));
-    }
-
-    public void updateBatteryTextColor() {
-        mBatteryMeterView.setBatteryTextColor(StatusBarColorHelper.getBatteryTextColor(getContext()));
-        mBatteryLevel.setTextColor(StatusBarColorHelper.getBatteryTextColor(getContext()));
     }
 
     private boolean showBattery() {
@@ -312,31 +264,5 @@ public class KeyguardStatusBarView extends RelativeLayout
         return Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 0,
                 UserHandle.USER_CURRENT) == 1;
-    }
-
-    private boolean cutOutBatteryText() {
-        return Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT, 1,
-                UserHandle.USER_CURRENT) == 1;
-    }
-
-    public void updateNetworkIconColors() {
-        mSignalCluster.setIgnoreSystemUITuner(true);
-        mSignalCluster.setIconTint(
-                StatusBarColorHelper.getNetworkSignalColor(mContext),
-                StatusBarColorHelper.getNoSimColor(mContext),
-                StatusBarColorHelper.getAirplaneModeColor(mContext), 0f);
-    }
-
-    public void updateNetworkSignalColor() {
-        mSignalCluster.applyNetworkSignalTint(StatusBarColorHelper.getNetworkSignalColor(getContext()));
-    }
-
-    public void updateNoSimColor() {
-        mSignalCluster.applyNoSimTint(StatusBarColorHelper.getNoSimColor(getContext()));
-    }
-
-    public void updateAirplaneModeColor() {
-        mSignalCluster.applyAirplaneModeTint(StatusBarColorHelper.getAirplaneModeColor(getContext()));
     }
 }

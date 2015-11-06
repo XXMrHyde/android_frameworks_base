@@ -30,7 +30,7 @@ public class StatusBarColorHelper {
                 Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR, WHITE);
     }
 
-    public static int getCarrierLabelColorDarkMode(Context context) {
+    public static int getCarrierLabelColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK);
@@ -40,24 +40,24 @@ public class StatusBarColorHelper {
         return (77 << 24) | (getBatteryColor(context) & 0x00ffffff);
     }
 
+    public static int getBatteryFrameColorDark(Context context) {
+        return getBatteryColorDark(context);
+    }
+
     public static int getBatteryColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR, WHITE);
-    }
-
-    public static int getBatteryTextColor(Context context) {
-        return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, WHITE);
-    }
-
-    public static int getBatteryFrameColorDark(Context context) {
-        return getBatteryColorDark(context);
     }
 
     public static int getBatteryColorDark(Context context) {
         return  (61 << 24) | (Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK) & 0x00ffffff);
+    }
+
+    public static int getBatteryTextColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR, WHITE);
     }
 
     public static int getBatteryTextColorDark(Context context) {
@@ -71,7 +71,7 @@ public class StatusBarColorHelper {
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR, WHITE);
     }
 
-    public static int getClockColorDarkMode(Context context) {
+    public static int getClockColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK);
@@ -137,26 +137,26 @@ public class StatusBarColorHelper {
         return (153 << 24) | (color & 0x00ffffff);
     }
 
-    public static int getStatusIconsColor(Context context) {
+    public static int getStatusIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_STATUS_ICONS_COLOR,
                 WHITE);
     }
 
-    public static int getStatusIconsColorDark(Context context) {
+    public static int getStatusIconColorDark(Context context) {
         final int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK);
         return (153 << 24) | (color & 0x00ffffff);
     }
 
-    public static int getNotificationIconsColor(Context context) {
+    public static int getNotificationIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR,
                 WHITE);
     }
 
-    public static int getNotificationIconsColorDark(Context context) {
+    public static int getNotificationIconColorDark(Context context) {
         final int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR_DARK_MODE,
                 TRANSLUCENT_BLACK);
