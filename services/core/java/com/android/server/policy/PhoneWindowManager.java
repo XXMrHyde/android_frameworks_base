@@ -22,7 +22,7 @@ import android.app.ActivityManagerInternal.SleepToken;
 import android.app.ActivityManagerNative;
 import android.app.AppOpsManager;
 import android.app.IUiModeManager;
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.app.StatusBarManager;
 import android.app.UiModeManager;
@@ -80,6 +80,7 @@ import android.service.dreams.DreamService;
 import android.service.dreams.IDreamManager;
 import android.speech.RecognizerIntent;
 import android.telecom.TelecomManager;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Log;
@@ -6087,7 +6088,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         screenTurningOn(null);
     }
 
-    ProgressDialog mBootMsgDialog = null;
+    AlertDialog mBootMsgDialog = null;
+
+    /**
+     * name of package currently being dex optimized
+     * as shown through this.showBootMessage(msg, always);
+     */
+    static String currentPackageName;
+    public void setPackageName(String pkgName) {
+        if (pkgName == null) {
+            pkgName = "stop.looking.at.me.swan";
+        }
+        this.currentPackageName = pkgName;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -6106,7 +6119,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         theme = 6; // Theme.Material.Dialog.Alert.DarkKat
                     }
 
-                    mBootMsgDialog = new ProgressDialog(mContext, theme) {
+                    mBootMsgDialog = new AlertDialog(mContext, theme) {
                         // This dialog will consume all events coming in to
                         // it, to avoid it trying to do things too early in boot.
                         @Override public boolean dispatchKeyEvent(KeyEvent event) {
@@ -6134,8 +6147,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     } else {
                         mBootMsgDialog.setTitle(R.string.android_start_title);
                     }
-                    mBootMsgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    mBootMsgDialog.setIndeterminate(true);
                     mBootMsgDialog.getWindow().setType(
                             WindowManager.LayoutParams.TYPE_BOOT_PROGRESS);
                     mBootMsgDialog.getWindow().addFlags(
@@ -6146,9 +6157,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     lp.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR;
                     mBootMsgDialog.getWindow().setAttributes(lp);
                     mBootMsgDialog.setCancelable(false);
+                    mBootMsgDialog.setMessage("");
                     mBootMsgDialog.show();
                 }
-                mBootMsgDialog.setMessage(msg);
+                if (always && (currentPackageName != null)) {
+                    // Only display the current package name if the main message says "Optimizing app N of M".
+                    // We don't want to do this when the message says "Starting apps" or "Finishing boot", etc.
+                    mBootMsgDialog.setMessage(Html.fromHtml(msg + "<br><b><font color=\"#009688\">"
+                            + currentPackageName + "</font></b>"));
+                } else {
+                    mBootMsgDialog.setMessage(msg);
+                }
             }
         });
     }
