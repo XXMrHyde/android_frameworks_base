@@ -523,7 +523,7 @@ public class NavigationBarView extends LinearLayout {
             d = ImageHelper.resize(mContext, d, 24);
         }
         if (clickAction.equals(ActionConstants.ACTION_BACK)) {
-            updateBackButtonDrawables(v, d);
+            updateBackButtonDrawables(v);
         } else if (d != null) {
             d.mutate();
             setIconAndColors(v, d);
@@ -573,25 +573,15 @@ public class NavigationBarView extends LinearLayout {
         return v;
     }
 
-    private void updateBackButtonDrawables(KeyButtonView v, Drawable d) {
-        Drawable back;
-        Drawable backLand;
-        if (d == null) {
-            back = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
-            backLand = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back_land);
-        } else {
-            back = d;
-            backLand = back;
-        }
-        back.mutate();
-        backLand.mutate();
+    private void updateBackButtonDrawables(KeyButtonView v) {
+        final Drawable back =
+                mContext.getResources().getDrawable(R.drawable.ic_sysbar_back).mutate();
+        final Drawable backLand =
+                mContext.getResources().getDrawable(R.drawable.ic_sysbar_back_land).mutate();
         final int iconColor = NavigationBarColorHelper.getIconColor(mContext, back);
         final int rippleColor = NavigationBarColorHelper.getRippleColor(mContext, back);
 
-        back.setTintMode(Mode.MULTIPLY);
-        backLand.setTintMode(Mode.MULTIPLY);
-
-        if (NavigationBarColorHelper.getIconColorMode(mContext) != 2) {
+        if (NavigationBarColorHelper.getIconColorMode(mContext) != 0) {
             back.setTint(iconColor);
             backLand.setTint(iconColor);
         }
