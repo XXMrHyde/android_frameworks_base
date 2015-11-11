@@ -762,14 +762,19 @@ public class StatusBarIconController implements Tunable {
     }
 
     public void updateBatteryTextVisibility(boolean show) {
-        mBatteryMeterView.setTextVisibility(show ? true : false);
-        mBatteryMeterViewKeyguard.setTextVisibility(show ? true : false);
+        mBatteryMeterView.setTextVisibility(show);
+        mBatteryMeterViewKeyguard.setTextVisibility(show);
         mKeyguardStatusBarView.updateBatteryLevelVisibility();
     }
 
+    public void updateShowChargeAnimation(boolean show) {
+        mBatteryMeterView.setShowChargeAnimation(show);
+        mBatteryMeterViewKeyguard.setShowChargeAnimation(show);
+    }
+
     public void updateCutOutBatteryText(boolean cutOut) {
-        mBatteryMeterView.setCutOutBatteryText(cutOut ? true : false);
-        mBatteryMeterViewKeyguard.setCutOutBatteryText(cutOut ? true : false);
+        mBatteryMeterView.setCutOutBatteryText(cutOut);
+        mBatteryMeterViewKeyguard.setCutOutBatteryText(cutOut);
     }
 
     public void updateBatteryColors(boolean animate) {

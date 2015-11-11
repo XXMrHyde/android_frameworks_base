@@ -3377,6 +3377,12 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
 
         /**
+         *  Weather to show a battery charging animation on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION = "status_bar_battery_status_show_charge_animation";
+
+        /**
          *  Weather to cut the battery percentage out of the battery status icon on the status bar
          * @hide
          */

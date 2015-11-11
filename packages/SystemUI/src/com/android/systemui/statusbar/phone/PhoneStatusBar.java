@@ -459,6 +459,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -533,6 +536,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT))) {
                 updateBatteryTextVisibility();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION))) {
+                updateShowChargeAnimation();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT))) {
                 updateCutOutBatteryText();
@@ -1949,6 +1955,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateClockColor(false);
         updateBatteryVisibility();
         updateBatteryTextVisibility();
+        updateShowChargeAnimation();
         updateCutOutBatteryText();
         updateBatteryColors(false);
         updateStatusNetworkIconColors(false);
@@ -2041,6 +2048,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 0) == 1;
         if (mIconController != null) {
             mIconController.updateBatteryTextVisibility(show);
+        }
+    }
+
+    private void updateShowChargeAnimation() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION, 0) == 1;
+        if (mIconController != null) {
+            mIconController.updateShowChargeAnimation(show);
         }
     }
 
