@@ -3371,6 +3371,18 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY = "status_bar_battery_status_show_battery";
 
         /**
+         *  Weather to show the battery bar on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
+
+        /**
+         *  Weather to show the battery bar on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR_LOCK_SCREEN = "status_bar_show_battery_bar_lock_screen";
+
+        /**
          *  Weather to show the battery status text on the status bar
          * @hide
          */

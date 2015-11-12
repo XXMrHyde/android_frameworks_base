@@ -37,6 +37,7 @@ import com.android.keyguard.CarrierText;
 
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.policy.BatteryBar;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
@@ -143,6 +144,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
         ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
+        ((BatteryBar) findViewById(R.id.battery_bar)).setBatteryController(batteryController);
     }
 
     public void setUserSwitcherController(UserSwitcherController controller) {
