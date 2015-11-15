@@ -559,8 +559,8 @@ public class StatusBarIconController implements Tunable {
         if (DeviceUtils.deviceSupportsMobileData(mContext)) {
             mCarrierLabel.setTextColor(mCarrierLabelColorTint);
         }
-        mBatteryMeterView.setBatteryColor(mBatteryFrameColorTint, mBatteryColorTint);
-        mBatteryMeterView.setBatteryTextColor(mBatteryTextColorTint);
+        mBatteryMeterView.setBatteryColors(mBatteryFrameColorTint, mBatteryColorTint);
+        mBatteryMeterView.setTextColor(mBatteryTextColorTint);
         mBatteryBar.setColor(mBatteryColorTint);
         if (mClockStyle == CLOCK_STYLE_DEFAULT) {
             mClockDefault.setTextColor(mClockColorTint);
@@ -664,8 +664,8 @@ public class StatusBarIconController implements Tunable {
                             mBatteryColorOld, mBatteryColor, position);
                     final int blendedText = ColorHelper.getBlendColor(
                             mBatteryTextColorOld, mBatteryTextColor, position);
-                    mBatteryMeterView.setBatteryColor(blendedFrame, blended);
-                    mBatteryMeterView.setBatteryTextColor(blendedText);
+                    mBatteryMeterView.setBatteryColors(blendedFrame, blended);
+                    mBatteryMeterView.setTextColor(blendedText);
                     mBatteryBar.setColor(blended);
                 } else if (mColorToChange == CLOCK_COLOR) {
                     final int blended = ColorHelper.getBlendColor(
@@ -769,9 +769,9 @@ public class StatusBarIconController implements Tunable {
         mCarrierLabelKeyguard.setTextColor(mCarrierLabelColor);
     }
 
-    public void updateBatteryVisibility(boolean show) {
-        mBatteryMeterView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mBatteryMeterViewKeyguard.setVisibility(show ? View.VISIBLE : View.GONE);
+    public void updateBatteryIndicator(int indicator) {
+        mBatteryMeterView.updateBatteryIndicator(indicator);
+        mBatteryMeterViewKeyguard.updateBatteryIndicator(indicator);
         mKeyguardStatusBarView.updateBatteryLevelVisibility();
     }
 
@@ -787,6 +787,11 @@ public class StatusBarIconController implements Tunable {
         mKeyguardStatusBarView.updateBatteryLevelVisibility();
     }
 
+    public void updateBatteryCircleDots(int interval, int length) {
+        mBatteryMeterView.updateCircleDots(interval, length);
+        mBatteryMeterViewKeyguard.updateCircleDots(interval, length);
+    }
+
     public void updateShowChargeAnimation(boolean show) {
         mBatteryMeterView.setShowChargeAnimation(show);
         mBatteryMeterViewKeyguard.setShowChargeAnimation(show);
@@ -795,8 +800,8 @@ public class StatusBarIconController implements Tunable {
     }
 
     public void updateCutOutBatteryText(boolean cutOut) {
-        mBatteryMeterView.setCutOutBatteryText(cutOut);
-        mBatteryMeterViewKeyguard.setCutOutBatteryText(cutOut);
+        mBatteryMeterView.setCutOutText(cutOut);
+        mBatteryMeterViewKeyguard.setCutOutText(cutOut);
     }
 
     public void updateBatteryColors(boolean animate) {
@@ -807,8 +812,8 @@ public class StatusBarIconController implements Tunable {
             mColorToChange = BATTERY_COLORS;
             mColorTransitionAnimator.start();
         } else {
-            mBatteryMeterView.setBatteryColor(mBatteryFrameColor, mBatteryColor);
-            mBatteryMeterView.setBatteryTextColor(mBatteryTextColor);
+            mBatteryMeterView.setBatteryColors(mBatteryFrameColor, mBatteryColor);
+            mBatteryMeterView.setTextColor(mBatteryTextColor);
             mBatteryBar.setColor(mBatteryColor);
             mBatteryFrameColorOld = mBatteryFrameColor;
             mBatteryColorOld = mBatteryColor;
@@ -817,8 +822,8 @@ public class StatusBarIconController implements Tunable {
             mBatteryColorTint = mBatteryColor;
             mBatteryTextColorTint = mBatteryTextColor;
         }
-        mBatteryMeterViewKeyguard.setBatteryColor(mBatteryFrameColor, mBatteryColor);
-        mBatteryMeterViewKeyguard.setBatteryTextColor(mBatteryTextColor);
+        mBatteryMeterViewKeyguard.setBatteryColors(mBatteryFrameColor, mBatteryColor);
+        mBatteryMeterViewKeyguard.setTextColor(mBatteryTextColor);
         mBatteryBarKeyguard.setColor(mBatteryColor);
         mBatteryLevelKeyguard.setTextColor(mBatteryTextColor);
     }

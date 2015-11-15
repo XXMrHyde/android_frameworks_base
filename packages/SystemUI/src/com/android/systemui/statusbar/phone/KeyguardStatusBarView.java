@@ -258,8 +258,8 @@ public class KeyguardStatusBarView extends RelativeLayout
 
     private boolean showBattery() {
         return Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY, 1,
-                UserHandle.USER_CURRENT) == 1;
+                Settings.System.STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR, 0,
+                UserHandle.USER_CURRENT) != 3;
     }
 
     private boolean showBatteryText() {

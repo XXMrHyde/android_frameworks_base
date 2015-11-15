@@ -3365,10 +3365,15 @@ public final class Settings {
         public static final String STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE = "status_bar_clock_date_color_dark_mode";
 
         /**
-         *  Weather to show the battery status on the status bar
+         * Icon of the battery on the status bar
+         * 0 - Battery portrait
+         * 1 - Battery landscape
+         * 2 - Circle
+         * 3 - Hidden
+         * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_BATTERY = "status_bar_battery_status_show_battery";
+        public static final String STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR = "status_bar_battery_status_icon_indicator";
 
         /**
          *  Weather to show the battery bar on the status bar
@@ -3387,6 +3392,24 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
+
+        /**
+         * Dot interval of the battery circle icon on the status bar
+         * 0 - No dots
+         * 1 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
+
+        /**
+         * Dot length of the battery circle icon on the status bar
+         * 0 - 10
+         * default: 0
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
 
         /**
          *  Weather to show a battery charging animation on the status bar
