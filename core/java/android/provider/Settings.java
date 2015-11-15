@@ -3406,7 +3406,6 @@ public final class Settings {
          * Dot length of the battery circle icon on the status bar
          * 0 - 10
          * default: 0
-         * default: 0
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
