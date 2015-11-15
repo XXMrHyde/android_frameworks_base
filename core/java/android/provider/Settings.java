@@ -3244,6 +3244,12 @@ public final class Settings {
         public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
 
         /**
+         *  Enable statusbar double tap gesture on to put device to sleep
+         * @hide
+         */
+        public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
+
+        /**
          *  Weather to use a custom label for the carrier name on the status bar
          * @hide
          */
