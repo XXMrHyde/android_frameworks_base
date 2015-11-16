@@ -3244,6 +3244,13 @@ public final class Settings {
         public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
 
         /**
+         * Whether to control brightness from status bar
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
+
+        /**
          *  Enable statusbar double tap gesture on to put device to sleep
          * @hide
          */
