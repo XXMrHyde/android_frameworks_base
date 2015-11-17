@@ -25,6 +25,18 @@ public class StatusBarColorHelper {
     private static final int WHITE             = 0xffffffff;
     private static final int TRANSLUCENT_BLACK = 0x7a000000;
 
+    public static int getGreetingColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_COLOR, WHITE);
+    }
+
+    public static int getGreetingColorDark(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_COLOR_DARK_MODE,
+                TRANSLUCENT_BLACK);
+        return (153 << 24) | (color & 0x00ffffff);
+    }
+
     public static int getCarrierLabelColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR, WHITE);

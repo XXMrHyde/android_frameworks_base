@@ -42,4 +42,6 @@
     <string name="shutdown_reboot_dlg_message_quick_reboot">Wird neu gestartet\u2026\n(Schneller Neustart)</string>
     <string name="shutdown_reboot_dlg_message_recovery">Wird neu gestartet\u2026\n(Recovery)</string>
     <string name="shutdown_reboot_dlg_message_bootloader">Wird neu gestartet\u2026\n(Bootloader)</string>
+
+    <string name="default_greeting_welcome">Willkommen: DarkKat</string>
 </resources>

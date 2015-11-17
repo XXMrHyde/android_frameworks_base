@@ -104,6 +104,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.darkkat.DeviceUtils;
+import com.android.internal.util.darkkat.GreetingTextHelper;
 
 import com.android.keyguard.CarrierText;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
@@ -448,6 +449,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.SCREEN_BRIGHTNESS_MODE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_SHOW_GREETING),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -549,6 +562,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.SCREEN_BRIGHTNESS_MODE))) {
                 updateBrightnessControl();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_SHOW_GREETING))) {
+                updateShowGreeting();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT))) {
+                updateGreetingText();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT))) {
+                updateGreetingTimeout();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_COLOR))) {
+                updateGreetingColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM))
                 || uri.equals(Settings.System.getUriFor(
@@ -1152,6 +1177,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction("com.android.settings.SHOW_GREETING_PREVIEW");
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         IntentFilter demoFilter = new IntentFilter();
@@ -2018,6 +2044,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void updateSettings() {
         updateBrightnessControl();
+        updateShowGreeting();
+        updateGreetingText();
+        updateGreetingTimeout();
+        updateGreetingColor();
         updateCarrierLabelVisibility();
         updateLockScreenCarrierLabelVisibility();
         updateCarrierLabelColor(false);
@@ -2043,6 +2073,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mAutomaticBrightness = mode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
         mBrightnessControl = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0) == 1;
+    }
+
+    private void updateShowGreeting() {
+        final int showGreeting = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_SHOW_GREETING, 1);
+        if (mIconController != null) {
+            mIconController.updateShowGreeting(showGreeting);
+        }
+    }
+
+    private void updateGreetingText() {
+        String greetingText = Settings.System.getString(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT);
+
+        if (greetingText == null || greetingText.isEmpty()) {
+            greetingText = GreetingTextHelper.getDefaultGreetingText(mContext);
+        }
+        if (mIconController != null) {
+            mIconController.updateGreetingText(greetingText);
+        }
+    }
+
+    private void updateGreetingTimeout() {
+        final int greetingTimeout = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_TIMEOUT, 400);
+        if (mIconController != null) {
+            mIconController.updateGreetingTimeout(greetingTimeout);
+        }
+    }
+
+    private void updateGreetingColor() {
+        if (mIconController != null) {
+            mIconController.updateGreetingColor();
+        }
     }
 
     private void updateCarrierLabelSettings() {
@@ -3410,6 +3475,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 mScreenOn = false;
+                if (mIconController != null) {
+                    mIconController.resetHideGreeting();
+                }
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOff();
                 finishBarAnimations();
@@ -3418,6 +3486,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;
                 notifyNavigationBarScreenOn(true);
+            }
+            else if (action.equals("com.android.settings.SHOW_GREETING_PREVIEW")) {
+                if (mIconController != null) {
+                    mIconController.showGreeting(true);
+                }
             }
         }
     };

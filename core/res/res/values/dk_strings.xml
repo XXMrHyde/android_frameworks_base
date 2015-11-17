@@ -42,4 +42,6 @@
     <string name="shutdown_reboot_dlg_message_quick_reboot">Rebooting\u2026\n(Quick reboot)</string>
     <string name="shutdown_reboot_dlg_message_recovery">Rebooting\u2026\n(Recovery)</string>
     <string name="shutdown_reboot_dlg_message_bootloader">Rebooting\u2026\n(Bootloader)</string>
+
+    <string name="default_greeting_welcome">Welcome: DarkKat</string>
 </resources>
