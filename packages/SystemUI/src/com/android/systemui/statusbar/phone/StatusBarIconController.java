@@ -23,6 +23,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -117,9 +118,6 @@ public class StatusBarIconController implements Tunable {
     private int mCarrierLabelColor;
     private int mCarrierLabelColorOld;
     private int mCarrierLabelColorTint;
-    private int mBatteryFrameColor;
-    private int mBatteryFrameColorOld;
-    private int mBatteryFrameColorTint;
     private int mBatteryColor;
     private int mBatteryColorOld;
     private int mBatteryColorTint;
@@ -229,9 +227,6 @@ public class StatusBarIconController implements Tunable {
         mCarrierLabelColor = StatusBarColorHelper.getCarrierLabelColor(mContext);
         mCarrierLabelColorOld = mCarrierLabelColor;
         mCarrierLabelColorTint = mCarrierLabelColor;
-        mBatteryFrameColor = StatusBarColorHelper.getBatteryFrameColor(mContext);
-        mBatteryFrameColorOld = mBatteryFrameColor;
-        mBatteryFrameColorTint = mBatteryFrameColor;
         mBatteryColor = StatusBarColorHelper.getBatteryColor(mContext);
         mBatteryColorOld = mBatteryColor;
         mBatteryColorTint = mBatteryColor;
@@ -595,33 +590,31 @@ public class StatusBarIconController implements Tunable {
 
     private void setIconTintInternal(float darkIntensity) {
         mDarkIntensity = darkIntensity;
-        mGreetingColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mGreetingColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mGreetingColor,  StatusBarColorHelper.getGreetingColorDark(mContext));
         if (DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mCarrierLabelColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+            mCarrierLabelColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                     mCarrierLabelColor, StatusBarColorHelper.getCarrierLabelColorDark(mContext));
         }
-        mBatteryFrameColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mBatteryFrameColor,  StatusBarColorHelper.getBatteryFrameColorDark(mContext));
-        mBatteryColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mBatteryColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mBatteryColor, StatusBarColorHelper.getBatteryColorDark(mContext));
-        mBatteryTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mBatteryTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mBatteryTextColor, StatusBarColorHelper.getBatteryTextColorDark(mContext));
-        mClockColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mClockColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mClockColor, StatusBarColorHelper.getClockColorDark(mContext));
         mNetworkTrafficTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNetworkTrafficTextColor, StatusBarColorHelper.getNetworkTrafficTextColorDark(mContext));
         mNetworkTrafficIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNetworkTrafficIconColor, StatusBarColorHelper.getNetworkTrafficIconColorDark(mContext));
-        mNetworkSignalColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mNetworkSignalColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNetworkSignalColor, StatusBarColorHelper.getNetworkSignalColorDark(mContext));
-        mNoSimColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mNoSimColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNoSimColor, StatusBarColorHelper.getNoSimColorDark(mContext));
-        mAirplaneModeColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mAirplaneModeColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mAirplaneModeColor, StatusBarColorHelper.getAirplaneModeColorDark(mContext));
-        mStatusIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mStatusIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mStatusIconColor, StatusBarColorHelper.getStatusIconColorDark(mContext));
-        mNotificationIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+        mNotificationIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNotificationIconColor, StatusBarColorHelper.getNotificationIconColorDark(mContext));
 
         applyIconTint();
@@ -640,7 +633,7 @@ public class StatusBarIconController implements Tunable {
         if (DeviceUtils.deviceSupportsMobileData(mContext)) {
             mCarrierLabel.setTextColor(mCarrierLabelColorTint);
         }
-        mBatteryMeterView.setBatteryColors(mBatteryFrameColorTint, mBatteryColorTint);
+        mBatteryMeterView.setBatteryColors(mBatteryColorTint);
         mBatteryMeterView.setTextColor(mBatteryTextColorTint);
         mBatteryBar.setColor(mBatteryColorTint);
         if (mClockStyle == CLOCK_STYLE_DEFAULT) {
@@ -652,12 +645,12 @@ public class StatusBarIconController implements Tunable {
         mNetworkTraffic.setTextColor(mNetworkTrafficTextColorTint);
         mNetworkTraffic.setIconColor(mNetworkTrafficIconColorTint);
         mSignalCluster.setIconTint(
-                mNetworkSignalColorTint, mNoSimColorTint, mAirplaneModeColorTint, mDarkIntensity);
+                mNetworkSignalColorTint, mNoSimColorTint, mAirplaneModeColorTint);
         for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
-            v.setImageTintList(ColorStateList.valueOf(mStatusIconColorTint));
+            v.setColorFilter(mStatusIconColorTint, Mode.MULTIPLY);
         }
-        mMoreIcon.setImageTintList(ColorStateList.valueOf(mNotificationIconColorTint));
+        mMoreIcon.setColorFilter(mNotificationIconColorTint, Mode.MULTIPLY);
         applyNotificationIconsTint();
     }
 
@@ -739,13 +732,11 @@ public class StatusBarIconController implements Tunable {
                             mCarrierLabelColorOld, mCarrierLabelColor, position);
                     mCarrierLabel.setTextColor(blended);
                 } else if (mColorToChange == BATTERY_COLORS) {
-                    final int blendedFrame = ColorHelper.getBlendColor(
-                            mBatteryFrameColorOld, mBatteryFrameColor, position);
                     final int blended = ColorHelper.getBlendColor(
                             mBatteryColorOld, mBatteryColor, position);
                     final int blendedText = ColorHelper.getBlendColor(
                             mBatteryTextColorOld, mBatteryTextColor, position);
-                    mBatteryMeterView.setBatteryColors(blendedFrame, blended);
+                    mBatteryMeterView.setBatteryColors(blended);
                     mBatteryMeterView.setTextColor(blendedText);
                     mBatteryBar.setColor(blended);
                 } else if (mColorToChange == CLOCK_COLOR) {
@@ -775,10 +766,10 @@ public class StatusBarIconController implements Tunable {
                             mAirplaneModeColorOld, mAirplaneModeColor, position);
                     for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
                         StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
-                        v.setImageTintList(ColorStateList.valueOf(blendedStatus));
+                        v.setColorFilter(blendedStatus, Mode.MULTIPLY);
                     }
                     mSignalCluster.setIconTint(
-                            blendedSignal, blendedNoSim, blendedAirPlaneMode, mDarkIntensity);
+                            blendedSignal, blendedNoSim, blendedAirPlaneMode);
                 }
             }
         });
@@ -789,10 +780,8 @@ public class StatusBarIconController implements Tunable {
                     mCarrierLabelColorOld = mCarrierLabelColor;
                     mCarrierLabelColorTint = mCarrierLabelColor;
                 } else if (mColorToChange == BATTERY_COLORS) {
-                    mBatteryFrameColorOld = mBatteryFrameColor;
                     mBatteryColorOld = mBatteryColor;
                     mBatteryTextColorOld = mBatteryTextColor;
-                    mBatteryFrameColorTint = mBatteryFrameColor;
                     mBatteryColorTint = mBatteryColor;
                     mBatteryTextColorTint = mBatteryTextColor;
                 } else if (mColorToChange == CLOCK_COLOR) {
@@ -909,24 +898,21 @@ public class StatusBarIconController implements Tunable {
     }
 
     public void updateBatteryColors(boolean animate) {
-        mBatteryFrameColor = StatusBarColorHelper.getBatteryFrameColor(mContext);
         mBatteryColor = StatusBarColorHelper.getBatteryColor(mContext);
         mBatteryTextColor = StatusBarColorHelper.getBatteryTextColor(mContext);
         if (animate) {
             mColorToChange = BATTERY_COLORS;
             mColorTransitionAnimator.start();
         } else {
-            mBatteryMeterView.setBatteryColors(mBatteryFrameColor, mBatteryColor);
+            mBatteryMeterView.setBatteryColors(mBatteryColor);
             mBatteryMeterView.setTextColor(mBatteryTextColor);
             mBatteryBar.setColor(mBatteryColor);
-            mBatteryFrameColorOld = mBatteryFrameColor;
             mBatteryColorOld = mBatteryColor;
             mBatteryTextColorOld = mBatteryTextColor;
-            mBatteryFrameColorTint = mBatteryFrameColor;
             mBatteryColorTint = mBatteryColor;
             mBatteryTextColorTint = mBatteryTextColor;
         }
-        mBatteryMeterViewKeyguard.setBatteryColors(mBatteryFrameColor, mBatteryColor);
+        mBatteryMeterViewKeyguard.setBatteryColors(mBatteryColor);
         mBatteryMeterViewKeyguard.setTextColor(mBatteryTextColor);
         mBatteryBarKeyguard.setColor(mBatteryColor);
         mBatteryLevelKeyguard.setTextColor(mBatteryTextColor);
@@ -1006,7 +992,7 @@ public class StatusBarIconController implements Tunable {
         } else {
             mSignalCluster.setIgnoreSystemUITuner(true);
             mSignalCluster.setIconTint(
-                    mNetworkSignalColor, mNoSimColor, mAirplaneModeColor, mDarkIntensity);
+                    mNetworkSignalColor, mNoSimColor, mAirplaneModeColor);
             mStatusIconColorOld = mStatusIconColor;
             mNetworkSignalColorOld = mNetworkSignalColor;
             mNoSimColorOld = mNoSimColor;
@@ -1018,7 +1004,7 @@ public class StatusBarIconController implements Tunable {
         }
         mSignalClusterKeyguard.setIgnoreSystemUITuner(true);
         mSignalClusterKeyguard.setIconTint(
-                mNetworkSignalColor, mNoSimColor, mAirplaneModeColor, 0f);
+                mNetworkSignalColor, mNoSimColor, mAirplaneModeColor);
         updateStatusIconKeyguardColor();
     }
 
@@ -1026,7 +1012,7 @@ public class StatusBarIconController implements Tunable {
         if (mStatusIconsKeyguard.getChildCount() > 0) {
             for (int index = 0; index < mStatusIconsKeyguard.getChildCount(); index++) {
                 StatusBarIconView v = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(index);
-                v.setImageTintList(ColorStateList.valueOf(mStatusIconColor));
+                v.setColorFilter(mStatusIconColor, Mode.MULTIPLY);
             }
         }
     }
@@ -1042,6 +1028,6 @@ public class StatusBarIconController implements Tunable {
                 v.setImageTintList(ColorStateList.valueOf(mNotificationIconColor));
             }
         }
-        mMoreIcon.setImageTintList(ColorStateList.valueOf(mNotificationIconColor));
+        mMoreIcon.setColorFilter(mNotificationIconColor, Mode.MULTIPLY);
     }
 }

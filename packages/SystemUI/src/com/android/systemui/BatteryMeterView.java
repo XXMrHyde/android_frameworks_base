@@ -27,6 +27,8 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -78,8 +80,9 @@ public class BatteryMeterView extends View implements DemoMode,
     private boolean mIsAnimating = false;
     private int mAnimationLevel;
 
-    private int mFillColor = Color.WHITE;
     private int mFrameColor;
+    private int mFillColor = Color.WHITE;
+    private int mTint = mFillColor;
     private int mTextColor = Color.WHITE;
     private final int mLowLevelColor = 0xfff4511e; // deep orange 600
 
@@ -437,9 +440,8 @@ public class BatteryMeterView extends View implements DemoMode,
         }
     }
 
-    public void setBatteryColors(int frameColor, int fillColor) {
-        mFrameColor = frameColor;
-        mFillColor = fillColor;
+    public void setBatteryColors(int tint) {
+        mTint = tint;
         if (!mIsAnimating) {
             invalidateIfVisible();
         }
@@ -452,11 +454,11 @@ public class BatteryMeterView extends View implements DemoMode,
         };
     }
 
-    private int getFillColorForLevel(int percent) {
+    private int getTintForLevel(int percent) {
         if (percent <= mLowLevel && !mPowerSaveEnabled) {
             return mLowLevelColor;
         } else {
-            return mFillColor;
+            return mTint;
         }
     }
 
@@ -554,11 +556,13 @@ public class BatteryMeterView extends View implements DemoMode,
             mFramePaint.setDither(true);
             mFramePaint.setStrokeWidth(0);
             mFramePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mFramePaint.setColor(mFrameColor);
 
             mFillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mFillPaint.setDither(true);
             mFillPaint.setStrokeWidth(0);
             mFillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mFillPaint.setColor(mFillColor);
 
             mWarningTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             Typeface font = Typeface.create("sans-serif", Typeface.BOLD);
@@ -755,10 +759,14 @@ public class BatteryMeterView extends View implements DemoMode,
                 }
             }
 
-            //update colors
-            mFramePaint.setColor(mFrameColor);
-            mFillPaint.setColor(tracker.plugged
-                    ? getFillColorForLevel(50) : getFillColorForLevel(level));
+            // apply battery tint
+            final PorterDuffColorFilter cff = new PorterDuffColorFilter(getTintForLevel(50), Mode.MULTIPLY);
+            final PorterDuffColorFilter cfb = new PorterDuffColorFilter((tracker.plugged
+                    ? getTintForLevel(50) : getTintForLevel(level)), Mode.MULTIPLY);
+            mFramePaint.setColorFilter(cff);
+            mFillPaint.setColorFilter(cfb);
+
+            // update text and bolt color
             mTextPaint.setColor(getTextColorForLevel(level));
             mBoltPaint.setColor(getTextColorForLevel(50));
 
@@ -862,12 +870,14 @@ public class BatteryMeterView extends View implements DemoMode,
             mFramePaint.setDither(true);
             mFramePaint.setStrokeWidth(0);
             mFramePaint.setStyle(Paint.Style.STROKE);
+            mFramePaint.setColor(mFrameColor);
 
             mFillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mFillPaint.setStrokeCap(Paint.Cap.BUTT);
             mFillPaint.setDither(true);
             mFillPaint.setStrokeWidth(0);
             mFillPaint.setStyle(Paint.Style.STROKE);
+            mFillPaint.setColor(mFillColor);
 
             mWarningTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             Typeface font = Typeface.create("sans-serif", Typeface.BOLD);
@@ -906,10 +916,14 @@ public class BatteryMeterView extends View implements DemoMode,
             boolean unknownStatus = tracker.status == BatteryManager.BATTERY_STATUS_UNKNOWN;
             int level = tracker.level;
 
-            // set the battery colors
-            mFramePaint.setColor(mFrameColor);
-            mFillPaint.setColor(tracker.plugged
-                    ? getFillColorForLevel(50) : getFillColorForLevel(level));
+            // apply battery tint
+            final PorterDuffColorFilter cff = new PorterDuffColorFilter(getTintForLevel(50), Mode.MULTIPLY);
+            final PorterDuffColorFilter cfb = new PorterDuffColorFilter((tracker.plugged
+                    ? getTintForLevel(50) : getTintForLevel(level)), Mode.MULTIPLY);
+            mFramePaint.setColorFilter(cff);
+            mFillPaint.setColorFilter(cfb);
+
+            // update text and bolt color
             mTextPaint.setColor(getTextColorForLevel(level));
             mBoltPaint.setColor(getTextColorForLevel(50));
 

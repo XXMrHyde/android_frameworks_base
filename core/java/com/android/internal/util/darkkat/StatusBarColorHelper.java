@@ -21,9 +21,8 @@ import android.graphics.Color;
 import android.provider.Settings;
 
 public class StatusBarColorHelper {
-
-    private static final int WHITE             = 0xffffffff;
-    private static final int TRANSLUCENT_BLACK = 0x7a000000;
+    private static final int WHITE = 0xffffffff;
+    private static final int BLACK = 0xff000000;
 
     public static int getGreetingColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
@@ -31,10 +30,8 @@ public class StatusBarColorHelper {
     }
 
     public static int getGreetingColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_GREETING_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_COLOR_DARK_MODE, BLACK);
     }
 
     public static int getCarrierLabelColor(Context context) {
@@ -44,16 +41,7 @@ public class StatusBarColorHelper {
 
     public static int getCarrierLabelColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-    }
-
-    public static int getBatteryFrameColor(Context context) {
-        return (77 << 24) | (getBatteryColor(context) & 0x00ffffff);
-    }
-
-    public static int getBatteryFrameColorDark(Context context) {
-        return getBatteryColorDark(context);
+                Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR_DARK_MODE, BLACK);
     }
 
     public static int getBatteryColor(Context context) {
@@ -62,9 +50,9 @@ public class StatusBarColorHelper {
     }
 
     public static int getBatteryColorDark(Context context) {
-        return  (61 << 24) | (Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_BATTERY_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK) & 0x00ffffff);
+                BLACK);
     }
 
     public static int getBatteryTextColor(Context context) {
@@ -75,7 +63,7 @@ public class StatusBarColorHelper {
     public static int getBatteryTextColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_BATTERY_STATUS_TEXT_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
+                BLACK);
     }
 
     public static int getClockColor(Context context) {
@@ -86,9 +74,8 @@ public class StatusBarColorHelper {
     public static int getClockColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_CLOCK_DATE_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
+                BLACK);
     }
-
 
     public static int getNetworkTrafficTextColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
@@ -98,7 +85,7 @@ public class StatusBarColorHelper {
     public static int getNetworkTrafficTextColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
+                BLACK);
     }
 
     public static int getNetworkTrafficIconColor(Context context) {
@@ -109,7 +96,7 @@ public class StatusBarColorHelper {
     public static int getNetworkTrafficIconColorDark(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
+                BLACK);
     }
 
     public static int getNetworkSignalColor(Context context) {
@@ -118,10 +105,9 @@ public class StatusBarColorHelper {
     }
 
     public static int getNetworkSignalColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_ICONS_SIGNAL_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+                BLACK);
     }
 
     public static int getNoSimColor(Context context) {
@@ -130,48 +116,41 @@ public class StatusBarColorHelper {
     }
 
     public static int getNoSimColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_ICONS_NO_SIM_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+                BLACK);
     }
 
     public static int getAirplaneModeColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR,
-                WHITE);
+                Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR, WHITE);
     }
 
     public static int getAirplaneModeColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_ICONS_AIRPLANE_MODE_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+                BLACK);
     }
 
     public static int getStatusIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_STATUS_ICONS_COLOR,
-                WHITE);
+                Settings.System.STATUS_BAR_STATUS_ICONS_COLOR, WHITE);
     }
 
     public static int getStatusIconColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+                BLACK);
     }
 
     public static int getNotificationIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR,
-                WHITE);
+                Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR, WHITE);
     }
 
     public static int getNotificationIconColorDark(Context context) {
-        final int color = Settings.System.getInt(context.getContentResolver(),
+        return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR_DARK_MODE,
-                TRANSLUCENT_BLACK);
-        return (153 << 24) | (color & 0x00ffffff);
+                BLACK);
     }
 }
