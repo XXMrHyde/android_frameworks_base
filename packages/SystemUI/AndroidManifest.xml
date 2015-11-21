@@ -197,7 +197,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <meta-data android:name="com.android.settings.category"
-                    android:value="com.android.settings.category.system" />
+                    android:value="com.android.settings.category.interface" />
         </activity>
 
         <!-- Alternate Recents -->
