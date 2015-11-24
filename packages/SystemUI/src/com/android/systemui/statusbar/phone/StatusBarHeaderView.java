@@ -888,6 +888,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 SBEHeaderColorHelper.getTextColor(mContext, 178));
         mDateExpanded.setTextColor(
                 SBEHeaderColorHelper.getTextColor(mContext, 178));
+        mEmergencyCallsOnly.setTextColor(
+                SBEHeaderColorHelper.getTextColor(mContext, 102));
         mAlarmStatus.setTextColor(
                 SBEHeaderColorHelper.getTextColor(mContext, 100));
     }
