@@ -54,6 +54,7 @@ import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.policy.Clock;
 import com.android.systemui.statusbar.policy.BatteryBar;
 import com.android.systemui.statusbar.policy.NetworkTraffic;
+import com.android.systemui.statusbar.policy.StatusBarCarrierText;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
 
@@ -78,7 +79,7 @@ public class StatusBarIconController implements Tunable {
     private static final int CLOCK_STYLE_CENTERED = 1;
     private static final int CLOCK_STYLE_HIDDEN   = 2;
 
-    private static final int CARRIER_LABEL_COLOR         = 0;
+    private static final int CARRIER_TEXT_COLOR         = 0;
     private static final int BATTERY_COLORS              = 1;
     private static final int CLOCK_COLOR                 = 2;
     private static final int NETWORK_TRAFFIC_COLORS      = 3;
@@ -99,8 +100,8 @@ public class StatusBarIconController implements Tunable {
     private SignalClusterView mSignalClusterKeyguard;
     private LinearLayout mGreetingLayout;
     private TextView mGreetingView;
-    private CarrierText mCarrierLabel;
-    private CarrierText mCarrierLabelKeyguard;
+    private StatusBarCarrierText mCarrierText;
+    private CarrierText mCarrierTextKeyguard;
     private IconMerger mNotificationIcons;
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
@@ -115,9 +116,9 @@ public class StatusBarIconController implements Tunable {
     private NetworkTraffic mNetworkTraffic;
     private int mGreetingColor;
     private int mGreetingColorTint;
-    private int mCarrierLabelColor;
-    private int mCarrierLabelColorOld;
-    private int mCarrierLabelColorTint;
+    private int mCarrierTextColor;
+    private int mCarrierTextColorOld;
+    private int mCarrierTextColorTint;
     private int mBatteryColor;
     private int mBatteryColorOld;
     private int mBatteryColorTint;
@@ -195,8 +196,8 @@ public class StatusBarIconController implements Tunable {
         mNotificationIconArea = statusBar.findViewById(R.id.notification_icon_area_inner);
         mGreetingLayout = (LinearLayout) statusBar.findViewById(R.id.status_bar_greeting_layout);
         mGreetingView = (TextView) statusBar.findViewById(R.id.status_bar_greeting_view);
-        mCarrierLabel = (CarrierText) statusBar.findViewById(R.id.status_bar_carrier_text);
-        mCarrierLabelKeyguard = (CarrierText) keyguardStatusBar.findViewById(R.id.keyguard_carrier_text);
+        mCarrierText = (StatusBarCarrierText) statusBar.findViewById(R.id.status_bar_carrier_text);
+        mCarrierTextKeyguard = (CarrierText) keyguardStatusBar.findViewById(R.id.keyguard_carrier_text);
         mNotificationIcons = (IconMerger) statusBar.findViewById(R.id.notificationIcons);
         mMoreIcon = (ImageView) statusBar.findViewById(R.id.moreIcon);
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
@@ -224,9 +225,9 @@ public class StatusBarIconController implements Tunable {
     private void setUpCustomColors() {
         mGreetingColor = StatusBarColorHelper.getGreetingColor(mContext);
         mGreetingColorTint = mGreetingColor;
-        mCarrierLabelColor = StatusBarColorHelper.getCarrierLabelColor(mContext);
-        mCarrierLabelColorOld = mCarrierLabelColor;
-        mCarrierLabelColorTint = mCarrierLabelColor;
+        mCarrierTextColor = StatusBarColorHelper.getCarrierLabelColor(mContext);
+        mCarrierTextColorOld = mCarrierTextColor;
+        mCarrierTextColorTint = mCarrierTextColor;
         mBatteryColor = StatusBarColorHelper.getBatteryColor(mContext);
         mBatteryColorOld = mBatteryColor;
         mBatteryColorTint = mBatteryColor;
@@ -593,8 +594,8 @@ public class StatusBarIconController implements Tunable {
         mGreetingColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mGreetingColor,  StatusBarColorHelper.getGreetingColorDark(mContext));
         if (DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mCarrierLabelColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
-                    mCarrierLabelColor, StatusBarColorHelper.getCarrierLabelColorDark(mContext));
+            mCarrierTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
+                    mCarrierTextColor, StatusBarColorHelper.getCarrierLabelColorDark(mContext));
         }
         mBatteryColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mBatteryColor, StatusBarColorHelper.getBatteryColorDark(mContext));
@@ -631,7 +632,7 @@ public class StatusBarIconController implements Tunable {
     private void applyIconTint() {
         mGreetingView.setTextColor(mGreetingColorTint);
         if (DeviceUtils.deviceSupportsMobileData(mContext)) {
-            mCarrierLabel.setTextColor(mCarrierLabelColorTint);
+            mCarrierText.setTextColor(mCarrierTextColorTint);
         }
         mBatteryMeterView.setBatteryColors(mBatteryColorTint);
         mBatteryMeterView.setTextColor(mBatteryTextColorTint);
@@ -727,10 +728,10 @@ public class StatusBarIconController implements Tunable {
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
             @Override public void onAnimationUpdate(ValueAnimator animation) {
                 float position = animation.getAnimatedFraction();
-                if (mColorToChange == CARRIER_LABEL_COLOR) {
+                if (mColorToChange == CARRIER_TEXT_COLOR) {
                     final int blended = ColorHelper.getBlendColor(
-                            mCarrierLabelColorOld, mCarrierLabelColor, position);
-                    mCarrierLabel.setTextColor(blended);
+                            mCarrierTextColorOld, mCarrierTextColor, position);
+                    mCarrierText.setTextColor(blended);
                 } else if (mColorToChange == BATTERY_COLORS) {
                     final int blended = ColorHelper.getBlendColor(
                             mBatteryColorOld, mBatteryColor, position);
@@ -776,9 +777,9 @@ public class StatusBarIconController implements Tunable {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (mColorToChange == CARRIER_LABEL_COLOR) {
-                    mCarrierLabelColorOld = mCarrierLabelColor;
-                    mCarrierLabelColorTint = mCarrierLabelColor;
+                if (mColorToChange == CARRIER_TEXT_COLOR) {
+                    mCarrierTextColorOld = mCarrierTextColor;
+                    mCarrierTextColorTint = mCarrierTextColor;
                 } else if (mColorToChange == BATTERY_COLORS) {
                     mBatteryColorOld = mBatteryColor;
                     mBatteryTextColorOld = mBatteryTextColor;
@@ -830,36 +831,36 @@ public class StatusBarIconController implements Tunable {
         mGreetingColorTint = mGreetingColor;
     }
 
-    public void updateCarrierLabelVisibility(boolean show, boolean forceHide, int maxAllowedIcons) {
+    public void updateCarrierTextVisibility(boolean show, boolean forceHide, int maxAllowedIcons) {
         boolean forceHideByNumberOfIcons = false;
         if (forceHide && mNotificationIcons.getChildCount() >= maxAllowedIcons) {
             forceHideByNumberOfIcons = true;
         }
-        mCarrierLabel.setVisibility(show && !forceHideByNumberOfIcons ? View.VISIBLE : View.GONE);
+        mCarrierText.setVisibility(show && !forceHideByNumberOfIcons ? View.VISIBLE : View.GONE);
     }
 
-    public void updateCarrierLabelKeyguardVisibility(boolean show) {
-        mCarrierLabelKeyguard.setVisibility(show ? View.VISIBLE : View.GONE);
+    public void updateCarrierTextKeyguardVisibility(boolean show) {
+        mCarrierTextKeyguard.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    public void updateCarrierLabelSettings() {
-        mCarrierLabel.updateCarrierLabelSettings();
-        mCarrierLabelKeyguard.updateCarrierLabelSettings();
-        mCarrierLabel.updateCarrierText();
-        mCarrierLabelKeyguard.updateCarrierText();
+    public void updateCarrierTextSettings() {
+        mCarrierText.updateCarrierTextSettings();
+        mCarrierTextKeyguard.updateCarrierTextSettings();
+        mCarrierText.updateCarrierText();
+        mCarrierTextKeyguard.updateCarrierText();
     }
 
-    public void updateCarrierLabelColor(boolean animate) {
-        mCarrierLabelColor = StatusBarColorHelper.getCarrierLabelColor(mContext);
+    public void updateCarrierTextColor(boolean animate) {
+        mCarrierTextColor = StatusBarColorHelper.getCarrierLabelColor(mContext);
         if (animate) {
-            mColorToChange = CARRIER_LABEL_COLOR;
+            mColorToChange = CARRIER_TEXT_COLOR;
             mColorTransitionAnimator.start();
         } else {
-            mCarrierLabel.setTextColor(mCarrierLabelColor);
-            mCarrierLabelColorOld = mCarrierLabelColor;
-            mCarrierLabelColorTint = mCarrierLabelColor;
+            mCarrierText.setTextColor(mCarrierTextColor);
+            mCarrierTextColorOld = mCarrierTextColor;
+            mCarrierTextColorTint = mCarrierTextColor;
         }
-        mCarrierLabelKeyguard.setTextColor(mCarrierLabelColor);
+        mCarrierTextKeyguard.setTextColor(mCarrierTextColor);
     }
 
     public void updateBatteryIndicator(int indicator) {
@@ -939,6 +940,9 @@ public class StatusBarIconController implements Tunable {
                 break;
         }
         mNotificationIcons.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
+        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+            mCarrierText.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
+        }
     }
 
     public void updateClockSettings() {

@@ -40,7 +40,6 @@ import android.widget.TextView;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.internal.telephony.IccCardConstants.State;
 import com.android.internal.telephony.TelephonyIntents;
-import com.android.internal.util.darkkat.ColorHelper;
 import com.android.settingslib.WirelessUtils;
 
 public class CarrierText extends TextView {
@@ -55,8 +54,8 @@ public class CarrierText extends TextView {
 
     private WifiManager mWifiManager;
 
-    private boolean mUseCustomLabel = false;
-    private String mCustomLabel = "";
+    private boolean mUseCustomText = false;
+    private String mCustomText = "";
 
     private KeyguardUpdateMonitorCallback mCallback = new KeyguardUpdateMonitorCallback() {
         @Override
@@ -106,7 +105,7 @@ public class CarrierText extends TextView {
 
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
-        updateCarrierLabelSettings();
+        updateCarrierTextSettings();
     }
 
     public void updateCarrierText() {
@@ -146,8 +145,8 @@ public class CarrierText extends TextView {
                 }
             }
         }
-        if (mUseCustomLabel && !mCustomLabel.isEmpty()) {
-            displayText = mCustomLabel;
+        if (mUseCustomText && !mCustomText.isEmpty()) {
+            displayText = mCustomText;
         }
         if (allSimsMissing) {
             if (N != 0) {
@@ -399,15 +398,15 @@ public class CarrierText extends TextView {
         }
     }
 
-    public void updateCarrierLabelSettings() {
+    public void updateCarrierTextSettings() {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mUseCustomLabel = Settings.System.getInt(resolver,
+        mUseCustomText = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM, 0) == 1;
-        mCustomLabel = Settings.System.getString(resolver,
+        mCustomText = Settings.System.getString(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL);
-        if (mCustomLabel == null || mCustomLabel.isEmpty()) {
-            mCustomLabel = mContext.getResources().getString(
+        if (mCustomText == null || mCustomText.isEmpty()) {
+            mCustomText = mContext.getResources().getString(
                     com.android.internal.R.string.default_custom_label);
         }
     }

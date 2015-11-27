@@ -106,7 +106,6 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.GreetingTextHelper;
 
-import com.android.keyguard.CarrierText;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
@@ -160,6 +159,7 @@ import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.policy.RotationLockControllerImpl;
 import com.android.systemui.statusbar.policy.SecurityControllerImpl;
+import com.android.systemui.statusbar.policy.StatusBarCarrierText;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
@@ -321,8 +321,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardBottomAreaView mKeyguardBottomArea;
     boolean mLeaveOpenOnKeyguardHide;
     KeyguardIndicationController mKeyguardIndicationController;
-
-    private CarrierText mStatusBarCarrierLabel;
 
     private boolean mKeyguardFadingAway;
     private long mKeyguardFadingAwayDelay;
@@ -578,20 +576,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_CARRIER_LABEL_USE_CUSTOM))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL))) {
-                updateCarrierLabelSettings();
+                updateCarrierTextSettings();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_HIDE_LABEL))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS))) {
-                updateCarrierLabelVisibility();
+                updateCarrierTextVisibility();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN))) {
-                updateLockScreenCarrierLabelVisibility();
+                updateLockScreenCarrierTextVisibility();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CARRIER_LABEL_COLOR))) {
-                updateCarrierLabelColor(true);
+                updateCarrierTextColor(true);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_POSITION))) {
                 updateClockStyle();
@@ -1052,8 +1050,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         R.id.keyguard_indication_text));
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
 
-        mStatusBarCarrierLabel = (CarrierText) mStatusBarView.findViewById(R.id.status_bar_carrier_text);
-
         // set the inital view visibility
         setAreThereNotifications();
 
@@ -1100,6 +1096,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (SignalClusterView) mKeyguardStatusBar.findViewById(R.id.signal_cluster);
         final SignalClusterView signalClusterQs =
                 (SignalClusterView) mHeader.findViewById(R.id.signal_cluster);
+        final StatusBarCarrierText carrierText =
+                (StatusBarCarrierText) mStatusBarView.findViewById(R.id.status_bar_carrier_text);
+        if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
+            carrierText.setVisibility(View.GONE);
+        } else {
+            carrierText.setNetworkController(mNetworkController);
+        }
         mNetworkController.addSignalCallback(signalCluster);
         mNetworkController.addSignalCallback(signalClusterKeyguard);
         mNetworkController.addSignalCallback(signalClusterQs);
@@ -1736,7 +1739,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateNotificationShade();
         mIconController.updateNotificationIcons(mNotificationData);
-        updateCarrierLabelVisibility();
+        updateCarrierTextVisibility();
     }
 
     @Override
@@ -2048,9 +2051,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateGreetingText();
         updateGreetingTimeout();
         updateGreetingColor();
-        updateCarrierLabelVisibility();
-        updateLockScreenCarrierLabelVisibility();
-        updateCarrierLabelColor(false);
+        if (DeviceUtils.deviceSupportsMobileData(mContext)) {
+            updateCarrierTextVisibility();
+            updateLockScreenCarrierTextVisibility();
+            updateCarrierTextColor(false);
+        }
         updateClockStyle();
         updateClockSettings();
         updateClockColor(false);
@@ -2110,16 +2115,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void updateCarrierLabelSettings() {
+    private void updateCarrierTextSettings() {
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
         if (mIconController != null) {
-            mIconController.updateCarrierLabelSettings();
+            mIconController.updateCarrierTextSettings();
         }
     }
 
-    private void updateCarrierLabelVisibility() {
+    private void updateCarrierTextVisibility() {
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
@@ -2132,29 +2137,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final int maxAllowedIcons = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CARRIER_LABEL_NUMBER_OF_NOTIFICATION_ICONS, 1);
         if (mIconController != null) {
-            mIconController.updateCarrierLabelVisibility(show, forceHide, maxAllowedIcons);
+            mIconController.updateCarrierTextVisibility(show, forceHide, maxAllowedIcons);
         }
     }
 
-    private void updateLockScreenCarrierLabelVisibility() {
+    private void updateLockScreenCarrierTextVisibility() {
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
         final boolean showOnLockScreen = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN, 1) == 1;
         if (mIconController != null) {
-            mIconController.updateCarrierLabelKeyguardVisibility(showOnLockScreen);
+            mIconController.updateCarrierTextKeyguardVisibility(showOnLockScreen);
         }
     }
 
-    private void updateCarrierLabelColor(boolean animate) {
+    private void updateCarrierTextColor(boolean animate) {
         if (!DeviceUtils.deviceSupportsMobileData(mContext)) {
             return;
         }
         final boolean show = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_LABEL_SHOW, 0) == 1;
         if (mIconController != null) {
-            mIconController.updateCarrierLabelColor(animate && show ? true : false);
+            mIconController.updateCarrierTextColor(animate && show ? true : false);
         }
     }
 
