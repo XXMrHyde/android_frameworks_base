@@ -3608,6 +3608,16 @@ public final class Settings {
         public static final String STATUS_BAR_NOTIFICATION_ICONS_COLOR_DARK_MODE = "status_bar_notification_icons_color_dark_mode";
 
         /**
+         * One finger expansion of the statusbar
+         * 0 - Disabled
+         * 1 - Right side
+         * 2 - Left side
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_QUICK_PULLDOWN = "status_bar_expanded_quick_pulldown";
+
+        /**
          * Color of the expanded status bar header background
          * @hide
          */
