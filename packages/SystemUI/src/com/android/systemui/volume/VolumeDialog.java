@@ -46,6 +46,7 @@ import android.provider.Settings.Global;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -220,15 +221,16 @@ public class VolumeDialog {
 
     private void updateWindowWidthH() {
         final ViewGroup.LayoutParams lp = mDialogView.getLayoutParams();
-        final DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        if (D.BUG) Log.d(TAG, "updateWindowWidth dm.w=" + dm.widthPixels);
+        final WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        final Display d = wm.getDefaultDisplay();
+        final DisplayMetrics dm = new DisplayMetrics();
+        d.getRealMetrics(dm);
         int w = dm.widthPixels;
-        final int max = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.standard_notification_panel_width);
-        if (w > max) {
-            w = max;
+        if (w > dm.heightPixels) {
+            // Use the displays height on landscape
+            w = dm.heightPixels;
         }
-        w -= mContext.getResources().getDimensionPixelSize(R.dimen.notification_side_padding) * 2;
+        if (D.BUG) Log.d(TAG, "updateWindowWidth width=" + w);
         lp.width = w;
         mDialogView.setLayoutParams(lp);
     }

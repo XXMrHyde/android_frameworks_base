@@ -16,8 +16,7 @@
 */
 -->
 <resources>
-    <!-- Standard notification width + gravity -->
-    <dimen name="notification_panel_width">@dimen/standard_notification_panel_width</dimen>
+    <!-- Notification gravity -->
     <integer name="notification_panel_layout_gravity">@integer/standard_notification_panel_layout_gravity</integer>
 
     <!-- Diameter of outer shape drawable shown in navbar search-->
