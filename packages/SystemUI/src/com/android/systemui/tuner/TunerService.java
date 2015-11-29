@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class TunerService extends SystemUI {
 
     public static final String ACTION_CLEAR = "com.android.systemui.action.CLEAR_TUNER";
@@ -136,7 +135,6 @@ public class TunerService extends SystemUI {
     public void clearAll() {
         // A couple special cases.
         Settings.Global.putString(mContentResolver, DemoMode.DEMO_MODE_ALLOWED, null);
-        Settings.System.putString(mContentResolver, BatteryMeterView.SHOW_PERCENT_SETTING, null);
         Intent intent = new Intent(DemoMode.ACTION_DEMO);
         intent.putExtra(DemoMode.EXTRA_COMMAND, DemoMode.COMMAND_EXIT);
         mContext.sendBroadcast(intent);
@@ -183,9 +181,6 @@ public class TunerService extends SystemUI {
                 context.sendBroadcast(new Intent(TunerService.ACTION_CLEAR));
                 // Disable access to tuner.
                 TunerService.setTunerEnabled(context, false);
-                // Make them sit through the warning dialog again.
-                Settings.Secure.putInt(context.getContentResolver(),
-                        TunerFragment.SETTING_SEEN_TUNER_WARNING, 0);
                 if (onDisabled != null) {
                     onDisabled.run();
                 }

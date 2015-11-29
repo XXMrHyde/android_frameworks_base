@@ -218,7 +218,9 @@ public class StatusBarIconController implements Tunable {
         mHandler = new Handler();
         updateResources();
         TunerService.get(mContext).addTunable(this, ICON_BLACKLIST);
-
+        if (!TunerService.isTunerEnabled(mContext)) {
+            TunerService.setTunerEnabled(mContext, true);
+        }
         setUpCustomColors();
     }
 

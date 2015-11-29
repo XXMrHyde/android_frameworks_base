@@ -64,7 +64,6 @@
             android:paddingStart="36dp"
             android:tint="#4DFFFFFF"
             android:tintMode="src_in"
-            android:visibility="invisible"
             android:src="@drawable/tuner" />
 
     </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
