@@ -218,9 +218,6 @@ public class StatusBarIconController implements Tunable {
         mHandler = new Handler();
         updateResources();
         TunerService.get(mContext).addTunable(this, ICON_BLACKLIST);
-        if (!TunerService.isTunerEnabled(mContext)) {
-            TunerService.setTunerEnabled(mContext, true);
-        }
         setUpCustomColors();
     }
 
@@ -996,7 +993,6 @@ public class StatusBarIconController implements Tunable {
             mColorToChange = STATUS_NETWORK_ICON_COLORS;
             mColorTransitionAnimator.start();
         } else {
-            mSignalCluster.setIgnoreSystemUITuner(true);
             mSignalCluster.setIconTint(
                     mNetworkSignalColor, mNoSimColor, mAirplaneModeColor);
             mStatusIconColorOld = mStatusIconColor;
@@ -1008,7 +1004,6 @@ public class StatusBarIconController implements Tunable {
             mNoSimColorTint = mNoSimColor;
             mAirplaneModeColorTint = mAirplaneModeColor;
         }
-        mSignalClusterKeyguard.setIgnoreSystemUITuner(true);
         mSignalClusterKeyguard.setIconTint(
                 mNetworkSignalColor, mNoSimColor, mAirplaneModeColor);
         updateStatusIconKeyguardColor();

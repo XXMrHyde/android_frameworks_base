@@ -18,13 +18,12 @@ package com.android.systemui.tuner;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class TunerActivity extends Activity {
+public class StatusBarIconsVisibilityActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new TunerFragment())
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new StatusBarIconsVisibilityFragment())
                 .commit();
     }
-
 }

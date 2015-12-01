@@ -17,11 +17,11 @@ package com.android.systemui.tuner;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,9 +54,9 @@ import com.android.systemui.statusbar.policy.SecurityController;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QsTuner extends Fragment implements Callback {
+public class QSTilesArrengmentFragment extends PreferenceFragment implements Callback {
 
-    private static final String TAG = "QsTuner";
+    private static final String TAG = "QsFragment";
 
     private static final int MENU_RESET = Menu.FIRST;
 
@@ -72,6 +72,7 @@ public class QsTuner extends Fragment implements Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
     }
 
@@ -97,7 +98,7 @@ public class QsTuner extends Fragment implements Callback {
                 mTileHost.reset();
                 break;
             case android.R.id.home:
-                getFragmentManager().popBackStack();
+                getActivity().finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

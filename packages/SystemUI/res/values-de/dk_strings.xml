@@ -17,5 +17,9 @@
 
     <!-- Content description of the data connection type HSPA+ for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_data_connection_hp">HSPA+</string>
+
+    <!-- SystemUI Tuner -->
+    <string name="status_bar_icons_visibility">Anzeigen/verbergen</string>
+    <string name="qs_tiles_arrengment">Kachelanordnung</string>
 </resources>
 

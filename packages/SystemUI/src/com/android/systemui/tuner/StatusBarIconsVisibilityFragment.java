@@ -15,69 +15,49 @@
  */
 package com.android.systemui.tuner;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.view.MenuItem;
 
-import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.tuner.TunerService.Tunable;
 
-public class TunerFragment extends PreferenceFragment {
+public class StatusBarIconsVisibilityFragment extends PreferenceFragment {
 
-    private static final String TAG = "TunerFragment";
+    private static final String TAG = "StatusBarIconsFragment";
 
-    private static final String KEY_QS_TUNER = "qs_tuner";
-    private static final String KEY_DEMO_MODE = "demo_mode";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.tuner_prefs);
+        addPreferencesFromResource(R.xml.status_bar_icons_visibility_prefs);
         getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
+    }
 
-        findPreference(KEY_QS_TUNER).setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(android.R.id.content, new QsTuner(), "QsTuner");
-                ft.addToBackStack(null);
-                ft.commit();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
                 return true;
-            }
-        });
-        findPreference(KEY_DEMO_MODE).setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(android.R.id.content, new DemoModeFragment(), "DemoMode");
-                ft.addToBackStack(null);
-                ft.commit();
-                return true;
-            }
-        });
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         registerPrefs(getPreferenceScreen());
-        MetricsLogger.visibility(getContext(), MetricsLogger.TUNER, true);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         unregisterPrefs(getPreferenceScreen());
-        MetricsLogger.visibility(getContext(), MetricsLogger.TUNER, false);
     }
 
     private void registerPrefs(PreferenceGroup group) {
@@ -104,15 +84,5 @@ public class TunerFragment extends PreferenceFragment {
                 registerPrefs((PreferenceGroup) pref);
             }
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

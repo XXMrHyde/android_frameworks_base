@@ -60,6 +60,7 @@ public class DemoModeFragment extends PreferenceFragment implements OnPreference
         super.onCreate(savedInstanceState);
 
         Context context = getContext();
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
         mEnabledSwitch = new SwitchPreference(context);
         mEnabledSwitch.setTitle(R.string.enable_demo_mode);
         mEnabledSwitch.setOnPreferenceChangeListener(this);
@@ -87,7 +88,7 @@ public class DemoModeFragment extends PreferenceFragment implements OnPreference
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getFragmentManager().popBackStack();
+                getActivity().finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

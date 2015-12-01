@@ -185,19 +185,29 @@
                   android:excludeFromRecents="true">
         </activity>
 
-        <activity android:name=".tuner.TunerActivity"
+        <activity android:name=".tuner.StatusBarIconsVisibilityActivity"
+                  android:enabled="true"
+                  android:theme="@style/Theme.Tuner"
+                  android:label="@string/status_bar_icons_visibility"
+                  android:process=":tuner"
+                  android:exported="true">
+        </activity>
+
+        <activity android:name=".tuner.QSTilesArrengmentActivity"
+                  android:enabled="true"
+                  android:theme="@style/Theme.Tuner"
+                  android:label="@string/qs_tiles_arrengment"
+                  android:process=":tuner"
+                  android:exported="true">
+        </activity>
+
+        <activity android:name=".tuner.DemoModeActivity"
                   android:enabled="true"
                   android:icon="@drawable/tuner"
                   android:theme="@style/Theme.Tuner"
-                  android:label="@string/system_ui_tuner"
+                  android:label="@string/demo_mode"
                   android:process=":tuner"
                   android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data android:name="com.android.settings.category"
-                    android:value="com.android.settings.category.interface" />
         </activity>
 
         <!-- Alternate Recents -->

@@ -167,42 +167,6 @@ public class TunerService extends SystemUI {
         return sInstance;
     }
 
-    public static final void showResetRequest(final Context context, final Runnable onDisabled) {
-        SystemUIDialog dialog = new SystemUIDialog(context, AlertDialog.THEME_MATERIAL_DARK);
-        dialog.setShowForAllUsers(true);
-        dialog.setMessage(R.string.remove_from_settings_prompt);
-        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(R.string.cancel),
-                (OnClickListener) null);
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                context.getString(R.string.guest_exit_guest_dialog_remove), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Tell the tuner (in main SysUI process) to clear all its settings.
-                context.sendBroadcast(new Intent(TunerService.ACTION_CLEAR));
-                // Disable access to tuner.
-                TunerService.setTunerEnabled(context, false);
-                if (onDisabled != null) {
-                    onDisabled.run();
-                }
-            }
-        });
-        dialog.show();
-    }
-
-    public static final void setTunerEnabled(Context context, boolean enabled) {
-        userContext(context).getPackageManager().setComponentEnabledSetting(
-                new ComponentName(context, TunerActivity.class),
-                enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                        PackageManager.DONT_KILL_APP);
-    }
-
-    public static final boolean isTunerEnabled(Context context) {
-        return userContext(context).getPackageManager().getComponentEnabledSetting(
-                new ComponentName(context, TunerActivity.class))
-                == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
-    }
-
     private static Context userContext(Context context) {
         try {
             return context.createPackageContextAsUser(context.getPackageName(), 0,
