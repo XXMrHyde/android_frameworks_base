@@ -3686,6 +3686,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_NETWORK_ICONS_AIRPLANE_MODE_COLOR = "status_bar_expanded_network_icons_airplane_mode_color";
 
+        /** Whether to show the brightness slider in the expanded panel.
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_QS_SHOW_BRIGHTNESS_SLIDER = "status_bar_expanded_qs_show_brightness_slider";
+
         /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
