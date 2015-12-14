@@ -80,8 +80,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private View mClock;
     private TextView mTime;
     private TextView mAmPm;
-    private MultiUserSwitch mMultiUserSwitch;
-    private ImageView mMultiUserAvatar;
     private TextView mDateCollapsed;
     private TextView mDateExpanded;
     private LinearLayout mSystemIcons;
@@ -150,8 +148,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mClock = findViewById(R.id.clock);
         mTime = (TextView) findViewById(R.id.time_view);
         mAmPm = (TextView) findViewById(R.id.am_pm_view);
-        mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
-        mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
         mDateCollapsed = (TextView) findViewById(R.id.date_collapsed);
         mDateExpanded = (TextView) findViewById(R.id.date_expanded);
         mSettingsContainer = findViewById(R.id.settings_button_container);
@@ -404,8 +400,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void updateClickTargets() {
-        mMultiUserSwitch.setClickable(mExpanded);
-        mMultiUserSwitch.setFocusable(mExpanded);
         mSystemIconsSuperContainer.setClickable(mExpanded);
         mSystemIconsSuperContainer.setFocusable(mExpanded);
         mAlarmStatus.setClickable(mNextAlarm != null && mNextAlarm.getShowIntent() != null);
@@ -452,15 +446,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         invalidateOutline();
     }
 
-    public void setUserInfoController(UserInfoController userInfoController) {
-        userInfoController.addListener(new UserInfoController.OnUserInfoChangedListener() {
-            @Override
-            public void onUserInfoChanged(String name, Drawable picture) {
-                mMultiUserAvatar.setImageDrawable(picture);
-            }
-        });
-    }
-
     @Override
     public void onClick(View v) {
         if (v == mSettingsButton) {
@@ -490,7 +475,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         if (mQSPanel != null) {
             mQSPanel.setCallback(mQsPanelCallback);
         }
-        mMultiUserSwitch.setQsPanel(qsp);
     }
 
     @Override
@@ -857,8 +841,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void updateBackgroundColor() {
         setBackground(getColoredBackgroundDrawable(
                 mContext.getDrawable(R.drawable.notification_header_bg), true));
-        mMultiUserSwitch.setBackground(getColoredBackgroundDrawable(
-                mContext.getDrawable(R.drawable.ripple_drawable), false));
         mSettingsButton.setBackground(getColoredBackgroundDrawable(
                 mContext.getDrawable(R.drawable.ripple_drawable), false));
         mSystemIconsSuperContainer.setBackground(getColoredBackgroundDrawable(

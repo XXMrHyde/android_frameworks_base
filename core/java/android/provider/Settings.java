@@ -3686,11 +3686,43 @@ public final class Settings {
          */
         public static final String STATUS_BAR_EXPANDED_NETWORK_ICONS_AIRPLANE_MODE_COLOR = "status_bar_expanded_network_icons_airplane_mode_color";
 
-        /** Whether to show the brightness slider in the expanded panel.
+        /**
+         * Whether to show the brightness slider in the expanded panel
          *
          * @hide
          */
-        public static final String STATUS_BAR_EXPANDED_QS_SHOW_BRIGHTNESS_SLIDER = "status_bar_expanded_qs_show_brightness_slider";
+        public static final String STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER = "status_bar_expanded_qs_show_brightness_slider";
+
+        /**
+         * Whether to show the Quick access bar in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_QAB = "status_bar_expanded_show_qab";
+
+        /**
+         * List of Quick access bar button names
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_QAB_BUTTONS = "status_bar_expanded_qab_buttons";
+
+        /**
+         * Color of the  in the expanded panel background
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BACKGROUND_COLOR = "status_bar_expanded_background_color";
+
+        /**
+         * Color of the icons in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_ICON_COLOR = "status_bar_expanded_icons_color";
+
+        /**
+         * Color of the icon background ripple effect in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_RIPPLE_COLOR = "status_bar_expanded_ripple_color";
 
         /**
          * Whether to include advanced reboot options in power menu for 

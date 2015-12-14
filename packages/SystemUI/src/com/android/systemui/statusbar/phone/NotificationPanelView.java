@@ -31,6 +31,7 @@ import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
@@ -53,6 +54,7 @@ import android.widget.TextView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.keyguard.KeyguardStatusView;
+import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
 import com.android.systemui.DejankUtils;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
@@ -106,6 +108,7 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private KeyguardStatusBarView mKeyguardStatusBar;
     private QSContainer mQsContainer;
+    private QuickAccessBar mQuickAccessBar;
     private QSPanel mQsPanel;
     private KeyguardStatusView mKeyguardStatusView;
     private ObservableScrollView mScrollView;
@@ -265,6 +268,7 @@ public class NotificationPanelView extends PanelView implements
         mKeyguardStatusBar = (KeyguardStatusBarView) findViewById(R.id.keyguard_header);
         mKeyguardStatusView = (KeyguardStatusView) findViewById(R.id.keyguard_status_view);
         mQsContainer = (QSContainer) findViewById(R.id.quick_settings_container);
+        mQuickAccessBar = (QuickAccessBar) findViewById(R.id.quick_access_bar);
         mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mClockView = (TextView) findViewById(R.id.clock_view);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
@@ -302,6 +306,7 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
+        setBackgroundColor();
     }
 
     @Override
@@ -1309,9 +1314,7 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setScrollingEnabled(
                 mStatusBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
-        mQsPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
-        mQsContainer.setVisibility(
-                mKeyguardShowing && !expandVisually ? View.INVISIBLE : View.VISIBLE);
+        mQsContainer.updateVisibility(mKeyguardShowing, expandVisually);
         mScrollView.setTouchEnabled(mQsExpanded);
         updateEmptyShadeView();
         mQsNavbarScrim.setVisibility(mStatusBarState == StatusBarState.SHADE && mQsExpanded
@@ -1875,7 +1878,7 @@ public class NotificationPanelView extends PanelView implements
     private void setListening(boolean listening) {
         mHeader.setListening(listening);
         mKeyguardStatusBar.setListening(listening);
-        mQsPanel.setListening(listening);
+        mQsContainer.setListening(listening);
     }
 
     @Override
@@ -2464,9 +2467,25 @@ public class NotificationPanelView extends PanelView implements
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP), false, this);
+                    Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP),
+                    false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_ICON_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR),
                     false, this);
             update();
         }
@@ -2476,14 +2495,34 @@ public class NotificationPanelView extends PanelView implements
             resolver.unregisterContentObserver(this);
         }
 
-        @Override
-        public void onChange(boolean selfChange) {
-            update();
-        }
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            update();
+            ContentResolver resolver = mContext.getContentResolver();
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN))) {
+                mDoubleTapToSleepEnabled = Settings.System.getInt(
+                        resolver, Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP, 0) == 1;
+                mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
+                        resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
+                        ONE_FINGER_QS_INTERCEPT_OFF);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER))) {
+                setShowBrightnessSlider();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB))) {
+                setShowQuickAccessBar();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR))) {
+                setBackgroundColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_ICON_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR))) {
+                setColors();
+            }
         }
 
         public void update() {
@@ -2493,6 +2532,10 @@ public class NotificationPanelView extends PanelView implements
             mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
                     ONE_FINGER_QS_INTERCEPT_OFF);
+            setShowBrightnessSlider();
+            setShowQuickAccessBar();
+            setBackgroundColor();
+            setColors();
         }
     }
 
@@ -2562,5 +2605,42 @@ public class NotificationPanelView extends PanelView implements
         ActivityManager am = getContext().getSystemService(ActivityManager.class);
         List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
         return !tasks.isEmpty() && pkgName.equals(tasks.get(0).topActivity.getPackageName());
+    }
+
+    private void setShowBrightnessSlider() {
+        ContentResolver resolver = mContext.getContentResolver();
+        final boolean showBrightnessSlider = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER, 1) == 1;
+        if (mQsContainer != null) {
+            mQsContainer.setShowBrightnessSlider(showBrightnessSlider);
+        }
+    }
+
+    private void setShowQuickAccessBar() {
+        ContentResolver resolver = mContext.getContentResolver();
+        final boolean showQuickAccessBar = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB, 1) == 1;
+        if (mQsContainer != null) {
+            mQsContainer.setShowQABar(showQuickAccessBar);
+        }
+    }
+
+    private void setBackgroundColor() {
+        ContentResolver resolver = mContext.getContentResolver();
+        final int bgColor = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR, 0xff263238);
+        if (mQsContainer != null) {
+            mQsContainer.getBackground().setColorFilter(
+                    bgColor, Mode.SRC_IN);
+        }
+    }
+
+    private void setColors() {
+        if (mQuickAccessBar != null) {
+            mQuickAccessBar.setColors();
+        }
+        if (mQsPanel != null) {
+            mQsPanel.setBrightnessSliderColors();
+         }
     }
 }

@@ -23,4 +23,13 @@
 
     <!-- Network traffic text end padding, (if no activity icon is shown) -->
     <dimen name="network_traffic_text_end_padding">3dp</dimen>
+
+    <!-- End margin for the Settings button container in the status bar header  -->
+    <dimen name="settings_botton_container_margin_end">16dp</dimen>
+
+    <!-- Top and bottom padding of the Quick settings container -->
+    <dimen name="qs_container_padding_top_bottom">8dp</dimen>
+
+    <!-- Size of the Quick access bar buttons -->
+    <dimen name="qab_button_size">64dp</dimen>
 </resources>

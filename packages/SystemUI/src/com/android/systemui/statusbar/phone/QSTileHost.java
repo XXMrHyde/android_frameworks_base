@@ -112,7 +112,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         ht.start();
         mLooper = ht.getLooper();
 
-        TunerService.get(mContext).addTunable(this, TILES_SETTING);
+//        TunerService.get(mContext).addTunable(this, TILES_SETTING);
     }
 
     public void destroy() {

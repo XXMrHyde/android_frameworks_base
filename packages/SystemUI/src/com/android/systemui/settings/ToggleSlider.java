@@ -17,8 +17,12 @@
 package com.android.systemui.settings;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +32,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
@@ -125,6 +131,23 @@ public class ToggleSlider extends RelativeLayout {
         if (mMirror != null) {
             mMirror.setValue(value);
         }
+    }
+
+    public void setColors() {
+        final int iconColor = SBEPanelColorHelper.getIconColor(mContext);
+        final int progressBarColor = 0xff009688; // Material deep teal 500
+        final int progressBarBgColor = (179 << 24) | (iconColor & 0x00ffffff); // Icon color with a transparency of 70%
+        final int rippleColor = SBEPanelColorHelper.getRippleColor(mContext);
+        RippleDrawable rd =
+                (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless).mutate();
+
+        mSlider.setThumbTintMode(Mode.MULTIPLY);
+        mSlider.setThumbTintList(ColorStateList.valueOf(iconColor));
+        mSlider.setProgressTintList(ColorStateList.valueOf(progressBarColor));
+        mSlider.setProgressBackgroundTintList(
+                ColorStateList.valueOf(progressBarBgColor));
+        rd.setColor(ColorStateList.valueOf(rippleColor));
+        mSlider.setBackground(rd);
     }
 
     @Override

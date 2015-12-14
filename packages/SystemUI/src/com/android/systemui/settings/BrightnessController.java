@@ -19,6 +19,7 @@ package com.android.systemui.settings;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
+import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
 import java.util.ArrayList;
 
@@ -281,6 +283,13 @@ public class BrightnessController implements ToggleSlider.Listener {
             mIcon.setImageResource(automatic ?
                     com.android.systemui.R.drawable.ic_qs_brightness_auto_on :
                     com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
+        }
+    }
+
+    public void setColors() {
+        mControl.setColors();
+        if (mIcon != null) {
+            mIcon.setColorFilter(SBEPanelColorHelper.getIconColor(mContext), Mode.MULTIPLY);
         }
     }
 

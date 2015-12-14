@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/qs_background_primary"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="@dimen/qs_container_padding_top_bottom"
+        android:paddingBottom="@dimen/qs_container_padding_top_bottom"
         android:elevation="2dp">
 
     <com.android.systemui.qs.QSPanel
@@ -28,4 +28,39 @@
             android:background="#0000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+    <HorizontalScrollView
+            android:id="@+id/quick_access_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/qab_button_size"
+            android:fadingEdgeLength="30dp"
+            android:requiresFadingEdge="horizontal"
+            android:scrollbars="none"
+            android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/quick_access_bar_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <com.android.systemui.darkkat.QuickAccess.QuickAccessBar
+                    android:id="@+id/quick_access_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:background="#0000" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </HorizontalScrollView>
 </com.android.systemui.qs.QSContainer>

@@ -124,7 +124,7 @@ public class QSPanel extends ViewGroup {
 
     private boolean showBrightnessSlider() {
         boolean brightnessSliderEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_EXPANDED_QS_SHOW_BRIGHTNESS_SLIDER,
+                Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER,
                 1, UserHandle.USER_CURRENT) == 1;
         ToggleSlider brightnessSlider = (ToggleSlider) findViewById(R.id.brightness_slider);
         if (brightnessSliderEnabled) {
@@ -664,5 +664,9 @@ public class QSPanel extends ViewGroup {
         void onShowingDetail(QSTile.DetailAdapter detail);
         void onToggleStateChanged(boolean state);
         void onScanStateChanged(boolean state);
+    }
+
+    public void setBrightnessSliderColors() {
+        mBrightnessController.setColors();
     }
 }

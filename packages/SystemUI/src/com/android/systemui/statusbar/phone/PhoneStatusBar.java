@@ -118,6 +118,7 @@ import com.android.systemui.EventLogTags;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
+import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
@@ -317,6 +318,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     TextView mNotificationPanelDebugText;
 
     // settings
+    private QuickAccessBar mQuickAccessBar;
     private QSPanel mQSPanel;
 
     // top bar
@@ -1164,18 +1166,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mUserSwitcherController, mKeyguardMonitor,
                     mSecurityController);
             mQSPanel.setHost(qsh);
-            mQSPanel.setTiles(qsh.getTiles());
+//            mQSPanel.setTiles(qsh.getTiles());
             mHeader.setQSPanel(mQSPanel);
-            qsh.setCallback(new QSTileHost.Callback() {
-                @Override
-                public void onTilesChanged() {
-                    mQSPanel.setTiles(qsh.getTiles());
-                }
-            });
+//            qsh.setCallback(new QSTileHost.Callback() {
+//                @Override
+//                public void onTilesChanged() {
+//                    mQSPanel.setTiles(qsh.getTiles());
+//                }
+//            });
+        }
+
+        // Set up the quick access bar
+        mQuickAccessBar = (QuickAccessBar) mStatusBarWindow.findViewById(R.id.quick_access_bar);
+        if (mQuickAccessBar != null) {
+            mQuickAccessBar.setUp(this, mBluetoothController, mNetworkController, mRotationLockController,
+                    mLocationController, mHotspotController, mFlashlightController);
         }
 
         // User info. Trigger first load.
-        mHeader.setUserInfoController(mUserInfoController);
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mKeyguardStatusBar.setUserSwitcherController(mUserSwitcherController);
         mUserInfoController.reloadUserInfo();
