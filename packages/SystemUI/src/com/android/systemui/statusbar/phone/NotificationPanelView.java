@@ -55,6 +55,7 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.weather.WeatherBarContainer;
 import com.android.systemui.DejankUtils;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
@@ -109,6 +110,7 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardStatusBarView mKeyguardStatusBar;
     private QSContainer mQsContainer;
     private QuickAccessBar mQuickAccessBar;
+    private WeatherBarContainer mWeatherBarContainer;
     private QSPanel mQsPanel;
     private KeyguardStatusView mKeyguardStatusView;
     private ObservableScrollView mScrollView;
@@ -269,6 +271,7 @@ public class NotificationPanelView extends PanelView implements
         mKeyguardStatusView = (KeyguardStatusView) findViewById(R.id.keyguard_status_view);
         mQsContainer = (QSContainer) findViewById(R.id.quick_settings_container);
         mQuickAccessBar = (QuickAccessBar) findViewById(R.id.quick_access_bar);
+        mWeatherBarContainer = (WeatherBarContainer) findViewById(R.id.status_bar_expanded_weather_bar_container);
         mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mClockView = (TextView) findViewById(R.id.clock_view);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
@@ -2479,6 +2482,15 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_CURRENT),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -2486,6 +2498,9 @@ public class NotificationPanelView extends PanelView implements
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_TEXT_COLOR),
                     false, this);
             update();
         }
@@ -2515,13 +2530,24 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB))) {
                 setShowQuickAccessBar();
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER))) {
+                setShowWeatherBar();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_CURRENT))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE))) {
+                updateWeatherBarItems();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR))) {
                 setBackgroundColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_ICON_COLOR))
                 || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_TEXT_COLOR))) {
+                setIconAndTextColors();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR))) {
-                setColors();
+                setRippleColor();
             }
         }
 
@@ -2534,8 +2560,11 @@ public class NotificationPanelView extends PanelView implements
                     ONE_FINGER_QS_INTERCEPT_OFF);
             setShowBrightnessSlider();
             setShowQuickAccessBar();
+            setShowWeatherBar();
+            updateWeatherBarItems();
             setBackgroundColor();
-            setColors();
+            setIconAndTextColors();
+            setRippleColor();
         }
     }
 
@@ -2625,6 +2654,21 @@ public class NotificationPanelView extends PanelView implements
         }
     }
 
+    private void setShowWeatherBar() {
+        ContentResolver resolver = mContext.getContentResolver();
+        final boolean showWeatherBar = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER, 0) == 1;
+        if (mQsContainer != null) {
+            mQsContainer.setShowWeatherBar(showWeatherBar);
+        }
+    }
+
+    private void updateWeatherBarItems() {
+        if (mWeatherBarContainer != null) {
+            mWeatherBarContainer.updateItems();
+        }
+    }
+
     private void setBackgroundColor() {
         ContentResolver resolver = mContext.getContentResolver();
         final int bgColor = Settings.System.getInt(resolver,
@@ -2635,12 +2679,25 @@ public class NotificationPanelView extends PanelView implements
         }
     }
 
-    private void setColors() {
+    private void setIconAndTextColors() {
         if (mQuickAccessBar != null) {
             mQuickAccessBar.setColors();
         }
         if (mQsPanel != null) {
             mQsPanel.setBrightnessSliderColors();
-         }
+        }
+        updateWeatherBarItems();
+    }
+
+    private void setRippleColor() {
+        if (mQuickAccessBar != null) {
+            mQuickAccessBar.setColors();
+        }
+        if (mQsPanel != null) {
+            mQsPanel.setBrightnessSliderColors();
+        }
+        if (mWeatherBarContainer != null) {
+            mWeatherBarContainer.setRippleColor();
+        }
     }
 }

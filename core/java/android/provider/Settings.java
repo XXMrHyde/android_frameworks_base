@@ -3707,6 +3707,30 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_QAB_BUTTONS = "status_bar_expanded_qab_buttons";
 
         /**
+         * Whether to show the weather in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_WEATHER = "status_bar_expanded_show_weather";
+
+        /**
+         * Whether to show the current weather informations in the expanded panel too
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_SHOW_CURRENT = "status_bar_expanded_weather_show_current";
+
+        /**
+         * Type of the weather icon in the expanded panel
+         * 0 - Monochrome
+         * 1 - Colored
+         * 2 - VClouds
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE = "status_bar_expanded_weather_icon_type";
+
+        /**
          * Color of the  in the expanded panel background
          * @hide
          */
@@ -3723,6 +3747,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_RIPPLE_COLOR = "status_bar_expanded_ripple_color";
+
+        /**
+         * Color of the text in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_TEXT_COLOR = "status_bar_expanded_text_color";
 
         /**
          * Whether to include advanced reboot options in power menu for 

@@ -21,5 +21,8 @@
     <!-- SystemUI Tuner -->
     <string name="status_bar_icons_visibility">Anzeigen/verbergen</string>
     <string name="qs_tiles_arrengment">Kachelanordnung</string>
+
+    <!-- Weather panel -->
+    <string name="weather_info_not_available">Wetterinformationen nicht verfügbar</string>
 </resources>
 

@@ -104,6 +104,7 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.GreetingTextHelper;
 
@@ -119,6 +120,7 @@ import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.weather.WeatherBarContainer;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
@@ -291,6 +293,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardMonitor mKeyguardMonitor;
     AccessibilityController mAccessibilityController;
     FingerprintUnlockController mFingerprintUnlockController;
+    WeatherControllerImpl mWeatherController;
 
     int mNaturalBarHeight = -1;
 
@@ -319,6 +322,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // settings
     private QuickAccessBar mQuickAccessBar;
+    private WeatherBarContainer mWeatherBarContainer;
     private QSPanel mQSPanel;
 
     // top bar
@@ -1181,6 +1185,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mQuickAccessBar != null) {
             mQuickAccessBar.setUp(this, mBluetoothController, mNetworkController, mRotationLockController,
                     mLocationController, mHotspotController, mFlashlightController);
+        }
+
+        mWeatherController = new WeatherControllerImpl(mContext);
+
+        // Set up the weather panel
+        mWeatherBarContainer = (WeatherBarContainer) mStatusBarWindow.findViewById(R.id.status_bar_expanded_weather_bar_container);
+        if (mWeatherBarContainer != null) {
+            mWeatherBarContainer.setUp(this, mWeatherController);
         }
 
         // User info. Trigger first load.

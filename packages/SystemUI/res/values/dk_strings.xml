@@ -21,5 +21,8 @@
     <!-- SystemUI Tuner -->
     <string name="status_bar_icons_visibility">Show/hide</string>
     <string name="qs_tiles_arrengment">Tile arrengment</string>
+
+    <!-- Weather panel -->
+    <string name="weather_info_not_available">Weather informations not available</string>
 </resources>
 

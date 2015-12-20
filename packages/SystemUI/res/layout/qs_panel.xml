@@ -63,4 +63,32 @@
                 android:layout_weight="1" />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <com.android.systemui.darkkat.weather.WeatherBarContainer
+            android:id="@+id/status_bar_expanded_weather_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+        <TextView
+                android:id="@+id/weather_bar_no_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="@dimen/weather_bar_padding_top_bottom"
+                android:paddingBottom="@dimen/weather_bar_padding_top_bottom"
+                android:text="@string/weather_info_not_available"
+                android:textSize="16sp"
+                android:textColor="#ffffffff" />
+
+        <LinearLayout
+                android:id="@+id/status_bar_expanded_weather_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/weather_panel_margin_start_end"
+                android:layout_marginEnd="@dimen/weather_panel_margin_start_end"
+                android:paddingTop="@dimen/weather_bar_padding_top_bottom"
+                android:paddingBottom="@dimen/weather_bar_padding_top_bottom"
+                android:gravity="center_vertical" />
+
+    </com.android.systemui.darkkat.weather.WeatherBarContainer>
 </com.android.systemui.qs.QSContainer>

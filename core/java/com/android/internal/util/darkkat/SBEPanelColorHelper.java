@@ -34,4 +34,9 @@ public class SBEPanelColorHelper {
         int colorToUse =  (51 << 24) | (color & 0x00ffffff);
         return colorToUse;
     }
+
+    public static int getTextColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_TEXT_COLOR, WHITE);
+    }
 }

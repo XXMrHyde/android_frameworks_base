@@ -32,4 +32,10 @@
 
     <!-- Size of the Quick access bar buttons -->
     <dimen name="qab_button_size">64dp</dimen>
+
+    <!-- Start and end margin of the weather bar -->
+    <dimen name="weather_panel_margin_start_end">16dp</dimen>
+
+    <!-- Top and bottom padding of the weather bar -->
+    <dimen name="weather_bar_padding_top_bottom">8dp</dimen>
 </resources>
