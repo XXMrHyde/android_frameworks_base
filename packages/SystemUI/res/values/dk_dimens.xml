@@ -27,15 +27,18 @@
     <!-- End margin for the Settings button container in the status bar header  -->
     <dimen name="settings_botton_container_margin_end">16dp</dimen>
 
-    <!-- Top and bottom padding of the Quick settings container -->
-    <dimen name="qs_container_padding_top_bottom">8dp</dimen>
+    <!-- Top padding of the Quick settings container -->
+    <dimen name="qs_container_padding_top">4dp</dimen>
+
+    <!-- Left and right padding of the Quick settings container content -->
+    <dimen name="qs_container_content_padding_left_right">16dp</dimen>
+
+    <!-- Top margin of the Quick settings container content -->
+    <dimen name="qs_container_content_margin_top">4dp</dimen>
 
     <!-- Size of the Quick access bar buttons -->
     <dimen name="qab_button_size">64dp</dimen>
 
-    <!-- Start and end margin of the weather bar -->
-    <dimen name="weather_panel_margin_start_end">16dp</dimen>
-
     <!-- Top and bottom padding of the weather bar -->
-    <dimen name="weather_bar_padding_top_bottom">8dp</dimen>
+    <dimen name="weather_bar_padding_top_bottom">12dp</dimen>
 </resources>

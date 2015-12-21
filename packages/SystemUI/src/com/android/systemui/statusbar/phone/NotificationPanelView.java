@@ -31,7 +31,6 @@ import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
@@ -2476,10 +2475,10 @@ public class NotificationPanelView extends PanelView implements
                     Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER),
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB),
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER),
@@ -2524,11 +2523,11 @@ public class NotificationPanelView extends PanelView implements
                         resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
                         ONE_FINGER_QS_INTERCEPT_OFF);
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER))) {
-                setShowBrightnessSlider();
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB))) {
                 setShowQuickAccessBar();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER))) {
+                setShowBrightnessSlider();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER))) {
                 setShowWeatherBar();
@@ -2558,8 +2557,8 @@ public class NotificationPanelView extends PanelView implements
             mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
                     ONE_FINGER_QS_INTERCEPT_OFF);
-            setShowBrightnessSlider();
             setShowQuickAccessBar();
+            setShowBrightnessSlider();
             setShowWeatherBar();
             updateWeatherBarItems();
             setBackgroundColor();
@@ -2636,21 +2635,21 @@ public class NotificationPanelView extends PanelView implements
         return !tasks.isEmpty() && pkgName.equals(tasks.get(0).topActivity.getPackageName());
     }
 
-    private void setShowBrightnessSlider() {
-        ContentResolver resolver = mContext.getContentResolver();
-        final boolean showBrightnessSlider = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER, 1) == 1;
-        if (mQsContainer != null) {
-            mQsContainer.setShowBrightnessSlider(showBrightnessSlider);
-        }
-    }
-
     private void setShowQuickAccessBar() {
         ContentResolver resolver = mContext.getContentResolver();
         final boolean showQuickAccessBar = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB, 1) == 1;
         if (mQsContainer != null) {
             mQsContainer.setShowQABar(showQuickAccessBar);
+        }
+    }
+
+    private void setShowBrightnessSlider() {
+        ContentResolver resolver = mContext.getContentResolver();
+        final boolean showBrightnessSlider = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER, 1) == 1;
+        if (mQsContainer != null) {
+            mQsContainer.setShowBrightnessSlider(showBrightnessSlider);
         }
     }
 
@@ -2674,8 +2673,7 @@ public class NotificationPanelView extends PanelView implements
         final int bgColor = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR, 0xff263238);
         if (mQsContainer != null) {
-            mQsContainer.getBackground().setColorFilter(
-                    bgColor, Mode.SRC_IN);
+            mQsContainer.setBackgroundColor(bgColor);
         }
     }
 

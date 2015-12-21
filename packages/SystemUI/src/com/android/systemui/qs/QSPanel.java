@@ -68,7 +68,6 @@ public class QSPanel extends ViewGroup {
     private int mLargeCellHeight;
     private int mPanelPaddingBottom;
     private int mDualTileUnderlap;
-    private int mBrightnessPaddingTop;
     private int mGridHeight;
     private boolean mExpanded;
     private boolean mListening;
@@ -174,7 +173,6 @@ public class QSPanel extends ViewGroup {
         mLargeCellWidth = (int)(mLargeCellHeight * TILE_ASPECT);
         mPanelPaddingBottom = res.getDimensionPixelSize(R.dimen.qs_panel_padding_bottom);
         mDualTileUnderlap = res.getDimensionPixelSize(R.dimen.qs_dual_tile_padding_vertical);
-        mBrightnessPaddingTop = res.getDimensionPixelSize(R.dimen.qs_brightness_padding_top);
         if (mColumns != columns) {
             mColumns = columns;
             postInvalidate();
@@ -474,7 +472,7 @@ public class QSPanel extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = MeasureSpec.getSize(widthMeasureSpec);
         mBrightnessView.measure(exactly(width), MeasureSpec.UNSPECIFIED);
-        final int brightnessHeight = mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop;
+        final int brightnessHeight = mBrightnessView.getMeasuredHeight();
         mFooter.getView().measure(exactly(width), MeasureSpec.UNSPECIFIED);
         int r = -1;
         int c = -1;
@@ -526,9 +524,8 @@ public class QSPanel extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int w = getWidth();
-        mBrightnessView.layout(0, mBrightnessPaddingTop,
-                mBrightnessView.getMeasuredWidth(),
-                mBrightnessPaddingTop + mBrightnessView.getMeasuredHeight());
+        mBrightnessView.layout(0, 0,
+                mBrightnessView.getMeasuredWidth(), mBrightnessView.getMeasuredHeight());
         boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
         for (TileRecord record : mRecords) {
             if (record.tileView.getVisibility() == GONE) continue;
@@ -557,8 +554,8 @@ public class QSPanel extends ViewGroup {
     }
 
     private int getRowTop(int row) {
-        if (row <= 0) return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop;
-        return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop
+        if (row <= 0) return mBrightnessView.getMeasuredHeight();
+        return mBrightnessView.getMeasuredHeight()
                 + mLargeCellHeight - mDualTileUnderlap + (row - 1) * mCellHeight;
     }
 

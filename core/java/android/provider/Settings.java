@@ -3687,18 +3687,18 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_NETWORK_ICONS_AIRPLANE_MODE_COLOR = "status_bar_expanded_network_icons_airplane_mode_color";
 
         /**
-         * Whether to show the brightness slider in the expanded panel
-         *
-         * @hide
-         */
-        public static final String STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER = "status_bar_expanded_qs_show_brightness_slider";
-
-        /**
          * Whether to show the Quick access bar in the expanded panel
          *
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_SHOW_QAB = "status_bar_expanded_show_qab";
+
+        /**
+         * Whether to show the brightness slider in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER = "status_bar_expanded_qs_show_brightness_slider";
 
         /**
          * List of Quick access bar button names
