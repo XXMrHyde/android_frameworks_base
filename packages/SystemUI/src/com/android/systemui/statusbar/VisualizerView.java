@@ -348,7 +348,8 @@ public class VisualizerView extends View implements Palette.PaletteAsyncListener
     }
 
     private void checkStateChanged() {
-        if (mVisible && mPlaying && !mDozing && !mPowerSaveMode && mVisualizerEnabled) {
+        if (mVisible && mPlaying && !mDozing && !mPowerSaveMode && mVisualizerEnabled
+                && !mOccluded) {
             if (!mDisplaying) {
                 mDisplaying = true;
                 AsyncTask.execute(mLinkVisualizer);
