@@ -342,7 +342,7 @@ public class VisualizerView extends View implements Palette.PaletteAsyncListener
         mUseCustomColor = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR, 0) == 1;
         final int color = Settings.System.getInt(resolver,
-                Settings.System.LOCK_SCREEN_VISUALIZER_CUSTOM_COLOR, 0xffffffff);
+                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
         // make sure custom color always has the right transparency
         mCustomColor = (140 << 24) | (color & 0x00ffffff);
     }
@@ -392,7 +392,7 @@ public class VisualizerView extends View implements Palette.PaletteAsyncListener
                     Settings.System.LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR),
                     false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_VISUALIZER_CUSTOM_COLOR),
+                    Settings.System.LOCK_SCREEN_ICON_COLOR),
                     false, this);
             update();
         }
@@ -412,7 +412,7 @@ public class VisualizerView extends View implements Palette.PaletteAsyncListener
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.LOCK_SCREEN_VISUALIZER_CUSTOM_COLOR))) {
+                    Settings.System.LOCK_SCREEN_ICON_COLOR))) {
                 updateColorSettings();
                 setColor(mUseCustomColor ? mCustomColor : mDefaultColor);
             }

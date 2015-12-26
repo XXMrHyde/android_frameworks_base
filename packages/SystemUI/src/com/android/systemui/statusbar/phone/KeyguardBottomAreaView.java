@@ -627,6 +627,16 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     };
 
+    public void updateTextColor(int color) {
+        mIndicationController.setTextColor(color);
+    }
+
+    public void updateIconColor(int color) {
+        mCameraImageView.updateColorSettings(color);
+        mLeftAffordanceView.updateColorSettings(color);
+        mLockIcon.updateColorSettings(color);
+    }
+
     private final KeyguardUpdateMonitorCallback mUpdateMonitorCallback =
             new KeyguardUpdateMonitorCallback() {
         @Override

@@ -75,6 +75,8 @@ public class KeyguardIndicationController {
     private int mChargingCurrent;
     private String mMessageToShowOnScreenOn;
 
+    private int mTextColor = Color.WHITE;
+
     public KeyguardIndicationController(Context context, KeyguardIndicationTextView textView,
                                         LockIcon lockIcon) {
         mContext = context;
@@ -129,7 +131,7 @@ public class KeyguardIndicationController {
      * Shows {@param transientIndication} until it is hidden by {@link #hideTransientIndication}.
      */
     public void showTransientIndication(String transientIndication) {
-        showTransientIndication(transientIndication, Color.WHITE);
+        showTransientIndication(transientIndication, mTextColor);
     }
 
     /**
@@ -164,7 +166,7 @@ public class KeyguardIndicationController {
         if (!TextUtils.isEmpty(mTransientIndication)) {
             return mTransientTextColor;
         }
-        return Color.WHITE;
+        return mTextColor;
     }
 
     private String computeIndication() {
@@ -320,5 +322,9 @@ public class KeyguardIndicationController {
     public void setStatusBarKeyguardViewManager(
             StatusBarKeyguardViewManager statusBarKeyguardViewManager) {
         mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
+    }
+
+    public void setTextColor(int color) {
+        mTextColor = color;
     }
 }

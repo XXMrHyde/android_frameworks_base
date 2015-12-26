@@ -16,10 +16,13 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -252,6 +255,12 @@ public class LockIcon extends KeyguardAffordanceView {
         } else {
             return STATE_LOCKED;
         }
+    }
+
+    @Override
+    public void updateColorSettings(int color) {
+        mNormalColor = color;
+        setImageTintList(ColorStateList.valueOf(mNormalColor));
     }
 
     /**

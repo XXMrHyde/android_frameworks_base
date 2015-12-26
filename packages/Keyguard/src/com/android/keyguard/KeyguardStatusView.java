@@ -20,9 +20,12 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
@@ -149,6 +152,7 @@ public class KeyguardStatusView extends GridLayout {
 
         refreshTime();
         refreshAlarmStatus(nextAlarm);
+        updateColors();
     }
 
     void refreshAlarmStatus(AlarmManager.AlarmClockInfo nextAlarm) {
@@ -206,6 +210,21 @@ public class KeyguardStatusView extends GridLayout {
             info = mLockPatternUtils.getOwnerInfo(KeyguardUpdateMonitor.getCurrentUser());
         }
         return info;
+    }
+
+    private void updateColors() {
+        final ContentResolver resolver = getContext().getContentResolver();
+
+        int primaryTextColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_TEXT_COLOR, 0xffffffff);
+        // primaryTextColor with a transparency of 70%
+        int secondaryTextColor = (179 << 24) | (primaryTextColor & 0x00ffffff);
+
+        mAlarmStatusView.setTextColor(secondaryTextColor);
+        mAlarmStatusView.setCompoundDrawableTintList(ColorStateList.valueOf(secondaryTextColor));
+        mDateView.setTextColor(primaryTextColor);
+        mClockView.setTextColor(primaryTextColor);
+        mOwnerInfo.setTextColor(secondaryTextColor);
     }
 
     @Override

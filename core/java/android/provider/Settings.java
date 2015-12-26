@@ -3237,10 +3237,16 @@ public final class Settings {
         public static final String LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR = "lock_screen_visualizer_use_custom_color";
 
         /**
-         *  Custom color of the visualizer on the lock screen
+         *  Color of the icons on the lock screen
          * @hide
          */
-        public static final String LOCK_SCREEN_VISUALIZER_CUSTOM_COLOR = "lock_screen_visualizer_custom_color";
+        public static final String LOCK_SCREEN_ICON_COLOR = "lock_screen_icon_color";
+
+        /**
+         *  Color of the text on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_TEXT_COLOR = "lock_screen_text_color";
 
         /**
          * Whether to control brightness from status bar
