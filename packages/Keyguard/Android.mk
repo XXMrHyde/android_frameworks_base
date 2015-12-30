@@ -22,6 +22,8 @@ LOCAL_MODULE := Keyguard
 
 LOCAL_CERTIFICATE := platform
 
+LOCAL_STATIC_JAVA_LIBRARIES := android-support-v7-palette
+
 LOCAL_JAVA_LIBRARIES := SettingsLib
 
 LOCAL_PRIVILEGED_MODULE := true

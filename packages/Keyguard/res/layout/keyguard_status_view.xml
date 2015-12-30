@@ -62,4 +62,16 @@
             android:singleLine="true" />
 
     </LinearLayout>
+
+    <com.android.keyguard.KeyguardButtonBar
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/button_bar_margin"
+        android:layout_marginTop="@dimen/button_bar_margin"
+        android:layout_marginEnd="@dimen/button_bar_margin"
+        android:padding="@dimen/button_bar_padding"
+        android:gravity="center"
+        android:background="@drawable/button_bar_bg"
+        android:elevation="@dimen/button_bar_elevation" />
 </com.android.keyguard.KeyguardStatusView>

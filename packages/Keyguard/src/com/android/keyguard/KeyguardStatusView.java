@@ -52,6 +52,7 @@ public class KeyguardStatusView extends GridLayout {
     private TextClock mDateView;
     private TextClock mClockView;
     private TextView mOwnerInfo;
+    private KeyguardButtonBar mButtonBar;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -115,6 +116,7 @@ public class KeyguardStatusView extends GridLayout {
         mDateView.setShowCurrentUserTime(true);
         mClockView.setShowCurrentUserTime(true);
         mOwnerInfo = (TextView) findViewById(R.id.owner_info);
+        mButtonBar = (KeyguardButtonBar) findViewById(R.id.button_bar);
 
         boolean shouldMarquee = KeyguardUpdateMonitor.getInstance(mContext).isDeviceInteractive();
         setEnableMarquee(shouldMarquee);
@@ -184,8 +186,10 @@ public class KeyguardStatusView extends GridLayout {
         if (!TextUtils.isEmpty(ownerInfo)) {
             mOwnerInfo.setVisibility(View.VISIBLE);
             mOwnerInfo.setText(ownerInfo);
+            mButtonBar.setOwnerInfoVisibility(true);
         } else {
             mOwnerInfo.setVisibility(View.GONE);
+            mButtonBar.setOwnerInfoVisibility(false);
         }
     }
 

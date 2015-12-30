@@ -3237,10 +3237,56 @@ public final class Settings {
         public static final String LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR = "lock_screen_visualizer_use_custom_color";
 
         /**
+         *  Config of the button bar buttons
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BUTTON_BAR_BUTTONS = "lock_screen_button_bar_buttons";
+
+        /**
+         * Launch type of the button bar buttons on the lock screen
+         * 0: Normal click
+         * 1: Double click
+         * 2: Lonpress
+         * default: 2
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BUTTON_BAR_LAUNCH_TYPE = "lock_screen_button_bar_launch_type";
+
+        /**
+         *  Weather to show the button bar background on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BUTTON_BAR_SHOW_BACKGROUND = "lock_screen_button_bar_show_background";
+
+        /**
+         *  Weather to colorize the ripple effect of the button bar buttons on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BUTTON_BAR_COLORIZE_RIPPLE = "lock_screen_button_bar_colorize_ripple";
+
+        /**
+         *  Weather to hide the button bar as soon as there isn`t enough space to show all visible notifications on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BUTTON_BAR_HIDE_BAR = "lock_screen_button_bar_hide_bar";
+
+        /**
+         *  Color of the backgrounds on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BACKGROUND_COLOR = "lock_screen_background_color";
+
+        /**
          *  Color of the icons on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_ICON_COLOR = "lock_screen_icon_color";
+
+        /**
+         *  Color of the ripple effects on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_RIPPLE_COLOR = "lock_screen_ripple_color";
 
         /**
          *  Color of the text on the lock screen

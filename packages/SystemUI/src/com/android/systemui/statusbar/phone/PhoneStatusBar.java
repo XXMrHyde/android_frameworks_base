@@ -111,7 +111,9 @@ import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.GreetingTextHelper;
 
+import com.android.keyguard.KeyguardButtonBar;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
+import com.android.keyguard.KeyguardStatusView;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.ViewMediatorCallback;
@@ -332,7 +334,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // top bar
     StatusBarHeaderView mHeader;
     KeyguardStatusBarView mKeyguardStatusBar;
-    View mKeyguardStatusView;
+    KeyguardStatusView mKeyguardStatusView;
+    KeyguardButtonBar mKeyguardButtonBar;
     KeyguardBottomAreaView mKeyguardBottomArea;
     boolean mLeaveOpenOnKeyguardHide;
     KeyguardIndicationController mKeyguardIndicationController;
@@ -1088,7 +1091,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mHeader = (StatusBarHeaderView) mStatusBarWindow.findViewById(R.id.header);
         mHeader.setActivityStarter(this);
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
-        mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
+        mKeyguardStatusView = (KeyguardStatusView) mStatusBarWindow.findViewById(R.id.keyguard_status_view);
+        mKeyguardButtonBar = (KeyguardButtonBar) mKeyguardStatusView.findViewById(R.id.button_bar);
         mKeyguardBottomArea =
                 (KeyguardBottomAreaView) mStatusBarWindow.findViewById(R.id.keyguard_bottom_area);
         mKeyguardBottomArea.setActivityStarter(this);
@@ -1818,6 +1822,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     protected void updateRowStates() {
         super.updateRowStates();
         mNotificationPanel.notifyVisibleChildrenChanged();
+        if (mState == StatusBarState.KEYGUARD && mKeyguardButtonBar != null) {
+            final boolean isKeyguardOverflowVisible =
+                    mKeyguardIconOverflowContainer.getIconsView().getChildCount() > 0;
+            updateKeyguardButtonBarVisibility(isKeyguardOverflowVisible);
+        }
     }
 
     @Override
@@ -2178,6 +2187,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateBatteryColors(false);
         updateStatusNetworkIconColors(false);
         updateNetworkTrafficColors(false);
+    }
+
+    private void updateKeyguardButtonBarVisibility(boolean isKeyguardOverflowVisible) {
+        if (mKeyguardButtonBar == null) {
+            return;
+        }
+        int visibleNotifications = 0;
+        ArrayList<Entry> activeNotifications = mNotificationData.getActiveNotifications();
+        final int N = activeNotifications.size();
+        for (int i = 0; i < N; i++) {
+            NotificationData.Entry entry = activeNotifications.get(i);
+            if (entry.row.getVisibility() == View.VISIBLE) {
+                visibleNotifications ++;
+            }
+        }
+        mKeyguardButtonBar.setNotificationCountAndOverflowVisibility(
+                mKeyguardMaxNotificationCount, visibleNotifications, isKeyguardOverflowVisible);
     }
 
     public void updateKeyguardIconColor() {
@@ -3034,6 +3060,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNavigationBarView.setNavigationIconHints(hints);
         }
         checkBarModes();
+    }
+
+    @Override // CommandQueue
+    public void showCustomIntentAfterKeyguard(Intent intent) {
+        startActivityDismissingKeyguard(intent, false, false);
     }
 
     @Override // CommandQueue
@@ -4360,6 +4391,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mFingerprintUnlockController.getMode()
                         != FingerprintUnlockController.MODE_WAKE_AND_UNLOCK_PULSING, animate);
         mVisualizerView.setDozing(mDozing);
+        mKeyguardButtonBar.setDozing(mDozing);
     }
 
     public void updateStackScrollerState(boolean goingToFullShade) {
