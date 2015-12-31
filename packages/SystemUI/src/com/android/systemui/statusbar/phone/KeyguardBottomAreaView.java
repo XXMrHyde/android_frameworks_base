@@ -94,9 +94,9 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     private static final int DOZE_ANIMATION_STAGGER_DELAY = 48;
     private static final int DOZE_ANIMATION_ELEMENT_DURATION = 250;
 
-    private static int String LEFT_ICON_PHONE  = 0;
-    private static int String LEFT_ICON_ASSIST = 1;
-    private static int String LEFT_ICON_HIDDEN = 2;
+    private static int LEFT_ICON_PHONE  = 0;
+    private static int LEFT_ICON_ASSIST = 1;
+    private static int LEFT_ICON_HIDDEN = 2;
 
     private KeyguardAffordanceView mCameraImageView;
     private KeyguardAffordanceView mLeftAffordanceView;
