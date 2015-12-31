@@ -37,6 +37,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.service.media.CameraPrewarmService;
 import android.telecom.TelecomManager;
 import android.util.AttributeSet;
@@ -93,6 +94,10 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     private static final int DOZE_ANIMATION_STAGGER_DELAY = 48;
     private static final int DOZE_ANIMATION_ELEMENT_DURATION = 250;
 
+    private static int String LEFT_ICON_PHONE  = 0;
+    private static int String LEFT_ICON_ASSIST = 1;
+    private static int String LEFT_ICON_HIDDEN = 2;
+
     private KeyguardAffordanceView mCameraImageView;
     private KeyguardAffordanceView mLeftAffordanceView;
     private LockIcon mLockIcon;
@@ -110,6 +115,8 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     private KeyguardIndicationController mIndicationController;
     private AccessibilityController mAccessibilityController;
     private PhoneStatusBar mPhoneStatusBar;
+
+    private int mLeftIcon;
 
     private final Interpolator mLinearOutSlowInInterpolator;
     private boolean mUserSetupComplete;
@@ -284,22 +291,26 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             return;
         }
         ResolveInfo resolved = resolveCameraIntent();
+        final boolean showCamera = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_SCREEN_BOTTOM_BUTTON_RIGHT, 1) == 1;
         boolean visible = !isCameraDisabledByDpm() && resolved != null
                 && getResources().getBoolean(R.bool.config_keyguardShowCameraAffordance)
-                && mUserSetupComplete;
+                && mUserSetupComplete && showCamera;
         mCameraImageView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void updateLeftAffordanceIcon() {
-        mLeftIsVoiceAssist = canLaunchVoiceAssist();
+        mLeftIcon = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_SCREEN_BOTTOM_BUTTON_LEFT, LEFT_ICON_ASSIST);
+        mLeftIsVoiceAssist = canLaunchVoiceAssist() && mLeftIcon == LEFT_ICON_ASSIST;
         int drawableId;
         int contentDescription;
-        boolean visible = mUserSetupComplete;
+        boolean visible = mUserSetupComplete && mLeftIcon != LEFT_ICON_HIDDEN;
         if (mLeftIsVoiceAssist) {
             drawableId = R.drawable.ic_mic_26dp;
             contentDescription = R.string.accessibility_voice_assist_button;
         } else {
-            visible &= isPhoneVisible();
+            visible &= isPhoneVisible() && mLeftIcon == LEFT_ICON_PHONE;
             drawableId = R.drawable.ic_phone_24dp;
             contentDescription = R.string.accessibility_phone_button;
         }
@@ -477,7 +488,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     public void launchLeftAffordance() {
         if (mLeftIsVoiceAssist) {
             launchVoiceAssist();
-        } else {
+        } else if (mLeftIcon == LEFT_ICON_PHONE) {
             launchPhone();
         }
     }

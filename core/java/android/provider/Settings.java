@@ -3271,6 +3271,22 @@ public final class Settings {
         public static final String LOCK_SCREEN_BUTTON_BAR_HIDE_BAR = "lock_screen_button_bar_hide_bar";
 
         /**
+         * Shortcut of the left bottom button on the lock screen
+         * 0: Phone
+         * 1: Voice Assist
+         * 2: Hidden
+         * default: 1
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BOTTOM_BUTTON_LEFT = "lock_screen_bottom_button_left";
+
+        /**
+         *  Weather to show the camera button on the bottom right side on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_BOTTOM_BUTTON_RIGHT = "lock_screen_bottom_button_right";
+
+        /**
          *  Color of the backgrounds on the lock screen
          * @hide
          */
