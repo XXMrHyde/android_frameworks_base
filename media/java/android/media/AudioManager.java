@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.media.audiopolicy.AudioPolicy;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
@@ -46,6 +47,9 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -723,12 +727,26 @@ public class AudioManager {
                  * Adjust the volume in on key down since it is more
                  * responsive to the user.
                  */
-                adjustSuggestedStreamVolume(
-                        keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                                ? ADJUST_RAISE
-                                : ADJUST_LOWER,
-                        stream,
-                        FLAG_SHOW_UI | FLAG_VIBRATE);
+                int direction = keyCode == KeyEvent.KEYCODE_VOLUME_UP ? ADJUST_RAISE
+                        : ADJUST_LOWER;
+                final WindowManager windowService = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                if (windowService != null) {
+                    final int rotation = windowService.getDefaultDisplay().getRotation();
+                    final Configuration config = getContext().getResources().getConfiguration();
+                    final boolean swapKeys = Settings.System.getIntForUser(getContext().getContentResolver(),
+                            Settings.System.SWAP_VOLUME_BUTTONS_ON_ROTATION, 0, Process.myUserHandle().getIdentifier()) == 1;
+
+                    if (swapKeys
+                            && (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_180)
+                            && config.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR) {
+                         direction = keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                                 ? ADJUST_LOWER
+                                 : ADJUST_RAISE;
+                    }
+                }
+                int flags = FLAG_SHOW_UI | FLAG_VIBRATE;
+
+                adjustSuggestedStreamVolume(direction, stream, flags);
                 break;
             case KeyEvent.KEYCODE_VOLUME_MUTE:
                 if (event.getRepeatCount() == 0) {

@@ -29,6 +29,7 @@ import android.app.ActivityManagerNative;
 import android.app.SearchManager;
 import android.os.Build;
 import android.os.UserHandle;
+import android.provider.Settings;
 
 import android.view.ActionMode;
 import android.view.ContextThemeWrapper;
@@ -45,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SearchEvent;
+import android.view.Surface;
 import android.view.SurfaceHolder.Callback2;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -1779,12 +1781,20 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_MUTE: {
                 int direction = 0;
+                final int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                final Configuration config = getContext().getResources().getConfiguration();
+                final boolean swapKeySetting = Settings.System.getInt(getContext().getContentResolver(),
+                        Settings.System.SWAP_VOLUME_BUTTONS_ON_ROTATION, 0) == 1;
+                final boolean swapKey = swapKeySetting
+                        && (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_180)
+                        && config.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR;
+
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_VOLUME_UP:
-                        direction = AudioManager.ADJUST_RAISE;
+                        direction = swapKey ? AudioManager.ADJUST_LOWER : AudioManager.ADJUST_RAISE;
                         break;
                     case KeyEvent.KEYCODE_VOLUME_DOWN:
-                        direction = AudioManager.ADJUST_LOWER;
+                        direction = swapKey ? AudioManager.ADJUST_RAISE : AudioManager.ADJUST_LOWER;
                         break;
                     case KeyEvent.KEYCODE_VOLUME_MUTE:
                         direction = AudioManager.ADJUST_TOGGLE_MUTE;
@@ -1880,11 +1890,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         | AudioManager.FLAG_FROM_KEY;
                 // If we have a session send it the volume command, otherwise
                 // use the suggested stream.
-                if (mMediaController != null) {
-                    mMediaController.adjustVolume(0, flags);
-                } else {
-                    MediaSessionLegacyHelper.getHelper(getContext()).sendAdjustVolumeBy(
-                            mVolumeControlStreamType, 0, flags);
+                final boolean volumeKeySounds = getContext().getResources().getBoolean(
+                        com.android.internal.R.bool.config_useVolumeKeySounds);
+                if (volumeKeySounds) {
+                    if (mMediaController != null) {
+                        mMediaController.adjustVolume(0, flags);
+                    } else {
+                        MediaSessionLegacyHelper.getHelper(getContext()).sendAdjustVolumeBy(
+                                mVolumeControlStreamType, 0, flags);
+                    }
                 }
                 return true;
             }

@@ -3860,6 +3860,12 @@ public final class Settings {
          */
         public static final String POWER_MENU_SHOW_ADVANCED_REBOOT = "power_menu_show_advanced_reboot";
 
+        /**
+         * Swap volume buttons when the screen is rotated
+         * @hide
+         */
+        public static final String SWAP_VOLUME_BUTTONS_ON_ROTATION = "swap_volume_buttons_on_rotation";
+
         // DarkKat additions end
 
         /**
