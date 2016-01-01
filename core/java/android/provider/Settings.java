@@ -3866,6 +3866,19 @@ public final class Settings {
          */
         public static final String SWAP_VOLUME_BUTTONS_ON_ROTATION = "swap_volume_buttons_on_rotation";
 
+        /**
+         * Volume rocker wake
+         * @hide
+         */
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
+
+        /**
+         * Whether to wake the display when plugging or unplugging the charger
+         *
+         * @hide
+         */
+        public static final String WAKE_WHEN_PLUGGED_OR_UNPLUGGED = "wake_when_plugged_or_unplugged";
+
         // DarkKat additions end
 
         /**
