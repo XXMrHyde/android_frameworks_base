@@ -69,6 +69,7 @@ interface IStatusBarService
     void preloadRecentApps();
     void cancelPreloadRecentApps();
     void showCustomIntentAfterKeyguard(inout Intent intent);
+    void toggleScreenshot();
 
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with

@@ -26,14 +26,30 @@
     <!-- Global actions -->
     <java-symbol type="array" name="shutdown_reboot_options" />
     <java-symbol type="array" name="shutdown_reboot_actions" />
+    <java-symbol type="color" name="global_actions_background" />
     <java-symbol type="color" name="global_actions_icon" />
-    <java-symbol type="drawable" name="ic_lock_reboot" />
+    <java-symbol type="color" name="global_actions_icon_normal" />
+    <java-symbol type="color" name="global_actions_icon_enabled_selected" />
+    <java-symbol type="color" name="global_actions_ripple" />
+    <java-symbol type="color" name="global_actions_text" />
+    <java-symbol type="dimen" name="global_actions_icon_padding" />
     <java-symbol type="drawable" name="ic_audio_ring_notif_dark" />
     <java-symbol type="drawable" name="ic_audio_ring_notif_mute_dark" />
     <java-symbol type="drawable" name="ic_audio_ring_notif_vibrate_dark" />
     <java-symbol type="drawable" name="ic_audio_vol_mute_dark" />
     <java-symbol type="drawable" name="ic_audio_vol_dark" />
+    <java-symbol type="drawable" name="ic_lock_lock_screen" />
+    <java-symbol type="drawable" name="ic_lock_reboot" />
+    <java-symbol type="drawable" name="ic_lock_screenshot" />
+    <java-symbol type="drawable" name="ic_lock_settings" />
+    <java-symbol type="drawable" name="ic_lock_users" />
+    <java-symbol type="drawable" name="ic_lock_users_guest" />
+    <java-symbol type="id" name="option1_icon" />
+    <java-symbol type="id" name="option2_icon" />
+    <java-symbol type="id" name="option3_icon" />
+    <java-symbol type="string" name="global_actions" />
     <java-symbol type="string" name="global_action_reboot" />
+    <java-symbol type="string" name="global_action_screenshot" />
     <java-symbol type="string" name="shutdown_reboot_dlg_confirm_title" />
     <java-symbol type="string" name="shutdown_reboot_dlg_title" />
     <java-symbol type="string" name="shutdown_reboot_dlg_message_reboot" />

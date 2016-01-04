@@ -19,6 +19,8 @@
 
     <!-- Button to reboot the phone, within the Global actions dialog -->
     <string name="global_action_reboot">Reboot</string>
+    <!-- Button to take a screenshot, within the Global actions dialog -->
+    <string name="global_action_screenshot">Screenshot</string>
 
     <!-- Shut down reboot dialogs -->
 

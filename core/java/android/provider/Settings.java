@@ -3854,11 +3854,48 @@ public final class Settings {
         public static final String ACCELEROMETER_ROTATION_ANGLES = "accelerometer_rotation_angles";
 
         /**
-         * Whether to include advanced reboot options in power menu for 
+         * Whether to include advanced reboot options the global actions dialog for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide
          */
         public static final String POWER_MENU_SHOW_ADVANCED_REBOOT = "power_menu_show_advanced_reboot";
+
+        /**
+         * Button names of the global actions dialog
+         *
+         * @hide
+         */
+        public static final String POWER_MENU_BUTTONS = "power_menu_buttons";
+
+        /**
+         * Background color of the global actions dialog
+         * @hide
+         */
+        public static final String POWER_MENU_BACKGROUND_COLOR = "power_menu_background_color";
+
+        /**
+         * Icon color (normal state) of the global actions dialog buttons
+         * @hide
+         */
+        public static final String POWER_MENU_ICON_NORMAL_COLOR = "power_menu_icon_normal_color";
+
+        /**
+         * Icon color (enabled/selected state) of the global actions dialog buttons
+         * @hide
+         */
+        public static final String POWER_MENU_ICON_ENABLED_SELECTED_COLOR = "power_menu_icon_enabled_selected_color";
+
+        /**
+         * Ripple color of the global actions dialog buttons
+         * @hide
+         */
+        public static final String POWER_MENU_RIPPLE_COLOR = "power_menu_ripple_color";
+
+        /**
+         * Text color of the global actions dialog buttons
+         * @hide
+         */
+        public static final String POWER_MENU_TEXT_COLOR = "power_menu_text_color";
 
         /**
          * Swap volume buttons when the screen is rotated

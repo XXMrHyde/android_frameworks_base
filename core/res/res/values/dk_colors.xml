@@ -17,4 +17,11 @@
 
     <color name="darkkat_blue_grey">#ff1b1f23</color>
     <drawable name="darkkat_bg_blue_grey">@color/darkkat_blue_grey</drawable>
+
+    <!-- Global actions -->
+    <color name="global_actions_background">@color/darkkat_blue_grey</color>
+    <color name="global_actions_icon_normal">@android:color/white</color>
+    <color name="global_actions_icon_enabled_selected">#ff009688</color>
+    <color name="global_actions_ripple">@android:color/white</color>
+    <color name="global_actions_text">@android:color/white</color>
 </resources>

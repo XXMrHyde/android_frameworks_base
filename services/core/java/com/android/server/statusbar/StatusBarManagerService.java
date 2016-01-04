@@ -524,6 +524,14 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
     }
 
+    public void toggleScreenshot() {
+        if (mBar != null) {
+            try {
+                mBar.toggleScreenshot();
+            } catch (RemoteException ex) {}
+        }
+    }
+
     @Override
     public void setWindowState(int window, int state) {
         if (mBar != null) {

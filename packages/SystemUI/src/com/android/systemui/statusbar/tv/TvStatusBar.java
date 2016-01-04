@@ -93,6 +93,10 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override // CommandQueue
+    public void toggleScreenshot() {
+    }
+
+    @Override // CommandQueue
     public void setWindowState(int window, int state) {
     }
 
