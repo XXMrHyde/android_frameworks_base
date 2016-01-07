@@ -24,6 +24,7 @@ import android.annotation.Nullable;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -99,7 +100,9 @@ public class AlertController {
 
     private ImageView mIconView;
     private TextView mTitleView;
+    private int mTitleTextColor = 0;
     private TextView mMessageView;
+    private int mMessageTextColor = 0;
     private View mCustomTitleView;
 
     private boolean mForceInverseBackground;
@@ -253,6 +256,13 @@ public class AlertController {
         }
     }
 
+    public void setTitleTextColor(int color) {
+        mTitleTextColor = color;
+        if (mTitleView != null) {
+            mTitleView.setTextColor(color);
+        }
+    }
+
     /**
      * @see AlertDialog.Builder#setCustomTitle(View)
      */
@@ -264,6 +274,13 @@ public class AlertController {
         mMessage = message;
         if (mMessageView != null) {
             mMessageView.setText(message);
+        }
+    }
+
+    public void setMessageTextColor(int color) {
+        mMessageTextColor = color;
+        if (mMessageView != null) {
+            mMessageView.setTextColor(color);
         }
     }
 
@@ -616,6 +633,9 @@ public class AlertController {
                 // Display the title if a title is supplied, else hide it.
                 mTitleView = (TextView) mWindow.findViewById(R.id.alertTitle);
                 mTitleView.setText(mTitle);
+                if (mTitleTextColor != 0) {
+                    mTitleView.setTextColor(mTitleTextColor);
+                }
 
                 // Do this last so that if the user has supplied any icons we
                 // use them instead of the default ones. If the user has
@@ -652,9 +672,11 @@ public class AlertController {
         if (mMessageView == null) {
             return;
         }
-
         if (mMessage != null) {
             mMessageView.setText(mMessage);
+            if (mMessageTextColor != 0) {
+                mMessageView.setTextColor(mMessageTextColor);
+            }
         } else {
             mMessageView.setVisibility(View.GONE);
             mScrollView.removeView(mMessageView);
@@ -911,8 +933,12 @@ public class AlertController {
         public Drawable mIcon;
         public int mIconAttrId = 0;
         public CharSequence mTitle;
+        public int mTitleTextColor = 0;
         public View mCustomTitleView;
         public CharSequence mMessage;
+        public int mMessageTextColor = 0;
+        public int mListItemTextColor = 0;
+        public ColorStateList mListItemIconColors = null;
         public CharSequence mPositiveButtonText;
         public DialogInterface.OnClickListener mPositiveButtonListener;
         public CharSequence mNegativeButtonText;
@@ -971,6 +997,9 @@ public class AlertController {
             } else {
                 if (mTitle != null) {
                     dialog.setTitle(mTitle);
+                    if (mTitleTextColor != 0) {
+                        dialog.setTitleTextColor(mTitleTextColor);
+                    }
                 }
                 if (mIcon != null) {
                     dialog.setIcon(mIcon);
@@ -984,6 +1013,9 @@ public class AlertController {
             }
             if (mMessage != null) {
                 dialog.setMessage(mMessage);
+                if (mMessageTextColor != 0) {
+                    dialog.setMessageTextColor(mMessageTextColor);
+                }
             }
             if (mPositiveButtonText != null) {
                 dialog.setButton(DialogInterface.BUTTON_POSITIVE, mPositiveButtonText,
@@ -1042,6 +1074,17 @@ public class AlertController {
                                 if (isItemChecked) {
                                     listView.setItemChecked(position, true);
                                 }
+                                if (mListItemTextColor != 0) {
+                                    ((TextView) view).setTextColor(mListItemTextColor);
+                                }
+                                if (mListItemIconColors != null) {
+                                    for (int i = 0; i < 3; i++) {
+                                        if (((CheckedTextView) view).getCompoundDrawablesRelative()[i] != null) {
+                                            ((CheckedTextView) view).getCompoundDrawablesRelative()[i]
+                                                    .setTintList(mListItemIconColors);
+                                        }
+                                    }
+                                }
                             }
                             return view;
                         }
@@ -1063,6 +1106,17 @@ public class AlertController {
                             text.setText(cursor.getString(mLabelIndex));
                             listView.setItemChecked(cursor.getPosition(),
                                     cursor.getInt(mIsCheckedIndex) == 1);
+                            if (mListItemTextColor != 0) {
+                                text.setTextColor(mListItemTextColor);
+                            }
+                            if (mListItemIconColors != null) {
+                                for (int i = 0; i < 3; i++) {
+                                    if (text.getCompoundDrawablesRelative()[i] != null) {
+                                        text.getCompoundDrawablesRelative()[i].setTintList(mListItemIconColors);
+                                    }
+                                }
+                                text.setCompoundDrawableTintList(mListItemIconColors);
+                            }
                         }
 
                         @Override
@@ -1087,7 +1141,35 @@ public class AlertController {
                 } else if (mAdapter != null) {
                     adapter = mAdapter;
                 } else {
-                    adapter = new CheckedItemAdapter(mContext, layout, R.id.text1, mItems);
+                    adapter = new ArrayAdapter<CharSequence>(
+                            mContext, layout, R.id.text1, mItems) {
+                        @Override
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View view = super.getView(position, convertView, parent);
+                            if (mListItemTextColor != 0) {
+                                ((TextView) view).setTextColor(mListItemTextColor);
+                            }
+                            if (mListItemIconColors != null) {
+                                for (int i = 0; i < 3; i++) {
+                                    if (((CheckedTextView) view).getCompoundDrawablesRelative()[i] != null) {
+                                        ((CheckedTextView) view).getCompoundDrawablesRelative()[i]
+                                                .setTintList(mListItemIconColors);
+                                    }
+                                }
+                            }
+                            return view;
+                        }
+
+                        @Override
+                        public boolean hasStableIds() {
+                            return true;
+                        }
+
+                        @Override
+                        public long getItemId(int position) {
+                            return position;
+                        }
+                    };
                 }
             }
 

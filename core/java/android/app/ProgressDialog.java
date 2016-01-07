@@ -69,7 +69,7 @@ public class ProgressDialog extends AlertDialog {
     private Drawable mIndeterminateDrawable;
     private CharSequence mMessage;
     private boolean mIndeterminate;
-    
+    private int mMessageTextColor = 0;
     private boolean mHasStarted;
     private Handler mViewUpdateHandler;
     
@@ -192,6 +192,9 @@ public class ProgressDialog extends AlertDialog {
         }
         if (mMessage != null) {
             setMessage(mMessage);
+        }
+        if (mMessageTextColor != 0) {
+            setMessageTextColor(mMessageTextColor);
         }
         setIndeterminate(mIndeterminate);
         onProgressChanged();
@@ -317,6 +320,19 @@ public class ProgressDialog extends AlertDialog {
             }
         } else {
             mMessage = message;
+        }
+    }
+
+    @Override
+    public void setMessageTextColor(int color) {
+        if (mProgress != null) {
+            if (mProgressStyle == STYLE_HORIZONTAL) {
+                super.setMessageTextColor(color);
+            } else {
+                mMessageView.setTextColor(color);
+            }
+        } else {
+            mMessageTextColor = color;
         }
     }
     
