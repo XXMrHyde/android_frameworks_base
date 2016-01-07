@@ -24,8 +24,9 @@ import com.android.internal.R;
 
 public class PowerMenuColorHelper {
 
-    private static final int STATE_NORMAL           = 0;
-    private static final int STATES_NORMAL_ENABLED  = 1;
+    private static final int STATE_NORMAL            = 0;
+    private static final int STATES_NORMAL_ENABLED   = 1;
+    private static final int STATES_NORMAL_SELECTED  = 2;
 
     public static ColorStateList getBackgroundColorList(Context context) {
         return ColorStateList.valueOf(getBackgroundColor(context));
@@ -42,12 +43,16 @@ public class PowerMenuColorHelper {
         if (iconStates == STATE_NORMAL) {
             return ColorStateList.valueOf(getIconNormalColor(context));
         } else {
+            int state;
+            if (iconStates == STATES_NORMAL_ENABLED) {
+                state = R.attr.state_enabled;
+            } else if (iconStates == STATES_NORMAL_SELECTED) {
+                state = R.attr.state_selected;
+            } else {
+                state = R.attr.state_checked;
+            }
             int states[][] = new int[][] {
-                new int[] {
-                    iconStates == STATES_NORMAL_ENABLED
-                            ? R.attr.state_enabled
-                            : R.attr.state_selected
-                },
+                new int[] { state },
                 new int[]{}
             };
             int colors[] = new int[] {

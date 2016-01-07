@@ -51,6 +51,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 
 import com.android.internal.telephony.ITelephony;
+import com.android.internal.util.darkkat.PowerMenuColorHelper;
 import com.android.server.pm.PackageManagerService;
 
 import android.util.Log;
@@ -212,6 +213,8 @@ public final class ShutdownThread extends Thread {
                                     }
                                 }
                             })
+                            .setListItemTextColor(PowerMenuColorHelper.getTextColor(context))
+                            .setListItemIconColors(PowerMenuColorHelper.getIconColors(context, 3))
                             .setPositiveButton(com.android.internal.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (mRebootAction == ACTION_QUICK_REBOOT) {
@@ -262,6 +265,8 @@ public final class ShutdownThread extends Thread {
                         .setNegativeButton(com.android.internal.R.string.no, null)
                         .create();
             }
+            sConfirmDialog.setTitleTextColor(PowerMenuColorHelper.getTextColor(context));
+            sConfirmDialog.setMessageTextColor(PowerMenuColorHelper.getSecondaryTextColor(context));
             closer.dialog = sConfirmDialog;
             sConfirmDialog.setOnDismissListener(closer);
             sConfirmDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
@@ -404,6 +409,8 @@ public final class ShutdownThread extends Thread {
             pd.setMessage(context.getText(messageResourceId));
             pd.setIndeterminate(true);
         }
+        pd.setTitleTextColor(PowerMenuColorHelper.getTextColor(context));
+        pd.setMessageTextColor(PowerMenuColorHelper.getSecondaryTextColor(context));
         pd.setCancelable(false);
         pd.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
 
