@@ -22,7 +22,9 @@ import android.app.ActivityManagerInternal.SleepToken;
 import android.app.ActivityManagerNative;
 import android.app.AppOpsManager;
 import android.app.IUiModeManager;
+import android.app.ProgressDialog;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.StatusBarManager;
 import android.app.UiModeManager;
@@ -42,6 +44,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
+import android.graphics.Color;
+import android.graphics.drawable.DrawableWrapper;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.hardware.hdmi.HdmiControlManager;
@@ -103,6 +107,7 @@ import android.view.MotionEvent;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.policy.PhoneWindow;
+import com.android.internal.util.darkkat.BootDialogColorHelper;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -6187,34 +6192,66 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     } else {
                         theme = 6; // Theme.Material.Dialog.Alert.DarkKat
                     }
-
-                    mBootMsgDialog = new AlertDialog(mContext, theme) {
-                        // This dialog will consume all events coming in to
-                        // it, to avoid it trying to do things too early in boot.
-                        @Override public boolean dispatchKeyEvent(KeyEvent event) {
-                            return true;
-                        }
-                        @Override public boolean dispatchKeyShortcutEvent(KeyEvent event) {
-                            return true;
-                        }
-                        @Override public boolean dispatchTouchEvent(MotionEvent ev) {
-                            return true;
-                        }
-                        @Override public boolean dispatchTrackballEvent(MotionEvent ev) {
-                            return true;
-                        }
-                        @Override public boolean dispatchGenericMotionEvent(MotionEvent ev) {
-                            return true;
-                        }
-                        @Override public boolean dispatchPopulateAccessibilityEvent(
-                                AccessibilityEvent event) {
-                            return true;
-                        }
-                    };
+                    boolean showProgress = Settings.System.getInt(mContext.getContentResolver(),
+                            Settings.System.BOOT_DIALOG_SHOW_PROGRESS_DIALOG, 1) == 1;
+                    if (showProgress) {
+                        mBootMsgDialog = (ProgressDialog) new ProgressDialog(mContext, theme) {
+                            // This dialog will consume all events coming in to
+                            // it, to avoid it trying to do things too early in boot.
+                            @Override public boolean dispatchKeyEvent(KeyEvent event) {
+                                return true;
+                            }
+                            @Override public boolean dispatchKeyShortcutEvent(KeyEvent event) {
+                                return true;
+                            }
+                            @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchTrackballEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchPopulateAccessibilityEvent(
+                                    AccessibilityEvent event) {
+                                return true;
+                            }
+                        };
+                    } else {
+                        mBootMsgDialog = new AlertDialog(mContext, theme) {
+                            // This dialog will consume all events coming in to
+                            // it, to avoid it trying to do things too early in boot.
+                            @Override public boolean dispatchKeyEvent(KeyEvent event) {
+                                return true;
+                            }
+                            @Override public boolean dispatchKeyShortcutEvent(KeyEvent event) {
+                                return true;
+                            }
+                            @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchTrackballEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+                                return true;
+                            }
+                            @Override public boolean dispatchPopulateAccessibilityEvent(
+                                    AccessibilityEvent event) {
+                                return true;
+                            }
+                        };
+                    }
                     if (mContext.getPackageManager().isUpgrade()) {
                         mBootMsgDialog.setTitle(R.string.android_upgrading_title);
                     } else {
                         mBootMsgDialog.setTitle(R.string.android_start_title);
+                    }
+                    mBootMsgDialog.setTitleTextColor(BootDialogColorHelper.getTextColor(mContext));
+                    if (showProgress) {
+                        ((ProgressDialog) mBootMsgDialog).setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        ((ProgressDialog) mBootMsgDialog).setIndeterminate(true);
                     }
                     mBootMsgDialog.getWindow().setType(
                             WindowManager.LayoutParams.TYPE_BOOT_PROGRESS);
@@ -6228,17 +6265,25 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mBootMsgDialog.setCancelable(false);
                     mBootMsgDialog.setMessage("");
                     mBootMsgDialog.show();
+                    setBackgroundColor(mBootMsgDialog);
                 }
                 if (always && (currentPackageName != null)) {
                     // Only display the current package name if the main message says "Optimizing app N of M".
                     // We don't want to do this when the message says "Starting apps" or "Finishing boot", etc.
-                    mBootMsgDialog.setMessage(Html.fromHtml(msg + "<br><b><font color=\"#009688\">"
+                    final String appColor = BootDialogColorHelper.getAppTextColor(mContext);
+                    mBootMsgDialog.setMessage(Html.fromHtml(msg + "<br><b><font color=\"" + appColor + "\">"
                             + currentPackageName + "</font></b>"));
                 } else {
                     mBootMsgDialog.setMessage(msg);
                 }
+                mBootMsgDialog.setMessageTextColor(BootDialogColorHelper.getSecondaryTextColor(mContext));
             }
         });
+    }
+
+    private void setBackgroundColor(Dialog d) {
+        ((DrawableWrapper) d.getWindow().getDecorView().getBackground())
+                .setTintList(BootDialogColorHelper.getBackgroundColorList(mContext));
     }
 
     /** {@inheritDoc} */
