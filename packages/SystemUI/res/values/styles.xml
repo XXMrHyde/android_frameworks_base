@@ -63,6 +63,12 @@
         parent="@*android:style/TextAppearance.StatusBar">
     </style>
 
+    <style name="TextAppearance.StatusBar.PhoneTicker"
+        parent="@*android:style/TextAppearance.StatusBar.Ticker">
+        <!-- Note: must be dp to fit in status bar -->
+        <item name="android:textSize">14dp</item>
+    </style>
+
     <style name="TextAppearance.StatusBar.SystemPanel"
         parent="@*android:style/TextAppearance.StatusBar">
         <item name="android:textAppearance">?android:attr/textAppearance</item>

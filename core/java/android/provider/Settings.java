@@ -3225,13 +3225,13 @@ public final class Settings {
         public static final String COLOR_PICKER_PALETTE = "color_picker_palette";
 
         /**
-         *  Weather to show the music visualizer on the lock screen
+         *  Whether to show the music visualizer on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_VISUALIZER_SHOW = "lock_screen_visualizer_show";
 
         /**
-         *  Weather to use a custom color for the visualizer on the lock screen
+         *  Whether to use a custom color for the visualizer on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR = "lock_screen_visualizer_use_custom_color";
@@ -3253,19 +3253,19 @@ public final class Settings {
         public static final String LOCK_SCREEN_BUTTON_BAR_LAUNCH_TYPE = "lock_screen_button_bar_launch_type";
 
         /**
-         *  Weather to show the button bar background on the lock screen
+         *  Whether to show the button bar background on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_BUTTON_BAR_SHOW_BACKGROUND = "lock_screen_button_bar_show_background";
 
         /**
-         *  Weather to colorize the ripple effect of the button bar buttons on the lock screen
+         *  Whether to colorize the ripple effect of the button bar buttons on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_BUTTON_BAR_COLORIZE_RIPPLE = "lock_screen_button_bar_colorize_ripple";
 
         /**
-         *  Weather to hide the button bar as soon as there isn`t enough space to show all visible notifications on the lock screen
+         *  Whether to hide the button bar as soon as there isn`t enough space to show all visible notifications on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_BUTTON_BAR_HIDE_BAR = "lock_screen_button_bar_hide_bar";
@@ -3281,7 +3281,7 @@ public final class Settings {
         public static final String LOCK_SCREEN_BOTTOM_BUTTON_LEFT = "lock_screen_bottom_button_left";
 
         /**
-         *  Weather to show the camera button on the bottom right side on the lock screen
+         *  Whether to show the camera button on the bottom right side on the lock screen
          * @hide
          */
         public static final String LOCK_SCREEN_BOTTOM_BUTTON_RIGHT = "lock_screen_bottom_button_right";
@@ -3324,7 +3324,7 @@ public final class Settings {
         public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
 
         /**
-         *  Weather to show a greeting on the status bar after unlocking the device
+         *  Whether to show a greeting on the status bar after unlocking the device
          * @hide
          */
         public static final String STATUS_BAR_GREETING_SHOW_GREETING = "status_bar_greeting_show_greeting";
@@ -3354,7 +3354,7 @@ public final class Settings {
         public static final String STATUS_BAR_GREETING_COLOR_DARK_MODE = "status_bar_greeting_color_dark_mode";
 
         /**
-         *  Weather to use a custom label for the carrier name on the status bar
+         *  Whether to use a custom label for the carrier name on the status bar
          * @hide
          */
         public static final String STATUS_BAR_CARRIER_LABEL_USE_CUSTOM = "status_bar_carrier_label_use_custom";
@@ -3366,13 +3366,13 @@ public final class Settings {
         public static final String STATUS_BAR_CARRIER_LABEL_CUSTOM_LABEL = "status_bar_carrier_label_custom_label";
 
         /**
-         *  Weather to show the (custom) carrier label on the status bar
+         *  Whether to show the (custom) carrier label on the status bar
          * @hide
          */
         public static final String STATUS_BAR_CARRIER_LABEL_SHOW = "status_bar_carrier_label_show";
 
         /**
-         *  Weather to show the (custom) carrier label on the status bar of the lock screen
+         *  Whether to show the (custom) carrier label on the status bar of the lock screen
          * @hide
          */
         public static final String STATUS_BAR_CARRIER_LABEL_SHOW_ON_LOCK_SCREEN = "status_bar_carrier_label_show_on_lock_screen";
@@ -3486,19 +3486,19 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR = "status_bar_battery_status_icon_indicator";
 
         /**
-         *  Weather to show the battery bar on the status bar
+         *  Whether to show the battery bar on the status bar
          * @hide
          */
         public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
 
         /**
-         *  Weather to show the battery bar on the status bar of the lock screen
+         *  Whether to show the battery bar on the status bar of the lock screen
          * @hide
          */
         public static final String STATUS_BAR_SHOW_BATTERY_BAR_LOCK_SCREEN = "status_bar_show_battery_bar_lock_screen";
 
         /**
-         *  Weather to show the battery status text on the status bar
+         *  Whether to show the battery status text on the status bar
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
@@ -3521,13 +3521,13 @@ public final class Settings {
         public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
 
         /**
-         *  Weather to show a battery charging animation on the status bar
+         *  Whether to show a battery charging animation on the status bar
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION = "status_bar_battery_status_show_charge_animation";
 
         /**
-         *  Weather to cut the battery percentage out of the battery status icon on the status bar
+         *  Whether to cut the battery percentage out of the battery status icon on the status bar
          * @hide
          */
         public static final String STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT = "status_bar_battery_status_cut_out_text";
@@ -3663,6 +3663,12 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_TRAFFIC_ICON_COLOR_DARK_MODE = "status_bar_network_traffic_icon_color_dark_mode";
 
         /**
+         * Whether to show the ticker on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIFICATION_SHOW_TICKER = "status_bar_notification_show_ticker_color";
+
+        /**
          * Color of the notification icons on the status bar
          * @hide
          */
@@ -3673,6 +3679,18 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_NOTIFICATION_ICONS_COLOR_DARK_MODE = "status_bar_notification_icons_color_dark_mode";
+
+        /**
+         * Color of the ticker text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR = "status_bar_notification_ticker_text_color_color";
+
+        /**
+         * Color of the ticker text on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR_DARK_MODE = "status_bar_notification_ticker_text_color_dark_mode";
 
         /**
          * One finger expansion of the statusbar
@@ -3720,7 +3738,7 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_BATTERY_ICON_INDICATOR = "status_bar_expanded_battery_icon_indicator";
 
         /**
-         *  Weather to show the battery status text on the expanded status bar
+         *  Whether to show the battery status text on the expanded status bar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_BATTERY_SHOW_TEXT = "status_bar_expanded_battery_show_text";
@@ -3743,13 +3761,13 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_BATTERY_CIRCLE_DOT_LENGTH = "status_bar_expanded_battery_circle_dot_length";
 
         /**
-         *  Weather to show a battery charging animation on the expanded status bar
+         *  Whether to show a battery charging animation on the expanded status bar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_BATTERY_SHOW_CHARGE_ANIMATION = "status_bar_expanded_battery_show_charge_animation";
 
         /**
-         *  Weather to cut the battery percentage out of the battery status icon on the expanded status bar
+         *  Whether to cut the battery percentage out of the battery status icon on the expanded status bar
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_BATTERY_CUT_OUT_TEXT = "status_bar_expanded_battery_cut_out_text";

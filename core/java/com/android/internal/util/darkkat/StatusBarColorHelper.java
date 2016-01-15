@@ -153,4 +153,15 @@ public class StatusBarColorHelper {
                 Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR_DARK_MODE,
                 BLACK);
     }
+
+    public static int getTickerTextColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR, WHITE);
+    }
+
+    public static int getTickerTextColorDark(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR_DARK_MODE,
+                BLACK);
+    }
 }

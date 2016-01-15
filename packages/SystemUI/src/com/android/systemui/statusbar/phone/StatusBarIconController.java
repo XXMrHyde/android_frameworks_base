@@ -29,10 +29,12 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -86,6 +88,7 @@ public class StatusBarIconController implements Tunable {
     private static final int STATUS_NETWORK_ICON_COLORS  = 4;
 
     private Context mContext;
+    private View mStatusBar;
     private PhoneStatusBar mPhoneStatusBar;
     private KeyguardStatusBarView mKeyguardStatusBarView;
     private Interpolator mLinearOutSlowIn;
@@ -114,6 +117,9 @@ public class StatusBarIconController implements Tunable {
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
     private NetworkTraffic mNetworkTraffic;
+    private Ticker mTicker;
+    private View mTickerView;
+
     private int mGreetingColor;
     private int mGreetingColorTint;
     private int mCarrierTextColor;
@@ -148,6 +154,8 @@ public class StatusBarIconController implements Tunable {
     private int mStatusIconColorTint;
     private int mNotificationIconColor;
     private int mNotificationIconColorTint;
+    private int mTickerTextColor;
+    private int mTickerTextColorTint;
     private float mDarkIntensity;
 
     private int mIconSize;
@@ -169,6 +177,10 @@ public class StatusBarIconController implements Tunable {
     private int mClockStyle;
     private int mColorToChange;
 
+    private boolean mShowTicker;
+    private boolean mTicking;
+    private boolean mTickingEnd = false;
+
     private final Handler mHandler;
     private boolean mTransitionDeferring;
     private long mTransitionDeferringStartTime;
@@ -186,6 +198,7 @@ public class StatusBarIconController implements Tunable {
     public StatusBarIconController(Context context, View statusBar, KeyguardStatusBarView keyguardStatusBar,
             PhoneStatusBar phoneStatusBar) {
         mContext = context;
+        mStatusBar = statusBar;
         mPhoneStatusBar = phoneStatusBar;
         mKeyguardStatusBarView = keyguardStatusBar;
         mNotificationColorUtil = NotificationColorUtil.getInstance(context);
@@ -256,6 +269,8 @@ public class StatusBarIconController implements Tunable {
         mStatusIconColorTint = mStatusIconColor;
         mNotificationIconColor = StatusBarColorHelper.getNotificationIconColor(mContext);
         mNotificationIconColorTint = mNotificationIconColor;
+        mTickerTextColor = StatusBarColorHelper.getTickerTextColor(mContext);
+        mTickerTextColorTint = mTickerTextColor;
 
         mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
     }
@@ -378,7 +393,7 @@ public class StatusBarIconController implements Tunable {
     }
 
     public void showGreeting(boolean isPreview) {
-        if (mIsGreetingVisible) {
+        if (mIsGreetingVisible || mTicking) {
             return;
         }
         mIsGreetingVisible = true;
@@ -501,6 +516,10 @@ public class StatusBarIconController implements Tunable {
                     @Override
                     public void run() {
                         v.setVisibility(View.INVISIBLE);
+                        if (mTickingEnd) {
+                            mTicking = false;
+                            mTickingEnd = false;
+                        }
                         if (isGreeting) {
                             mIsGreetingVisible = false;
                             mHideGreeting = true;
@@ -618,6 +637,8 @@ public class StatusBarIconController implements Tunable {
                 mStatusIconColor, StatusBarColorHelper.getStatusIconColorDark(mContext));
         mNotificationIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNotificationIconColor, StatusBarColorHelper.getNotificationIconColorDark(mContext));
+        mTickerTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
+                mTickerTextColor, StatusBarColorHelper.getTickerTextColorDark(mContext));
 
         applyIconTint();
     }
@@ -654,6 +675,9 @@ public class StatusBarIconController implements Tunable {
         }
         mMoreIcon.setColorFilter(mNotificationIconColorTint, Mode.MULTIPLY);
         applyNotificationIconsTint();
+        if (mShowTicker && mTicker != null && mTickerView != null) {
+            mTicker.setTextColor(mTickerTextColorTint);
+        }
     }
 
     private void applyNotificationIconsTint() {
@@ -664,6 +688,9 @@ public class StatusBarIconController implements Tunable {
             if (colorize) {
                 v.setImageTintList(ColorStateList.valueOf(mNotificationIconColorTint));
             }
+        }
+        if (mShowTicker && mTicker != null && mTickerView != null) {
+            mTicker.setIconColorTint(ColorStateList.valueOf(mNotificationIconColorTint));
         }
     }
 
@@ -1020,6 +1047,11 @@ public class StatusBarIconController implements Tunable {
         }
     }
 
+    public void updateShowTicker(boolean show) {
+        mShowTicker = show;
+        inflateTickerView();
+    }
+
     public void updateNotificationIconColor() {
         mNotificationIconColor = StatusBarColorHelper.getNotificationIconColor(mContext);
         mNotificationIconColorTint = mNotificationIconColor;
@@ -1032,5 +1064,95 @@ public class StatusBarIconController implements Tunable {
             }
         }
         mMoreIcon.setColorFilter(mNotificationIconColor, Mode.MULTIPLY);
+        updateTickerIconColor(mNotificationIconColor);
+    }
+
+    private void updateTickerIconColor(int color) {
+        if (mShowTicker && mTicker != null && mTickerView != null) {
+            mTicker.setIconColorTint(ColorStateList.valueOf(color));
+        }
+    }
+
+    public void updateTickerTextColor() {
+        mTickerTextColor = StatusBarColorHelper.getTickerTextColor(mContext);
+        mTickerTextColorTint = mTickerTextColor;
+        if (mShowTicker && mTicker != null && mTickerView != null) {
+            mTicker.setTextColor(mTickerTextColor);
+        }
+    }
+
+    private void inflateTickerView() {
+        if (mShowTicker && (mTicker == null || mTickerView == null)) {
+            final ViewStub tickerStub = (ViewStub) mStatusBar.findViewById(R.id.ticker_stub);
+            if (tickerStub != null) {
+                mTickerView = tickerStub.inflate();
+                mTicker = new MyTicker(mContext, mStatusBar);
+
+                TickerView tickerView = (TickerView) mStatusBar.findViewById(R.id.tickerText);
+                tickerView.mTicker = mTicker;
+                updateTickerIconColor(mNotificationIconColor);
+                updateTickerTextColor();
+            } else {
+                mShowTicker = false;
+            }
+        }
+    }
+
+    public void addTickerEntry(StatusBarNotification n) {
+        mTicker.addEntry(n);
+    }
+
+    public void removeTickerEntry(StatusBarNotification n) {
+        mTicker.removeEntry(n);
+    }
+
+    public void haltTicker() {
+        if (mTicking) {
+            mTicker.halt();
+        }
+    }
+
+    private class MyTicker extends Ticker {
+        MyTicker(Context context, View sb) {
+            super(context, sb);
+        }
+
+        @Override
+        public void tickerStarting() {
+            if (!mShowTicker || mIsGreetingVisible) return;
+            mTicking = true;
+            hideSystemIconArea(true);
+            hideNotificationIconArea(true);
+            animateShow(mTickerView, true);
+        }
+
+        @Override
+        public void tickerDone() {
+            if (!mShowTicker || mIsGreetingVisible) return;
+            animateShow(mSystemIconArea, true);
+            if (mClockStyle == CLOCK_STYLE_CENTERED) {
+                animateShow(mCenterClockLayout, true);
+            }
+            if (mShowBatteryBar) {
+                animateShow(mBatteryBar, true);
+            }
+            animateShow(mNotificationIconArea, true);
+            mTickingEnd = true;
+            animateHide(mTickerView, true);
+        }
+
+        public void tickerHalting() {
+            if (!mShowTicker || mIsGreetingVisible) return;
+            animateShow(mSystemIconArea, true);
+            if (mClockStyle == CLOCK_STYLE_CENTERED) {
+                animateShow(mCenterClockLayout, true);
+            }
+            if (mShowBatteryBar) {
+                animateShow(mBatteryBar, true);
+            }
+            animateShow(mNotificationIconArea, true);
+            // we do not animate the ticker away at this point, just get rid of it (b/6992707)
+            mTickerView.setVisibility(View.GONE);
+        }
     }
 }

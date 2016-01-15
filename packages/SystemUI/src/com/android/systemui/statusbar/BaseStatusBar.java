@@ -1902,8 +1902,10 @@ public abstract class BaseStatusBar extends SystemUI implements
         setShowLockscreenNotifications(show && allowedByDpm);
     }
 
+    protected abstract void haltTicker();
     protected abstract void setAreThereNotifications();
     protected abstract void updateNotifications();
+    protected abstract void tick(StatusBarNotification n, boolean firstTime);
     public abstract boolean shouldDisableNavbarGestures();
 
     public abstract void addNotification(StatusBarNotification notification,
@@ -1924,6 +1926,11 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (DEBUG) {
             logUpdate(entry, n);
         }
+
+        boolean updateTicker = n.tickerText != null
+                && !TextUtils.equals(n.tickerText,
+                entry.notification.getNotification().tickerText);
+
         boolean applyInPlace = shouldApplyInPlace(entry, n);
         boolean shouldInterrupt = shouldInterrupt(entry, notification);
         boolean alertAgain = alertAgain(entry, n);
@@ -1979,10 +1986,15 @@ public abstract class BaseStatusBar extends SystemUI implements
         // swipe-dismissable)
         updateNotificationVetoButton(entry.row, notification);
 
-        if (DEBUG) {
-            // Is this for you?
-            boolean isForCurrentUser = isNotificationForCurrentProfiles(notification);
-            Log.d(TAG, "notification is " + (isForCurrentUser ? "" : "not ") + "for you");
+
+        // Is this for you?
+        boolean isForCurrentUser = isNotificationForCurrentProfiles(notification);
+        if (DEBUG) Log.d(TAG, "notification is " + (isForCurrentUser ? "" : "not ") + "for you");
+
+        // Restart the ticker if it's still running
+        if (updateTicker && isForCurrentUser) {
+            haltTicker();
+            tick(notification, false);
         }
 
         setAreThereNotifications();
