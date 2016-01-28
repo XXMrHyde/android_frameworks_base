@@ -13,12 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.android.systemui.qs.QSContainer
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/quick_settings_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <include layout="@layout/status_bar_expanded_bars" />
-
-</com.android.systemui.qs.QSContainer>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/system_primary_color"/>
+    <corners android:radius="@dimen/notification_material_rounded_rect_radius"/>
+</shape>

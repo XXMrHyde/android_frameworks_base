@@ -111,8 +111,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
                 Process.THREAD_PRIORITY_BACKGROUND);
         ht.start();
         mLooper = ht.getLooper();
-
-//        TunerService.get(mContext).addTunable(this, TILES_SETTING);
     }
 
     public void destroy() {

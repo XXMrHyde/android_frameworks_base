@@ -22,6 +22,18 @@ import android.provider.Settings;
 public class SBEPanelColorHelper {
 
     private static int WHITE = 0xffffffff;
+    private static int SYSTEMUI_PRIMARY = 0xff263238;
+
+    public static int getBatteryTextColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_BARS_BATTERY_TEXT_COLOR, WHITE);
+    }
+
+    public static int getBackgroundColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR,
+                SYSTEMUI_PRIMARY);
+    }
 
     public static int getIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),

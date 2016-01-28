@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.weather;
+package com.android.systemui.darkkat.statusBarExpanded.bars;
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +56,7 @@ public class WeatherBarContainer extends FrameLayout implements
 
     private final Context mContext;
     private PhoneStatusBar mStatusBar;
-    private WeatherController mWeatherController;
+    private final WeatherControllerImpl mWeatherController;
 
     private LinearLayout mWeatherBar;
     private TextView mNoWeather;
@@ -71,11 +71,7 @@ public class WeatherBarContainer extends FrameLayout implements
     public WeatherBarContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-    }
-
-    public void setUp(PhoneStatusBar statusBar, WeatherController weather) {
-        mStatusBar = statusBar;
-        mWeatherController = weather;
+        mWeatherController = new WeatherControllerImpl(mContext);
     }
 
     @Override
@@ -92,6 +88,10 @@ public class WeatherBarContainer extends FrameLayout implements
                 return true;
             }
         });
+    }
+
+    public void setStatusBar(PhoneStatusBar statusBar) {
+        mStatusBar = statusBar;
     }
 
     public void setListening(boolean listening) {

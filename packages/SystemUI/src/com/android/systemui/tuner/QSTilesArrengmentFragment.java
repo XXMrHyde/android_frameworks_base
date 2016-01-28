@@ -507,7 +507,6 @@ public class QSTilesArrengmentFragment extends PreferenceFragment implements Cal
     private class DraggableQsPanel extends QSPanel implements OnTouchListener {
         public DraggableQsPanel(Context context) {
             super(context);
-            mBrightnessView.setVisibility(View.GONE);
         }
 
         @Override

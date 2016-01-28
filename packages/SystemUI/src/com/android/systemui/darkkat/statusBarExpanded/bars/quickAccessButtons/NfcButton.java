@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,7 +23,7 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.nfc.NfcAdapter;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
 
 public class NfcButton extends QabButton {

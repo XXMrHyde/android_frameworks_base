@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.IconState;

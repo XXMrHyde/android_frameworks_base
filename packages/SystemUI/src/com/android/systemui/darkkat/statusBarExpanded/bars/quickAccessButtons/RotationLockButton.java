@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,53 +22,49 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.policy.HotspotController;
+import com.android.systemui.statusbar.policy.RotationLockController;
 
+public class RotationLockButton extends QabButton implements
+        RotationLockController.RotationLockControllerCallback {
+    private static final Intent DISPLAY_SETTINGS = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
 
-public class HotspotButton extends QabButton implements
-        HotspotController.Callback {
-
-    private final HotspotController mHotspotController;
+    private final RotationLockController mRotationLockController;
 
     private boolean mEnabled;
 
-    public HotspotButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
+    public RotationLockButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
             Drawable iconDisabled) {
         super(context, bar, iconEnabled, iconDisabled);
 
-        mHotspotController = mBar.getHotspotController();
-        mEnabled = mHotspotController.isHotspotEnabled();
+        mRotationLockController = mBar.getRotationLockController();
+        mEnabled = !mRotationLockController.isRotationLocked();
         updateState(mEnabled);
     }
 
     @Override
     public void setListening(boolean listening) {
         if (listening) {
-            mHotspotController.addCallback(this);
+            mRotationLockController.addRotationLockControllerCallback(this);
         } else {
-            mHotspotController.removeCallback(this);
+            mRotationLockController.removeRotationLockControllerCallback(this);
         }
     }
 
     @Override
     public void handleClick() {
-        mHotspotController.setHotspotEnabled(!mEnabled);
+        mRotationLockController.setRotationLocked(mEnabled);
     }
 
     @Override
     public void handleLongClick() {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName(
-                "com.android.settings",
-                "com.android.settings.Settings$TetherSettingsActivity"));
-        mBar.startSettingsActivity(intent);
+        mBar.startSettingsActivity(DISPLAY_SETTINGS);
     }
 
     @Override
-    public void onHotspotChanged(boolean enabled) {
-        mEnabled = enabled;
+    public void onRotationLockStateChanged(boolean rotationLocked, boolean affordanceVisible) {
+        mEnabled = !rotationLocked;
         updateState(mEnabled);
     }
 }

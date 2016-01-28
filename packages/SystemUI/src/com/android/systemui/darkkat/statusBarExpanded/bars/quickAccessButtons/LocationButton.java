@@ -14,57 +14,57 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.policy.RotationLockController;
+import com.android.systemui.statusbar.policy.LocationController;
 
-public class RotationLockButton extends QabButton implements
-        RotationLockController.RotationLockControllerCallback {
-    private static final Intent DISPLAY_SETTINGS = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
 
-    private final RotationLockController mRotationLockController;
+public class LocationButton extends QabButton implements
+        LocationController.LocationSettingsChangeCallback {
+    private static final Intent LOCATION_SETTINGS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+
+    private final LocationController mLocationController;
 
     private boolean mEnabled;
 
-    public RotationLockButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
+    public LocationButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
             Drawable iconDisabled) {
         super(context, bar, iconEnabled, iconDisabled);
 
-        mRotationLockController = mBar.getRotationLockController();
-        mEnabled = !mRotationLockController.isRotationLocked();
+        mLocationController = mBar.getLocationController();
+        mEnabled = mLocationController.isLocationEnabled();
         updateState(mEnabled);
     }
 
     @Override
     public void setListening(boolean listening) {
         if (listening) {
-            mRotationLockController.addRotationLockControllerCallback(this);
+            mLocationController.addSettingsChangedCallback(this);
         } else {
-            mRotationLockController.removeRotationLockControllerCallback(this);
+            mLocationController.removeSettingsChangedCallback(this);
         }
     }
 
     @Override
     public void handleClick() {
-        mRotationLockController.setRotationLocked(mEnabled);
+        mLocationController.setLocationEnabled(!mEnabled);
     }
 
     @Override
     public void handleLongClick() {
-        mBar.startSettingsActivity(DISPLAY_SETTINGS);
+        mBar.startSettingsActivity(LOCATION_SETTINGS);
     }
 
     @Override
-    public void onRotationLockStateChanged(boolean rotationLocked, boolean affordanceVisible) {
-        mEnabled = !rotationLocked;
+    public void onLocationSettingsChanged(boolean locationEnabled) {
+        mEnabled = locationEnabled;
         updateState(mEnabled);
     }
 }

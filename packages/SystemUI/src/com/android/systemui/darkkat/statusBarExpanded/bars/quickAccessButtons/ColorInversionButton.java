@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -24,7 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
 
 public class ColorInversionButton extends QabButton {

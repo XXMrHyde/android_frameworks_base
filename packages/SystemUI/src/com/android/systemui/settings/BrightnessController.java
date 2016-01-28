@@ -18,7 +18,9 @@ package com.android.systemui.settings;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.database.ContentObserver;
+import android.graphics.drawable.RippleDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -158,14 +160,13 @@ public class BrightnessController implements ToggleSlider.Listener {
 
         if (mIcon != null) {
             if (mAutomaticAvailable) {
-                mIcon.setOnTouchListener(new View.OnTouchListener() {
+                mIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public boolean onTouch(View v, MotionEvent event) {
+                    public void onClick(View v) {
                         int newMode = mAutomatic ?
                                 Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
                                 : Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
                         setMode(newMode);
-                        return false;
                     }
                 });
             }
@@ -286,11 +287,19 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
-    public void setColors() {
-        mControl.setColors();
+    public void setIconColor() {
+        mControl.setIconColor();
         if (mIcon != null) {
             mIcon.setColorFilter(SBEPanelColorHelper.getIconColor(mContext), Mode.MULTIPLY);
         }
+    }
+
+    public void setRippleColor() {
+        final int color = SBEPanelColorHelper.getRippleColor(mContext);
+        if (mIcon != null) {
+            ((RippleDrawable) mIcon.getBackground()).setColor(ColorStateList.valueOf(color));
+        }
+        mControl.setRippleColor(color);
     }
 
     /** Fetch the brightness mode from the system settings and update the icon */

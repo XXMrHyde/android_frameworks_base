@@ -53,14 +53,12 @@ import android.widget.TextView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.keyguard.KeyguardStatusView;
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
-import com.android.systemui.darkkat.weather.WeatherBarContainer;
+import com.android.systemui.darkkat.statusBarExpanded.BarsController;
 import com.android.systemui.DejankUtils;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSContainer;
-import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.ExpandableView;
 import com.android.systemui.statusbar.FlingAnimationUtils;
@@ -108,9 +106,7 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private KeyguardStatusBarView mKeyguardStatusBar;
     private QSContainer mQsContainer;
-    private QuickAccessBar mQuickAccessBar;
-    private WeatherBarContainer mWeatherBarContainer;
-    private QSPanel mQsPanel;
+    private BarsController mBarsController;
     private KeyguardStatusView mKeyguardStatusView;
     private ObservableScrollView mScrollView;
     private TextView mClockView;
@@ -269,9 +265,6 @@ public class NotificationPanelView extends PanelView implements
         mKeyguardStatusBar = (KeyguardStatusBarView) findViewById(R.id.keyguard_header);
         mKeyguardStatusView = (KeyguardStatusView) findViewById(R.id.keyguard_status_view);
         mQsContainer = (QSContainer) findViewById(R.id.quick_settings_container);
-        mQuickAccessBar = (QuickAccessBar) findViewById(R.id.quick_access_bar);
-        mWeatherBarContainer = (WeatherBarContainer) findViewById(R.id.status_bar_expanded_weather_bar_container);
-        mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
         mClockView = (TextView) findViewById(R.id.clock_view);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
         mScrollView.setListener(this);
@@ -296,7 +289,7 @@ public class NotificationPanelView extends PanelView implements
         mAfforanceHelper = new KeyguardAffordanceHelper(this, getContext());
         mLastOrientation = getResources().getConfiguration().orientation;
 
-        // recompute internal state when qspanel height changes
+        // recompute internal state when qscontainer height changes
         mQsContainer.addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
@@ -308,7 +301,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-        setBackgroundColor();
     }
 
     @Override
@@ -403,11 +395,17 @@ public class NotificationPanelView extends PanelView implements
     @Override
     public void onAttachedToWindow() {
         mSettingsObserver.observe();
+        if (mBarsController != null) {
+            mBarsController.setObserving(true);
+        }
     }
 
     @Override
     public void onDetachedFromWindow() {
         mSettingsObserver.unobserve();
+        if (mBarsController != null) {
+            mBarsController.setObserving(false);
+        }
     }
 
     private void startQsSizeChangeAnimation(int oldHeight, final int newHeight) {
@@ -1042,7 +1040,6 @@ public class NotificationPanelView extends PanelView implements
             requestPanelHeightUpdate();
             mNotificationStackScroller.setInterceptDelegateEnabled(expanded);
             mStatusBar.setQsExpanded(expanded);
-            mQsPanel.setExpanded(expanded);
             mNotificationContainerParent.setQsExpanded(expanded);
         }
     }
@@ -1316,7 +1313,9 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setScrollingEnabled(
                 mStatusBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
-        mQsContainer.updateVisibility(mKeyguardShowing, expandVisually);
+        if (mBarsController != null) {
+            mBarsController.updateVisibility(mKeyguardShowing, expandVisually);
+        }
         mScrollView.setTouchEnabled(mQsExpanded);
         updateEmptyShadeView();
         mQsNavbarScrim.setVisibility(mStatusBarState == StatusBarState.SHADE && mQsExpanded
@@ -1881,7 +1880,9 @@ public class NotificationPanelView extends PanelView implements
     private void setListening(boolean listening) {
         mHeader.setListening(listening);
         mKeyguardStatusBar.setListening(listening);
-        mQsContainer.setListening(listening);
+        if (mBarsController != null) {
+            mBarsController.setListening(listening);
+        }
     }
 
     @Override
@@ -2203,11 +2204,10 @@ public class NotificationPanelView extends PanelView implements
     }
 
     public boolean isQsDetailShowing() {
-        return mQsPanel.isShowingDetail();
+        return false;
     }
 
     public void closeQsDetail() {
-        mQsPanel.closeDetail();
     }
 
     @Override
@@ -2475,33 +2475,6 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN),
                     false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_CURRENT),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_ICON_COLOR),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR),
-                    false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_TEXT_COLOR),
-                    false, this);
             update();
         }
 
@@ -2515,39 +2488,14 @@ public class NotificationPanelView extends PanelView implements
         public void onChange(boolean selfChange, Uri uri) {
             ContentResolver resolver = mContext.getContentResolver();
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP))
-                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP))) {
+                mDoubleTapToSleepEnabled = Settings.System.getInt(resolver,
+                        Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP, 0) == 1;
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN))) {
-                mDoubleTapToSleepEnabled = Settings.System.getInt(
-                        resolver, Settings.System.STATUS_BAR_DOUBLE_TAP_TO_SLEEP, 0) == 1;
-                mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
-                        resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
+                mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(resolver,
+                        Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
                         ONE_FINGER_QS_INTERCEPT_OFF);
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB))) {
-                setShowQuickAccessBar();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER))) {
-                setShowBrightnessSlider();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER))) {
-                setShowWeatherBar();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_SHOW_CURRENT))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE))) {
-                updateWeatherBarItems();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR))) {
-                setBackgroundColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_ICON_COLOR))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_TEXT_COLOR))) {
-                setIconAndTextColors();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_EXPANDED_RIPPLE_COLOR))) {
-                setRippleColor();
             }
         }
 
@@ -2558,13 +2506,6 @@ public class NotificationPanelView extends PanelView implements
             mOneFingerQuickSettingsInterceptMode = Settings.System.getInt(
                     resolver, Settings.System.STATUS_BAR_EXPANDED_QUICK_PULLDOWN,
                     ONE_FINGER_QS_INTERCEPT_OFF);
-            setShowQuickAccessBar();
-            setShowBrightnessSlider();
-            setShowWeatherBar();
-            updateWeatherBarItems();
-            setBackgroundColor();
-            setIconAndTextColors();
-            setRippleColor();
         }
     }
 
@@ -2636,67 +2577,7 @@ public class NotificationPanelView extends PanelView implements
         return !tasks.isEmpty() && pkgName.equals(tasks.get(0).topActivity.getPackageName());
     }
 
-    private void setShowQuickAccessBar() {
-        ContentResolver resolver = mContext.getContentResolver();
-        final boolean showQuickAccessBar = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB, 1) == 1;
-        if (mQsContainer != null) {
-            mQsContainer.setShowQABar(showQuickAccessBar);
-        }
-    }
-
-    private void setShowBrightnessSlider() {
-        ContentResolver resolver = mContext.getContentResolver();
-        final boolean showBrightnessSlider = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_SHOW_BRIGHTNESS_SLIDER, 1) == 1;
-        if (mQsContainer != null) {
-            mQsContainer.setShowBrightnessSlider(showBrightnessSlider);
-        }
-    }
-
-    private void setShowWeatherBar() {
-        ContentResolver resolver = mContext.getContentResolver();
-        final boolean showWeatherBar = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_SHOW_WEATHER, 0) == 1;
-        if (mQsContainer != null) {
-            mQsContainer.setShowWeatherBar(showWeatherBar);
-        }
-    }
-
-    private void updateWeatherBarItems() {
-        if (mWeatherBarContainer != null) {
-            mWeatherBarContainer.updateItems();
-        }
-    }
-
-    private void setBackgroundColor() {
-        ContentResolver resolver = mContext.getContentResolver();
-        final int bgColor = Settings.System.getInt(resolver,
-                Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR, 0xff263238);
-        if (mQsContainer != null) {
-            mQsContainer.setBackgroundColor(bgColor);
-        }
-    }
-
-    private void setIconAndTextColors() {
-        if (mQuickAccessBar != null) {
-            mQuickAccessBar.setColors();
-        }
-        if (mQsPanel != null) {
-            mQsPanel.setBrightnessSliderColors();
-        }
-        updateWeatherBarItems();
-    }
-
-    private void setRippleColor() {
-        if (mQuickAccessBar != null) {
-            mQuickAccessBar.setColors();
-        }
-        if (mQsPanel != null) {
-            mQsPanel.setBrightnessSliderColors();
-        }
-        if (mWeatherBarContainer != null) {
-            mWeatherBarContainer.setRippleColor();
-        }
+    public void setBarsController(BarsController controller) {
+        mBarsController = controller;
     }
 }

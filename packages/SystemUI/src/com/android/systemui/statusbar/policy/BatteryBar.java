@@ -18,20 +18,20 @@ package com.android.systemui.statusbar.policy;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
-import com.android.internal.R;
+import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.BatteryController;
 
 public class BatteryBar extends ProgressBar implements
         BatteryController.BatteryStateChangeCallback {
 
-    private static final int INDICATOR_HIDDEN     = 0;
-    private static final int INDICATOR_FILL_ONLY  = 1;
+    private final boolean mIsOnExpandedBar;
 
     private int mColor = Color.WHITE;
     private final int mLowLevelColor = 0xfff4511e; // deep orange 600
@@ -65,9 +65,13 @@ public class BatteryBar extends ProgressBar implements
     public BatteryBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryBar,
+                defStyle, 0);
+        mIsOnExpandedBar = atts.getBoolean(R.styleable.BatteryBar_isOnExpandedBar, false);
+        atts.recycle();
         mHandler = new Handler();
         mLowLevel = mContext.getResources().getInteger(
-                R.integer.config_lowBatteryWarningLevel);
+                com.android.internal.R.integer.config_lowBatteryWarningLevel);
         final int backgroundColor = (77 << 24) | (mColor & 0x00ffffff);
         setProgressBackgroundTintList(ColorStateList.valueOf(backgroundColor));
         setProgressTintList(ColorStateList.valueOf(mColor));
@@ -76,13 +80,29 @@ public class BatteryBar extends ProgressBar implements
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        mBatteryController.addStateChangedCallback(this);
+        if (!mIsOnExpandedBar) {
+            setListening(true);
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mBatteryController.removeStateChangedCallback(this);
+        if (!mIsOnExpandedBar) {
+            setListening(false);
+        }
+    }
+
+    public void setListening(boolean listening) {
+        if (listening) {
+            if (mBatteryController != null) {
+                mBatteryController.addStateChangedCallback(this);
+            }
+        } else {
+            if (mBatteryController != null) {
+                mBatteryController.removeStateChangedCallback(this);
+            }
+        }
     }
 
     public void setBatteryController(BatteryController batteryController) {

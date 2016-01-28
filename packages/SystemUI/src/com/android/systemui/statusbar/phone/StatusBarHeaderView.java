@@ -52,8 +52,6 @@ import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
-import com.android.systemui.qs.QSPanel;
-import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl.EmergencyListener;
 import com.android.systemui.statusbar.policy.NextAlarmController;
@@ -116,7 +114,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private ActivityStarter mActivityStarter;
     private BatteryController mBatteryController;
     private NextAlarmController mNextAlarmController;
-    private QSPanel mQSPanel;
 
     private final Rect mClipBounds = new Rect();
 
@@ -447,13 +444,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 true /* dismissShade */);
     }
 
-    public void setQSPanel(QSPanel qsp) {
-        mQSPanel = qsp;
-        if (mQSPanel != null) {
-            mQSPanel.setCallback(mQsPanelCallback);
-        }
-    }
-
     @Override
     public boolean shouldDelayChildPressedState() {
         return true;
@@ -577,113 +567,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             alarmStatusAlpha = v1.alarmStatusAlpha * (1 - t3) + v2.alarmStatusAlpha * t3;
         }
     }
-
-    private final QSPanel.Callback mQsPanelCallback = new QSPanel.Callback() {
-        private boolean mScanState;
-
-        @Override
-        public void onToggleStateChanged(final boolean state) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleToggleStateChanged(state);
-                }
-            });
-        }
-
-        @Override
-        public void onShowingDetail(final QSTile.DetailAdapter detail) {
-            mDetailTransitioning = true;
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleShowingDetail(detail);
-                }
-            });
-        }
-
-        @Override
-        public void onScanStateChanged(final boolean state) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    handleScanStateChanged(state);
-                }
-            });
-        }
-
-        private void handleToggleStateChanged(boolean state) {
-            mQsDetailHeaderSwitch.setChecked(state);
-        }
-
-        private void handleScanStateChanged(boolean state) {
-            if (mScanState == state) return;
-            mScanState = state;
-            final Animatable anim = (Animatable) mQsDetailHeaderProgress.getDrawable();
-            if (state) {
-                mQsDetailHeaderProgress.animate().alpha(1f);
-                anim.start();
-            } else {
-                mQsDetailHeaderProgress.animate().alpha(0f);
-                anim.stop();
-            }
-        }
-
-        private void handleShowingDetail(final QSTile.DetailAdapter detail) {
-            final boolean showingDetail = detail != null;
-            transition(mClock, !showingDetail);
-            transition(mDateGroup, !showingDetail);
-            if (mAlarmShowing) {
-                transition(mAlarmStatus, !showingDetail);
-            }
-            transition(mQsDetailHeader, showingDetail);
-            mShowingDetail = showingDetail;
-            if (showingDetail) {
-                mQsDetailHeaderTitle.setText(detail.getTitle());
-                final Boolean toggleState = detail.getToggleState();
-                if (toggleState == null) {
-                    mQsDetailHeaderSwitch.setVisibility(INVISIBLE);
-                    mQsDetailHeader.setClickable(false);
-                } else {
-                    mQsDetailHeaderSwitch.setVisibility(VISIBLE);
-                    mQsDetailHeaderSwitch.setChecked(toggleState);
-                    mQsDetailHeader.setClickable(true);
-                    mQsDetailHeader.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            boolean checked = !mQsDetailHeaderSwitch.isChecked();
-                            mQsDetailHeaderSwitch.setChecked(checked);
-                            detail.setToggleState(checked);
-                        }
-                    });
-                }
-            } else {
-                mQsDetailHeader.setClickable(false);
-            }
-        }
-
-        private void transition(final View v, final boolean in) {
-            if (in) {
-                v.bringToFront();
-                v.setVisibility(VISIBLE);
-            }
-            if (v.hasOverlappingRendering()) {
-                v.animate().withLayer();
-            }
-            v.animate()
-                    .alpha(in ? 1 : 0)
-                    .withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!in) {
-                                v.setVisibility(INVISIBLE);
-                            }
-                            mDetailTransitioning = false;
-                        }
-                    })
-                    .start();
-        }
-    };
 
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {

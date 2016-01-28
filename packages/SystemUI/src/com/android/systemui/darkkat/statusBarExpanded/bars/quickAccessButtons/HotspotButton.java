@@ -14,57 +14,61 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess.buttons;
+package com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
+import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.R;
-import com.android.systemui.statusbar.policy.LocationController;
+import com.android.systemui.statusbar.policy.HotspotController;
 
 
-public class LocationButton extends QabButton implements
-        LocationController.LocationSettingsChangeCallback {
-    private static final Intent LOCATION_SETTINGS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+public class HotspotButton extends QabButton implements
+        HotspotController.Callback {
 
-    private final LocationController mLocationController;
+    private final HotspotController mHotspotController;
 
     private boolean mEnabled;
 
-    public LocationButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
+    public HotspotButton(Context context, QuickAccessBar bar, Drawable iconEnabled,
             Drawable iconDisabled) {
         super(context, bar, iconEnabled, iconDisabled);
 
-        mLocationController = mBar.getLocationController();
-        mEnabled = mLocationController.isLocationEnabled();
+        mHotspotController = mBar.getHotspotController();
+        mEnabled = mHotspotController.isHotspotEnabled();
         updateState(mEnabled);
     }
 
     @Override
     public void setListening(boolean listening) {
         if (listening) {
-            mLocationController.addSettingsChangedCallback(this);
+            mHotspotController.addCallback(this);
         } else {
-            mLocationController.removeSettingsChangedCallback(this);
+            mHotspotController.removeCallback(this);
         }
     }
 
     @Override
     public void handleClick() {
-        mLocationController.setLocationEnabled(!mEnabled);
+        mHotspotController.setHotspotEnabled(!mEnabled);
     }
 
     @Override
     public void handleLongClick() {
-        mBar.startSettingsActivity(LOCATION_SETTINGS);
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(
+                "com.android.settings",
+                "com.android.settings.Settings$TetherSettingsActivity"));
+        mBar.startSettingsActivity(intent);
     }
 
     @Override
-    public void onLocationSettingsChanged(boolean locationEnabled) {
-        mEnabled = locationEnabled;
+    public void onHotspotChanged(boolean enabled) {
+        mEnabled = enabled;
         updateState(mEnabled);
     }
 }

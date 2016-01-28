@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -62,6 +63,8 @@ public class BatteryMeterView extends View implements DemoMode,
     private BatteryMeterDrawable mBatteryMeterDrawable;
     private final Object mLock = new Object();
 
+    private final boolean mIsOnExpandedBar;
+
     private final int mLowLevel;
     private final int mCriticalLevel;
     private final String mWarningString;
@@ -100,6 +103,7 @@ public class BatteryMeterView extends View implements DemoMode,
     private BatteryController mBatteryController;
 
     protected boolean mAttached;
+    private boolean mReceiverRegistered = false;
 
     private final class BatteryTracker extends BroadcastReceiver {
         public static final int UNKNOWN_LEVEL = -1;
@@ -210,9 +214,15 @@ public class BatteryMeterView extends View implements DemoMode,
         super(context, attrs, defStyle);
 
         final Resources res = context.getResources();
+        TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,
+                defStyle, 0);
+
         mTracker = new BatteryTracker();
         mDemoTracker = new BatteryTracker();
         mHandler = new Handler();
+
+        mIsOnExpandedBar = atts.getBoolean(R.styleable.BatteryMeterView_isOnExpandedBar, false);
+        atts.recycle();
 
         mFrameColor = (77 << 24) | (mFillColor & 0x00ffffff);
         mLowLevel = res.getInteger(
@@ -248,26 +258,46 @@ public class BatteryMeterView extends View implements DemoMode,
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        filter.addAction(ACTION_LEVEL_TEST);
-        final Intent sticky = getContext().registerReceiver(mTracker, filter);
-        if (sticky != null) {
-            // preload the battery level
-            mTracker.onReceive(getContext(), sticky);
-        }
-        mBatteryController.addStateChangedCallback(this);
         mAttached = true;
+        if (!mIsOnExpandedBar) {
+            setListening(true);
+        }
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
+        if (!mIsOnExpandedBar) {
+            setListening(false);
+        }
         mAttached = false;
-        getContext().unregisterReceiver(mTracker);
-        mBatteryController.removeStateChangedCallback(this);
+    }
+
+    public void setListening(boolean listening) {
+        if (listening) {
+            if (!mReceiverRegistered) {
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+                filter.addAction(ACTION_LEVEL_TEST);
+                final Intent sticky = getContext().registerReceiver(mTracker, filter);
+                mReceiverRegistered = true;
+                if (sticky != null) {
+                    // preload the battery level
+                    mTracker.onReceive(getContext(), sticky);
+                }
+            }
+            if (mBatteryController != null) {
+                mBatteryController.addStateChangedCallback(this);
+            }
+        } else {
+            if (mReceiverRegistered) {
+                getContext().unregisterReceiver(mTracker);
+                mReceiverRegistered = false;
+            }
+            if (mBatteryController != null) {
+                mBatteryController.removeStateChangedCallback(this);
+            }
+        }
     }
 
     @Override

@@ -107,7 +107,6 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
-import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.GreetingTextHelper;
 
@@ -124,12 +123,10 @@ import com.android.systemui.EventLogTags;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
-import com.android.systemui.darkkat.QuickAccess.QuickAccessBar;
-import com.android.systemui.darkkat.weather.WeatherBarContainer;
+import com.android.systemui.darkkat.statusBarExpanded.BarsController;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
-import com.android.systemui.qs.QSPanel;
 import com.android.systemui.recents.ScreenPinningRequest;
 import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.statusbar.ActivatableNotificationView;
@@ -299,7 +296,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardMonitor mKeyguardMonitor;
     AccessibilityController mAccessibilityController;
     FingerprintUnlockController mFingerprintUnlockController;
-    WeatherControllerImpl mWeatherController;
 
     int mNaturalBarHeight = -1;
 
@@ -325,11 +321,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
     View mExpandedContents;
     TextView mNotificationPanelDebugText;
-
-    // settings
-    private QuickAccessBar mQuickAccessBar;
-    private WeatherBarContainer mWeatherBarContainer;
-    private QSPanel mQSPanel;
 
     // top bar
     StatusBarHeaderView mHeader;
@@ -1202,41 +1193,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (ViewStub) mStatusBarWindow.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
-
-        // Set up the quick settings tile panel
-        mQSPanel = (QSPanel) mStatusBarWindow.findViewById(R.id.quick_settings_panel);
-        if (mQSPanel != null) {
-            final QSTileHost qsh = new QSTileHost(mContext, this,
-                    mBluetoothController, mLocationController, mRotationLockController,
-                    mNetworkController, mZenModeController, mHotspotController,
-                    mCastController, mFlashlightController,
-                    mUserSwitcherController, mKeyguardMonitor,
-                    mSecurityController);
-            mQSPanel.setHost(qsh);
-//            mQSPanel.setTiles(qsh.getTiles());
-            mHeader.setQSPanel(mQSPanel);
-//            qsh.setCallback(new QSTileHost.Callback() {
-//                @Override
-//                public void onTilesChanged() {
-//                    mQSPanel.setTiles(qsh.getTiles());
-//                }
-//            });
-        }
-
-        // Set up the quick access bar
-        mQuickAccessBar = (QuickAccessBar) mStatusBarWindow.findViewById(R.id.quick_access_bar);
-        if (mQuickAccessBar != null) {
-            mQuickAccessBar.setUp(this, mBluetoothController, mNetworkController, mRotationLockController,
-                    mLocationController, mHotspotController, mFlashlightController);
-        }
-
-        mWeatherController = new WeatherControllerImpl(mContext);
-
-        // Set up the weather panel
-        mWeatherBarContainer = (WeatherBarContainer) mStatusBarWindow.findViewById(R.id.status_bar_expanded_weather_bar_container);
-        if (mWeatherBarContainer != null) {
-            mWeatherBarContainer.setUp(this, mWeatherController);
-        }
+        // Set up the expanded panel bars controller
+        final View barsContainer = mStatusBarWindow.findViewById(R.id.status_bar_expanded_bars_container);
+        BarsController barsController = new BarsController(mContext, barsContainer);
+        barsController.setUp(this, mBluetoothController, mNetworkController, mRotationLockController, mLocationController,
+                mHotspotController, mFlashlightController, mBatteryController);
+        mNotificationPanel.setBarsController(barsController);
 
         // User info. Trigger first load.
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
@@ -3841,11 +3803,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * meantime, just update the things that we know change.
      */
     void updateResources() {
-        // Update the quick setting tiles
-        if (mQSPanel != null) {
-            mQSPanel.updateResources();
-        }
-
         loadDimens();
 
         if (mNotificationPanel != null) {
@@ -4094,9 +4051,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNetworkController.removeSignalCallback(signalCluster);
         mNetworkController.removeSignalCallback(signalClusterKeyguard);
         mNetworkController.removeSignalCallback(signalClusterQs);
-        if (mQSPanel != null && mQSPanel.getHost() != null) {
-            mQSPanel.getHost().destroy();
-        }
     }
 
     private boolean mDemoModeAllowed;
@@ -4347,11 +4301,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         updateKeyguardState(staying, false /* fromShadeLocked */);
 
-        // Keyguard state has changed, but QS is not listening anymore. Make sure to update the tile
-        // visibilities so next time we open the panel we know the correct height already.
-        if (mQSPanel != null) {
-            mQSPanel.refreshAllTiles();
-        }
         mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
         releaseGestureWakeLock();
         mNotificationPanel.onAffordanceLaunchEnded();

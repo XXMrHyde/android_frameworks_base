@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2015 DarkKat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
+        android:id="@+id/status_bar_expanded_bars_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <Space
+        android:id="@+id/expanded_bars_space_quick_access_bar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <HorizontalScrollView
+            android:id="@+id/expanded_bars_quick_access_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/expanded_bars_padding_left_right"
+            android:paddingRight="@dimen/expanded_bars_padding_left_right"
+            android:fadingEdgeLength="@dimen/quick_access_bar_fading_edge_length"
+            android:requiresFadingEdge="horizontal"
+            android:scrollbars="none"
+            android:fillViewport="true"
+            android:background="@drawable/expanded_bars_background"
+            android:elevation="@dimen/expanded_bars_elevation">
+
+        <LinearLayout
+            android:id="@+id/quick_access_bar_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar
+                    android:id="@+id/quick_access_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <Space
+        android:id="@+id/expanded_bars_space_brightness"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <com.android.systemui.darkkat.statusBarExpanded.bars.BrightnessSliderBar
+        xmlns:systemui="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/expanded_bars_brightness_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/expanded_bars_padding_left_right"
+        android:paddingRight="@dimen/expanded_bars_padding_left_right"
+        android:background="@drawable/expanded_bars_background"
+        android:elevation="@dimen/expanded_bars_elevation">
+
+        <ImageView
+            android:id="@+id/brightness_bar_mode_icon"
+            android:layout_width="@dimen/expanded_bars_icon_size"
+            android:layout_height="@dimen/expanded_bars_icon_size"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/expanded_bars_icon_padding"
+            android:src="@drawable/ic_qs_brightness_auto_off"
+            android:scaleType="centerInside"
+            android:background="@drawable/ripple_drawable_oval" />
+
+        <com.android.systemui.settings.ToggleSlider
+            android:id="@+id/brightness_bar_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:contentDescription="@string/accessibility_brightness"
+            android:importantForAccessibility="no"
+            systemui:text="@string/status_bar_settings_auto_brightness_label"
+            systemui:isOnExpandedBar="true" />
+
+    </com.android.systemui.darkkat.statusBarExpanded.bars.BrightnessSliderBar>
+
+    <Space
+        android:id="@+id/expanded_bars_space_wifi"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <com.android.systemui.darkkat.statusBarExpanded.bars.WifiBar
+            android:id="@+id/expanded_bars_wifi_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/expanded_bars_padding_left_right"
+            android:paddingRight="@dimen/expanded_bars_padding_left_right"
+            android:background="@drawable/expanded_bars_background"
+            android:gravity="center_vertical"
+            android:elevation="@dimen/expanded_bars_elevation">
+
+        <ImageView
+                android:id="@+id/wifi_bar_strength_icon"
+                android:layout_width="@dimen/expanded_bars_icon_size"
+                android:layout_height="@dimen/expanded_bars_icon_size"
+                android:padding="@dimen/expanded_bars_icon_padding"
+                android:scaleType="centerInside" />
+
+        <LinearLayout
+                android:id="@+id/wifi_bar_text_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/expanded_bars_text_padding_left_right"
+                android:paddingRight="@dimen/expanded_bars_text_padding_left_right"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/wifi_bar_primary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_primary_text_size"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+            <TextView
+                    android:id="@+id/wifi_bar_secondary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_secondary_text_size"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+        </LinearLayout>
+    </com.android.systemui.darkkat.statusBarExpanded.bars.WifiBar>
+
+    <Space
+        android:id="@+id/expanded_bars_space_mobile"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <com.android.systemui.darkkat.statusBarExpanded.bars.MobileBar
+            android:id="@+id/expanded_bars_mobile_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/expanded_bars_padding_left_right"
+            android:paddingRight="@dimen/expanded_bars_padding_left_right"
+            android:background="@drawable/expanded_bars_background"
+            android:gravity="center_vertical"
+            android:elevation="@dimen/expanded_bars_elevation">
+
+        <ImageView
+                android:id="@+id/mobile_bar_strength_icon"
+                android:layout_width="@dimen/expanded_bars_icon_size"
+                android:layout_height="@dimen/expanded_bars_icon_size"
+                android:padding="@dimen/expanded_bars_icon_padding"
+                android:scaleType="centerInside" />
+
+        <LinearLayout
+                android:id="@+id/mobile_bar_text_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/expanded_bars_text_padding_left_right"
+                android:paddingRight="@dimen/expanded_bars_text_padding_left_right"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/mobile_bar_primary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_primary_text_size"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+            <TextView
+                    android:id="@+id/mobile_bar_secondary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_secondary_text_size"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+        </LinearLayout>
+    </com.android.systemui.darkkat.statusBarExpanded.bars.MobileBar>
+
+    <Space
+        android:id="@+id/expanded_bars_space_battery"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <com.android.systemui.darkkat.statusBarExpanded.bars.BatteryStatusBar
+            android:id="@+id/expanded_bars_battery_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/expanded_bars_background"
+            android:elevation="@dimen/expanded_bars_elevation">
+
+        <FrameLayout
+                android:id="@+id/battery_status_bar_icon_layout"
+                android:layout_width="@dimen/expanded_bars_icon_size"
+                android:layout_height="@dimen/expanded_bars_icon_size"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/battery_status_bar_icon_frame_margin_left"
+                android:padding="@dimen/expanded_bars_icon_padding">
+
+            <com.android.systemui.BatteryMeterView
+                    android:id="@+id/battery_status_bar_icon"
+                    android:layout_height="@dimen/battery_status_bar_icon_base_height"
+                    android:layout_width="@dimen/battery_status_bar_icon_base_width"
+                    android:layout_gravity="center"
+                    systemui:isOnExpandedBar="true" />
+
+        </FrameLayout>
+
+        <LinearLayout
+                android:id="@+id/battery_status_bar_text_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/battery_status_bar_icon_layout"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/expanded_bars_text_padding_left_right"
+                android:paddingRight="@dimen/expanded_bars_text_padding_left_right"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/battery_status_bar_primary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_primary_text_size"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+            <TextView
+                    android:id="@+id/battery_status_bar_secondary_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/expanded_bars_secondary_text_size"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+        </LinearLayout>
+
+        <com.android.systemui.statusbar.policy.BatteryBar
+                android:id="@+id/battery_status_bar_battery_bar"
+                style="@style/BatteryBarStyle.BatteryStatusBar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/battery_status_bar_battery_bar_height"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+    </com.android.systemui.darkkat.statusBarExpanded.bars.BatteryStatusBar>
+
+    <Space
+        android:id="@+id/expanded_bars_space_weather"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/expanded_bars_space_height" />
+
+    <com.android.systemui.darkkat.statusBarExpanded.bars.WeatherBarContainer
+            android:id="@+id/expanded_bars_weather_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/expanded_bars_padding_left_right"
+            android:paddingRight="@dimen/expanded_bars_padding_left_right"
+            android:background="@drawable/expanded_bars_background"
+            android:elevation="@dimen/expanded_bars_elevation">
+
+        <TextView
+                android:id="@+id/weather_bar_no_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/weather_info_not_available"
+                android:textSize="@dimen/weather_bar_no_weather_text_size"
+                android:textColor="?android:attr/textColorPrimary" />
+
+        <LinearLayout
+                android:id="@+id/status_bar_expanded_weather_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/weather_bar_padding_top_bottom"
+                android:paddingBottom="@dimen/weather_bar_padding_top_bottom"
+                android:gravity="center_vertical" />
+
+    </com.android.systemui.darkkat.statusBarExpanded.bars.WeatherBarContainer>
+</LinearLayout>

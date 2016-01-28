@@ -3798,7 +3798,7 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_SHOW_QAB = "status_bar_expanded_show_qab";
 
         /**
-         * Whether to show the brightness slider in the expanded panel
+         * Whether to show the brightness slider bar in the expanded panel
          *
          * @hide
          */
@@ -3811,11 +3811,90 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_QAB_BUTTONS = "status_bar_expanded_qab_buttons";
 
         /**
-         * Whether to show the weather in the expanded panel
+         * Whether to show the wifi network bar in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_WIFI_BAR = "status_bar_expanded_show_wifi_bar";
+
+        /**
+         * Whether to show the mobile network bar in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_MOBILE_BAR = "status_bar_expanded_show_mobile_bar";
+
+        /**
+         * Whether to show the battery status bar in the expanded panel
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SHOW_BATTERY_STATUS_BAR = "status_bar_expanded_show_battery_status_bar";
+
+        /**
+         * Whether to show the weather bar in the expanded panel
          *
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_SHOW_WEATHER = "status_bar_expanded_show_weather";
+
+        /**
+         * Icon of the battery in the expanded panel
+         * 0 - Battery portrait
+         * 1 - Battery landscape
+         * 2 - Circle
+         * 3 - Hidden
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_ICON_INDICATOR = "status_bar_expanded_bars_battery_icon_indicator";
+
+        /**
+         *  Whether to show the battery status text in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_SHOW_TEXT = "status_bar_expanded_bars_battery_show_text";
+
+        /**
+         * Dot interval of the battery circle icon in the expanded panel
+         * 0 - No dots
+         * 1 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_CIRCLE_DOT_INTERVAL = "status_bar_expanded_bars_battery_circle_dot_interval";
+
+        /**
+         * Dot length of the battery circle icon in the expanded panel
+         * 0 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_CIRCLE_DOT_LENGTH = "status_bar_expanded_bars_battery_circle_dot_length";
+
+        /**
+         *  Whether to show a battery charging animation in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_SHOW_CHARGE_ANIMATION = "status_bar_expanded_bars_battery_show_charge_animation";
+
+        /**
+         *  Whether to cut the battery percentage out of the battery status icon in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_CUT_OUT_TEXT = "status_bar_expanded_bars_battery_cut_out_text";
+
+        /**
+         *  Whether to cut the battery percentage out of the battery status icon in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_SHOW_BATTERY_BAR = "status_bar_expanded_bars_battery_show_battery_bar";
+
+        /**
+         * Color of the battery status text in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_BATTERY_TEXT_COLOR = "status_bar_expanded_bars_battery_text_color";
 
         /**
          * Whether to show the current weather informations in the expanded panel too
@@ -3835,7 +3914,7 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE = "status_bar_expanded_weather_icon_type";
 
         /**
-         * Color of the  in the expanded panel background
+         * Color of the background in the expanded panel background
          * @hide
          */
         public static final String STATUS_BAR_EXPANDED_BACKGROUND_COLOR = "status_bar_expanded_background_color";

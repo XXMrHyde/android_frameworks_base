@@ -24,6 +24,7 @@
     </declare-styleable>
     <declare-styleable name="ToggleSlider">
         <attr name="text" format="string" />
+        <attr name="isOnExpandedBar" format="boolean" />
     </declare-styleable>
     <declare-styleable name="NotificationLinearLayout">
         <attr name="insetLeft" format="dimension" />
@@ -43,6 +44,7 @@
     </declare-styleable>
     <declare-styleable name="BatteryMeterView">
         <attr name="frameColor" format="color" />
+        <attr name="isOnExpandedBar" />
     </declare-styleable>
     <declare-styleable name="Clock">
         <attr name="amPmStyle" format="enum">

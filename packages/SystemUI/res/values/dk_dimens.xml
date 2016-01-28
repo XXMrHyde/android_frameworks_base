@@ -15,6 +15,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- Status bar -->
+
     <!-- Network traffic single-line text size -->
     <dimen name="network_traffic_single_text_size">12sp</dimen>
 
@@ -24,21 +26,65 @@
     <!-- Network traffic text end padding, (if no activity icon is shown) -->
     <dimen name="network_traffic_text_end_padding">3dp</dimen>
 
+    <!-- Status bar expanded header-->
+
     <!-- End margin for the Settings button container in the status bar header  -->
     <dimen name="settings_botton_container_margin_end">16dp</dimen>
 
-    <!-- Top padding of the Quick settings container -->
-    <dimen name="qs_container_padding_top">4dp</dimen>
+    <!-- Status bar expanded bars (general) -->
 
-    <!-- Left and right padding of the Quick settings container content -->
-    <dimen name="qs_container_content_padding_left_right">16dp</dimen>
+    <!-- Height of the space to the top of expanded bars  -->
+    <dimen name="expanded_bars_space_height">4dp</dimen>
 
-    <!-- Top margin of the Quick settings container content -->
-    <dimen name="qs_container_content_margin_top">4dp</dimen>
+    <!-- Left and right padding of the expanded bars -->
+    <dimen name="expanded_bars_padding_left_right">16dp</dimen>
 
-    <!-- Size of the Quick access bar buttons -->
-    <dimen name="qab_button_size">64dp</dimen>
+    <!-- Elevation of expanded bars  -->
+    <dimen name="expanded_bars_elevation">2dp</dimen>
+
+    <!-- Width and height of the icon views on the expanded bars -->
+    <dimen name="expanded_bars_icon_size">56dp</dimen>
+
+    <!-- Padding of the icon views on the expanded bars -->
+    <dimen name="expanded_bars_icon_padding">10dp</dimen>
+
+    <!-- Left and right padding of the  text on the expanded bars -->
+    <dimen name="expanded_bars_text_padding_left_right">@dimen/expanded_bars_padding_left_right</dimen>
+
+    <!-- Text size of the primary text on the expanded bars -->
+    <dimen name="expanded_bars_primary_text_size">14sp</dimen>
+
+    <!-- Text size of the secondary text on the expanded bars -->
+    <dimen name="expanded_bars_secondary_text_size">12sp</dimen>
+
+    <!-- Quick access bar -->
+
+    <!-- Fading edge length of the quick access bar -->
+    <dimen name="quick_access_bar_fading_edge_length">10dp</dimen>
+
+    <!-- Brightness slider bar -->
+
+    <!-- left padding of the toggle slider on the brightness slider bar -->
+    <dimen name="brightness_slider_bar_toggle_slider_left_padding">@dimen/expanded_bars_padding_left_right</dimen>
+
+    <!-- battery status bar -->
+
+    <!-- Width and height of the default battery icon on the battery status bar -->
+    <dimen name="battery_status_bar_icon_base_height">30dp</dimen>
+    <dimen name="battery_status_bar_icon_base_width">22dp</dimen>
+
+    <!-- Left margin of the battery icon frame on the battery status bar -->
+    <dimen name="battery_status_bar_icon_frame_margin_left">@dimen/expanded_bars_padding_left_right</dimen>
+
+    <!-- Height of the battery bar on the battery status bar -->
+    <dimen name="battery_status_bar_battery_bar_height">2dp</dimen>
+
+    <!-- Weather bar -->
+
+    <!-- Text size of the no weather info on the weather bar -->
+    <dimen name="weather_bar_no_weather_text_size">16sp</dimen>
 
     <!-- Top and bottom padding of the weather bar -->
     <dimen name="weather_bar_padding_top_bottom">12dp</dimen>
+
 </resources>

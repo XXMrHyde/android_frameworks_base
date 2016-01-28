@@ -72,11 +72,19 @@ public class ToggleSlider extends RelativeLayout {
         final TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.ToggleSlider, defStyle, 0);
 
+        final boolean isOnExpandedBar = a.getBoolean(R.styleable.ToggleSlider_isOnExpandedBar, false);
+
         mToggle = (CompoundButton) findViewById(R.id.toggle);
         mToggle.setOnCheckedChangeListener(mCheckListener);
 
         mSlider = (ToggleSeekBar) findViewById(R.id.slider);
         mSlider.setOnSeekBarChangeListener(mSeekListener);
+
+        if (isOnExpandedBar) {
+            final int leftPadding = context.getResources().getDimensionPixelSize(
+                    R.dimen.brightness_slider_bar_toggle_slider_left_padding);
+            mSlider.setPadding(leftPadding, 0, 0, 0);
+        }
 
         mLabel = (TextView) findViewById(R.id.label);
         mLabel.setText(a.getString(R.styleable.ToggleSlider_text));
@@ -133,20 +141,21 @@ public class ToggleSlider extends RelativeLayout {
         }
     }
 
-    public void setColors() {
+    public void setIconColor() {
         final int iconColor = SBEPanelColorHelper.getIconColor(mContext);
         final int progressBarColor = 0xff009688; // Material deep teal 500
         final int progressBarBgColor = (179 << 24) | (iconColor & 0x00ffffff); // Icon color with a transparency of 70%
-        final int rippleColor = SBEPanelColorHelper.getRippleColor(mContext);
-        RippleDrawable rd =
-                (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless).mutate();
-
         mSlider.setThumbTintMode(Mode.MULTIPLY);
         mSlider.setThumbTintList(ColorStateList.valueOf(iconColor));
         mSlider.setProgressTintList(ColorStateList.valueOf(progressBarColor));
         mSlider.setProgressBackgroundTintList(
                 ColorStateList.valueOf(progressBarBgColor));
-        rd.setColor(ColorStateList.valueOf(rippleColor));
+    }
+
+    public void setRippleColor(int color) {
+        RippleDrawable rd =
+                (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless).mutate();
+        rd.setColor(ColorStateList.valueOf(color));
         mSlider.setBackground(rd);
     }
 

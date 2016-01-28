@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.darkkat.QuickAccess;
+package com.android.systemui.darkkat.statusBarExpanded.bars;
 
 import android.content.Context;
 import android.content.Intent;
@@ -38,17 +38,17 @@ import com.android.internal.util.darkkat.SBEPanelColorHelper;
 import com.android.internal.util.slim.ActionConfig;
 
 import com.android.systemui.R;
-import com.android.systemui.darkkat.QuickAccess.buttons.AirplaneModeButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.BluetoothButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.ColorInversionButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.DataButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.HotspotButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.LocationButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.NfcButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.QabButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.RotationLockButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.TorchButton;
-import com.android.systemui.darkkat.QuickAccess.buttons.WifiButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.AirplaneModeButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.BluetoothButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.ColorInversionButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.DataButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.HotspotButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.LocationButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.NfcButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.QabButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.RotationLockButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.TorchButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.WifiButton;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.FlashlightController;
@@ -85,10 +85,6 @@ public class QuickAccessBar extends LinearLayout {
         mHandler = new Handler();
         mSettingsObserver = new SettingsObserver(mHandler);
         mButtons = new ArrayList<QabButton>();
-
-        boolean showBar = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_EXPANDED_SHOW_QAB, 1) == 1;
-        setVisibility(showBar ? View.INVISIBLE : View.GONE);
     }
 
     public void setUp(PhoneStatusBar statusBar, BluetoothController bluetooth, NetworkController network,
@@ -184,11 +180,13 @@ public class QuickAccessBar extends LinearLayout {
                     mContext.getResources().getDrawable(R.drawable.ic_qs_button_wifi_off));
         }
 
-        int dimens = mContext.getResources().getDimensionPixelSize(R.dimen.qab_button_size);
+        int dimens = mContext.getResources().getDimensionPixelSize(R.dimen.expanded_bars_icon_size);
+        int padding = mContext.getResources().getDimensionPixelSize(R.dimen.expanded_bars_icon_padding);
         LinearLayout.LayoutParams lp =
                 new LinearLayout.LayoutParams(dimens, dimens);
         button.setLayoutParams(lp);
-        button.setScaleType(ImageView.ScaleType.CENTER);
+        button.setPadding(padding, padding, padding, padding);
+        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         button.setClickable(true);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
