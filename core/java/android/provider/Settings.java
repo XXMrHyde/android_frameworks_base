@@ -3324,6 +3324,24 @@ public final class Settings {
         public static final String STATUS_BAR_DOUBLE_TAP_TO_SLEEP = "status_bar_double_tap_sleep";
 
         /**
+         *  Color of the user - and multi user switch icon on the status bar (lock screen)
+         * @hide
+         */
+        public static final String STATUS_BAR_MULTI_USER_SWITCH_ICON_COLOR = "status_bar_multi_user_switch_icon_color";
+
+        /**
+         *  Color of the multi user switch active text and symbol frame on the status bar (lock screen)
+         * @hide
+         */
+        public static final String STATUS_BAR_MULTI_USER_SWITCH_ACTIVE_TEXT_COLOR = "status_bar_multi_user_switch_active_text_color";
+
+        /**
+         *  Color of the multi user switch inactive text on the status bar (lock screen)
+         * @hide
+         */
+        public static final String STATUS_BAR_MULTI_USER_SWITCH_INACTIVE_TEXT_COLOR = "status_bar_multi_user_switch_inactive_text_color";
+
+        /**
          *  Whether to show a greeting on the status bar after unlocking the device
          * @hide
          */

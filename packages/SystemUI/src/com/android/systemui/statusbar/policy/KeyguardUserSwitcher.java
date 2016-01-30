@@ -30,6 +30,8 @@ import android.view.ViewStub;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
+import com.android.internal.util.darkkat.StatusBarColorHelper;
+
 import com.android.settingslib.animation.AppearAnimationUtils;
 import com.android.systemui.R;
 import com.android.systemui.qs.tiles.UserDetailItemView;
@@ -256,9 +258,13 @@ public class KeyguardUserSwitcher {
             String name = getName(mContext, item);
             if (item.picture == null) {
                 v.bind(name, getDrawable(mContext, item));
+                if (item.isAddUser || item.isGuest) {
+                    v.setAvatarIconColor(StatusBarColorHelper.getUserIconColor(mContext));
+                }
             } else {
                 v.bind(name, item.picture);
             }
+            v.setNameTextColor(StatusBarColorHelper.getUserTextColors(mContext));
             convertView.setActivated(item.isCurrent);
             convertView.setTag(item);
             return convertView;

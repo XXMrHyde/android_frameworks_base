@@ -22,6 +22,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.UserAvatarView;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -128,5 +129,15 @@ public class UserDetailItemView extends LinearLayout {
     @Override
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+    public void setAvatarIconColor(int color) {
+        mAvatar.setDrawableColor(color);
+    }
+
+    public void setNameTextColor(ColorStateList colors) {
+        mName.setTextColor(colors);
+        final int activeFrameColor = colors.getColors()[0];
+        mAvatar.setActiveFrameColor(activeFrameColor);
     }
 }
