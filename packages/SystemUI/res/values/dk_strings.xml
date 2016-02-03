@@ -25,6 +25,17 @@
     <string name="status_bar_icons_visibility">Show/hide</string>
     <string name="qs_tiles_arrengment">Tile arrengment</string>
 
+    <!-- Network traffic -->
+    <string name="network_traffic_no_traffic">0</string>
+
+    <!-- Network traffic units -->
+    <string name="network_traffic_unit_bits_per_second">bit/s</string>
+    <string name="network_traffic_unit_kilo_bits_per_second">Kbit/s</string>
+    <string name="network_traffic_unit_mega_bits_per_second">Mbit/s</string>
+    <string name="network_traffic_unit_bytes_per_second">B/s</string>
+    <string name="network_traffic_unit_kilo_bytes_per_second">KB/s</string>
+    <string name="network_traffic_unit_mega_bytes_per_second">MB/s</string>
+
     <!-- Weather panel -->
     <string name="weather_info_not_available">Weather informations not available</string>
 </resources>

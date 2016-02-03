@@ -123,6 +123,7 @@ import com.android.systemui.EventLogTags;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
+import com.android.systemui.darkkat.NetworkTrafficControllerImpl;
 import com.android.systemui.darkkat.statusBarExpanded.BarsController;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -296,6 +297,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardMonitor mKeyguardMonitor;
     AccessibilityController mAccessibilityController;
     FingerprintUnlockController mFingerprintUnlockController;
+
+    NetworkTrafficControllerImpl mNetworkTrafficController;
 
     int mNaturalBarHeight = -1;
 
@@ -1193,11 +1196,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (ViewStub) mStatusBarWindow.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
+        mNetworkTrafficController = new NetworkTrafficControllerImpl(mContext);
+
         // Set up the expanded panel bars controller
         final View barsContainer = mStatusBarWindow.findViewById(R.id.status_bar_expanded_bars_container);
         BarsController barsController = new BarsController(mContext, barsContainer);
-        barsController.setUp(this, mBluetoothController, mNetworkController, mRotationLockController, mLocationController,
-                mHotspotController, mFlashlightController, mBatteryController);
+        barsController.setUp(this, mBluetoothController, mNetworkController, mNetworkTrafficController,
+                mRotationLockController, mLocationController, mHotspotController, mFlashlightController,
+                mBatteryController);
         mNotificationPanel.setBarsController(barsController);
 
         // User info. Trigger first load.
@@ -3681,6 +3687,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (mIconController != null) {
                     mIconController.resetHideGreeting();
                 }
+                if (mNetworkTrafficController != null) {
+                    mNetworkTrafficController.setScreenState(mScreenOn);
+                }
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOff();
                 finishBarAnimations();
@@ -3688,6 +3697,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;
+                if (mNetworkTrafficController != null) {
+                    mNetworkTrafficController.setScreenState(mScreenOn);
+                }
                 notifyNavigationBarScreenOn(true);
             }
             else if (action.equals("com.android.settings.SHOW_GREETING_PREVIEW")) {

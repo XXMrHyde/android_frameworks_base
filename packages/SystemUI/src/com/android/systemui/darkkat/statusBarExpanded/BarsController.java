@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
+import com.android.systemui.darkkat.NetworkTrafficController;
 import com.android.systemui.darkkat.statusBarExpanded.bars.BatteryStatusBar;
 import com.android.systemui.darkkat.statusBarExpanded.bars.BrightnessSliderBar;
 import com.android.systemui.darkkat.statusBarExpanded.bars.MobileBar;
@@ -125,15 +126,19 @@ public class BarsController {
     }
 
     public void setUp(PhoneStatusBar statusBar, BluetoothController bluetooth, NetworkController network,
-            RotationLockController rotationLock, LocationController location, HotspotController hotspot,
-                FlashlightController flashlight, BatteryController battery) {
+            NetworkTrafficController networkTraffic, RotationLockController rotationLock,
+            LocationController location, HotspotController hotspot, FlashlightController flashlight,
+            BatteryController battery) {
         mQuickAccessBar.setUp(statusBar, bluetooth, network, rotationLock, location, hotspot, flashlight);
         mWifiBar.setNetworkController(network);
+        mWifiBar.setNetworkTrafficController(networkTraffic);
         mMobileBar.setNetworkController(network);
+        mMobileBar.setNetworkTrafficController(networkTraffic);
         mBatteryStatusBar.setBatteryController(battery);
         mWeatherBarContainer.setStatusBar(statusBar);
 
         applyVisibilitySettings();
+        mobileWifiBarSetBitByte();
         applyAdvancedBatteryStatusSettings();
         applyColors();
     }
@@ -268,6 +273,13 @@ public class BarsController {
                 Settings.System.STATUS_BAR_EXPANDED_BARS_BATTERY_SHOW_BATTERY_BAR, 0) == 1;
         mBatteryBar.setVisibility(mShowBatteryStatusBar && mShowBatteryBar
                 ? View.INVISIBLE : View.GONE);
+    }
+
+    private void mobileWifiBarSetBitByte() {
+        final int bitByte = Settings.System.getInt(mResolver,
+                Settings.System.STATUS_BAR_EXPANDED_BARS_TRAFFIC_BIT_BYTE, 1);
+        mWifiBar.setBitByte(bitByte);
+        mMobileBar.setBitByte(bitByte);
     }
 
     private void batteryStatusSetIconTextColor() {
@@ -420,6 +432,9 @@ public class BarsController {
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE),
                     false, this);
             mResolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_BARS_TRAFFIC_BIT_BYTE),
+                    false, this);
+            mResolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR),
                     false, this);
             mResolver.registerContentObserver(Settings.System.getUriFor(
@@ -485,6 +500,9 @@ public class BarsController {
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE))) {
                 weatherupdateItems();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_EXPANDED_BARS_TRAFFIC_BIT_BYTE))) {
+                mobileWifiBarSetBitByte();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_EXPANDED_BACKGROUND_COLOR))) {
                 setBackgroundColor();

@@ -30,6 +30,8 @@ import android.widget.TextView;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
 import com.android.systemui.R;
+import com.android.systemui.darkkat.NetworkTrafficController;
+import com.android.systemui.darkkat.statusBarExpanded.bars.BarNetworkTraffic;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.IconState;
 import com.android.systemui.statusbar.policy.SignalCallbackAdapter;
@@ -45,10 +47,12 @@ public class WifiBar extends LinearLayout {
     private ImageView mStrengthIcon;
     private TextView mPrimaryText;
     private TextView mSecondaryText;
+    private BarNetworkTraffic mNetworkTraffic;
 
     private boolean mWifiEnabled = false;
     private boolean mWifiConnected = false;
     private boolean mIsAirPlaneMode = false;
+    private boolean mListening = false;
 
     public WifiBar(Context context) {
         this(context, null);
@@ -67,17 +71,24 @@ public class WifiBar extends LinearLayout {
         mStrengthIcon = (ImageView) findViewById(R.id.wifi_bar_strength_icon);
         mPrimaryText = (TextView) findViewById(R.id.wifi_bar_primary_text);
         mSecondaryText = (TextView) findViewById(R.id.wifi_bar_secondary_text);
+        mNetworkTraffic = (BarNetworkTraffic) findViewById(R.id.expanded_bars_network_traffic_container);
     }
 
     public void setNetworkController(NetworkController nc) {
         mNetworkController = nc;
     }
 
+    public void setNetworkTrafficController(NetworkTrafficController ntc) {
+        mNetworkTraffic.setNetworkTrafficController(ntc);
+    }
+
     public void setListening(boolean listening) {
-        if (mNetworkController == null) {
+        mNetworkTraffic.setListening(listening && mWifiConnected);
+        if (mNetworkController == null || mListening == listening) {
             return;
         }
-        if (listening) {
+        mListening = listening;
+        if (mListening) {
             mNetworkController.addSignalCallback(mWifiSignalCallback);
         } else {
             mNetworkController.removeSignalCallback(mWifiSignalCallback);
@@ -114,9 +125,14 @@ public class WifiBar extends LinearLayout {
         mSecondaryText.setText(linkSpeed);
     }
 
+    public void setBitByte(int bitByte) {
+        mNetworkTraffic.setBitByte(bitByte);
+    }
+
     public void setIconColor() {
         final int iconColor =  SBEPanelColorHelper.getIconColor(mContext);
         mStrengthIcon.setImageTintList(ColorStateList.valueOf(iconColor));
+        mNetworkTraffic.setIconColor(iconColor);
     }
 
     public void setTextColor() {
@@ -124,6 +140,7 @@ public class WifiBar extends LinearLayout {
         final int textColorSecondary = (179 << 24) | (textColorPrimary & 0x00ffffff);
         mPrimaryText.setTextColor(textColorPrimary);
         mSecondaryText.setTextColor(textColorSecondary);
+        mNetworkTraffic.setTextColors(textColorPrimary, textColorSecondary);
     }
 
     private static String removeDoubleQuotes(String string) {
@@ -144,6 +161,7 @@ public class WifiBar extends LinearLayout {
             final int strengthIconId = qsIcon.icon;
             mStrengthIcon.setImageResource(strengthIconId);
             updateWifiText(description);
+            mNetworkTraffic.setListening(mListening && mWifiConnected);
         }
 
         @Override

@@ -67,6 +67,14 @@
     <!-- left padding of the toggle slider on the brightness slider bar -->
     <dimen name="brightness_slider_bar_toggle_slider_left_padding">@dimen/expanded_bars_padding_left_right</dimen>
 
+    <!-- Network traffic -->
+
+    <!-- Traffic icon top padding on the mobile- and wifi bar -->
+    <dimen name="bars_network_traffic_icon_padding_top">5dp</dimen>
+
+    <!-- Traffic icon and value text right padding on the mobile- and wifi bar -->
+    <dimen name="bars_network_traffic_icon_text_padding_right">3dp</dimen>
+
     <!-- battery status bar -->
 
     <!-- Width and height of the default battery icon on the battery status bar -->

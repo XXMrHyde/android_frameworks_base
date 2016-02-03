@@ -27,6 +27,8 @@ import android.widget.TextView;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
 import com.android.systemui.R;
+import com.android.systemui.darkkat.NetworkTrafficController;
+import com.android.systemui.darkkat.statusBarExpanded.bars.BarNetworkTraffic;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.IconState;
 import com.android.systemui.statusbar.policy.SignalCallbackAdapter;
@@ -41,6 +43,7 @@ public class MobileBar extends LinearLayout {
     private ImageView mMobileStrengthIcon;
     private TextView mPrimaryText;
     private TextView mSecondaryText;
+    private BarNetworkTraffic mNetworkTraffic;
 
     private int mMobileStrengthIconId = 0;
     private String mDescription = null;
@@ -53,6 +56,7 @@ public class MobileBar extends LinearLayout {
     private boolean mIsAirPlaneMode = false;
     private boolean mIsNoSims = false;
     private boolean mWifiConnected = false;
+    private boolean mListening = false;
 
     public MobileBar(Context context) {
         this(context, null);
@@ -70,7 +74,7 @@ public class MobileBar extends LinearLayout {
         mMobileStrengthIcon = (ImageView) findViewById(R.id.mobile_bar_strength_icon);
         mPrimaryText = (TextView) findViewById(R.id.mobile_bar_primary_text);
         mSecondaryText = (TextView) findViewById(R.id.mobile_bar_secondary_text);
-
+        mNetworkTraffic = (BarNetworkTraffic) findViewById(R.id.expanded_bars_network_traffic_container);
         mSeparator = getResources().getString(
                 com.android.internal.R.string.kg_text_message_separator);
     }
@@ -79,11 +83,17 @@ public class MobileBar extends LinearLayout {
         mNetworkController = nc;
     }
 
+    public void setNetworkTrafficController(NetworkTrafficController ntc) {
+        mNetworkTraffic.setNetworkTrafficController(ntc);
+    }
+
     public void setListening(boolean listening) {
-        if (mNetworkController == null) {
+        mNetworkTraffic.setListening(listening && !mWifiConnected && mMobileDataEnabled);
+        if (mNetworkController == null || mListening == listening) {
             return;
         }
-        if (listening) {
+        mListening = listening;
+        if (mListening) {
             mNetworkController.addSignalCallback(mMobileSignalCallback);
         } else {
             mNetworkController.removeSignalCallback(mMobileSignalCallback);
@@ -115,9 +125,14 @@ public class MobileBar extends LinearLayout {
         mSecondaryText.setText(mType);
     }
 
+    public void setBitByte(int bitByte) {
+        mNetworkTraffic.setBitByte(bitByte);
+    }
+
     public void setIconColor() {
         final int iconColor =  SBEPanelColorHelper.getIconColor(mContext);
         mMobileStrengthIcon.setImageTintList(ColorStateList.valueOf(iconColor));
+        mNetworkTraffic.setIconColor(iconColor);
     }
 
     public void setTextColor() {
@@ -125,6 +140,7 @@ public class MobileBar extends LinearLayout {
         final int textColorSecondary = (179 << 24) | (textColorPrimary & 0x00ffffff);
         mPrimaryText.setTextColor(textColorPrimary);
         mSecondaryText.setTextColor(textColorSecondary);
+        mNetworkTraffic.setTextColors(textColorPrimary, textColorSecondary);
     }
 
     public static String removeTrailingPeriod(String string) {
@@ -147,6 +163,7 @@ public class MobileBar extends LinearLayout {
                             + mContext.getResources().getString(R.string.accessibility_no_data);
                 }
             }
+            mNetworkTraffic.setListening(mListening && !mWifiConnected && mMobileDataEnabled);
             updateViews();
         }
 
@@ -170,6 +187,7 @@ public class MobileBar extends LinearLayout {
                             + mContext.getResources().getString(R.string.accessibility_no_data);
                 }
             }
+            mNetworkTraffic.setListening(mListening && !mWifiConnected && mMobileDataEnabled);
             updateViews();
         }
 

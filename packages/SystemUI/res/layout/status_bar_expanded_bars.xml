@@ -145,6 +145,19 @@
                     android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <include layout="@layout/expanded_bars_network_traffic" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
     </com.android.systemui.darkkat.statusBarExpanded.bars.WifiBar>
 
     <Space
@@ -192,6 +205,19 @@
                     android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <include layout="@layout/expanded_bars_network_traffic" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
     </com.android.systemui.darkkat.statusBarExpanded.bars.MobileBar>
 
     <Space

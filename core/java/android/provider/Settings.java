@@ -3932,6 +3932,12 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_WEATHER_ICON_TYPE = "status_bar_expanded_weather_icon_type";
 
         /**
+         * Whether to show network traffic bit values instead of byte values on the in the expanded panel
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_BARS_TRAFFIC_BIT_BYTE = "status_bar_expanded_bars_traffic_bit_byte";
+
+        /**
          * Color of the background in the expanded panel background
          * @hide
          */
