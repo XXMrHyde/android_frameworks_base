@@ -164,6 +164,7 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.LocationControllerImpl;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl;
+import com.android.systemui.statusbar.policy.NetworkTraffic;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.policy.RotationLockControllerImpl;
@@ -1197,6 +1198,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
         mNetworkTrafficController = new NetworkTrafficControllerImpl(mContext);
+
+        ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
+                .setNetworkTrafficController(mNetworkTrafficController);
 
         // Set up the expanded panel bars controller
         final View barsContainer = mStatusBarWindow.findViewById(R.id.status_bar_expanded_bars_container);

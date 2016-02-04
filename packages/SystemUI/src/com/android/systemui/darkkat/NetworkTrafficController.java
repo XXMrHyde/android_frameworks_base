@@ -19,6 +19,7 @@ package com.android.systemui.darkkat;
 public interface NetworkTrafficController {
     void addCallback(Callback callback);
     void removeCallback(Callback callback);
+    Traffic getTraffic();
 
     public interface Callback {
         void onNetworkTrafficChanged(Traffic traffic);

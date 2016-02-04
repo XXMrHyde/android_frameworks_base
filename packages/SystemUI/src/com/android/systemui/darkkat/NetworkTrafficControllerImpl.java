@@ -82,7 +82,7 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         mIntegerFormat = NumberFormat.getIntegerInstance();
 
         mCallbacks = new ArrayList<Callback>();
-        mTraffic = new Traffic();
+        mTraffic = getDefaultTraffic();
     }
 
     public void setScreenState(boolean on) {
@@ -132,6 +132,11 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         if (shouldStopTrafficUpdates()) {
             stopTrafficUpdates();
         }
+    }
+
+    @Override
+    public Traffic getTraffic() {
+        return mTraffic;
     }
 
     private boolean shouldStartTrafficUpdates() {
@@ -261,5 +266,29 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
                     : R.string.network_traffic_unit_bytes_per_second;
         }
         return resId > 0 ? mResources.getString(resId) : emptyString;
+    }
+
+    private Traffic getDefaultTraffic() {
+        Traffic traffic = new Traffic();
+
+        final String defaultValue =
+                mResources.getString(R.string.network_traffic_no_traffic);
+        final String defaultBitsUnit =
+                mResources.getString(R.string.network_traffic_unit_bits_per_second);
+        final String defaultBytesUnit =
+                mResources.getString(R.string.network_traffic_unit_bytes_per_second);
+
+        traffic.upBitsValue = defaultValue;
+        traffic.upBytesValue = defaultValue;
+        traffic.downBitsValue = defaultValue;
+        traffic.downBytesValue = defaultValue;
+        traffic.upBitsUnit = defaultBitsUnit;
+        traffic.upBytesUnit = defaultBytesUnit;
+        traffic.downBitsUnit = defaultBitsUnit;
+        traffic.downBytesUnit = defaultBytesUnit;
+        traffic.activityUp = false;
+        traffic.activityDown = false;
+
+        return traffic;
     }
 }

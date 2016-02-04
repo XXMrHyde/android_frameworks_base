@@ -1000,7 +1000,7 @@ public class StatusBarIconController implements Tunable {
     public void updateNetworkTrafficColors(boolean animate) {
         mNetworkTrafficTextColor = StatusBarColorHelper.getNetworkTrafficTextColor(mContext);
         mNetworkTrafficIconColor = StatusBarColorHelper.getNetworkTrafficIconColor(mContext);
-        if (animate && mNetworkTraffic.isUpdating()) {
+        if (animate && mNetworkTraffic.getVisibility() == View.VISIBLE) {
             mColorToChange = NETWORK_TRAFFIC_COLORS;
             mColorTransitionAnimator.start();
         } else {
