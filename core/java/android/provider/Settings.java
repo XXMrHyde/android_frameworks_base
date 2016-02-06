@@ -3623,15 +3623,26 @@ public final class Settings {
         public static final String STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE = "status_bar_status_icons_status_color_color_dark_mode";
 
         /**
-         * Network traffic activity
+         *  Whether to show the Network traffic on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_SHOW = "status_bar_network_traffic_show";
+
+        /**
+         *  Whether to show the Network traffic on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_SHOW_ON_LOCK_SCREEN = "status_bar_network_traffic_show_on_lock_screen";
+
+        /**
+         * Network traffic activity direction
          * 0: download
          * 1: upload
          * 2: download and upload
-         * 3: hidden
          * default: 2
          * @hide
          */
-        public static final String STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY = "status_bar_network_traffic_activity";
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION = "status_bar_network_traffic_activity_direction";
 
         /**
          * Network traffic type

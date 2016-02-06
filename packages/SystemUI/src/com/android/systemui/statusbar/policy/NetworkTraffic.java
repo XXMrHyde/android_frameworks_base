@@ -20,12 +20,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.database.ContentObserver;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -43,11 +39,14 @@ public class NetworkTraffic extends LinearLayout implements
     private static final int TRAFFIC_DOWN        = 0;
     private static final int TRAFFIC_UP          = 1;
     private static final int TRAFFIC_UP_DOWN     = 2;
-    private static final int TRAFFIC_NO_ACTIVITY = 3;
 
     private static final int TRAFFIC_TYPE_TEXT      = 0;
     private static final int TRAFFIC_TYPE_ICON      = 1;
     private static final int TRAFFIC_TYPE_TEXT_ICON = 2;
+
+    private final Resources mResources;
+    private final ContentResolver mResolver;
+    private final boolean mIsOnKeyguard;
 
     private NetworkTrafficController mNetworkTrafficController;
 
@@ -55,8 +54,9 @@ public class NetworkTraffic extends LinearLayout implements
     private ImageView mIconView;
 
     private boolean mAttached = false;
+    private boolean mListening = false;
 
-    private boolean mEnabled;
+    private boolean mShowTraffic;
     private boolean mShowDl;
     private boolean mShowUl;
     private boolean mShowText;
@@ -64,60 +64,8 @@ public class NetworkTraffic extends LinearLayout implements
     private boolean mIsBit;
     private boolean mHide;
 
-    private final Resources mResources;
-    private final ContentResolver mResolver;
-
     private final int mTxtSizeSingle;
     private final int mTxtSizeDual;
-
-    private SettingsObserver mSettingsObserver;
-
-    class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC),
-                    false, this, UserHandle.USER_ALL);
-
-            updateSettings();
-        }
-
-        void unObserve() {
-            mContext.getContentResolver().unregisterContentObserver(this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY))) {
-                updateTrafficActivity();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE))) {
-                updateType();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE))) {
-                updateBitByte();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC))) {
-                updateHideTraffic();
-            }
-        }
-
-    }
 
     public NetworkTraffic(Context context) {
         this(context, null);
@@ -133,10 +81,13 @@ public class NetworkTraffic extends LinearLayout implements
         mResources = getResources();
         mResolver = context.getContentResolver();
 
+        TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.NetworkTraffic,
+                defStyle, 0);
+        mIsOnKeyguard = atts.getBoolean(R.styleable.NetworkTraffic_isOnKeyguard, false);
+        atts.recycle();
+
         mTxtSizeSingle = mResources.getDimensionPixelSize(R.dimen.network_traffic_single_text_size);
         mTxtSizeDual = mResources.getDimensionPixelSize(R.dimen.network_traffic_dual_text_size);
-
-        updateSettings();
     }
 
     @Override
@@ -152,14 +103,9 @@ public class NetworkTraffic extends LinearLayout implements
         super.onAttachedToWindow();
 
         mAttached = true;
-        if (mSettingsObserver == null) {
-            mSettingsObserver = new SettingsObserver(getHandler());
+        if (!mIsOnKeyguard) {
+            setListening(true);
         }
-        if (mNetworkTrafficController != null && mEnabled) {
-            mNetworkTrafficController.addCallback(this);
-            onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
-        }
-        mSettingsObserver.observe();
     }
 
     @Override
@@ -167,17 +113,26 @@ public class NetworkTraffic extends LinearLayout implements
         super.onDetachedFromWindow();
 
         mAttached = false;
-        if (mSettingsObserver == null) {
-            mSettingsObserver.unObserve();
+        if (!mIsOnKeyguard) {
+            setListening(false);
         }
-        if (mNetworkTrafficController != null) {
+    }
+
+    public void setListening(boolean listening) {
+        mListening = listening;
+
+        if (isTrafficEnabled()) {
+            mNetworkTrafficController.addCallback(this);
+            onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
+        } else if (mNetworkTrafficController != null) {
             mNetworkTrafficController.removeCallback(this);
         }
     }
 
     public void setNetworkTrafficController(NetworkTrafficController ntc) {
         mNetworkTrafficController = ntc;
-        if (mEnabled && mAttached) {
+
+        if (isTrafficEnabled()) {
             mNetworkTrafficController.addCallback(this);
         }
     }
@@ -188,64 +143,52 @@ public class NetworkTraffic extends LinearLayout implements
         updateText(traffic);
     }
 
-    private void updateSettings() {
-        updateTrafficActivity();
-        updateType();
-        updateBitByte();
-        updateHideTraffic();
+    public void setShow(boolean show) {
+        mShowTraffic = show;
+
+        if (mShowTraffic && getVisibility() != View.VISIBLE) {
+            setVisibility(View.VISIBLE);
+        } else if (!mShowTraffic && getVisibility() != View.GONE) {
+            setVisibility(View.GONE);
+        }
+        if (isTrafficEnabled()) {
+            mNetworkTrafficController.addCallback(this);
+            onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
+        } else if (mNetworkTrafficController != null) {
+            mNetworkTrafficController.removeCallback(this);
+        }
     }
 
-    private void updateTrafficActivity() {
-        final int activity = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY,
-                TRAFFIC_NO_ACTIVITY, UserHandle.USER_CURRENT);
-        mEnabled = activity != TRAFFIC_NO_ACTIVITY;
+    public void setActivityDirection(int activity) {
         mShowDl = activity == TRAFFIC_DOWN || activity == TRAFFIC_UP_DOWN;
         mShowUl = activity == TRAFFIC_UP || activity == TRAFFIC_UP_DOWN;
 
-        if (mEnabled && getVisibility() != View.VISIBLE) {
-            setVisibility(View.VISIBLE);
-        } else if (!mEnabled && getVisibility() != View.GONE) {
-            setVisibility(View.GONE);
-        }
-        if (mNetworkTrafficController != null) {
-            if (mEnabled && mAttached) {
-                mNetworkTrafficController.addCallback(this);
-                onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
-            } else {
-                mNetworkTrafficController.removeCallback(this);
-            }
-        }
-    }
-
-    private void updateType() {
-        final int type = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE, TRAFFIC_TYPE_TEXT_ICON,
-                UserHandle.USER_CURRENT);
-        mShowText = mEnabled && (type == TRAFFIC_TYPE_TEXT || type == TRAFFIC_TYPE_TEXT_ICON);
-        mShowIcon = mEnabled && (type == TRAFFIC_TYPE_ICON || type == TRAFFIC_TYPE_TEXT_ICON);
-
-        if (mNetworkTrafficController != null) {
+        if (isTrafficEnabled()) {
             onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
         }
     }
 
-    private void updateBitByte() {
-        mIsBit = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE, 0,
-                UserHandle.USER_CURRENT) == 1;
+    public void setType(int type) {
+        mShowText = type == TRAFFIC_TYPE_TEXT || type == TRAFFIC_TYPE_TEXT_ICON;
+        mShowIcon = type == TRAFFIC_TYPE_ICON || type == TRAFFIC_TYPE_TEXT_ICON;
 
-        if (mNetworkTrafficController != null) {
+        if (isTrafficEnabled()) {
             onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
         }
     }
 
-    private void updateHideTraffic() {
-        mHide = Settings.System.getIntForUser(mResolver,
-                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC, 1,
-                UserHandle.USER_CURRENT) == 1;
+    public void setIsBit(boolean isBit) {
+        mIsBit = isBit;
 
-        if (mNetworkTrafficController != null) {
+        if (isTrafficEnabled()) {
+            onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
+        }
+    }
+
+    public void setHide(boolean hide) {
+        mHide = hide;
+
+        if (isTrafficEnabled()) {
             onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
         }
     }
@@ -353,5 +296,12 @@ public class NetworkTraffic extends LinearLayout implements
             }
             mIconView.setImageDrawable(drawable);
         }
+    }
+
+    private boolean isTrafficEnabled() {
+        return mNetworkTrafficController != null
+                && mShowTraffic
+                && mListening
+                && mAttached;
     }
 }

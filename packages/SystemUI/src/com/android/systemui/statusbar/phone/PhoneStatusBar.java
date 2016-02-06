@@ -568,6 +568,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_STATUS_ICONS_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW_ON_LOCK_SCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -680,6 +698,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_STATUS_ICONS_COLOR))) {
                 updateStatusNetworkIconColors(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW))) {
+                setShowNetworkTraffic();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW_ON_LOCK_SCREEN))) {
+                setShowNetworkTrafficOnKeyguard();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION))) {
+                setNetworkTrafficActivityDirection();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE))) {
+                setNetworkTrafficType();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE))) {
+                setNetworkTrafficIsBit();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC))) {
+                setNetworkTrafficHideTraffic();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -1209,6 +1245,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mRotationLockController, mLocationController, mHotspotController, mFlashlightController,
                 mBatteryController);
         mNotificationPanel.setBarsController(barsController);
+
+        mKeyguardStatusBar.setNetworkTrafficController(mNetworkTrafficController);
 
         // User info. Trigger first load.
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
@@ -2178,6 +2216,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateCutOutBatteryText();
         updateBatteryColors(false);
         updateStatusNetworkIconColors(false);
+        setShowNetworkTraffic();
+        setShowNetworkTrafficOnKeyguard();
+        setNetworkTrafficActivityDirection();
+        setNetworkTrafficType();
+        setNetworkTrafficIsBit();
+        setNetworkTrafficHideTraffic();
         updateNetworkTrafficColors(false);
         updateShowTicker();
     }
@@ -2395,6 +2439,60 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateStatusNetworkIconColors(boolean animate) {
         if (mIconController != null) {
             mIconController.updateStatusNetworkIconColors(animate);
+        }
+    }
+
+    private void setShowNetworkTraffic() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW, 0) == 1;
+
+        if (mIconController != null) {
+            mIconController.setShowNetworkTraffic(show);
+        }
+    }
+
+    private void setShowNetworkTrafficOnKeyguard() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW_ON_LOCK_SCREEN, 0) == 1;
+
+        if (mIconController != null) {
+            mIconController.setShowNetworkTrafficOnKeyguard(show);
+        }
+    }
+
+    private void setNetworkTrafficActivityDirection() {
+        final int activity = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION, 2);
+
+        if (mIconController != null) {
+            mIconController.setNetworkTrafficActivityDirection(activity);
+        }
+    }
+
+    private void setNetworkTrafficType() {
+        final int type = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE, 2);
+
+        if (mIconController != null) {
+            mIconController.setNetworkTrafficType(type);
+        }
+    }
+
+    private void setNetworkTrafficIsBit() {
+        final boolean isBit = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE, 0) == 1;
+
+        if (mIconController != null) {
+            mIconController.setNetworkTrafficIsBit(isBit);
+        }
+    }
+
+    private void setNetworkTrafficHideTraffic() {
+        final boolean hide = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC, 1) == 1;
+
+        if (mIconController != null) {
+            mIconController.setNetworkTrafficHideTraffic(hide);
         }
     }
 

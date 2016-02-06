@@ -117,6 +117,7 @@ public class StatusBarIconController implements Tunable {
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
     private NetworkTraffic mNetworkTraffic;
+    private NetworkTraffic mNetworkTrafficKeyguard;
     private Ticker mTicker;
     private View mTickerView;
 
@@ -224,6 +225,8 @@ public class StatusBarIconController implements Tunable {
         mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
         mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
         mNetworkTraffic = (NetworkTraffic) statusBar.findViewById(R.id.network_traffic_layout);
+        mNetworkTrafficKeyguard = (NetworkTraffic) keyguardStatusBar.findViewById(
+                R.id.keyguard_network_traffic_layout);
         mLinearOutSlowIn = AnimationUtils.loadInterpolator(mContext,
                 android.R.interpolator.linear_out_slow_in);
         mFastOutSlowIn = AnimationUtils.loadInterpolator(mContext,
@@ -997,6 +1000,34 @@ public class StatusBarIconController implements Tunable {
         }
     }
 
+    public void setShowNetworkTraffic(boolean show) {
+        mNetworkTraffic.setShow(show);
+    }
+
+    public void setShowNetworkTrafficOnKeyguard(boolean show) {
+        mNetworkTrafficKeyguard.setShow(show);
+    }
+
+    public void setNetworkTrafficActivityDirection(int activity) {
+        mNetworkTraffic.setActivityDirection(activity);
+        mNetworkTrafficKeyguard.setActivityDirection(activity);
+    }
+
+    public void setNetworkTrafficType(int type) {
+        mNetworkTraffic.setType(type);
+        mNetworkTrafficKeyguard.setType(type);
+    }
+
+    public void setNetworkTrafficIsBit(boolean isBit) {
+        mNetworkTraffic.setIsBit(isBit);
+        mNetworkTrafficKeyguard.setIsBit(isBit);
+    }
+
+    public void setNetworkTrafficHideTraffic(boolean hide) {
+        mNetworkTraffic.setHide(hide);
+        mNetworkTrafficKeyguard.setHide(hide);
+    }
+
     public void updateNetworkTrafficColors(boolean animate) {
         mNetworkTrafficTextColor = StatusBarColorHelper.getNetworkTrafficTextColor(mContext);
         mNetworkTrafficIconColor = StatusBarColorHelper.getNetworkTrafficIconColor(mContext);
@@ -1011,6 +1042,8 @@ public class StatusBarIconController implements Tunable {
             mNetworkTrafficTextColorTint = mNetworkTrafficTextColor;
             mNetworkTrafficIconColorTint = mNetworkTrafficIconColor;
         }
+        mNetworkTrafficKeyguard.setTextColor(mNetworkTrafficTextColor);
+        mNetworkTrafficKeyguard.setIconColor(mNetworkTrafficIconColor);
     }
 
     public void updateStatusNetworkIconColors(boolean animate) {
