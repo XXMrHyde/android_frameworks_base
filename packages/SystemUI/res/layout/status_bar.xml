@@ -165,32 +165,4 @@
         android:visibility="invisible"
         />
 
-    <com.android.keyguard.AlphaOptimizedLinearLayout
-        android:id="@+id/status_bar_greeting_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        >
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/status_bar_greeting_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.StatusBar.Clock"
-            android:textColor="#ffffff" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </com.android.keyguard.AlphaOptimizedLinearLayout>
-
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>
