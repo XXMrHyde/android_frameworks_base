@@ -114,7 +114,8 @@ public class BatteryBar extends ProgressBar implements
         mBatteryLevel = level;
         setProgress(mBatteryLevel);
         mIsCharging = charging;
-        setProgressTintList(ColorStateList.valueOf(getColorForLevel(mBatteryLevel)));
+        setProgressTintList(ColorStateList.valueOf(getColorForLevel(mIsCharging
+                ? 50 : mBatteryLevel)));
         startChargeAnim();
     }
 
@@ -122,7 +123,8 @@ public class BatteryBar extends ProgressBar implements
     public void onPowerSaveChanged() {
         if (mPowerSaveEnabled != mBatteryController.isPowerSave()) {
             mPowerSaveEnabled = mBatteryController.isPowerSave();
-            setProgressTintList(ColorStateList.valueOf(getColorForLevel(mBatteryLevel)));
+            setProgressTintList(ColorStateList.valueOf(getColorForLevel(mIsCharging
+                    ? 50 : mBatteryLevel)));
         }
     }
 
@@ -135,7 +137,8 @@ public class BatteryBar extends ProgressBar implements
         mColor = color;
         final int backgroundColor = (77 << 24) | (mColor & 0x00ffffff);
         setProgressBackgroundTintList(ColorStateList.valueOf(backgroundColor));
-        setProgressTintList(ColorStateList.valueOf(getColorForLevel(mBatteryLevel)));
+        setProgressTintList(ColorStateList.valueOf(getColorForLevel(mIsCharging
+                ? 50 : mBatteryLevel)));
     }
 
     private int getColorForLevel(int percent) {

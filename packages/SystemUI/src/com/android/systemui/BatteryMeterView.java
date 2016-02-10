@@ -755,13 +755,13 @@ public class BatteryMeterView extends View implements DemoMode,
 
             // apply battery tint
             final PorterDuffColorFilter cff = new PorterDuffColorFilter(getTintForLevel(50), Mode.MULTIPLY);
-            final PorterDuffColorFilter cfb = new PorterDuffColorFilter((tracker.plugged
-                    ? getTintForLevel(50) : getTintForLevel(level)), Mode.MULTIPLY);
+            final PorterDuffColorFilter cfb = new PorterDuffColorFilter(
+                    getTintForLevel(tracker.plugged ? 50 : level), Mode.MULTIPLY);
             mFramePaint.setColorFilter(cff);
             mFillPaint.setColorFilter(cfb);
 
             // update text and bolt color
-            mTextPaint.setColor(getTextColorForLevel(level));
+            mTextPaint.setColor(getTextColorForLevel(tracker.plugged ? 50 : level));
             mBoltPaint.setColor(getTextColorForLevel(50));
 
             // draw the battery shape background
@@ -912,13 +912,13 @@ public class BatteryMeterView extends View implements DemoMode,
 
             // apply battery tint
             final PorterDuffColorFilter cff = new PorterDuffColorFilter(getTintForLevel(50), Mode.MULTIPLY);
-            final PorterDuffColorFilter cfb = new PorterDuffColorFilter((tracker.plugged
-                    ? getTintForLevel(50) : getTintForLevel(level)), Mode.MULTIPLY);
+            final PorterDuffColorFilter cfb = new PorterDuffColorFilter(
+                    getTintForLevel(tracker.plugged ? 50 : level), Mode.MULTIPLY);
             mFramePaint.setColorFilter(cff);
             mFillPaint.setColorFilter(cfb);
 
             // update text and bolt color
-            mTextPaint.setColor(getTextColorForLevel(level));
+            mTextPaint.setColor(getTextColorForLevel(tracker.plugged ? 50 : level));
             mBoltPaint.setColor(getTextColorForLevel(50));
 
             if (mIsCircleDotted) {
