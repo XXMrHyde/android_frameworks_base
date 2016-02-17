@@ -28,7 +28,7 @@ public class IconMerger extends LinearLayout {
     private static final boolean DEBUG = false;
 
     private int mIconSize;
-    private View mMoreView;
+    protected View mMoreView;
     private boolean mCenteredClock = false;
 
     public IconMerger(Context context, AttributeSet attrs) {

@@ -587,6 +587,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -705,6 +711,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR))) {
                 updateTickerTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_ICON_COLOR))) {
+                UpdateClearAllNotificationIconColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NOTIFICATION_TEXT_COLOR))) {
+                UpdateEmptyShadeTextColor();
             }
         }
     }
@@ -2194,6 +2206,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setNetworkTrafficHideTraffic();
         updateNetworkTrafficColors(false);
         updateShowTicker();
+        UpdateClearAllNotificationIconColor();
+        UpdateEmptyShadeTextColor();
     }
 
     private void updateKeyguardButtonBarVisibility(boolean isKeyguardOverflowVisible) {
@@ -2457,6 +2471,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateTickerTextColor() {
         if (mIconController != null) {
             mIconController.updateTickerTextColor();
+        }
+    }
+
+    private void UpdateClearAllNotificationIconColor() {
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NOTIFICATION_ICON_COLOR, 0xffffffff);
+        if (mDismissView != null) {
+            mDismissView.updateIconColor(color);
+        }
+    }
+
+    private void UpdateEmptyShadeTextColor() {
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NOTIFICATION_TEXT_COLOR, 0xffffffff);
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.updateTextColor(color);
         }
     }
 

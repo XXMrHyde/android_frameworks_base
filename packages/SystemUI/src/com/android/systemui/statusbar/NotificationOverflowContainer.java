@@ -79,4 +79,8 @@ public class NotificationOverflowContainer extends ActivatableNotificationView {
         realActualHeight = Math.max(getMinHeight(), realActualHeight);
         return realActualHeight;
     }
+
+    public void setMoreIconColor() {
+        mIconsView.setMoreIconColor();
+    }
 }

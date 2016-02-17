@@ -38,6 +38,8 @@ public class ViewInvertHelper {
     private final ColorMatrix mGrayscaleMatrix = new ColorMatrix();
     private final long mFadeDuration;
 
+    private final boolean mGrayscaleDisabled = true;
+
     public ViewInvertHelper(View target, long fadeDuration) {
         mTarget = target;
         mLinearOutSlowInInterpolator = AnimationUtils.loadInterpolator(mTarget.getContext(),
@@ -46,8 +48,8 @@ public class ViewInvertHelper {
     }
 
     public void fade(final boolean invert, long delay) {
-        float startIntensity = invert ? 0f : 1f;
-        float endIntensity = invert ? 1f : 0f;
+        float startIntensity = invert && !mGrayscaleDisabled ? 0f :  1f;
+        float endIntensity =  invert && !mGrayscaleDisabled ? 1f : 0f;
         ValueAnimator animator = ValueAnimator.ofFloat(startIntensity, endIntensity);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -59,7 +61,7 @@ public class ViewInvertHelper {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                if (!invert) {
+                if (!invert && !mGrayscaleDisabled) {
                     mTarget.setLayerType(View.LAYER_TYPE_NONE, null);
                 }
             }
@@ -71,7 +73,7 @@ public class ViewInvertHelper {
     }
 
     public void update(boolean invert) {
-        if (invert) {
+        if (invert && !mGrayscaleDisabled) {
             updateInvertPaint(1f);
             mTarget.setLayerType(View.LAYER_TYPE_HARDWARE, mDarkPaint);
         } else {

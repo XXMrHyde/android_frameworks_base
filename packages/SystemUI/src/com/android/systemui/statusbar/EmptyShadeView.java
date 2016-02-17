@@ -40,4 +40,8 @@ public class EmptyShadeView extends StackScrollerDecorView {
     protected View findContentView() {
         return findViewById(R.id.no_notifications);
     }
+
+    public void updateTextColor(int color) {
+        ((TextView) findViewById(R.id.no_notifications)).setTextColor(color);
+    }
 }

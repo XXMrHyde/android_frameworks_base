@@ -53,6 +53,8 @@ public class NotificationTemplateViewWrapper extends NotificationViewWrapper {
     private ImageView mIcon;
     protected ImageView mPicture;
 
+    protected final boolean mGrayscaleDisabled = true;
+
     /** Whether the icon needs to be forced grayscale when in dark mode. */
     private boolean mIconForceGraysaleWhenDark;
 
@@ -124,20 +126,26 @@ public class NotificationTemplateViewWrapper extends NotificationViewWrapper {
         }
         if (mIcon != null) {
             if (fade) {
-                fadeIconColorFilter(mIcon, dark, delay);
+                if (!mGrayscaleDisabled) {
+                    fadeIconColorFilter(mIcon, dark, delay);
+                }
                 fadeIconAlpha(mIcon, dark, delay);
-                if (!mIconForceGraysaleWhenDark) {
+                if (!mIconForceGraysaleWhenDark && !mGrayscaleDisabled) {
                     fadeGrayscale(mIcon, dark, delay);
                 }
             } else {
-                updateIconColorFilter(mIcon, dark);
+                if (!mGrayscaleDisabled) {
+                    updateIconColorFilter(mIcon, dark);
+                }
                 updateIconAlpha(mIcon, dark);
-                if (!mIconForceGraysaleWhenDark) {
+                if (!mIconForceGraysaleWhenDark && !mGrayscaleDisabled) {
                     updateGrayscale(mIcon, dark);
                 }
             }
         }
-        setPictureGrayscale(dark, fade, delay);
+        if (!mGrayscaleDisabled) {
+            setPictureGrayscale(dark, fade, delay);
+        }
     }
 
     protected void setPictureGrayscale(boolean grayscale, boolean fade, long delay) {

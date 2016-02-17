@@ -30,8 +30,10 @@ public class NotificationMediaViewWrapper extends NotificationTemplateViewWrappe
 
     @Override
     public void setDark(boolean dark, boolean fade, long delay) {
+        if (!mGrayscaleDisabled) {
 
-        // Only update the large icon, because the rest is already inverted.
-        setPictureGrayscale(dark, fade, delay);
+            // Only update the large icon, because the rest is already inverted.
+            setPictureGrayscale(dark, fade, delay);
+        }
     }
 }

@@ -873,10 +873,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView {
     private void updateExpandButtonColor() {
         // TODO: This needs some more baking, currently only the divider is colored according to
         // the tint, but legacy black doesn't work yet perfectly for the button etc.
-        int color = getRippleColor();
-        if (color == mNormalRippleColor) {
-            color = 0;
-        }
+        int color = 0;
         if (mExpandButtonDivider != null) {
             applyTint(mExpandButtonDivider, color);
         }

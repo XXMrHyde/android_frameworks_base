@@ -61,4 +61,7 @@
   <java-symbol type="string" name="default_custom_label" />
 
   <java-symbol type="string" name="default_greeting_welcome" />
+
+  <!-- Notifications -->
+    <java-symbol type="id" name="big_picture_action_list_layout" />
 </resources>

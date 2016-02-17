@@ -76,4 +76,8 @@ public class DismissView extends StackScrollerDecorView {
     public boolean isButtonVisible() {
         return mDismissButton.isButtonStatic();
     }
+
+    public void updateIconColor(int color) {
+        mDismissButton.setIconColor(color);
+    }
 }

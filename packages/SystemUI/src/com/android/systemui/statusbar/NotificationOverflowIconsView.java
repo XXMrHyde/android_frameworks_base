@@ -18,12 +18,16 @@ package com.android.systemui.statusbar;
 
 import android.app.Notification;
 import android.content.Context;
-import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
+import com.android.internal.util.darkkat.NotificationColorHelper;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.IconMerger;
 
@@ -33,7 +37,6 @@ import com.android.systemui.statusbar.phone.IconMerger;
 public class NotificationOverflowIconsView extends IconMerger {
 
     private TextView mMoreText;
-    private int mTintColor;
     private int mIconSize;
     private NotificationColorUtil mNotificationColorUtil;
 
@@ -45,7 +48,6 @@ public class NotificationOverflowIconsView extends IconMerger {
     protected void onFinishInflate() {
         super.onFinishInflate();
         mNotificationColorUtil = NotificationColorUtil.getInstance(getContext());
-        mTintColor = getContext().getColor(R.color.keyguard_overflow_content_color);
         mIconSize = getResources().getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_icon_size);
     }
@@ -58,18 +60,48 @@ public class NotificationOverflowIconsView extends IconMerger {
         StatusBarIconView v = new StatusBarIconView(getContext(), "",
                 notification.notification.getNotification());
         v.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        addView(v, mIconSize, mIconSize);
         v.set(notification.icon.getStatusBarIcon());
+        addView(v, mIconSize, mIconSize);
         applyColor(notification.notification.getNotification(), v);
         updateMoreText();
     }
 
     private void applyColor(Notification notification, StatusBarIconView view) {
-        view.setColorFilter(mTintColor, PorterDuff.Mode.MULTIPLY);
+        StatusBarIcon sbi = view.getStatusBarIcon();
+        Drawable icon = StatusBarIconView.getIcon(getContext(), sbi);
+        final int iconColor = NotificationColorHelper.getIconColor(getContext(), icon);
+        if (iconColor != 0) {
+            view.setColorFilter(iconColor, Mode.MULTIPLY);
+        } else {
+            view.setColorFilter(null);
+        }
     }
 
     private void updateMoreText() {
+        final int textColor = NotificationColorHelper.getCustomIconColor(getContext());
+        final int bgColor = NotificationColorHelper.getAppIconBgColor(getContext(), 0);
+        final int bgAlpha = NotificationColorHelper.getAppIconBgAlpha(getContext(), 0);
         mMoreText.setText(
                 getResources().getString(R.string.keyguard_more_overflow_text, getChildCount()));
+        mMoreText.setTextColor(textColor);
+        if (mMoreText.getBackground() != null) {
+            if (bgColor == Notification.COLOR_DEFAULT) {
+                mMoreText.getBackground().setColorFilter(null);
+            } else {
+                mMoreText.getBackground().setColorFilter(bgColor, Mode.SRC_ATOP);
+
+            }
+            mMoreText.getBackground().setAlpha(bgAlpha);
+        }
+    }
+
+    public void setMoreIconColor() {
+        int iconColor = NotificationColorHelper.getIconColor(getContext(),
+                ((ImageView) mMoreView).getDrawable());
+        if (iconColor != 0) {
+            ((ImageView) mMoreView).setColorFilter(iconColor, Mode.MULTIPLY);
+        } else {
+            ((ImageView) mMoreView).setColorFilter(null);
+        }
     }
 }

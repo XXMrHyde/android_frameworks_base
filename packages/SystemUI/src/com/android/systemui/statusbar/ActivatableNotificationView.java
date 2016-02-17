@@ -33,6 +33,9 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.PathInterpolator;
 
+import com.android.internal.util.darkkat.ColorHelper;
+import com.android.internal.util.darkkat.NotificationColorHelper;
+
 import com.android.systemui.R;
 
 /**
@@ -85,9 +88,6 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
             = new PathInterpolator(0.6f, 0, 0.5f, 1);
     private static final Interpolator ACTIVATE_INVERSE_ALPHA_INTERPOLATOR
             = new PathInterpolator(0, 0, 0.5f, 1);
-    private final int mTintedRippleColor;
-    private final int mLowPriorityRippleColor;
-    protected final int mNormalRippleColor;
 
     private boolean mDimmed;
     private boolean mDark;
@@ -125,8 +125,10 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     private float mAppearAnimationTranslation;
     private boolean mShowingLegacyBackground;
     private final int mLegacyColor;
-    private final int mNormalColor;
-    private final int mLowPriorityColor;
+    private int mNormalColor;
+    private int mLowPriorityColor;
+    private int mMediaColor;
+    protected int mRippleColor;
     private boolean mIsBelowSpeedBump;
 
     public ActivatableNotificationView(Context context, AttributeSet attrs) {
@@ -142,15 +144,6 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         setClipChildren(false);
         setClipToPadding(false);
         mLegacyColor = context.getColor(R.color.notification_legacy_background_color);
-        mNormalColor = context.getColor(R.color.notification_material_background_color);
-        mLowPriorityColor = context.getColor(
-                R.color.notification_material_background_low_priority_color);
-        mTintedRippleColor = context.getColor(
-                R.color.notification_ripple_tinted_color);
-        mLowPriorityRippleColor = context.getColor(
-                R.color.notification_ripple_color_low_priority);
-        mNormalRippleColor = context.getColor(
-                R.color.notification_ripple_untinted_color);
     }
 
     @Override
@@ -161,7 +154,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         mBackgroundNormal.setCustomBackground(R.drawable.notification_material_bg);
         mBackgroundDimmed.setCustomBackground(R.drawable.notification_material_bg_dim);
         updateBackground();
-        updateBackgroundTint();
+        updateSettings();
     }
 
     private final Runnable mTapTimeoutRunnable = new Runnable() {
@@ -372,16 +365,12 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
      */
     public void setTintColor(int color) {
         mBgTint = color;
-        updateBackgroundTint();
+        updateSettings();
     }
 
     private void updateBackgroundTint() {
         int color = getBgColor();
         int rippleColor = getRippleColor();
-        if (color == mNormalColor) {
-            // We don't need to tint a normal notification
-            color = 0;
-        }
         mBackgroundDimmed.setTint(color);
         mBackgroundNormal.setTint(color);
         mBackgroundDimmed.setRippleColor(rippleColor);
@@ -671,9 +660,9 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
 
     protected abstract View getContentView();
 
-    private int getBgColor() {
+    public int getBgColor() {
         if (mBgTint != 0) {
-            return mBgTint;
+            return mMediaColor;
         } else if (mShowingLegacyBackground) {
             return mLegacyColor;
         } else if (mIsBelowSpeedBump) {
@@ -684,15 +673,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     }
 
     protected int getRippleColor() {
-        if (mBgTint != 0) {
-            return mTintedRippleColor;
-        } else if (mShowingLegacyBackground) {
-            return mTintedRippleColor;
-        } else if (mIsBelowSpeedBump) {
-            return mLowPriorityRippleColor;
-        } else {
-            return mNormalRippleColor;
-        }
+        return mRippleColor;
     }
 
     /**
@@ -737,5 +718,14 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     public interface OnActivatedListener {
         void onActivated(ActivatableNotificationView view);
         void onActivationReset(ActivatableNotificationView view);
+    }
+
+    public void updateSettings() {
+        mNormalColor = NotificationColorHelper.getCustomNotificationBgColor(mContext);
+        mMediaColor = NotificationColorHelper.getNotificationMediaBgColor(mContext, mBgTint);
+        mLowPriorityColor = ColorHelper.getLightenOrDarkenColor(mNormalColor);
+        mRippleColor = NotificationColorHelper.getRippleColor(mContext);
+
+        updateBackgroundTint();
     }
 }
