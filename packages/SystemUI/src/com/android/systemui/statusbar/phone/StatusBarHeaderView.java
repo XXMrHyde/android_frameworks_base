@@ -81,6 +81,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private TextView mDateCollapsed;
     private TextView mDateExpanded;
     private LinearLayout mSystemIcons;
+    private SignalClusterView mSignalCluster;
     private SettingsButton mSettingsButton;
     private ImageView mTunerIcon;
     private View mSettingsContainer;
@@ -118,6 +119,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private final Rect mClipBounds = new Rect();
 
     private boolean mCaptureValues;
+    private boolean mSignalClusterDetached;
     private final LayoutValues mCollapsedValues = new LayoutValues();
     private final LayoutValues mExpandedValues = new LayoutValues();
     private final LayoutValues mCurrentValues = new LayoutValues();
@@ -158,6 +160,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mBatteryLevel = (TextView) findViewById(R.id.battery_level);
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
+        mSignalCluster = (SignalClusterView) findViewById(R.id.signal_cluster);
         mSystemIcons = (LinearLayout) findViewById(R.id.system_icons);
         mSettingsObserver = new SettingsObserver(new Handler());
         mSettingsObserver.observe();
@@ -323,8 +326,28 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mDateExpanded.setVisibility(mExpanded && mAlarmShowing ? View.INVISIBLE : View.VISIBLE);
         mAlarmStatus.setVisibility(mExpanded && mAlarmShowing ? View.VISIBLE : View.INVISIBLE);
         mQsDetailHeader.setVisibility(mExpanded && mShowingDetail? View.VISIBLE : View.INVISIBLE);
+        if (mSignalCluster != null) {
+            updateSignalClusterDetachment();
+        }
         mEmergencyCallsOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly ? VISIBLE : GONE);
         mBatteryLevel.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateSignalClusterDetachment() {
+        boolean detached = mExpanded;
+        if (detached != mSignalClusterDetached) {
+            if (detached) {
+                getOverlay().add(mSignalCluster);
+            } else {
+                reattachSignalCluster();
+            }
+        }
+        mSignalClusterDetached = detached;
+    }
+
+    private void reattachSignalCluster() {
+        getOverlay().remove(mSignalCluster);
+        mSystemIcons.addView(mSignalCluster, 1);
     }
 
     private void updateListeners() {
@@ -484,6 +507,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
         target.batteryY = mSystemIconsSuperContainer.getTop() + mSystemIconsContainer.getTop();
         target.batteryLevelAlpha = getAlphaForVisibility(mBatteryLevel);
+        target.signalClusterAlpha = mSignalClusterDetached ? 0f : 1f;
     }
 
     private float getAlphaForVisibility(View v) {
@@ -514,6 +538,21 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mSystemIconsSuperContainer.setX(values.batteryX - mSystemIconsContainer.getLeft());
         }
         mSystemIconsSuperContainer.setY(values.batteryY - mSystemIconsContainer.getTop());
+        if (mSignalCluster != null && mExpanded) {
+            if (getLayoutDirection() == LAYOUT_DIRECTION_LTR) {
+                mSignalCluster.setX(mSystemIconsSuperContainer.getX()
+                        - mSignalCluster.getWidth());
+            } else {
+                mSignalCluster.setX(mSystemIconsSuperContainer.getX()
+                        + mSystemIconsSuperContainer.getWidth());
+            }
+            mSignalCluster.setY(
+                    mSystemIconsSuperContainer.getY() + mSystemIconsSuperContainer.getHeight()/2
+                            - mSignalCluster.getHeight()/2);
+        } else if (mSignalCluster != null) {
+            mSignalCluster.setTranslationX(0f);
+            mSignalCluster.setTranslationY(0f);
+        }
         if (!mSettingsButton.isAnimating()) {
             mSettingsContainer.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         }
@@ -525,6 +564,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         applyAlpha(mDateCollapsed, values.dateCollapsedAlpha);
         applyAlpha(mDateExpanded, values.dateExpandedAlpha);
         applyAlpha(mBatteryLevel, values.batteryLevelAlpha);
+        applyAlpha(mSignalCluster, values.signalClusterAlpha);
         if (!mExpanded) {
             mTime.setScaleX(1f);
             mTime.setScaleY(1f);
@@ -548,6 +588,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         float batteryX;
         float batteryY;
         float batteryLevelAlpha;
+        float signalClusterAlpha;
 
         public void interpoloate(LayoutValues v1, LayoutValues v2, float t) {
             timeScale = v1.timeScale * (1 - t) + v2.timeScale * t;
@@ -559,6 +600,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             float t1 = Math.max(0, t - 0.5f) * 2;
             emergencyCallsOnlyAlpha =
                     v1.emergencyCallsOnlyAlpha * (1 - t1) + v2.emergencyCallsOnlyAlpha * t1;
+
+            float t2 = Math.min(1, 2 * t);
+            signalClusterAlpha = v1.signalClusterAlpha * (1 - t2) + v2.signalClusterAlpha * t2;
 
             float t3 = Math.max(0, t - 0.7f) / 0.3f;
             batteryLevelAlpha = v1.batteryLevelAlpha * (1 - t3) + v2.batteryLevelAlpha * t3;
@@ -711,7 +755,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         final int airplaneModeIconColor = SBEHeaderColorHelper.getAirplaneModeIconColor(mContext);
         final int tunerIconColor = (77 << 24) | (iconColor & 0x00ffffff);
 
-        ((SignalClusterView) findViewById(R.id.signal_cluster)).setIconTint(
+        mSignalCluster.setIconTint(
                 iconColor, noSimIconColor, airplaneModeIconColor);
         mBatteryMeterView.setBatteryColors(iconColor);
         ((ImageView) mSettingsButton).setImageTintList(ColorStateList.valueOf(iconColor));
