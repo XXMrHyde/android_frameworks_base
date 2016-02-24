@@ -53,6 +53,8 @@ public class KeyButtonView extends ImageView {
     private AudioManager mAudioManager;
     private boolean mGestureAborted;
 
+    private KeyButtonRipple mRipple;
+
     private final Runnable mCheckLongPress = new Runnable() {
         public void run() {
             if (isPressed()) {
@@ -93,7 +95,8 @@ public class KeyButtonView extends ImageView {
         setClickable(true);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        setBackground(new KeyButtonRipple(context, this));
+        mRipple = new KeyButtonRipple(context, this);
+        setBackground(mRipple);
     }
 
     @Override
@@ -175,6 +178,9 @@ public class KeyButtonView extends ImageView {
                 break;
             case MotionEvent.ACTION_CANCEL:
                 setPressed(false);
+                // hack to fix ripple getting stuck. exitHardware() starts an animation,
+                // but sometimes does not finish it.
+                mRipple.exitSoftware();
                 if (mCode != 0) {
                     sendEvent(KeyEvent.ACTION_UP, KeyEvent.FLAG_CANCELED);
                 }
@@ -225,6 +231,10 @@ public class KeyButtonView extends ImageView {
     public void abortCurrentGesture() {
         setPressed(false);
         mGestureAborted = true;
+    }
+
+    public void setRippleColor(int color) {
+        mRipple.setColor(color);
     }
 }
 

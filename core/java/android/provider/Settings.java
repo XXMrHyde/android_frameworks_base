@@ -3973,6 +3973,18 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_TEXT_COLOR = "status_bar_expanded_text_color";
 
         /**
+         * Navigation bar button icon color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_BUTTON_ICON_COLOR = "navigation_bar_button_icon_color";
+
+        /**
+         * Navigation bar button ripple color
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_BUTTON_RIPPLE_COLOR = "navigation_bar_button_ripple_color";
+
+        /**
          * Whether to use a progress dialog for the boot dialog
          * @hide
          */

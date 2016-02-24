@@ -588,6 +588,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_BUTTON_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_BUTTON_RIPPLE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_ICON_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -711,6 +717,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR))) {
                 updateTickerTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_BUTTON_ICON_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_BUTTON_RIPPLE_COLOR))) {
+                updateNavigationBarColors(true);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_ICON_COLOR))) {
                 UpdateClearAllNotificationIconColor();
@@ -2206,6 +2217,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setNetworkTrafficHideTraffic();
         updateNetworkTrafficColors(false);
         updateShowTicker();
+        updateNavigationBarColors(false);
         UpdateClearAllNotificationIconColor();
         UpdateEmptyShadeTextColor();
     }
@@ -2471,6 +2483,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateTickerTextColor() {
         if (mIconController != null) {
             mIconController.updateTickerTextColor();
+        }
+    }
+
+    private void updateNavigationBarColors(boolean animate) {
+        if (mNavigationBarView != null) {
+            mNavigationBarView.updateColors(animate);
         }
     }
 
