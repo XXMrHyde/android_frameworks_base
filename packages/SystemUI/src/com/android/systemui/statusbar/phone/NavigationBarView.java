@@ -229,12 +229,12 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView;
     }
 
-    public View getRecentsButton() {
-        return mCurrentView.findViewById(R.id.recent_apps);
+    public View getMenuButtonLeft() {
+        return mCurrentView.findViewById(R.id.menu_left);
     }
 
-    public View getMenuButton() {
-        return mCurrentView.findViewById(R.id.menu);
+    public View getImeSwitchButtonLeft() {
+        return mCurrentView.findViewById(R.id.ime_switcher_left);
     }
 
     public View getBackButton() {
@@ -245,8 +245,16 @@ public class NavigationBarView extends LinearLayout {
         return (KeyButtonView) mCurrentView.findViewById(R.id.home);
     }
 
-    public View getImeSwitchButton() {
-        return mCurrentView.findViewById(R.id.ime_switcher);
+    public View getRecentsButton() {
+        return mCurrentView.findViewById(R.id.recent_apps);
+    }
+
+    public View getMenuButtonRight() {
+        return mCurrentView.findViewById(R.id.menu_right);
+    }
+
+    public View getImeSwitchButtonRight() {
+        return mCurrentView.findViewById(R.id.ime_switcher_right);
     }
 
     @Override
@@ -268,6 +276,7 @@ public class NavigationBarView extends LinearLayout {
     public void setNavigationIconHints(int hints, boolean force) {
         if (!force && hints == mNavigationIconHints) return;
         final boolean backAlt = (hints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0;
+        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
         if ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0 && !backAlt) {
             mTransitionListener.onBackAltCleared();
         }
@@ -282,9 +291,8 @@ public class NavigationBarView extends LinearLayout {
         mNavigationBarButtonController.updateIcons(false);
         mNavigationBarButtonController.updateColors(false);
         mNavigationBarButtonController.setImeVisible(backAlt);
+        mNavigationBarButtonController.setShowImeButton(showImeButton);
 
-        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
-        getImeSwitchButton().setVisibility(showImeButton ? View.VISIBLE : View.INVISIBLE);
         // Update menu button in case the IME state has changed.
         setMenuVisibility(mShowMenu, true);
 
@@ -329,6 +337,18 @@ public class NavigationBarView extends LinearLayout {
         getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
         getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
         getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    public void updateMenuButtonVisibility() {
+        mNavigationBarButtonController.updateMenuButtonVisibility(false, false);
+    }
+
+    public void updateMenuButtonPosition() {
+        mNavigationBarButtonController.updateMenuButtonPosition();
+    }
+
+    public void updateImeButtonPosition() {
+        mNavigationBarButtonController.updateImeButtonPosition();
     }
 
     public void updateColors(boolean animate) {
@@ -419,11 +439,12 @@ public class NavigationBarView extends LinearLayout {
         if (!force && mShowMenu == show) return;
 
         mShowMenu = show;
+        mNavigationBarButtonController.updateMenuButtonVisibility(mShowMenu, isImeVisible());
 
-        // Only show Menu if IME switcher not shown.
-        final boolean shouldShow = mShowMenu &&
-                ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) == 0);
-        getMenuButton().setVisibility(shouldShow ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private boolean isImeVisible() {
+        return ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
     }
 
     @Override
@@ -437,7 +458,8 @@ public class NavigationBarView extends LinearLayout {
 
         mCurrentView = mRotatedViews[Surface.ROTATION_0];
 
-        getImeSwitchButton().setOnClickListener(mImeSwitcherClickListener);
+        getImeSwitchButtonLeft().setOnClickListener(mImeSwitcherClickListener);
+        getImeSwitchButtonRight().setOnClickListener(mImeSwitcherClickListener);
 
         updateRTLOrder();
     }
@@ -455,7 +477,8 @@ public class NavigationBarView extends LinearLayout {
         mCurrentView.setVisibility(View.VISIBLE);
         updateLayoutTransitionsEnabled();
 
-        getImeSwitchButton().setOnClickListener(mImeSwitcherClickListener);
+        getImeSwitchButtonLeft().setOnClickListener(mImeSwitcherClickListener);
+        getImeSwitchButtonRight().setOnClickListener(mImeSwitcherClickListener);
 
         mDeadZone = (DeadZone) mCurrentView.findViewById(R.id.deadzone);
 
@@ -532,17 +555,30 @@ public class NavigationBarView extends LinearLayout {
     }
 
     private void adjustExtraKeyGravity(View navBar, boolean isLayoutRtl) {
-        View menu = navBar.findViewById(R.id.menu);
-        View imeSwitcher = navBar.findViewById(R.id.ime_switcher);
-        if (menu != null) {
-            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) menu.getLayoutParams();
-            lp.gravity = isLayoutRtl ? Gravity.BOTTOM : Gravity.TOP;
-            menu.setLayoutParams(lp);
+        View menuLeft = navBar.findViewById(R.id.menu_left);
+        View menuRight = navBar.findViewById(R.id.menu_right);
+        View imeSwitcherLeft = navBar.findViewById(R.id.ime_switcher_left);
+        View imeSwitcherRight = navBar.findViewById(R.id.ime_switcher_left);
+        if (menuLeft != null) {
+            FrameLayout.LayoutParams lpl = (FrameLayout.LayoutParams) menuLeft.getLayoutParams();
+            lpl.gravity = isLayoutRtl ? Gravity.BOTTOM : Gravity.TOP;
+            menuLeft.setLayoutParams(lpl);
         }
-        if (imeSwitcher != null) {
-            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) imeSwitcher.getLayoutParams();
-            lp.gravity = isLayoutRtl ? Gravity.BOTTOM : Gravity.TOP;
-            imeSwitcher.setLayoutParams(lp);
+        if (menuRight != null) {
+            FrameLayout.LayoutParams lpr = (FrameLayout.LayoutParams) menuRight.getLayoutParams();
+            lpr.gravity = isLayoutRtl ? Gravity.TOP : Gravity.BOTTOM;
+            menuRight.setLayoutParams(lpr);
+        }
+
+        if (imeSwitcherLeft != null) {
+            FrameLayout.LayoutParams lpl = (FrameLayout.LayoutParams) imeSwitcherLeft.getLayoutParams();
+            lpl.gravity = isLayoutRtl ? Gravity.BOTTOM : Gravity.TOP;
+            imeSwitcherLeft.setLayoutParams(lpl);
+        }
+        if (imeSwitcherRight != null) {
+            FrameLayout.LayoutParams lpr = (FrameLayout.LayoutParams) imeSwitcherRight.getLayoutParams();
+            lpr.gravity = isLayoutRtl ? Gravity.TOP : Gravity.BOTTOM;
+            imeSwitcherRight.setLayoutParams(lpr);
         }
     }
 
@@ -647,7 +683,8 @@ public class NavigationBarView extends LinearLayout {
         dumpButton(pw, "back", getBackButton());
         dumpButton(pw, "home", getHomeButton());
         dumpButton(pw, "rcnt", getRecentsButton());
-        dumpButton(pw, "menu", getMenuButton());
+        dumpButton(pw, "menul", getMenuButtonLeft());
+        dumpButton(pw, "menur", getMenuButtonRight());
 
         pw.println("    }");
     }

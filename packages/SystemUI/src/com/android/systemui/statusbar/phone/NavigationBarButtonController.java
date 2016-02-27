@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff.Mode;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -33,17 +34,30 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
 public class NavigationBarButtonController {
+    private static final int MENU_BUTTON_VISIBILITY_ON_REQUEST = 0;
+    private static final int MENU_BUTTON_VISIBILITY_VISIBLE    = 1;
+    private static final int MENU_BUTTON_VISIBILITY_HIDDEN     = 2;
+
+    private static final int MENU_IME_BUTTON_POSITION_RIGHT = 0;
+    private static final int MENU_IME_BUTTON_POSITION_LEFT  = 1;
+
     private final Context mContext;
     private final NavigationBarView mNavigationBarView;
     private BackButtonDrawable mBackDrawable, mBackLandDrawable;
     private Drawable mRecentIcon, mRecentLandIcon;
     private Animator mColorTransitionAnimator;
+
+    private int mMenuButtonVisibility;
+    private int mMenuButtonPosition;
+    private int mImeButtonPosition;
+
     private int mIconColorOld;
 
     public NavigationBarButtonController(Context context, NavigationBarView navigationBarView) {
         mContext = context;
         mNavigationBarView = navigationBarView;
         mColorTransitionAnimator = createColorTransitionAnimator(0f, 1f);
+
         mIconColorOld = getIconColor();
         updateIcons(true);
     }
@@ -64,9 +78,15 @@ public class NavigationBarButtonController {
                 float position = animation.getAnimatedFraction();
                 final int blended = ColorHelper.getBlendColor(
                         mIconColorOld, getIconColor(), position);
+                if (animateImeLeftColorTransition()) {
+                    setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), blended);
+                }
                 setBackButtonIconColor(blended);
                 setButtonIconColor((ImageView) mNavigationBarView.getHomeButton(), blended);
                 setButtonIconColor((ImageView) mNavigationBarView.getRecentsButton(), blended);
+                if (animateImeRightColorTransition()) {
+                    setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), blended);
+                }
             }
         });
         animator.addListener(new AnimatorListenerAdapter() {
@@ -78,22 +98,92 @@ public class NavigationBarButtonController {
         return animator;
     }
 
+    public void updateMenuButtonVisibility() {
+        updateMenuButtonVisibility(false, false);
+    }
+
+    public void updateMenuButtonVisibility(boolean isRequestShow, boolean hide) {
+        mMenuButtonVisibility = getMenuButtonVisibility();
+
+        if (hide && mMenuButtonPosition == mImeButtonPosition) {
+            if (mNavigationBarView.getMenuButtonLeft().getVisibility() != View.INVISIBLE) {
+                mNavigationBarView.getMenuButtonLeft().setVisibility(View.INVISIBLE);
+            }
+            if (mNavigationBarView.getMenuButtonRight().getVisibility() != View.INVISIBLE) {
+                mNavigationBarView.getMenuButtonRight().setVisibility(View.INVISIBLE);
+            }
+        } else {
+            if (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_ON_REQUEST && isRequestShow) {
+                mNavigationBarView.getMenuButtonLeft().setVisibility(mMenuButtonPosition
+                        == MENU_IME_BUTTON_POSITION_LEFT ? View.VISIBLE : View.INVISIBLE);
+                mNavigationBarView.getMenuButtonRight().setVisibility(mMenuButtonPosition
+                        == MENU_IME_BUTTON_POSITION_RIGHT ? View.VISIBLE : View.INVISIBLE);
+            } else if (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE) {
+                mNavigationBarView.getMenuButtonLeft().setVisibility(mMenuButtonPosition
+                        == MENU_IME_BUTTON_POSITION_LEFT ? View.VISIBLE : View.INVISIBLE);
+                mNavigationBarView.getMenuButtonRight().setVisibility(mMenuButtonPosition
+                        == MENU_IME_BUTTON_POSITION_RIGHT ? View.VISIBLE : View.INVISIBLE);
+            } else {
+                if (mNavigationBarView.getMenuButtonLeft().getVisibility() != View.INVISIBLE) {
+                    mNavigationBarView.getMenuButtonLeft().setVisibility(View.INVISIBLE);
+                }
+                if (mNavigationBarView.getMenuButtonRight().getVisibility() != View.INVISIBLE) {
+                    mNavigationBarView.getMenuButtonRight().setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    }
+
+    public void updateMenuButtonPosition() {
+        mMenuButtonPosition = getMenuButtonPosition();
+        updateMenuButtonVisibility();
+    }
+
+    public void updateImeButtonPosition() {
+        mImeButtonPosition = getImeButtonPosition();
+    }
+
+    public void setShowImeButton(boolean show) {
+        if (mImeButtonPosition == MENU_IME_BUTTON_POSITION_LEFT) {
+            mNavigationBarView.getImeSwitchButtonLeft().setVisibility(
+                    show ? View.VISIBLE : View.INVISIBLE);
+            mNavigationBarView.getImeSwitchButtonRight().setVisibility(View.INVISIBLE);
+        } else {
+            mNavigationBarView.getImeSwitchButtonRight().setVisibility(
+                    show ? View.VISIBLE : View.INVISIBLE);
+            mNavigationBarView.getImeSwitchButtonLeft().setVisibility(View.INVISIBLE);
+        }
+    }
+
     public void updateColors(boolean animate) {
         updateIconColor(animate);
         updateRippleColor();
     }
 
+    public void setImeVisible(boolean visible) {
+        mBackDrawable.setImeVisible(visible);
+        mBackLandDrawable.setImeVisible(visible);
+    }
+
     private void updateIconColor(boolean animate) {
         if (animate) {
             mColorTransitionAnimator.start();
-            setButtonIconColor((ImageView) mNavigationBarView.getMenuButton(), getIconColor());
-            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButton(), getIconColor());
+            if (!animateImeLeftColorTransition()) {
+                setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), getIconColor());
+            }
+            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonLeft(), getIconColor());
+            if (!animateImeRightColorTransition()) {
+                setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), getIconColor());
+            }
+            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonRight(), getIconColor());
         } else {
+            setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonLeft(), getIconColor());
             setBackButtonIconColor(getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getHomeButton(), getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getRecentsButton(), getIconColor());
-            setButtonIconColor((ImageView) mNavigationBarView.getMenuButton(), getIconColor());
-            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButton(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonRight(), getIconColor());
             mIconColorOld = getIconColor();
         }
 
@@ -107,11 +197,13 @@ public class NavigationBarButtonController {
     }
 
     private void updateRippleColor() {
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getMenuButtonLeft(), getRippleColor());
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeSwitchButtonLeft(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getBackButton(), getRippleColor());
         setButtonRippleColor(mNavigationBarView.getHomeButton(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getRecentsButton(), getRippleColor());
-        setButtonRippleColor((KeyButtonView) mNavigationBarView.getMenuButton(), getRippleColor());
-        setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeSwitchButton(), getRippleColor());
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getMenuButtonRight(), getRippleColor());
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeSwitchButtonRight(), getRippleColor());
 
     }
 
@@ -138,6 +230,24 @@ public class NavigationBarButtonController {
         button.setRippleColor(rippleColor);
     }
 
+    private int getMenuButtonVisibility() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_MENU_BUTTON_VISIBILITY,
+                MENU_BUTTON_VISIBILITY_ON_REQUEST);
+    }
+
+    private int getMenuButtonPosition() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_MENU_BUTTON_POSITION,
+                MENU_IME_BUTTON_POSITION_RIGHT);
+    }
+
+    private int getImeButtonPosition() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_IME_BUTTON_POSITION,
+                MENU_IME_BUTTON_POSITION_RIGHT);
+    }
+
     private int getIconColor() {
         return Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NAVIGATION_BAR_BUTTON_ICON_COLOR, 0xffffffff);
@@ -145,11 +255,16 @@ public class NavigationBarButtonController {
 
     private int getRippleColor() {
         return Settings.System.getInt(mContext.getContentResolver(),
-            Settings.System.NAVIGATION_BAR_BUTTON_RIPPLE_COLOR, 0xffffffff);
+                Settings.System.NAVIGATION_BAR_BUTTON_RIPPLE_COLOR, 0xffffffff);
     }
 
-    public void setImeVisible(boolean visible) {
-        mBackDrawable.setImeVisible(visible);
-        mBackLandDrawable.setImeVisible(visible);
+    private boolean animateImeLeftColorTransition() {
+        return mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE
+                && mMenuButtonPosition == MENU_IME_BUTTON_POSITION_LEFT;
+    }
+
+    private boolean animateImeRightColorTransition() {
+        return mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE
+                && mMenuButtonPosition == MENU_IME_BUTTON_POSITION_RIGHT;
     }
 }

@@ -3973,6 +3973,28 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_TEXT_COLOR = "status_bar_expanded_text_color";
 
         /**
+         * Navigation bar Menu button visibility
+         * 0 = On request
+         * 1 = Always
+         * 2 = Never
+         * default: 0
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MENU_BUTTON_VISIBILITY = "navigation_bar_menu_button_visibility";
+
+        /**
+         * Wether to show the navigation bar menu button on the left/bottom
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_MENU_BUTTON_POSITION = "navigation_bar_menu_button_position";
+
+        /**
+         * Wether to show the navigation bar ime button on the left/bottom
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_IME_BUTTON_POSITION = "navigation_bar_ime_button_position";
+
+        /**
          * Navigation bar button icon color
          * @hide
          */
