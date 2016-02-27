@@ -78,13 +78,13 @@ public class NavigationBarButtonController {
                 float position = animation.getAnimatedFraction();
                 final int blended = ColorHelper.getBlendColor(
                         mIconColorOld, getIconColor(), position);
-                if (animateImeLeftColorTransition()) {
+                if (animateMenuLeftColorTransition()) {
                     setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), blended);
                 }
                 setBackButtonIconColor(blended);
                 setButtonIconColor((ImageView) mNavigationBarView.getHomeButton(), blended);
                 setButtonIconColor((ImageView) mNavigationBarView.getRecentsButton(), blended);
-                if (animateImeRightColorTransition()) {
+                if (animateMenuRightColorTransition()) {
                     setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), blended);
                 }
             }
@@ -168,11 +168,11 @@ public class NavigationBarButtonController {
     private void updateIconColor(boolean animate) {
         if (animate) {
             mColorTransitionAnimator.start();
-            if (!animateImeLeftColorTransition()) {
+            if (!animateMenuLeftColorTransition()) {
                 setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), getIconColor());
             }
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonLeft(), getIconColor());
-            if (!animateImeRightColorTransition()) {
+            if (!animateMenuRightColorTransition()) {
                 setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), getIconColor());
             }
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonRight(), getIconColor());
@@ -258,12 +258,12 @@ public class NavigationBarButtonController {
                 Settings.System.NAVIGATION_BAR_BUTTON_RIPPLE_COLOR, 0xffffffff);
     }
 
-    private boolean animateImeLeftColorTransition() {
+    private boolean animateMenuLeftColorTransition() {
         return mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE
                 && mMenuButtonPosition == MENU_IME_BUTTON_POSITION_LEFT;
     }
 
-    private boolean animateImeRightColorTransition() {
+    private boolean animateMenuRightColorTransition() {
         return mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE
                 && mMenuButtonPosition == MENU_IME_BUTTON_POSITION_RIGHT;
     }
