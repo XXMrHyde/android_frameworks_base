@@ -588,6 +588,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW_IME_ARROWS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_MENU_BUTTON_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -727,14 +730,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR))) {
                 updateTickerTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_MENU_BUTTON_VISIBILITY))) {
-                updateNavigationBarMenuButtonVisibility();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_MENU_BUTTON_POSITION))) {
-                updateNavigationBarMenuButtonPosition();
-            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW_IME_ARROWS))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_MENU_BUTTON_VISIBILITY))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_MENU_BUTTON_POSITION))
+                || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_IME_BUTTON_POSITION))) {
-                updateNavigationBarImeButtonPosition();
+                updateNavigationBarExtraButtons();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_ICON_COLOR))
                 || uri.equals(Settings.System.getUriFor(
@@ -2235,9 +2238,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setNetworkTrafficHideTraffic();
         updateNetworkTrafficColors(false);
         updateShowTicker();
-        updateNavigationBarMenuButtonVisibility();
-        updateNavigationBarMenuButtonPosition();
-        updateNavigationBarImeButtonPosition();
+        updateNavigationBarExtraButtons();
         updateNavigationBarColors(false);
         UpdateClearAllNotificationIconColor();
         UpdateEmptyShadeTextColor();
@@ -2507,21 +2508,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void updateNavigationBarMenuButtonVisibility() {
+    private void updateNavigationBarExtraButtons() {
         if (mNavigationBarView != null) {
-            mNavigationBarView.updateMenuButtonVisibility();
-        }
-    }
-
-    private void updateNavigationBarMenuButtonPosition() {
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateMenuButtonPosition();
-        }
-    }
-
-    private void updateNavigationBarImeButtonPosition() {
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateImeButtonPosition();
+            mNavigationBarView.updateExtraButtons();
         }
     }
 

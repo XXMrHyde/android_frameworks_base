@@ -3973,6 +3973,12 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_TEXT_COLOR = "status_bar_expanded_text_color";
 
         /**
+         * Whether to show the navigation bar IME arrows while typing
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW_IME_ARROWS = "navigation_bar_show_ime_arrows";
+
+        /**
          * Navigation bar Menu button visibility
          * 0 = On request
          * 1 = Always

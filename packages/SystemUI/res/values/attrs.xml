@@ -18,6 +18,10 @@
     <declare-styleable name="KeyButtonView">
         <!-- key code to send when pressed; if absent or 0, no key is sent -->
         <attr name="keyCode" format="integer" />
+        <!-- key code to send when long pressed; if absent or 0, key code is sent -->
+        <attr name="keyCodeLongClick" format="integer" />
+        <!-- does this button generate soft keyboard events? -->
+        <attr name="useSoftKeyboard" format="boolean" />
         <!-- does this button generate longpress / repeat events? -->
         <attr name="keyRepeat" format="boolean" />
         <attr name="android:contentDescription" />

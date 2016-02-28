@@ -98,60 +98,74 @@ public class NavigationBarButtonController {
         return animator;
     }
 
-    public void updateMenuButtonVisibility() {
-        updateMenuButtonVisibility(false, false);
-    }
-
-    public void updateMenuButtonVisibility(boolean isRequestShow, boolean hide) {
+    public void updateExtraButtons(boolean showImeButtons, boolean requestShowMenuButton) {
         mMenuButtonVisibility = getMenuButtonVisibility();
+        mMenuButtonPosition = getMenuButtonPosition();
+        mImeButtonPosition = getImeButtonPosition();
 
-        if (hide && mMenuButtonPosition == mImeButtonPosition) {
-            if (mNavigationBarView.getMenuButtonLeft().getVisibility() != View.INVISIBLE) {
-                mNavigationBarView.getMenuButtonLeft().setVisibility(View.INVISIBLE);
-            }
-            if (mNavigationBarView.getMenuButtonRight().getVisibility() != View.INVISIBLE) {
-                mNavigationBarView.getMenuButtonRight().setVisibility(View.INVISIBLE);
-            }
-        } else {
-            if (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_ON_REQUEST && isRequestShow) {
-                mNavigationBarView.getMenuButtonLeft().setVisibility(mMenuButtonPosition
-                        == MENU_IME_BUTTON_POSITION_LEFT ? View.VISIBLE : View.INVISIBLE);
-                mNavigationBarView.getMenuButtonRight().setVisibility(mMenuButtonPosition
-                        == MENU_IME_BUTTON_POSITION_RIGHT ? View.VISIBLE : View.INVISIBLE);
-            } else if (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE) {
-                mNavigationBarView.getMenuButtonLeft().setVisibility(mMenuButtonPosition
-                        == MENU_IME_BUTTON_POSITION_LEFT ? View.VISIBLE : View.INVISIBLE);
-                mNavigationBarView.getMenuButtonRight().setVisibility(mMenuButtonPosition
-                        == MENU_IME_BUTTON_POSITION_RIGHT ? View.VISIBLE : View.INVISIBLE);
+        int imeArrowButtonsVisibility = View.INVISIBLE;
+        int imeSwitchButtonLeftVisibility = View.INVISIBLE;
+        int imeSwitchButtonRightVisibility = View.INVISIBLE;
+        int menuButtonLeftVisibility = View.INVISIBLE;
+        int menuButtonRightVisibility = View.INVISIBLE;
+
+        if (showImeButtons) {
+            if (showImeArrowButtons()) {
+                imeArrowButtonsVisibility = View.VISIBLE;
             } else {
-                if (mNavigationBarView.getMenuButtonLeft().getVisibility() != View.INVISIBLE) {
-                    mNavigationBarView.getMenuButtonLeft().setVisibility(View.INVISIBLE);
-                }
-                if (mNavigationBarView.getMenuButtonRight().getVisibility() != View.INVISIBLE) {
-                    mNavigationBarView.getMenuButtonRight().setVisibility(View.INVISIBLE);
+                if (mImeButtonPosition == MENU_IME_BUTTON_POSITION_LEFT) {
+                    imeSwitchButtonLeftVisibility = View.VISIBLE;
+                } else {
+                    imeSwitchButtonRightVisibility = View.VISIBLE;
                 }
             }
         }
-    }
+        if (mMenuButtonVisibility != MENU_BUTTON_VISIBILITY_HIDDEN) {
+            if (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_VISIBLE
+                    || (mMenuButtonVisibility == MENU_BUTTON_VISIBILITY_ON_REQUEST
+                    && requestShowMenuButton)) {
+                if (imeArrowButtonsVisibility != View.VISIBLE) {
+                    if (mMenuButtonPosition == MENU_IME_BUTTON_POSITION_LEFT
+                            && imeSwitchButtonLeftVisibility != View.VISIBLE) {
+                        menuButtonLeftVisibility = View.VISIBLE;
+                    }
+                    if (mMenuButtonPosition == MENU_IME_BUTTON_POSITION_RIGHT
+                            && imeSwitchButtonRightVisibility != View.VISIBLE) {
+                        menuButtonRightVisibility = View.VISIBLE;
+                    }
+                }
+            }
+        }
 
-    public void updateMenuButtonPosition() {
-        mMenuButtonPosition = getMenuButtonPosition();
-        updateMenuButtonVisibility();
-    }
-
-    public void updateImeButtonPosition() {
-        mImeButtonPosition = getImeButtonPosition();
-    }
-
-    public void setShowImeButton(boolean show) {
-        if (mImeButtonPosition == MENU_IME_BUTTON_POSITION_LEFT) {
+        if (mNavigationBarView.getImeArrowButtonLeft().getVisibility()
+                != imeArrowButtonsVisibility) {
+            mNavigationBarView.getImeArrowButtonLeft().setVisibility(
+                    imeArrowButtonsVisibility);
+        }
+        if (mNavigationBarView.getImeArrowButtonRight().getVisibility()
+                != imeArrowButtonsVisibility) {
+            mNavigationBarView.getImeArrowButtonRight().setVisibility(
+                    imeArrowButtonsVisibility);
+        }
+        if (mNavigationBarView.getImeSwitchButtonLeft().getVisibility()
+                != imeSwitchButtonLeftVisibility) {
             mNavigationBarView.getImeSwitchButtonLeft().setVisibility(
-                    show ? View.VISIBLE : View.INVISIBLE);
-            mNavigationBarView.getImeSwitchButtonRight().setVisibility(View.INVISIBLE);
-        } else {
+                    imeSwitchButtonLeftVisibility);
+        }
+        if (mNavigationBarView.getImeSwitchButtonRight().getVisibility()
+                != imeSwitchButtonRightVisibility) {
             mNavigationBarView.getImeSwitchButtonRight().setVisibility(
-                    show ? View.VISIBLE : View.INVISIBLE);
-            mNavigationBarView.getImeSwitchButtonLeft().setVisibility(View.INVISIBLE);
+                    imeSwitchButtonRightVisibility);
+        }
+        if (mNavigationBarView.getMenuButtonLeft().getVisibility()
+                != menuButtonLeftVisibility) {
+            mNavigationBarView.getMenuButtonLeft().setVisibility(
+                    menuButtonLeftVisibility);
+        }
+        if (mNavigationBarView.getMenuButtonRight().getVisibility()
+                != menuButtonRightVisibility) {
+            mNavigationBarView.getMenuButtonRight().setVisibility(
+                    menuButtonRightVisibility);
         }
     }
 
@@ -172,18 +186,22 @@ public class NavigationBarButtonController {
                 setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), getIconColor());
             }
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonLeft(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeArrowButtonLeft(), getIconColor());
             if (!animateMenuRightColorTransition()) {
                 setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), getIconColor());
             }
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonRight(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeArrowButtonRight(), getIconColor());
         } else {
             setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonLeft(), getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonLeft(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeArrowButtonLeft(), getIconColor());
             setBackButtonIconColor(getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getHomeButton(), getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getRecentsButton(), getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getMenuButtonRight(), getIconColor());
             setButtonIconColor((ImageView) mNavigationBarView.getImeSwitchButtonRight(), getIconColor());
+            setButtonIconColor((ImageView) mNavigationBarView.getImeArrowButtonRight(), getIconColor());
             mIconColorOld = getIconColor();
         }
 
@@ -199,11 +217,13 @@ public class NavigationBarButtonController {
     private void updateRippleColor() {
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getMenuButtonLeft(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeSwitchButtonLeft(), getRippleColor());
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeArrowButtonLeft(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getBackButton(), getRippleColor());
         setButtonRippleColor(mNavigationBarView.getHomeButton(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getRecentsButton(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getMenuButtonRight(), getRippleColor());
         setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeSwitchButtonRight(), getRippleColor());
+        setButtonRippleColor((KeyButtonView) mNavigationBarView.getImeArrowButtonRight(), getRippleColor());
 
     }
 
@@ -228,6 +248,11 @@ public class NavigationBarButtonController {
 
     private void setButtonRippleColor(KeyButtonView button, int rippleColor) {
         button.setRippleColor(rippleColor);
+    }
+
+    private boolean showImeArrowButtons() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_SHOW_IME_ARROWS, 0) == 1;
     }
 
     private int getMenuButtonVisibility() {

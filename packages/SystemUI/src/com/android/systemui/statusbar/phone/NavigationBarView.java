@@ -237,6 +237,10 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.ime_switcher_left);
     }
 
+    public View getImeArrowButtonLeft() {
+        return mCurrentView.findViewById(R.id.ime_arrow_left);
+    }
+
     public View getBackButton() {
         return mCurrentView.findViewById(R.id.back);
     }
@@ -255,6 +259,10 @@ public class NavigationBarView extends LinearLayout {
 
     public View getImeSwitchButtonRight() {
         return mCurrentView.findViewById(R.id.ime_switcher_right);
+    }
+
+    public View getImeArrowButtonRight() {
+        return mCurrentView.findViewById(R.id.ime_arrow_right);
     }
 
     @Override
@@ -291,10 +299,7 @@ public class NavigationBarView extends LinearLayout {
         mNavigationBarButtonController.updateIcons(false);
         mNavigationBarButtonController.updateColors(false);
         mNavigationBarButtonController.setImeVisible(backAlt);
-        mNavigationBarButtonController.setShowImeButton(showImeButton);
-
-        // Update menu button in case the IME state has changed.
-        setMenuVisibility(mShowMenu, true);
+        setMenuVisibility(mShowMenu);
 
 
         setDisabledFlags(mDisabledFlags, true);
@@ -339,16 +344,8 @@ public class NavigationBarView extends LinearLayout {
         getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
     }
 
-    public void updateMenuButtonVisibility() {
-        mNavigationBarButtonController.updateMenuButtonVisibility(false, false);
-    }
-
-    public void updateMenuButtonPosition() {
-        mNavigationBarButtonController.updateMenuButtonPosition();
-    }
-
-    public void updateImeButtonPosition() {
-        mNavigationBarButtonController.updateImeButtonPosition();
+    public void updateExtraButtons() {
+        mNavigationBarButtonController.updateExtraButtons(false, false);
     }
 
     public void updateColors(boolean animate) {
@@ -432,18 +429,11 @@ public class NavigationBarView extends LinearLayout {
     }
 
     public void setMenuVisibility(final boolean show) {
-        setMenuVisibility(show, false);
-    }
-
-    public void setMenuVisibility(final boolean show, final boolean force) {
-        if (!force && mShowMenu == show) return;
-
         mShowMenu = show;
-        mNavigationBarButtonController.updateMenuButtonVisibility(mShowMenu, isImeVisible());
-
+        mNavigationBarButtonController.updateExtraButtons(showImeBottons(), mShowMenu);
     }
 
-    private boolean isImeVisible() {
+    private boolean showImeBottons() {
         return ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
     }
 
@@ -485,7 +475,6 @@ public class NavigationBarView extends LinearLayout {
         // force the low profile & disabled states into compliance
         mBarTransitions.init();
         setDisabledFlags(mDisabledFlags, true /* force */);
-        setMenuVisibility(mShowMenu, true /* force */);
 
         if (DEBUG) {
             Log.d(TAG, "reorient(): rot=" + mDisplay.getRotation());

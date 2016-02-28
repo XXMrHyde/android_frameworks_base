@@ -48,6 +48,8 @@ public class KeyButtonView extends ImageView {
     private int mContentDescriptionRes;
     private long mDownTime;
     private int mCode;
+    private int mCodeLongClick;
+    private boolean mUseSoftKeyboard;
     private int mTouchSlop;
     private boolean mSupportsLongpress = true;
     private AudioManager mAudioManager;
@@ -81,6 +83,8 @@ public class KeyButtonView extends ImageView {
                 defStyle, 0);
 
         mCode = a.getInteger(R.styleable.KeyButtonView_keyCode, 0);
+        mCodeLongClick = a.getInteger(R.styleable.KeyButtonView_keyCodeLongClick, mCode);
+        mUseSoftKeyboard = a.getBoolean(R.styleable.KeyButtonView_useSoftKeyboard, false);
 
         mSupportsLongpress = a.getBoolean(R.styleable.KeyButtonView_keyRepeat, true);
 
@@ -111,9 +115,11 @@ public class KeyButtonView extends ImageView {
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
-        if (mCode != 0) {
-            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(ACTION_CLICK, null));
-            if (mSupportsLongpress || isLongClickable()) {
+        if (mCode != 0 || mCodeLongClick != 0) {
+            if (mCode != 0) {
+                info.addAction(new AccessibilityNodeInfo.AccessibilityAction(ACTION_CLICK, null));
+            }
+            if (mCodeLongClick != 0 && (mSupportsLongpress || isLongClickable())) {
                 info.addAction(
                         new AccessibilityNodeInfo.AccessibilityAction(ACTION_LONG_CLICK, null));
             }
@@ -136,7 +142,7 @@ public class KeyButtonView extends ImageView {
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
             playSoundEffect(SoundEffectConstants.CLICK);
             return true;
-        } else if (action == ACTION_LONG_CLICK && mCode != 0) {
+        } else if (action == ACTION_LONG_CLICK && mCodeLongClick != 0) {
             sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
             sendEvent(KeyEvent.ACTION_UP, 0);
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_LONG_CLICKED);
@@ -159,7 +165,7 @@ public class KeyButtonView extends ImageView {
             case MotionEvent.ACTION_DOWN:
                 mDownTime = SystemClock.uptimeMillis();
                 setPressed(true);
-                if (mCode != 0) {
+                if (mCode != 0 || mCodeLongClick != 0) {
                     sendEvent(KeyEvent.ACTION_DOWN, 0, mDownTime);
                 } else {
                     // Provide the same haptic feedback that the system offers for virtual keys.
@@ -181,7 +187,7 @@ public class KeyButtonView extends ImageView {
                 // hack to fix ripple getting stuck. exitHardware() starts an animation,
                 // but sometimes does not finish it.
                 mRipple.exitSoftware();
-                if (mCode != 0) {
+                if (mCode != 0 || mCodeLongClick != 0) {
                     sendEvent(KeyEvent.ACTION_UP, KeyEvent.FLAG_CANCELED);
                 }
                 removeCallbacks(mCheckLongPress);
@@ -189,7 +195,7 @@ public class KeyButtonView extends ImageView {
             case MotionEvent.ACTION_UP:
                 final boolean doIt = isPressed();
                 setPressed(false);
-                if (mCode != 0) {
+                if (mCode != 0 || mCodeLongClick != 0) {
                     if (doIt) {
                         sendEvent(KeyEvent.ACTION_UP, 0);
                         sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
@@ -219,10 +225,16 @@ public class KeyButtonView extends ImageView {
     }
 
     void sendEvent(int action, int flags, long when) {
-        final int repeatCount = (flags & KeyEvent.FLAG_LONG_PRESS) != 0 ? 1 : 0;
-        final KeyEvent ev = new KeyEvent(mDownTime, when, action, mCode, repeatCount,
-                0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
-                flags | KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
+        final boolean isLongClick = (flags & KeyEvent.FLAG_LONG_PRESS) != 0;
+        final int repeatCount = isLongClick ? 1 : 0;
+        int flagsToUse;
+        if (mUseSoftKeyboard) {
+            flagsToUse = flags | KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE;
+        } else {
+            flagsToUse = flags | KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY;
+        }
+        final KeyEvent ev = new KeyEvent(mDownTime, when, action, isLongClick ? mCodeLongClick : mCode,
+                repeatCount, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, flagsToUse,
                 InputDevice.SOURCE_KEYBOARD);
         InputManager.getInstance().injectInputEvent(ev,
                 InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);

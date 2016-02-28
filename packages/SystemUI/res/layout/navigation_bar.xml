@@ -62,7 +62,6 @@
                     android:scaleType="centerInside"
                     android:layout_gravity="start"
                     systemui:keyCode="82" />
-
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/ime_switcher_left"
                     android:layout_width="@dimen/navigation_extra_key_width"
@@ -72,6 +71,18 @@
                     android:src="@drawable/ic_ime_switcher_default"
                     android:visibility="invisible"
                     android:layout_gravity="start" />
+                <com.android.systemui.statusbar.policy.KeyButtonView
+                    android:id="@+id/ime_arrow_left"
+                    android:layout_width="@dimen/navigation_extra_key_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/accessibility_ime_arrow_button"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_ime_arrow_left"
+                    android:visibility="invisible"
+                    android:layout_gravity="start"
+                    systemui:useSoftKeyboard="true"
+                    systemui:keyCode="21"
+                    systemui:keyCodeLongClick="19" />
             </FrameLayout>
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/back"
                 android:layout_width="@dimen/navigation_key_width"
@@ -126,7 +137,6 @@
                     android:scaleType="centerInside"
                     android:layout_gravity="end"
                     systemui:keyCode="82" />
-
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/ime_switcher_right"
                     android:layout_width="@dimen/navigation_extra_key_width"
@@ -136,6 +146,18 @@
                     android:src="@drawable/ic_ime_switcher_default"
                     android:visibility="invisible"
                     android:layout_gravity="end" />
+                <com.android.systemui.statusbar.policy.KeyButtonView
+                    android:id="@+id/ime_arrow_right"
+                    android:layout_width="@dimen/navigation_extra_key_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/accessibility_ime_arrow_button"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_ime_arrow_right"
+                    android:visibility="invisible"
+                    android:layout_gravity="end"
+                    systemui:useSoftKeyboard="true"
+                    systemui:keyCode="22"
+                    systemui:keyCodeLongClick="20" />
             </FrameLayout>
             <View
                 android:layout_width="0dp"
@@ -235,6 +257,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/navigation_side_padding" >
                 <com.android.systemui.statusbar.policy.KeyButtonView
+                    android:id="@+id/ime_arrow_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/navigation_extra_key_width"
+                    android:contentDescription="@string/accessibility_ime_arrow_button"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_ime_arrow_right"
+                    android:layout_gravity="top"
+                    android:visibility="invisible"
+                    systemui:useSoftKeyboard="true"
+                    systemui:keyCode="22"
+                    systemui:keyCodeLongClick="20" />
+                <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/ime_switcher_right"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/navigation_extra_key_width"
@@ -243,7 +277,6 @@
                     android:src="@drawable/ic_ime_switcher_default"
                     android:layout_gravity="top"
                     android:visibility="invisible" />
-
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/menu_right"
                     android:layout_width="match_parent"
@@ -299,6 +332,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/navigation_side_padding" >
                 <com.android.systemui.statusbar.policy.KeyButtonView
+                    android:id="@+id/ime_arrow_left"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/navigation_extra_key_width"
+                    android:contentDescription="@string/accessibility_ime_arrow_button"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_ime_arrow_left"
+                    android:layout_gravity="bottom"
+                    android:visibility="invisible"
+                    systemui:useSoftKeyboard="true"
+                    systemui:keyCode="21"
+                    systemui:keyCodeLongClick="19" />
+                <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/ime_switcher_left"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/navigation_extra_key_width"
@@ -307,7 +352,6 @@
                     android:src="@drawable/ic_ime_switcher_default"
                     android:layout_gravity="bottom"
                     android:visibility="invisible" />
-
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/menu_left"
                     android:layout_width="match_parent"
