@@ -23,6 +23,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.ActivityOptions;
 import android.app.IActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -35,6 +36,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.IPackageManager;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
@@ -103,6 +106,7 @@ import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
@@ -1450,16 +1454,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (shouldDisableNavbarGestures()) {
+            if (isHomeButtonLongClickEnabled()) {
+                if (shouldDisableNavbarGestures()) {
+                    return false;
+                }
+                MetricsLogger.action(mContext, MetricsLogger.ACTION_ASSIST_LONG_PRESS);
+                mAssistManager.startAssist(new Bundle() /* args */);
+                awakenDreams();
+                if (mNavigationBarView != null) {
+                    mNavigationBarView.abortCurrentGesture();
+                }
+                return true;
+            } else {
                 return false;
             }
-            MetricsLogger.action(mContext, MetricsLogger.ACTION_ASSIST_LONG_PRESS);
-            mAssistManager.startAssist(new Bundle() /* args */);
-            awakenDreams();
-            if (mNavigationBarView != null) {
-                mNavigationBarView.abortCurrentGesture();
-            }
-            return true;
         }
     };
 
@@ -2506,6 +2514,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mIconController != null) {
             mIconController.updateTickerTextColor();
         }
+    }
+
+    private boolean isBackButtonLongClickEnabled() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_ENABLE_BACK_BUTTON_LONG_CLICK, 0) == 1;
+    }
+
+    private boolean isHomeButtonLongClickEnabled() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_ENABLE_HOME_BUTTON_LONG_CLICK, 1) == 1;
+    }
+
+    private boolean isRecentsButtonLongClickEnabled() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_ENABLE_RECENTS_BUTTON_LONG_CLICK, 0) == 1;
     }
 
     private void updateNavigationBarExtraButtons() {
@@ -4867,31 +4890,43 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             boolean sendBackLongPress = false;
             IActivityManager activityManager = ActivityManagerNative.getDefault();
             boolean isAccessiblityEnabled = mAccessibilityManager.isEnabled();
-            if (activityManager.isInLockTaskMode() && !isAccessiblityEnabled) {
-                long time = System.currentTimeMillis();
-                // If we recently long-pressed the other button then they were
-                // long-pressed 'together'
-                if ((time - mLastLockToAppLongPress) < LOCK_TO_APP_GESTURE_TOLERENCE) {
-                    activityManager.stopLockTaskModeOnCurrent();
-                    // When exiting refresh disabled flags.
-                    mNavigationBarView.setDisabledFlags(mDisabled1, true);
-                } else if ((v.getId() == R.id.back)
-                        && !mNavigationBarView.getRecentsButton().isPressed()) {
-                    // If we aren't pressing recents right now then they presses
-                    // won't be together, so send the standard long-press action.
-                    sendBackLongPress = true;
-                }
-                mLastLockToAppLongPress = time;
-            } else {
-                // If this is back still need to handle sending the long-press event.
+            if (!activityManager.isInLockTaskMode()) {
                 if (v.getId() == R.id.back) {
-                    sendBackLongPress = true;
-                } else if (isAccessiblityEnabled && activityManager.isInLockTaskMode()) {
-                    // When in accessibility mode a long press that is recents (not back)
-                    // should stop lock task.
-                    activityManager.stopLockTaskModeOnCurrent();
-                    // When exiting refresh disabled flags.
-                    mNavigationBarView.setDisabledFlags(mDisabled1, true);
+                    if (isBackButtonLongClickEnabled()) {
+                        killForegroundApp();
+                    } else {
+                        sendBackLongPress = true;
+                    }
+                } else if (isRecentsButtonLongClickEnabled()) {
+                    switchToLastApp();
+                }
+            } else {
+                if (!isAccessiblityEnabled) {
+                    long time = System.currentTimeMillis();
+                    // If we recently long-pressed the other button then they were
+                    // long-pressed 'together'
+                    if ((time - mLastLockToAppLongPress) < LOCK_TO_APP_GESTURE_TOLERENCE) {
+                        activityManager.stopLockTaskModeOnCurrent();
+                        // When exiting refresh disabled flags.
+                        mNavigationBarView.setDisabledFlags(mDisabled1, true);
+                    } else if ((v.getId() == R.id.back)
+                            && !mNavigationBarView.getRecentsButton().isPressed()) {
+                        // If we aren't pressing recents right now then they presses
+                        // won't be together, so send the standard long-press action.
+                        sendBackLongPress = true;
+                    }
+                    mLastLockToAppLongPress = time;
+                } else {
+                    // If this is back still need to handle sending the long-press event.
+                    if (v.getId() == R.id.back) {
+                        sendBackLongPress = true;
+                    } else {
+                        // When in accessibility mode a long press that is recents (not back)
+                        // should stop lock task.
+                        activityManager.stopLockTaskModeOnCurrent();
+                        // When exiting refresh disabled flags.
+                        mNavigationBarView.setDisabledFlags(mDisabled1, true);
+                    }
                 }
             }
             if (sendBackLongPress) {
@@ -4902,6 +4937,102 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } catch (RemoteException e) {
             Log.d(TAG, "Unable to reach activity manager", e);
         }
+    }
+
+    private void killForegroundApp() {
+        try {
+            final Intent intent = new Intent(Intent.ACTION_MAIN);
+            String defaultHomePackage = "com.android.launcher";
+            intent.addCategory(Intent.CATEGORY_HOME);
+            final ResolveInfo res = mContext.getPackageManager().resolveActivity(intent, 0);
+
+            if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
+                defaultHomePackage = res.activityInfo.packageName;
+            }
+
+            boolean targetKilled = false;
+            IActivityManager am = ActivityManagerNative.getDefault();
+            List<ActivityManager.RunningAppProcessInfo> apps = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo appInfo : apps) {
+                int uid = appInfo.uid;
+                // Make sure it's a foreground user application (not system,
+                // root, phone, etc.)
+                if (uid >= Process.FIRST_APPLICATION_UID && uid <= Process.LAST_APPLICATION_UID
+                        && appInfo.importance ==
+                        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    if (appInfo.pkgList != null && (appInfo.pkgList.length > 0)) {
+                        for (String pkg : appInfo.pkgList) {
+                            if (!pkg.equals("com.android.systemui")
+                                    && !pkg.equals(defaultHomePackage)) {
+                                am.forceStopPackage(pkg, UserHandle.USER_CURRENT);
+                                targetKilled = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        Process.killProcess(appInfo.pid);
+                        targetKilled = true;
+                    }
+                }
+                if (targetKilled) {
+                    Toast.makeText(mContext, R.string.app_killed_message, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+            }
+        } catch (RemoteException remoteException) {
+            // Do nothing; just let it go.
+        }
+    }
+
+    private void switchToLastApp() {
+        try {
+            ActivityManager.RecentTaskInfo lastTask = getLastTask();
+
+            if (lastTask == null || lastTask.id < 0) {
+                return;
+            }
+
+            final String packageName = lastTask.baseIntent.getComponent().getPackageName();
+            final IActivityManager am = ActivityManagerNative.getDefault();
+            final ActivityOptions opts = ActivityOptions.makeCustomAnimation(mContext,
+                    R.anim.last_app_in, R.anim.last_app_out);
+
+            if (DEBUG) Log.d(TAG, "switching to " + packageName);
+            am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION, opts.toBundle());
+        } catch (RemoteException e) {
+            Log.e(TAG, "Could not switch to last app");
+        }
+    }
+
+    private ActivityManager.RecentTaskInfo getLastTask()
+            throws RemoteException {
+        final String defaultHomePackage = resolveCurrentLauncherPackage();
+        final IActivityManager am = ActivityManagerNative.getDefault();
+        final List<ActivityManager.RecentTaskInfo> tasks = am.getRecentTasks(5,
+                ActivityManager.RECENT_IGNORE_UNAVAILABLE, mCurrentUserId);
+
+        for (int i = 1; i < tasks.size(); i++) {
+            ActivityManager.RecentTaskInfo task = tasks.get(i);
+            if (task.origActivity != null) {
+                task.baseIntent.setComponent(task.origActivity);
+            }
+            String packageName = task.baseIntent.getComponent().getPackageName();
+            if (!packageName.equals(defaultHomePackage)
+                    && !packageName.equals("com.android.systemui")) {
+                return tasks.get(i);
+            }
+        }
+
+        return null;
+    }
+
+    private String resolveCurrentLauncherPackage() {
+        final Intent launcherIntent = new Intent(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_HOME);
+        final PackageManager pm = mContext.getPackageManager();
+        final ResolveInfo launcherInfo = pm.resolveActivityAsUser(launcherIntent, 0, mCurrentUserId);
+        return launcherInfo.activityInfo.packageName;
     }
 
     // Recents

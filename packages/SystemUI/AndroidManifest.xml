@@ -142,6 +142,9 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- Back kill app on long click  -->
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"

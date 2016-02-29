@@ -3973,6 +3973,24 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_TEXT_COLOR = "status_bar_expanded_text_color";
 
         /**
+         * Whether to enable the the navigation bar back button long click, (close the current app)
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ENABLE_BACK_BUTTON_LONG_CLICK = "navigation_bar_enable_back_button_long_click";
+
+        /**
+         * Whether to enable the the navigation bar home button long click, (open Google Now)
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ENABLE_HOME_BUTTON_LONG_CLICK = "navigation_bar_enable_home_button_long_click";
+
+        /**
+         * Whether to enable the the navigation bar cecents button long click, (switch to the last app)
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_ENABLE_RECENTS_BUTTON_LONG_CLICK = "navigation_bar_enable_cecents_button_long_click";
+
+        /**
          * Whether to show the navigation bar IME arrows while typing
          * @hide
          */

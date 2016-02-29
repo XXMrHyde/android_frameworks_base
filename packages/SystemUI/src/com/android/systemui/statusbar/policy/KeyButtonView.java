@@ -54,6 +54,7 @@ public class KeyButtonView extends ImageView {
     private boolean mSupportsLongpress = true;
     private AudioManager mAudioManager;
     private boolean mGestureAborted;
+    private boolean mPerformedLongClick;
 
     private KeyButtonRipple mRipple;
 
@@ -63,6 +64,7 @@ public class KeyButtonView extends ImageView {
                 // Log.d("KeyButtonView", "longpressed: " + this);
                 if (isLongClickable()) {
                     // Just an old-fashioned ImageView
+                    mPerformedLongClick = true;
                     performLongClick();
                 } else if (mSupportsLongpress) {
                     sendEvent(KeyEvent.ACTION_DOWN, KeyEvent.FLAG_LONG_PRESS);
@@ -83,7 +85,7 @@ public class KeyButtonView extends ImageView {
                 defStyle, 0);
 
         mCode = a.getInteger(R.styleable.KeyButtonView_keyCode, 0);
-        mCodeLongClick = a.getInteger(R.styleable.KeyButtonView_keyCodeLongClick, mCode);
+        mCodeLongClick = a.getInteger(R.styleable.KeyButtonView_keyCodeLongClick, 0);
         mUseSoftKeyboard = a.getBoolean(R.styleable.KeyButtonView_useSoftKeyboard, false);
 
         mSupportsLongpress = a.getBoolean(R.styleable.KeyButtonView_keyRepeat, true);
@@ -205,11 +207,12 @@ public class KeyButtonView extends ImageView {
                     }
                 } else {
                     // no key code, just a regular ImageView
-                    if (doIt) {
+                    if (doIt && !mPerformedLongClick) {
                         performClick();
                     }
                 }
                 removeCallbacks(mCheckLongPress);
+                mPerformedLongClick = false;
                 break;
         }
 
