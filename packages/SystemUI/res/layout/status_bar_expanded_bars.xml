@@ -300,14 +300,75 @@
             android:background="@drawable/expanded_bars_background"
             android:elevation="@dimen/expanded_bars_elevation">
 
-        <TextView
-                android:id="@+id/weather_bar_no_weather"
-                android:layout_width="wrap_content"
+        <RelativeLayout
+                android:id="@+id/weather_bar_no_weather_info_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/weather_info_not_available"
-                android:textSize="@dimen/weather_bar_no_weather_text_size"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:gravity="center_vertical">
+
+            <ImageView
+                    android:id="@+id/weather_lock_clock_icon"
+                    android:layout_width="@dimen/expanded_bars_icon_size"
+                    android:layout_height="@dimen/expanded_bars_icon_size"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_lock_clock" />
+
+            <LinearLayout
+                    android:id="@+id/no_weather_info_text_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/weather_lock_clock_icon"
+                    android:layout_toStartOf="@+id/no_weather_settings_button_layout"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="@dimen/expanded_bars_text_padding_left_right"
+                    android:paddingRight="@dimen/expanded_bars_text_padding_left_right"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/no_weather_info_primary_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/weather_info_not_available_title"
+                        android:textSize="@dimen/expanded_bars_primary_text_size"
+                        android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                        android:id="@+id/no_weather_info_secondary_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/weather_info_not_available_summary"
+                        android:textSize="@dimen/expanded_bars_secondary_text_size"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                    android:id="@id/no_weather_settings_button_layout"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
+
+                <ImageView
+                        android:id="@+id/weather_settings_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="12dp"
+                        android:background="@drawable/ripple_drawable_oval"
+                        android:src="@drawable/ic_weather_settings" />
+                <ImageView
+                        android:id="@+id/weather_settings_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingStart="36dp"
+                        android:src="@drawable/tuner" />
+
+            </FrameLayout>
+        </RelativeLayout>
 
         <LinearLayout
                 android:id="@+id/status_bar_expanded_weather_bar"

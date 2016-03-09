@@ -62,13 +62,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
+                <com.android.systemui.darkkat.statusbar.StatusBarWeather
+                    android:id="@+id/status_bar_weather_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingStart="@dimen/weather_layout_start_padding"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/status_bar_weather_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                        android:singleLine="true"
+                        />
+
+                    <ImageView
+                        android:id="@+id/status_bar_weather_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/status_bar_icon_size"
+                        android:paddingTop="@dimen/weather_icon_top_bottom_padding"
+                        android:paddingBottom="@dimen/weather_icon_top_bottom_padding"
+                        android:scaleType="centerInside"
+                        android:adjustViewBounds="true"
+                        />
+                </com.android.systemui.darkkat.statusbar.StatusBarWeather>
                 <com.android.systemui.statusbar.policy.StatusBarCarrierText
                     android:id="@+id/status_bar_carrier_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="8dp"
+                    android:paddingStart="@dimen/carrier_text_start_padding"
+                    android:paddingEnd="@dimen/carrier_text_end_padding"
                     android:ellipsize="end"
                     android:textAppearance="@style/TextAppearance.StatusBar.Clock"
                     android:textColor="#ffffff"

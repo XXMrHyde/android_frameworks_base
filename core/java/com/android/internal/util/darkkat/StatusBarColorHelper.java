@@ -111,6 +111,28 @@ public class StatusBarColorHelper {
                 BLACK);
     }
 
+    public static int getWeatherTextColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_TEXT_COLOR, WHITE);
+    }
+
+    public static int getWeatherTextColorDark(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_TEXT_COLOR_DARK_MODE,
+                BLACK);
+    }
+
+    public static int getWeatherIconColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_ICON_COLOR, WHITE);
+    }
+
+    public static int getWeatherIconColorDark(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_ICON_COLOR_DARK_MODE,
+                BLACK);
+    }
+
     public static int getNetworkTrafficTextColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR, WHITE);

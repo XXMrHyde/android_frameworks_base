@@ -16,12 +16,10 @@
 
 package com.android.systemui.darkkat.statusBarExpanded.bars;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.provider.Settings;
@@ -33,16 +31,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import com.android.systemui.statusbar.phone.SystemUIDialog;
 
 import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.cm.WeatherController.DayForecast;
-import com.android.internal.util.cm.WeatherControllerImpl;
+import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
-import com.android.internal.util.darkkat.SBEPanelWeatherHelper;
+import com.android.internal.util.darkkat.WeatherHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,10 +56,16 @@ public class WeatherBarContainer extends FrameLayout implements
 
     private final Context mContext;
     private PhoneStatusBar mStatusBar;
-    private final WeatherControllerImpl mWeatherController;
+    private WeatherController mWeatherController;
 
     private LinearLayout mWeatherBar;
-    private TextView mNoWeather;
+    private RelativeLayout mNoWeatherLayout;
+
+    private ImageView mLockClockIcon;
+    private TextView mNoWeatherPrimaryText;
+    private TextView mNoWeatherSecondaryText;
+    private ImageView mWeatherSettingsButton;
+    private ImageView mWeatherSettingsIcon;
 
     private boolean mWeatherAvailable = false;
     private boolean mListening = false;
@@ -71,40 +77,37 @@ public class WeatherBarContainer extends FrameLayout implements
     public WeatherBarContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        mWeatherController = new WeatherControllerImpl(mContext);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mNoWeather = (TextView) findViewById(R.id.weather_bar_no_weather);
         mWeatherBar = 
                 (LinearLayout) findViewById(R.id.status_bar_expanded_weather_bar);
-        mWeatherBar.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
-                startForecastActivity();
-                return true;
-            }
-        });
+        mNoWeatherLayout = 
+                (RelativeLayout) findViewById(R.id.weather_bar_no_weather_info_layout);
+        mLockClockIcon = (ImageView) findViewById(R.id.weather_lock_clock_icon);
+        mNoWeatherPrimaryText = (TextView) findViewById(R.id.no_weather_info_primary_text);
+        mNoWeatherSecondaryText = (TextView) findViewById(R.id.no_weather_info_secondary_text);
+        mWeatherSettingsButton = (ImageView) findViewById(R.id.weather_settings_button);
+        mWeatherSettingsIcon = (ImageView) findViewById(R.id.weather_settings_icon);
     }
 
-    public void setStatusBar(PhoneStatusBar statusBar) {
+    public void setUp(PhoneStatusBar statusBar, WeatherController weather) {
         mStatusBar = statusBar;
+        mWeatherController = weather;
+        updateWeatherLayouts();
     }
 
     public void setListening(boolean listening) {
-        if (!isLockClockInstalled()) {
+        updateWeatherLayouts();
+        if (!mStatusBar.isLockClockInstalledAndEnabled() || mWeatherController == null) {
             return;
         }
         if (listening && !mListening) {
             mListening = true;
             mWeatherController.addCallback(this);
         }
-    }
-
-    public void updateClickTargets(boolean clickable) {
     }
 
     @Override
@@ -114,18 +117,96 @@ public class WeatherBarContainer extends FrameLayout implements
         } else {
             mWeatherAvailable = false;
         }
-        updateWeather(info);
+        updateWeatherLayouts();
         if (mWeatherAvailable) {
             createItems(info);
         }
     }
 
-    private void updateWeather(WeatherController.WeatherInfo info) {
-        if (!mWeatherAvailable) {
-            mNoWeather.setVisibility(View.VISIBLE);
+    private void updateWeatherLayouts() {
+        if (WeatherHelper.getLockClockAvailability(mContext)
+                == WeatherHelper.LOCK_CLOCK_MISSING) {
+            mNoWeatherLayout.setVisibility(View.VISIBLE);
+            LinearLayout noWeatherTextLayout = 
+                    (LinearLayout) findViewById(R.id.no_weather_info_text_layout);
+            RelativeLayout.LayoutParams lp =
+                    (RelativeLayout.LayoutParams) noWeatherTextLayout.getLayoutParams();
+            lp.addRule(RelativeLayout.ALIGN_PARENT_END);
+            lp.removeRule(RelativeLayout.START_OF);
+            mNoWeatherPrimaryText.setText(R.string.weather_lock_clock_missing_title);
+            mNoWeatherSecondaryText.setText(R.string.weather_lock_clock_missing_summary);
+            mWeatherSettingsButton.setVisibility(View.INVISIBLE);
+            mWeatherSettingsIcon.setVisibility(View.INVISIBLE);
+            mWeatherSettingsButton.setOnClickListener(null);
+            mWeatherBar.setOnLongClickListener(null);
+            mWeatherBar.setVisibility(View.GONE);
+        } else if (WeatherHelper.getLockClockAvailability(mContext)
+                == WeatherHelper.LOCK_CLOCK_DISABLED) {
+            mNoWeatherLayout.setVisibility(View.VISIBLE);
+            LinearLayout noWeatherTextLayout = 
+                    (LinearLayout) findViewById(R.id.no_weather_info_text_layout);
+            FrameLayout noWeatherSettingsButtonLayout = 
+                    (FrameLayout) findViewById(R.id.no_weather_settings_button_layout);
+            RelativeLayout.LayoutParams lp =
+                    (RelativeLayout.LayoutParams) noWeatherTextLayout.getLayoutParams();
+            int rule = noWeatherSettingsButtonLayout.getId();
+            lp.addRule(RelativeLayout.START_OF, rule);
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_END);
+            noWeatherTextLayout.setLayoutParams(lp);
+            mNoWeatherPrimaryText.setText(R.string.weather_lock_clock_disabled_title);
+            mNoWeatherSecondaryText.setText(R.string.weather_lock_clock_disabled_summary);
+            mWeatherSettingsButton.setVisibility(View.VISIBLE);
+            mWeatherSettingsButton.setImageResource(R.drawable.ic_lock_clock);
+            mWeatherSettingsIcon.setVisibility(View.VISIBLE);
+            mWeatherSettingsIcon.setImageResource(R.drawable.ic_settings_applications);
+            mWeatherSettingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showEnableLockClockDialog();
+                }
+            });
+            mWeatherBar.setOnLongClickListener(null);
+            mWeatherBar.setVisibility(View.GONE);
+        } else if (!mWeatherAvailable) {
+            mNoWeatherLayout.setVisibility(View.VISIBLE);
+            LinearLayout noWeatherTextLayout = 
+                    (LinearLayout) findViewById(R.id.no_weather_info_text_layout);
+            FrameLayout noWeatherSettingsButtonLayout = 
+                    (FrameLayout) findViewById(R.id.no_weather_settings_button_layout);
+            RelativeLayout.LayoutParams lp =
+                    (RelativeLayout.LayoutParams) noWeatherTextLayout.getLayoutParams();
+            int rule = noWeatherSettingsButtonLayout.getId();
+            lp.addRule(RelativeLayout.START_OF, rule);
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_END);
+            noWeatherTextLayout.setLayoutParams(lp);
+            mNoWeatherPrimaryText.setText(R.string.weather_info_not_available_title);
+            mNoWeatherSecondaryText.setText(R.string.weather_info_not_available_summary);
+            mWeatherSettingsButton.setVisibility(View.VISIBLE);
+            mWeatherSettingsButton.setImageResource(R.drawable.ic_weather_settings);
+            mWeatherSettingsIcon.setVisibility(View.VISIBLE);
+            mWeatherSettingsIcon.setImageResource(R.drawable.tuner);
+            mWeatherSettingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mStatusBar.startActivity(WeatherHelper.getWeatherSettingsIntent(), true);
+                }
+            });
+            mWeatherBar.setOnLongClickListener(null);
+            mWeatherBar.setVisibility(View.GONE);
         } else {
-            mNoWeather.setVisibility(View.GONE);
+            mNoWeatherLayout.setVisibility(View.GONE);
+            mWeatherSettingsButton.setOnClickListener(null);
+            mWeatherBar.setVisibility(View.VISIBLE);
+            mWeatherBar.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
+                    mStatusBar.startForecastActivity();
+                    return true;
+                }
+            });
         }
+        setNoWeatherColors();
     }
 
     private void createItems(WeatherController.WeatherInfo info) {
@@ -136,10 +217,9 @@ public class WeatherBarContainer extends FrameLayout implements
         final int textColorPrimary = SBEPanelColorHelper.getTextColor(mContext);
         final int textColorSecondary = (179 << 24) | (textColorPrimary & 0x00ffffff);
         mWeatherBar.removeAllViews();
-        mNoWeather.setTextColor(textColorSecondary);
 
         boolean isToday = false;
-        if (SBEPanelWeatherHelper.showCurrent(mContext)) {
+        if (WeatherHelper.showCurrent(mContext)) {
             View currentItem = inflater.inflate(R.layout.weather_bar_current_item, null);
 
             TextView updateTime = (TextView) currentItem.findViewById(R.id.weather_update_time);
@@ -149,8 +229,8 @@ public class WeatherBarContainer extends FrameLayout implements
 
             ImageView currentImage = (ImageView) currentItem.findViewById(R.id.weather_image);
             currentImage.setImageDrawable(
-                    SBEPanelWeatherHelper.getCurrentConditionDrawable(mContext, info));
-            if (SBEPanelWeatherHelper.getIconType(mContext) == 0) {
+                    WeatherHelper.getCurrentConditionDrawable(mContext, info));
+            if (WeatherHelper.getIconType(mContext) == 0) {
                 currentImage.setColorFilter(iconColor, Mode.MULTIPLY);
             }
             TextView temp = (TextView) currentItem.findViewById(R.id.weather_temp);
@@ -175,8 +255,8 @@ public class WeatherBarContainer extends FrameLayout implements
                 calendar.roll(Calendar.DAY_OF_WEEK, true);
 
                 ImageView image = (ImageView) forecastItem.findViewById(R.id.weather_image);
-                image.setImageDrawable(SBEPanelWeatherHelper.getForcastConditionDrawable(mContext, d));
-                if (SBEPanelWeatherHelper.getIconType(mContext) == 0) {
+                image.setImageDrawable(WeatherHelper.getForcastConditionDrawable(mContext, d));
+                if (WeatherHelper.getIconType(mContext) == 0) {
                     image.setColorFilter(iconColor, Mode.MULTIPLY);
                 }
                 TextView temps = (TextView) forecastItem.findViewById(R.id.forecast_temps);
@@ -192,24 +272,42 @@ public class WeatherBarContainer extends FrameLayout implements
     }
 
     public void updateItems() {
-        if (mWeatherAvailable) {
+        if (mWeatherAvailable && mWeatherController != null) {
             createItems(mWeatherController.getWeatherInfo());
         }
+        setNoWeatherColors();
+    }
+
+    private void setNoWeatherColors() {
+        final int iconColor =  SBEPanelColorHelper.getIconColor(mContext);
+        int lockClockIconColor =  iconColor;
+        final int iconColorSecondary = (77 << 24) | (iconColor & 0x00ffffff);
+        if (WeatherHelper.getLockClockAvailability(mContext)
+                == WeatherHelper.LOCK_CLOCK_MISSING) {
+            lockClockIconColor = 0xffff0000;
+        } else if (WeatherHelper.getLockClockAvailability(mContext)
+                == WeatherHelper.LOCK_CLOCK_DISABLED) {
+            lockClockIconColor = 0x77ff0000;
+        }
+        final int textColorPrimary = SBEPanelColorHelper.getTextColor(mContext);
+        final int textColorSecondary = (179 << 24) | (textColorPrimary & 0x00ffffff);
+        mLockClockIcon.setColorFilter(lockClockIconColor, Mode.MULTIPLY);
+        mNoWeatherPrimaryText.setTextColor(textColorPrimary);
+        mNoWeatherSecondaryText.setTextColor(textColorSecondary);
+        mWeatherSettingsButton.setColorFilter(iconColor, Mode.MULTIPLY);
+        mWeatherSettingsIcon.setColorFilter(iconColorSecondary, Mode.SRC_IN);
     }
 
     public void setRippleColor() {
         RippleDrawable background =
                 (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_rectangle).mutate();
-        final int color = SBEPanelColorHelper.getRippleColor(mContext);
-        background.setColor(ColorStateList.valueOf(color));
+        final ColorStateList color =
+                ColorStateList.valueOf(SBEPanelColorHelper.getRippleColor(mContext));
+        background.setColor(color);
         mWeatherBar.setBackground(background);
-    }
+        ((RippleDrawable) mWeatherSettingsButton.getBackground()).setColor(color);
 
-    private void startForecastActivity() {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(WeatherControllerImpl.COMPONENT_WEATHER_FORECAST);
-        mStatusBar.startActivity(intent, true /* dismissShade */);
+
     }
 
     private void doHapticKeyClick(int type) {
@@ -230,15 +328,20 @@ public class WeatherBarContainer extends FrameLayout implements
         }
     }
 
-    private boolean isLockClockInstalled() {
-        PackageManager pm = mContext.getPackageManager();
-        boolean installed = false;
-        try {
-           pm.getPackageInfo("com.cyanogenmod.lockclock", PackageManager.GET_ACTIVITIES);
-           installed = true;
-        } catch (PackageManager.NameNotFoundException e) {
-           installed = false;
-        }
-        return installed;
+    private void showEnableLockClockDialog() {
+        final CharSequence message = mContext.getString(DeviceUtils.isPhone(mContext)
+                ? R.string.enable_lock_clock_dialog_message
+                : R.string.enable_lock_clock_dialog_tablet_message);
+        final SystemUIDialog d = new SystemUIDialog(mContext, AlertDialog.THEME_MATERIAL_DARK);
+        d.setTitle(mContext.getString(R.string.enable_lock_clock_dialog_title));
+        d.setMessage(message);
+        d.setPositiveButton(R.string.enable_lock_clock_dialog_open, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mStatusBar.startActivity(WeatherHelper.getLockClockAppDetailSettingsIntent(), true);
+            }
+        });
+        d.setNegativeButton(R.string.enable_lock_clock_dialog_cancel, null);
+        d.show();
     }
 }

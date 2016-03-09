@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.darkkat.StatusBarColorHelper;
 
 import com.android.keyguard.CarrierText;
@@ -56,20 +57,26 @@ import java.text.NumberFormat;
  * The header group on Keyguard.
  */
 public class KeyguardStatusBarView extends RelativeLayout
-        implements BatteryController.BatteryStateChangeCallback {
+        implements BatteryController.BatteryStateChangeCallback,
+        WeatherController.Callback {
 
     private boolean mBatteryCharging;
     private boolean mKeyguardUserSwitcherShowing;
     private boolean mListening;
 
     private View mSystemIconsSuperContainer;
+    private CarrierText mCarrierText;
     private NetworkTraffic mNetworkTraffic;
     private MultiUserSwitch mMultiUserSwitch;
     private ImageView mMultiUserAvatar;
     private TextView mBatteryLevel;
 
+    private boolean mShowWeather = false;
+    private boolean mWeatherAvailable = false;
+
     private BatteryController mBatteryController;
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
+    private WeatherController mWeatherController;
 
     private int mSystemIconsSwitcherHiddenExpandedMargin;
     private Interpolator mFastOutSlowInInterpolator;
@@ -82,6 +89,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     protected void onFinishInflate() {
         super.onFinishInflate();
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
+        mCarrierText = (CarrierText) findViewById(R.id.keyguard_carrier_text);
         mNetworkTraffic = (NetworkTraffic) findViewById(R.id.keyguard_network_traffic_layout);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
@@ -97,8 +105,8 @@ public class KeyguardStatusBarView extends RelativeLayout
         super.onConfigurationChanged(newConfig);
 
         // Respect font size setting.
-        ((CarrierText) findViewById(R.id.keyguard_carrier_text)).setTextSize(
-                TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(
+        mCarrierText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(
                         com.android.internal.R.dimen.text_size_small_material));
         mBatteryLevel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.battery_level_text_size));
@@ -131,8 +139,32 @@ public class KeyguardStatusBarView extends RelativeLayout
         }
     }
 
+    public void updateCarrierTextLayoutParams(boolean showWeather) {
+        updateCarrierTextLayoutParams(showWeather, mWeatherAvailable);
+    }
+
+    private void updateCarrierTextLayoutParams(boolean showWeather, boolean weatherAvailable) {
+        mShowWeather = showWeather;
+        RelativeLayout.LayoutParams lp =
+                (LayoutParams) mCarrierText.getLayoutParams();
+        int carrierTextMargin = getResources().getDimensionPixelSize(
+                    R.dimen.keyguard_carrier_text_margin);
+        int marginStart = showWeather && weatherAvailable ? 0 : carrierTextMargin;
+        if (marginStart != lp.getMarginStart()) {
+            lp.setMarginStart(marginStart);
+            mCarrierText.setLayoutParams(lp);
+        }
+    }
+
     public void setNetworkTrafficController(NetworkTrafficController ntc) {
         mNetworkTraffic.setNetworkTrafficController(ntc);
+    }
+
+    public void setWeatherController(WeatherController weather) {
+        mWeatherController = weather;
+        if (mWeatherController != null) {
+            mWeatherController.addCallback(this);
+        }
     }
 
     public void setListening(boolean listening) {
@@ -199,6 +231,16 @@ public class KeyguardStatusBarView extends RelativeLayout
     @Override
     public void onPowerSaveChanged() {
         // could not care less
+    }
+
+    @Override
+    public void onWeatherChanged(WeatherController.WeatherInfo info) {
+        if (info.temp != null && info.condition != null) {
+            mWeatherAvailable = true;
+        } else {
+            mWeatherAvailable = false;
+        }
+        updateCarrierTextLayoutParams(mShowWeather, mWeatherAvailable);
     }
 
     public void setKeyguardUserSwitcher(KeyguardUserSwitcher keyguardUserSwitcher) {

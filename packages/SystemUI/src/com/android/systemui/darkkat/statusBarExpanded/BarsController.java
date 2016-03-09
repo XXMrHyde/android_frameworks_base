@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
 
@@ -128,14 +129,14 @@ public class BarsController {
     public void setUp(PhoneStatusBar statusBar, BluetoothController bluetooth, NetworkController network,
             NetworkTrafficController networkTraffic, RotationLockController rotationLock,
             LocationController location, HotspotController hotspot, FlashlightController flashlight,
-            BatteryController battery) {
+            BatteryController battery, WeatherController weather) {
         mQuickAccessBar.setUp(statusBar, bluetooth, network, rotationLock, location, hotspot, flashlight);
         mWifiBar.setNetworkController(network);
         mWifiBar.setNetworkTrafficController(networkTraffic);
         mMobileBar.setNetworkController(network);
         mMobileBar.setNetworkTrafficController(networkTraffic);
         mBatteryStatusBar.setBatteryController(battery);
-        mWeatherBarContainer.setStatusBar(statusBar);
+        mWeatherBarContainer.setUp(statusBar, weather);
 
         applyVisibilitySettings();
         mobileWifiBarSetBitByte();

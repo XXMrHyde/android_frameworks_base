@@ -111,7 +111,9 @@ import android.widget.Toast;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
+import com.android.internal.util.darkkat.WeatherHelper;
 
 import com.android.keyguard.KeyguardButtonBar;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
@@ -127,6 +129,7 @@ import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.NetworkTrafficControllerImpl;
+import com.android.systemui.darkkat.statusbar.StatusBarWeather;
 import com.android.systemui.darkkat.statusBarExpanded.BarsController;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -559,6 +562,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_STATUS_ICONS_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_SHOW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_TYPE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_HIDE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -701,6 +725,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_STATUS_ICONS_COLOR))) {
                 updateStatusNetworkIconColors(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_SHOW))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_HIDE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS))) {
+                if (isLockClockInstalledAndEnabled()) {
+                    updateWeatherVisibility();
+                }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN))) {
+                setShowWeatherOnKeyguard();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_TYPE))) {
+                setWeatherType();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_TEXT_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_ICON_COLOR))) {
+                updateWeatherColors(true);
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_SHOW))) {
                 setShowNetworkTraffic();
@@ -1258,6 +1302,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNetworkTrafficController = new NetworkTrafficControllerImpl(mContext);
 
+        WeatherControllerImpl weatherController = new WeatherControllerImpl(mContext);
+        StatusBarWeather weather =
+                (StatusBarWeather) mStatusBarView.findViewById(R.id.status_bar_weather_layout);
+        StatusBarWeather weatherKeyguard =
+                (StatusBarWeather) mKeyguardStatusBar.findViewById(R.id.keyguard_weather_layout);
+        weather.setOnLongClickListener(mLongPressWeatherListener);
+        weatherKeyguard.setOnLongClickListener(mLongPressWeatherListener);
+        weather.setUp(this, weatherController);
+        weatherKeyguard.setUp(this, weatherController);
+        mKeyguardStatusBar.setWeatherController(weatherController);
+
         ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
                 .setNetworkTrafficController(mNetworkTrafficController);
 
@@ -1266,7 +1321,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         BarsController barsController = new BarsController(mContext, barsContainer);
         barsController.setUp(this, mBluetoothController, mNetworkController, mNetworkTrafficController,
                 mRotationLockController, mLocationController, mHotspotController, mFlashlightController,
-                mBatteryController);
+                mBatteryController, weatherController);
         mNotificationPanel.setBarsController(barsController);
 
         mKeyguardStatusBar.setNetworkTrafficController(mNetworkTrafficController);
@@ -1437,6 +1492,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         public void onClick(View v) {
             awakenDreams();
             toggleRecentApps();
+        }
+    };
+
+    private View.OnLongClickListener mLongPressWeatherListener =
+            new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            startForecastActivity();
+            return true;
         }
     };
 
@@ -1872,6 +1937,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateNotificationShade();
         mIconController.updateNotificationIcons(mNotificationData);
         updateCarrierTextVisibility();
+        if (isLockClockInstalledAndEnabled()) {
+            updateWeatherVisibility();
+        }
     }
 
     @Override
@@ -2238,6 +2306,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateCutOutBatteryText();
         updateBatteryColors(false);
         updateStatusNetworkIconColors(false);
+        updateWeatherVisibility();
+        setWeatherType();
+        updateWeatherColors(false);
+        setShowWeatherOnKeyguard();
         setShowNetworkTraffic();
         setShowNetworkTrafficOnKeyguard();
         setNetworkTrafficActivityDirection();
@@ -2430,6 +2502,45 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateStatusNetworkIconColors(boolean animate) {
         if (mIconController != null) {
             mIconController.updateStatusNetworkIconColors(animate);
+        }
+    }
+
+    private void updateWeatherVisibility() {
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        final boolean show = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WEATHER_SHOW, 0) == 1;
+        final boolean forceHide = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WEATHER_HIDE, 1) == 1;
+        final int maxAllowedIcons = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS, 1);
+        if (mIconController != null) {
+            mIconController.updateWeatherVisibility(isLockClockInstalledAndEnabled()
+                    && show, forceHide, maxAllowedIcons);
+        }
+    }
+
+    private void setShowWeatherOnKeyguard() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN, 0) == 1;
+        if (mIconController != null) {
+            mIconController.setShowWeatherOnKeyguard(isLockClockInstalledAndEnabled() && show);
+        }
+        mKeyguardStatusBar.updateCarrierTextLayoutParams(isLockClockInstalledAndEnabled() && show);
+    }
+
+    private void setWeatherType() {
+        final int type = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_TYPE, 2);
+
+        if (mIconController != null) {
+            mIconController.setWeatherType(type);
+        }
+    }
+
+    private void updateWeatherColors(boolean animate) {
+        if (mIconController != null) {
+            mIconController.updateWeatherColors(animate);
         }
     }
 
@@ -5182,6 +5293,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public VisualizerView getVisualizer() {
         return mVisualizerView;
+    }
+
+    public void startForecastActivity() {
+        if (!isLockClockInstalledAndEnabled()) {
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(WeatherControllerImpl.COMPONENT_WEATHER_FORECAST);
+        startActivity(intent, true /* dismissShade */);
+    }
+
+    public boolean isLockClockInstalledAndEnabled() {
+        return WeatherHelper.getLockClockAvailability(mContext)
+                == WeatherHelper.LOCK_CLOCK_ENABLED;
     }
 
     private final class ShadeUpdates {

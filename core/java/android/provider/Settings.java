@@ -3623,6 +3623,72 @@ public final class Settings {
         public static final String STATUS_BAR_STATUS_ICONS_COLOR_DARK_MODE = "status_bar_status_icons_status_color_color_dark_mode";
 
         /**
+         *  Whether to show the weather on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_SHOW = "status_bar_weather_show";
+
+        /**
+         *  Whether to show the weather on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN = "status_bar_weather_show_on_lock_screen";
+
+        /**
+         * Weather type
+         * 0: text
+         * 1: icon
+         * 2: text and icon
+         * default: 2
+         * @hide
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_TYPE = "status_bar_weather_type";
+
+        /**
+         * Wether to hide the weather on the status bar when the custom number of notification icons is reached
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_HIDE = "status_bar_weather_hide";
+
+        /**
+         * Hide the weather on the status bar when the notification icons will reach this number
+         * 1: 1 notification icon (always)
+         * 2: 2 notification icons
+         * 3: 3 notification icons
+         * 4: 4 notification icons
+         * 5: 5 notification icons
+         * 6: 6 notification icons
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS = "status_bar_weather_number_of_notification_icons";
+
+        /**
+         * Color of the weather text
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_TEXT_COLOR = "status_bar_weather_text_color";
+
+        /**
+         * Color of the weather text, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_TEXT_COLOR_DARK_MODE = "status_bar_weather_text_color_dark_mode";
+
+        /**
+         * Color of the weather icon
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_ICON_COLOR = "status_bar_weather_icon_color";
+
+        /**
+         * Color of the weather icon, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_ICON_COLOR_DARK_MODE = "status_bar_weather_icon_color_dark_mode";
+
+        /**
          *  Whether to show the Network traffic on the status bar
          * @hide
          */

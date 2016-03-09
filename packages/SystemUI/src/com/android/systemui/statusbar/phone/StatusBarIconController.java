@@ -47,8 +47,11 @@ import com.android.internal.util.NotificationColorUtil;
 import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.StatusBarColorHelper;
+
 import com.android.keyguard.CarrierText;
+
 import com.android.systemui.BatteryMeterView;
+import com.android.systemui.darkkat.statusbar.StatusBarWeather;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.NotificationData;
@@ -79,11 +82,12 @@ public class StatusBarIconController implements Tunable {
     private static final int CLOCK_STYLE_CENTERED = 1;
     private static final int CLOCK_STYLE_HIDDEN   = 2;
 
-    private static final int CARRIER_TEXT_COLOR         = 0;
+    private static final int CARRIER_TEXT_COLOR          = 0;
     private static final int BATTERY_COLORS              = 1;
     private static final int CLOCK_COLOR                 = 2;
-    private static final int NETWORK_TRAFFIC_COLORS      = 3;
-    private static final int STATUS_NETWORK_ICON_COLORS  = 4;
+    private static final int WEATHER_COLORS              = 3;
+    private static final int NETWORK_TRAFFIC_COLORS      = 4;
+    private static final int STATUS_NETWORK_ICON_COLORS  = 5;
 
     private Context mContext;
     private View mStatusBar;
@@ -113,6 +117,8 @@ public class StatusBarIconController implements Tunable {
     private Clock mClockDefault;
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
+    private StatusBarWeather mWeatherLayout;
+    private StatusBarWeather mWeatherLayoutKeyguard;
     private NetworkTraffic mNetworkTraffic;
     private NetworkTraffic mNetworkTrafficKeyguard;
     private Ticker mTicker;
@@ -130,6 +136,12 @@ public class StatusBarIconController implements Tunable {
     private int mClockColor;
     private int mClockColorOld;
     private int mClockColorTint;
+    private int mWeatherTextColor;
+    private int mWeatherTextColorOld;
+    private int mWeatherTextColorTint;
+    private int mWeatherIconColor;
+    private int mWeatherIconColorOld;
+    private int mWeatherIconColorTint;
     private int mNetworkTrafficTextColor;
     private int mNetworkTrafficTextColorOld;
     private int mNetworkTrafficTextColorTint;
@@ -212,6 +224,8 @@ public class StatusBarIconController implements Tunable {
         mClockDefault = (Clock) statusBar.findViewById(R.id.clock);
         mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
         mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
+        mWeatherLayout = (StatusBarWeather) statusBar.findViewById(R.id.status_bar_weather_layout);
+        mWeatherLayoutKeyguard = (StatusBarWeather) keyguardStatusBar.findViewById(R.id.keyguard_weather_layout);
         mNetworkTraffic = (NetworkTraffic) statusBar.findViewById(R.id.network_traffic_layout);
         mNetworkTrafficKeyguard = (NetworkTraffic) keyguardStatusBar.findViewById(
                 R.id.keyguard_network_traffic_layout);
@@ -238,6 +252,12 @@ public class StatusBarIconController implements Tunable {
         mClockColor = StatusBarColorHelper.getClockColor(mContext);
         mClockColorOld = mClockColor;
         mClockColorTint = mClockColor;
+        mWeatherTextColor = StatusBarColorHelper.getWeatherTextColor(mContext);
+        mWeatherTextColorOld = mWeatherTextColor;
+        mWeatherTextColorTint = mWeatherTextColor;
+        mWeatherIconColor = StatusBarColorHelper.getWeatherIconColor(mContext);
+        mWeatherIconColorOld = mWeatherIconColor;
+        mWeatherIconColorTint = mWeatherIconColor;
         mNetworkTrafficTextColor = StatusBarColorHelper.getNetworkTrafficTextColor(mContext);
         mNetworkTrafficTextColorOld = mNetworkTrafficTextColor;
         mNetworkTrafficTextColorTint = mNetworkTrafficTextColor;
@@ -544,6 +564,10 @@ public class StatusBarIconController implements Tunable {
                 mBatteryTextColor, StatusBarColorHelper.getBatteryTextColorDark(mContext));
         mClockColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mClockColor, StatusBarColorHelper.getClockColorDark(mContext));
+        mWeatherTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
+                mWeatherTextColor, StatusBarColorHelper.getWeatherTextColorDark(mContext));
+        mWeatherIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
+                mWeatherIconColor, StatusBarColorHelper.getWeatherIconColorDark(mContext));
         mNetworkTrafficTextColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
                 mNetworkTrafficTextColor, StatusBarColorHelper.getNetworkTrafficTextColorDark(mContext));
         mNetworkTrafficIconColorTint = (int) ArgbEvaluator.getInstance().evaluate(mDarkIntensity,
@@ -585,6 +609,8 @@ public class StatusBarIconController implements Tunable {
         if (mClockStyle == CLOCK_STYLE_CENTERED) {
             mClockCentered.setTextColor(mClockColorTint);
         }
+        mWeatherLayout.setTextColor(mWeatherTextColorTint);
+        mWeatherLayout.setIconColor(mWeatherIconColorTint);
         mNetworkTraffic.setTextColor(mNetworkTrafficTextColorTint);
         mNetworkTraffic.setIconColor(mNetworkTrafficIconColorTint);
         mSignalCluster.setIconTint(
@@ -697,6 +723,13 @@ public class StatusBarIconController implements Tunable {
                     if (mClockStyle == CLOCK_STYLE_CENTERED) {
                         mClockCentered.setTextColor(blended);
                     }
+                } else if (mColorToChange == WEATHER_COLORS) {
+                    final int blendedText = ColorHelper.getBlendColor(
+                            mWeatherTextColorOld, mWeatherTextColor, position);
+                    final int blendedIcon = ColorHelper.getBlendColor(
+                            mWeatherIconColorOld, mWeatherIconColor, position);
+                    mWeatherLayout.setTextColor(blendedText);
+                    mWeatherLayout.setIconColor(blendedIcon);
                 } else if (mColorToChange == NETWORK_TRAFFIC_COLORS) {
                     final int blendedText = ColorHelper.getBlendColor(
                             mNetworkTrafficTextColorOld, mNetworkTrafficTextColor, position);
@@ -736,6 +769,11 @@ public class StatusBarIconController implements Tunable {
                 } else if (mColorToChange == CLOCK_COLOR) {
                     mClockColorOld = mClockColor;
                     mClockColorTint = mClockColor;
+                } else if (mColorToChange == WEATHER_COLORS) {
+                    mWeatherTextColorOld = mWeatherTextColor;
+                    mWeatherIconColorOld = mWeatherIconColor;
+                    mWeatherTextColorTint = mWeatherTextColor;
+                    mWeatherIconColorTint = mWeatherIconColor;
                 } else if (mColorToChange == NETWORK_TRAFFIC_COLORS) {
                     mNetworkTrafficTextColorOld = mNetworkTrafficTextColor;
                     mNetworkTrafficIconColorOld = mNetworkTrafficIconColor;
@@ -892,6 +930,45 @@ public class StatusBarIconController implements Tunable {
             mClockColorOld = mClockColor;
             mClockColorTint = mClockColor;
         }
+    }
+
+    public void updateWeatherVisibility(boolean show, boolean forceHide, int maxAllowedIcons) {
+        boolean forceHideByNumberOfIcons = false;
+        if (forceHide && mNotificationIcons.getChildCount() >= maxAllowedIcons) {
+            forceHideByNumberOfIcons = true;
+        }
+        mWeatherLayout.setShow(show && !forceHideByNumberOfIcons);
+    }
+
+    public void setShowWeather(boolean show) {
+        mWeatherLayout.setShow(show);
+    }
+
+    public void setShowWeatherOnKeyguard(boolean show) {
+        mWeatherLayoutKeyguard.setShow(show);
+    }
+
+    public void setWeatherType(int type) {
+        mWeatherLayout.setType(type);
+        mWeatherLayoutKeyguard.setType(type);
+    }
+
+    public void updateWeatherColors(boolean animate) {
+        mWeatherTextColor = StatusBarColorHelper.getWeatherTextColor(mContext);
+        mWeatherIconColor = StatusBarColorHelper.getWeatherIconColor(mContext);
+        if (animate) {
+            mColorToChange = WEATHER_COLORS;
+            mColorTransitionAnimator.start();
+        } else {
+            mWeatherLayout.setTextColor(mWeatherTextColor);
+            mWeatherLayout.setIconColor(mWeatherIconColor);
+            mWeatherTextColorOld = mWeatherTextColor;
+            mWeatherIconColorOld = mWeatherIconColor;
+            mWeatherTextColorTint = mWeatherTextColor;
+            mWeatherIconColorTint = mWeatherIconColor;
+        }
+        mWeatherLayoutKeyguard.setTextColor(mWeatherTextColor);
+        mWeatherLayoutKeyguard.setIconColor(mWeatherIconColor);
     }
 
     public void setShowNetworkTraffic(boolean show) {

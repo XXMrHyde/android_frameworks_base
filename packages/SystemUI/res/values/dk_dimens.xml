@@ -26,6 +26,21 @@
     <!-- Network traffic text end padding, (if no activity icon is shown) -->
     <dimen name="network_traffic_text_end_padding">3dp</dimen>
 
+    <!-- Weather layout start padding -->
+    <dimen name="weather_layout_start_padding">6dp</dimen>
+
+    <!-- Weather layout end margin -->
+    <dimen name="weather_layout_end_margin">8dp</dimen>
+
+    <!-- Weather icon top and bottom padding -->
+    <dimen name="weather_icon_top_bottom_padding">1dp</dimen>
+
+    <!-- carrier text start padding -->
+    <dimen name="carrier_text_start_padding">6dp</dimen>
+
+    <!-- carrier text end padding -->
+    <dimen name="carrier_text_end_padding">8dp</dimen>
+
     <!-- Status bar expanded header-->
 
     <!-- End margin for the Settings button container in the status bar header  -->
