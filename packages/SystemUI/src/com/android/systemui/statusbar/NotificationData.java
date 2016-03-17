@@ -275,6 +275,32 @@ public class NotificationData {
     }
 
     /**
+     * Return whether there are any visible notifications (i.e. without an error).
+     */
+    public boolean hasActiveVisibleNotifications() {
+        for (Entry e : mSortedAndFiltered) {
+            if (e.getContentView() != null) { // the view successfully inflated
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return whether there are any persistent notifications (that aren't errors).
+     */
+    public boolean hasActivePersistentNotifications() {
+        for (Entry e : mSortedAndFiltered) {
+            if (e.getContentView() != null) { // the view successfully inflated
+                if (!e.notification.isClearable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return whether there are any clearable notifications (that aren't errors).
      */
     public boolean hasActiveClearableNotifications() {

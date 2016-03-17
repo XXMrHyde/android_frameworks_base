@@ -3788,14 +3788,27 @@ public final class Settings {
         public static final String STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR_DARK_MODE = "status_bar_notification_ticker_text_color_dark_mode";
 
         /**
-         * One finger expansion of the statusbar
-         * 0 - Disabled
-         * 1 - Right side
-         * 2 - Left side
-         * default: 0
+         * One finger expansion type of the statusbar
+         * 0 - Always
+         * 1 - No dismissable notifications
+         * 2 - No persistent notifications
+         * 3 - No notifications
+         * 4 - Never
+         * default: 4
          * @hide
          */
-        public static final String STATUS_BAR_EXPANDED_QUICK_PULLDOWN = "status_bar_expanded_quick_pulldown";
+        public static final String STATUS_BAR_EXPANDED_SMART_QUICK_PULLDOWN_TYPE = "status_bar_expanded_smart_quick_pulldown_type";
+
+        /**
+         * One finger expansion area of the statusbar
+         * 0 - Left
+         * 2 - Middle
+         * 2 - Right
+         * 3 - Entire width
+         * default: 3
+         * @hide
+         */
+        public static final String STATUS_BAR_EXPANDED_SMART_QUICK_PULLDOWN_AREA = "status_bar_expanded_smart_quick_pulldown_area";
 
         /**
          * Color of the expanded status bar header background

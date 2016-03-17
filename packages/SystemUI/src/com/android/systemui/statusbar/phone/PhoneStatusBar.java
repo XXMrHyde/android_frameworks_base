@@ -2800,6 +2800,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         overrideActivityPendingAppTransition(true /* keyguardShowing */);
     }
 
+    public int getSmartQuickPullDownArea() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_SMART_QUICK_PULLDOWN_AREA, 3);
+    }
+
+    public boolean resolveSmartQuickPullDown() {
+        final int type = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_EXPANDED_SMART_QUICK_PULLDOWN_TYPE, 4);
+        if (type == 0) {
+            return true;
+        } else if (type == 1) {
+            return !mNotificationData.hasActiveClearableNotifications();
+        } else if (type == 2) {
+            return !mNotificationData.hasActivePersistentNotifications();
+        } else if (type == 3) {
+            return !mNotificationData.hasActiveVisibleNotifications();
+        } else {
+            return false;
+        }
+    }
+
     public void setQsExpanded(boolean expanded) {
         mStatusBarWindowManager.setQsExpanded(expanded);
         mKeyguardStatusView.setImportantForAccessibility(expanded
