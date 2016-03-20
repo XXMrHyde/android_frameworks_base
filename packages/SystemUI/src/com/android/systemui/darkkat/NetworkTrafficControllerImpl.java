@@ -157,25 +157,25 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
     private void updateTraffic() {
         long td = SystemClock.elapsedRealtime() - mLastUpdateTime;
 
-        final String defaultValue =
+        final String noTraffic =
                 mResources.getString(R.string.network_traffic_no_traffic);
-        final String defaultBitsUnit =
+        final String defaultUnitAsBits =
                 mResources.getString(R.string.network_traffic_unit_bits_per_second);
-        final String defaultBytesUnit =
+        final String defaultUnitAsBytes =
                 mResources.getString(R.string.network_traffic_unit_bytes_per_second);
 
-        long trafficUpValue = 0;
-        long trafficDownValue = 0;
-        String trafficUpBitsValue = defaultValue;
-        String trafficUpBytesValue = defaultValue;
-        String trafficDownBitsValue = defaultValue;
-        String trafficDownBytesValue = defaultValue;
-        String trafficUpBitsUnit = defaultBitsUnit;
-        String trafficUpBytesUnit = defaultBytesUnit;
-        String trafficDownBitsUnit = defaultBitsUnit;
-        String trafficDownBytesUnit = defaultBytesUnit;
-        boolean trafficActivityUp = false;
-        boolean trafficActivityDown = false;
+        long trafficOutSpeed = 0;
+        long trafficInSpeed = 0;
+        String formattedOutSpeedInBits = noTraffic;
+        String formattedOutSpeedInBytes = noTraffic;
+        String formattedInSpeedInBits = noTraffic;
+        String formattedInSpeedInBytes = noTraffic;
+        String formattedOutUnitAsBits = defaultUnitAsBits;
+        String formattedOutUnitAsBytes = defaultUnitAsBytes;
+        String formattedInUnitAsBits = defaultUnitAsBits;
+        String formattedInUnitAsBytes = defaultUnitAsBytes;
+        boolean trafficActivityOut = false;
+        boolean trafficActivityIn = false;
 
         long currentRxBytes = TrafficStats.getTotalRxBytes();
         long currentTxBytes = TrafficStats.getTotalTxBytes();
@@ -183,34 +183,34 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         long newTxBytes = currentTxBytes - mTotalTxBytes;
 
         if (newTxBytes != 0) {
-            trafficUpValue = newTxBytes * 1000 / td;
-            trafficUpBitsValue = formatTraffic(newTxBytes * 8000 / td);
-            trafficUpBytesValue = formatTraffic(newTxBytes * 1000 / td);
-            trafficUpBitsUnit = getUnit(newTxBytes * 8000 / td, true);
-            trafficUpBytesUnit = getUnit(newTxBytes * 1000 / td, false);
-            trafficActivityUp = true;
+            trafficOutSpeed = newTxBytes * 1000 / td;
+            formattedOutSpeedInBits = formatTraffic(newTxBytes * 8000 / td);
+            formattedOutSpeedInBytes = formatTraffic(newTxBytes * 1000 / td);
+            formattedOutUnitAsBits = getUnit(newTxBytes * 8000 / td, true);
+            formattedOutUnitAsBytes = getUnit(newTxBytes * 1000 / td, false);
+            trafficActivityOut = true;
         }
         if (newRxBytes != 0 ) {
-            trafficDownValue = newRxBytes * 1000 / td;
-            trafficDownBitsValue = formatTraffic(newRxBytes * 8000 / td);
-            trafficDownBytesValue = formatTraffic(newRxBytes * 1000 / td);
-            trafficDownBitsUnit = getUnit(newRxBytes * 8000 / td, true);
-            trafficDownBytesUnit = getUnit(newRxBytes * 1000 / td, false);
-            trafficActivityDown = true;
+            trafficInSpeed = newRxBytes * 1000 / td;
+            formattedInSpeedInBits = formatTraffic(newRxBytes * 8000 / td);
+            formattedInSpeedInBytes = formatTraffic(newRxBytes * 1000 / td);
+            formattedInUnitAsBits = getUnit(newRxBytes * 8000 / td, true);
+            formattedInUnitAsBytes = getUnit(newRxBytes * 1000 / td, false);
+            trafficActivityIn = true;
         }
 
-        mTraffic.upValue = trafficUpValue;
-        mTraffic.downValue = trafficDownValue;
-        mTraffic.upBitsValue = trafficUpBitsValue;
-        mTraffic.upBytesValue = trafficUpBytesValue;
-        mTraffic.downBitsValue = trafficDownBitsValue;
-        mTraffic.downBytesValue = trafficDownBytesValue;
-        mTraffic.upBitsUnit = trafficUpBitsUnit;
-        mTraffic.upBytesUnit = trafficUpBytesUnit;
-        mTraffic.downBitsUnit = trafficDownBitsUnit;
-        mTraffic.downBytesUnit = trafficDownBytesUnit;
-        mTraffic.activityUp = trafficActivityUp;
-        mTraffic.activityDown = trafficActivityDown;
+        mTraffic.outSpeed = trafficOutSpeed;
+        mTraffic.inSpeed = trafficInSpeed;
+        mTraffic.outSpeedInBits = formattedOutSpeedInBits;
+        mTraffic.outSpeedInBytes = formattedOutSpeedInBytes;
+        mTraffic.inSpeedInBits = formattedInSpeedInBits;
+        mTraffic.inSpeedInBytes = formattedInSpeedInBytes;
+        mTraffic.outUnitAsBits = formattedOutUnitAsBits;
+        mTraffic.outUnitAsBytes = formattedOutUnitAsBytes;
+        mTraffic.inUnitAsBits = formattedInUnitAsBits;
+        mTraffic.inUnitAsBytes = formattedInUnitAsBytes;
+        mTraffic.activityOut = trafficActivityOut;
+        mTraffic.activityIn = trafficActivityIn;
 
         for (Callback callback : mCallbacks) {
             callback.onNetworkTrafficChanged(mTraffic);
@@ -277,25 +277,25 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
     private Traffic getDefaultTraffic() {
         Traffic traffic = new Traffic();
 
-        final String defaultValue =
+        final String noTraffic =
                 mResources.getString(R.string.network_traffic_no_traffic);
-        final String defaultBitsUnit =
+        final String defaultUnitAsBits =
                 mResources.getString(R.string.network_traffic_unit_bits_per_second);
-        final String defaultBytesUnit =
+        final String defaultUnitAsBytes =
                 mResources.getString(R.string.network_traffic_unit_bytes_per_second);
 
-        traffic.upValue = 0;
-        traffic.downValue = 0;
-        traffic.upBitsValue = defaultValue;
-        traffic.upBytesValue = defaultValue;
-        traffic.downBitsValue = defaultValue;
-        traffic.downBytesValue = defaultValue;
-        traffic.upBitsUnit = defaultBitsUnit;
-        traffic.upBytesUnit = defaultBytesUnit;
-        traffic.downBitsUnit = defaultBitsUnit;
-        traffic.downBytesUnit = defaultBytesUnit;
-        traffic.activityUp = false;
-        traffic.activityDown = false;
+        traffic.outSpeed = 0;
+        traffic.inSpeed = 0;
+        traffic.outSpeedInBits = noTraffic;
+        traffic.outSpeedInBytes = noTraffic;
+        traffic.inSpeedInBits = noTraffic;
+        traffic.inSpeedInBytes = noTraffic;
+        traffic.outUnitAsBits = defaultUnitAsBits;
+        traffic.outUnitAsBytes = defaultUnitAsBytes;
+        traffic.inUnitAsBits = defaultUnitAsBits;
+        traffic.inUnitAsBytes = defaultUnitAsBytes;
+        traffic.activityOut = false;
+        traffic.activityIn = false;
 
         return traffic;
     }

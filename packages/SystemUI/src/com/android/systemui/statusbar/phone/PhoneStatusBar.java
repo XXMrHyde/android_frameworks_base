@@ -759,7 +759,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 setShowNetworkTrafficOnKeyguard();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION))) {
-                setNetworkTrafficActivityDirection();
+                setNetworkTrafficActivity();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TYPE))) {
                 setNetworkTrafficType();
@@ -2322,7 +2322,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setShowWeatherOnKeyguard();
         setShowNetworkTraffic();
         setShowNetworkTrafficOnKeyguard();
-        setNetworkTrafficActivityDirection();
+        setNetworkTrafficActivity();
         setNetworkTrafficType();
         setNetworkTrafficIsBit();
         setNetworkTrafficHideTraffic();
@@ -2572,12 +2572,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void setNetworkTrafficActivityDirection() {
+    private void setNetworkTrafficActivity() {
         final int activity = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ACTIVITY_DIRECTION, 2);
 
         if (mIconController != null) {
-            mIconController.setNetworkTrafficActivityDirection(activity);
+            mIconController.setNetworkTrafficActivity(activity);
         }
     }
 

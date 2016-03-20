@@ -35,15 +35,15 @@ public class BarNetworkTraffic extends LinearLayout implements
 
     private NetworkTrafficController mNetworkTrafficController;
 
-    private ImageView mUpIconView;
-    private ImageView mDownIconView;
+    private ImageView mOutIconView;
+    private ImageView mInIconView;
 
-    private TextView mUpValueTextView;
-    private TextView mUpUnitTextView;
-    private TextView mDownValueTextView;
-    private TextView mDownUnitTextView;
+    private TextView mOutValueTextView;
+    private TextView mOutUnitTextView;
+    private TextView mInValueTextView;
+    private TextView mInUnitTextView;
 
-    private final int trafficInBytes = 0;
+    private final int mTrafficInBytes = 0;
     private int mBitByte;
 
     private boolean mListening = false;
@@ -64,20 +64,20 @@ public class BarNetworkTraffic extends LinearLayout implements
     protected void onFinishInflate() {
         super.onFinishInflate();
         Resources res = getResources();
-        mUpIconView = (ImageView) findViewById(R.id.bars_network_traffic_up_icon);
-        mDownIconView = (ImageView) findViewById(R.id.bars_network_traffic_down_icon);
+        mOutIconView = (ImageView) findViewById(R.id.bars_network_traffic_out_icon);
+        mInIconView = (ImageView) findViewById(R.id.bars_network_traffic_in_icon);
 
-        mUpValueTextView = (TextView) findViewById(R.id.bars_network_traffic_up_value_text);
-        mUpUnitTextView = (TextView) findViewById(R.id.bars_network_traffic_up_unit_text);
-        mDownValueTextView = (TextView) findViewById(R.id.bars_network_traffic_down_value_text);
-        mDownUnitTextView = (TextView) findViewById(R.id.bars_network_traffic_down_unit_text);
+        mOutValueTextView = (TextView) findViewById(R.id.bars_network_traffic_out_value_text);
+        mOutUnitTextView = (TextView) findViewById(R.id.bars_network_traffic_out_unit_text);
+        mInValueTextView = (TextView) findViewById(R.id.bars_network_traffic_in_value_text);
+        mInUnitTextView = (TextView) findViewById(R.id.bars_network_traffic_in_unit_text);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        mUpUnitTextView.setY(mUpValueTextView.getBottom() - mUpUnitTextView.getHeight());
-        mDownUnitTextView.setY(mDownValueTextView.getBottom() - mDownUnitTextView.getHeight());
+        mOutUnitTextView.setY(mOutValueTextView.getBottom() - mOutUnitTextView.getHeight());
+        mInUnitTextView.setY(mInValueTextView.getBottom() - mInUnitTextView.getHeight());
     }
 
     public void setNetworkTrafficController(NetworkTrafficController ntc) {
@@ -99,16 +99,16 @@ public class BarNetworkTraffic extends LinearLayout implements
 
     @Override
     public void onNetworkTrafficChanged(NetworkTrafficController.Traffic traffic) {
-        mUpIconView.setVisibility(traffic.activityUp ? View.VISIBLE : View.INVISIBLE);
-        mDownIconView.setVisibility(traffic.activityDown ? View.VISIBLE : View.INVISIBLE);
-        mUpValueTextView.setText(mBitByte == trafficInBytes ?
-                traffic.upBytesValue : traffic.upBitsValue);
-        mUpUnitTextView .setText(mBitByte == trafficInBytes ?
-                traffic.upBytesUnit : traffic.upBitsUnit);
-        mDownValueTextView.setText(mBitByte == trafficInBytes ?
-                traffic.downBytesValue : traffic.downBitsValue);
-        mDownUnitTextView.setText(mBitByte == trafficInBytes ?
-                traffic.downBytesUnit : traffic.downBitsUnit);
+        mOutIconView.setVisibility(traffic.activityOut ? View.VISIBLE : View.INVISIBLE);
+        mInIconView.setVisibility(traffic.activityIn ? View.VISIBLE : View.INVISIBLE);
+        mOutValueTextView.setText(mBitByte == mTrafficInBytes ?
+                traffic.outSpeedInBytes : traffic.outSpeedInBits);
+        mOutUnitTextView .setText(mBitByte == mTrafficInBytes ?
+                traffic.outUnitAsBytes : traffic.outUnitAsBits);
+        mInValueTextView.setText(mBitByte == mTrafficInBytes ?
+                traffic.inSpeedInBytes : traffic.inSpeedInBits);
+        mInUnitTextView.setText(mBitByte == mTrafficInBytes ?
+                traffic.inUnitAsBytes : traffic.inUnitAsBits);
 
     }
 
@@ -117,14 +117,14 @@ public class BarNetworkTraffic extends LinearLayout implements
     }
 
     public void setIconColor(int color) {
-        mUpIconView.setImageTintList(ColorStateList.valueOf(color));
-        mDownIconView.setImageTintList(ColorStateList.valueOf(color));
+        mOutIconView.setImageTintList(ColorStateList.valueOf(color));
+        mInIconView.setImageTintList(ColorStateList.valueOf(color));
     }
 
     public void setTextColors(int primaryColor, int secondaryColor) {
-        mUpValueTextView.setTextColor(primaryColor);
-        mDownValueTextView.setTextColor(primaryColor);
-        mUpUnitTextView.setTextColor(secondaryColor);
-        mDownUnitTextView.setTextColor(secondaryColor);
+        mOutValueTextView.setTextColor(primaryColor);
+        mInValueTextView.setTextColor(primaryColor);
+        mOutUnitTextView.setTextColor(secondaryColor);
+        mInUnitTextView.setTextColor(secondaryColor);
     }
 }

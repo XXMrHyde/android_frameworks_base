@@ -979,9 +979,9 @@ public class StatusBarIconController implements Tunable {
         mNetworkTrafficKeyguard.setShow(show);
     }
 
-    public void setNetworkTrafficActivityDirection(int activity) {
-        mNetworkTraffic.setActivityDirection(activity);
-        mNetworkTrafficKeyguard.setActivityDirection(activity);
+    public void setNetworkTrafficActivity(int activity) {
+        mNetworkTraffic.setActivity(activity);
+        mNetworkTrafficKeyguard.setActivity(activity);
     }
 
     public void setNetworkTrafficType(int type) {

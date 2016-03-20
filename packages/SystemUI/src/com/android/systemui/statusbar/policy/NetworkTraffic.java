@@ -36,9 +36,9 @@ import com.android.systemui.R;
 public class NetworkTraffic extends LinearLayout implements
         NetworkTrafficController.Callback {
 
-    private static final int TRAFFIC_DOWN        = 0;
-    private static final int TRAFFIC_UP          = 1;
-    private static final int TRAFFIC_UP_DOWN     = 2;
+    private static final int TRAFFIC_IN     = 0;
+    private static final int TRAFFIC_OUT    = 1;
+    private static final int TRAFFIC_IN_OUT = 2;
 
     private static final int TRAFFIC_TYPE_TEXT      = 0;
     private static final int TRAFFIC_TYPE_ICON      = 1;
@@ -57,8 +57,8 @@ public class NetworkTraffic extends LinearLayout implements
     private boolean mListening = false;
 
     private boolean mShowTraffic;
-    private boolean mShowDl;
-    private boolean mShowUl;
+    private boolean mShowActivityIn;
+    private boolean mShowActivityOut;
     private boolean mShowText;
     private boolean mShowIcon;
     private boolean mIsBit;
@@ -66,8 +66,8 @@ public class NetworkTraffic extends LinearLayout implements
     private boolean mHide;
     private int mThreshold;
     private boolean mIconAsIndicator;
-    private long mUpValue = 0;
-    private long mDownValue = 0;
+    private long mOutSpeed = 0;
+    private long mInSpeed = 0;
 
     private final int mTxtSizeSingle;
     private final int mTxtSizeDual;
@@ -163,9 +163,9 @@ public class NetworkTraffic extends LinearLayout implements
         }
     }
 
-    public void setActivityDirection(int activity) {
-        mShowDl = activity == TRAFFIC_DOWN || activity == TRAFFIC_UP_DOWN;
-        mShowUl = activity == TRAFFIC_UP || activity == TRAFFIC_UP_DOWN;
+    public void setActivity(int activity) {
+        mShowActivityIn = activity == TRAFFIC_IN || activity == TRAFFIC_IN_OUT;
+        mShowActivityOut = activity == TRAFFIC_OUT || activity == TRAFFIC_IN_OUT;
 
         if (isTrafficEnabled()) {
             onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
@@ -225,40 +225,40 @@ public class NetworkTraffic extends LinearLayout implements
             return;
         }
 
-        mUpValue = traffic.upValue;
-        mDownValue = traffic.downValue;
-        String output = "";
-        String outputUp = "";
-        String outputDown = "";
+        mOutSpeed = traffic.outSpeed;
+        mInSpeed = traffic.inSpeed;
+        String speed = "";
+        String speedOut = "";
+        String speedIn = "";
         String blankSpace = " ";
         int textSize = mTxtSizeSingle;
         boolean visible = true;
 
         if (mShowText) {
-            outputUp = mIsBit ? (traffic.upBitsValue + blankSpace + traffic.upBitsUnit)
-                    : (traffic.upBytesValue + blankSpace + traffic.upBytesUnit);
-            outputDown = mIsBit ? (traffic.downBitsValue + blankSpace + traffic.downBitsUnit)
-                    : (traffic.downBytesValue + blankSpace + traffic.downBytesUnit);
+            speedOut = mIsBit ? (traffic.outSpeedInBits + blankSpace + traffic.outUnitAsBits)
+                    : (traffic.outSpeedInBytes + blankSpace + traffic.outUnitAsBytes);
+            speedIn = mIsBit ? (traffic.inSpeedInBits + blankSpace + traffic.inUnitAsBits)
+                    : (traffic.inSpeedInBytes + blankSpace + traffic.inUnitAsBytes);
 
             if (mHide) {
-                if (mShowUl && !shouldHide(mUpValue) && mShowDl && !shouldHide(mDownValue)) {
-                    output = outputUp + "\n" + outputDown;
+                if (mShowActivityOut && !shouldHide(mOutSpeed) && mShowActivityIn && !shouldHide(mInSpeed)) {
+                    speed = speedOut + "\n" + speedIn;
                     textSize = mTxtSizeDual;
-                } else if (mShowUl && !shouldHide(mUpValue)) {
-                    output = outputUp;
-                } else if (mShowDl && !shouldHide(mDownValue)) {
-                    output = outputDown;
+                } else if (mShowActivityOut && !shouldHide(mOutSpeed)) {
+                    speed = speedOut;
+                } else if (mShowActivityIn && !shouldHide(mInSpeed)) {
+                    speed = speedIn;
                 } else {
                     visible = false;
                 }
             } else {
-                if (mShowUl && mShowDl) {
-                    output = outputUp + "\n" + outputDown;
+                if (mShowActivityOut && mShowActivityIn) {
+                    speed = speedOut + "\n" + speedIn;
                     textSize = mTxtSizeDual;
-                } else if (mShowUl) {
-                    output = outputUp;
-                } else if (mShowDl) {
-                    output = outputDown;
+                } else if (mShowActivityOut) {
+                    speed = speedOut;
+                } else if (mShowActivityIn) {
+                    speed = speedIn;
                 } else {
                     visible = false;
                 }
@@ -267,31 +267,31 @@ public class NetworkTraffic extends LinearLayout implements
             visible = false;
         }
 
-        mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float)textSize);
-        mTextView.setText(output);
+        mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) textSize);
+        mTextView.setText(speed);
         if (visible && mTextView.getVisibility() != View.VISIBLE) {
             mTextView.setVisibility(View.VISIBLE);
         } else if (!visible && mTextView.getVisibility() != View.GONE) {
             mTextView.setVisibility(View.GONE);
         }
         if (mHide) {
-            updateDrawable(mIconAsIndicator ? traffic.activityUp : !shouldHide(mUpValue),
-                    mIconAsIndicator ? traffic.activityDown : !shouldHide(mDownValue));
+            updateDrawable(mIconAsIndicator ? traffic.activityOut : !shouldHide(mOutSpeed),
+                    mIconAsIndicator ? traffic.activityIn : !shouldHide(mInSpeed));
         } else {
             updateDrawable(true, true);
         }
     }
 
-    private void updateDrawable(boolean showUp, boolean showDown) {
+    private void updateDrawable(boolean outIconVisible, boolean inIconVisible) {
         Drawable drawable = null;
         boolean iconVisible = false;
 
         if (mShowIcon) {
-            if (mShowUl && showUp) {
+            if (mShowActivityOut && outIconVisible) {
                 iconVisible = true;
                 drawable = mResources.getDrawable(R.drawable.stat_sys_signal_out);
             }
-            if (mShowDl && showDown) {
+            if (mShowActivityIn && inIconVisible) {
                 drawable = iconVisible
                         ? mResources.getDrawable(R.drawable.stat_sys_signal_inout)
                         : mResources.getDrawable(R.drawable.stat_sys_signal_in);

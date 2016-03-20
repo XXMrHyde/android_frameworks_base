@@ -26,17 +26,17 @@ public interface NetworkTrafficController {
     }
 
     public static class Traffic {
-        public long upValue = 0;
-        public long downValue = 0;
-        public String upBitsValue = null;
-        public String upBytesValue = null;
-        public String downBitsValue = null;
-        public String downBytesValue = null;
-        public String upBitsUnit = null;
-        public String upBytesUnit = null;
-        public String downBitsUnit = null;
-        public String downBytesUnit = null;
-        public boolean activityUp = false;
-        public boolean activityDown = false;
+        public long outSpeed = 0;
+        public long inSpeed = 0;
+        public String outSpeedInBits = null;
+        public String outSpeedInBytes = null;
+        public String inSpeedInBits = null;
+        public String inSpeedInBytes = null;
+        public String outUnitAsBits = null;
+        public String outUnitAsBytes = null;
+        public String inUnitAsBits = null;
+        public String inUnitAsBytes = null;
+        public boolean activityOut = false;
+        public boolean activityIn = false;
     }
 }
