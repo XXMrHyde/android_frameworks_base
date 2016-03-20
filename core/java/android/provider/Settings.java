@@ -3717,7 +3717,6 @@ public final class Settings {
          * 2: text and icon
          * default: 2
          * @hide
-         * @hide
          */
         public static final String STATUS_BAR_NETWORK_TRAFFIC_TYPE = "status_bar_network_traffic_type";
 
@@ -3728,10 +3727,34 @@ public final class Settings {
         public static final String STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE = "status_bar_network_traffic_bit_byte";
 
         /**
-         * Show/hide network traffic on no traffic
+         * Hide network traffic if network speed is on a specific threshold or below
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC = "status_bar_network_traffic_hide_traffic";
+
+        /**
+         * Network traffic threshold (in kilo bytes)
+         * 0
+         * 10
+         * 20
+         * 30
+         * 40
+         * 50
+         * 60
+         * 70
+         * 80
+         * 90
+         * 100
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_THRESHOLD = "status_bar_network_traffic_threshold";
+
+        /**
+         *  Whether to use the icon to indicate network activity
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_TRAFFIC_ICON_AS_INDICATOR = "status_bar_network_traffic_icon_as_indicator";
 
         /**
          * Color of the network traffic text

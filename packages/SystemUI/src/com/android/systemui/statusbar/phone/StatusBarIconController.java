@@ -994,9 +994,9 @@ public class StatusBarIconController implements Tunable {
         mNetworkTrafficKeyguard.setIsBit(isBit);
     }
 
-    public void setNetworkTrafficHideTraffic(boolean hide) {
-        mNetworkTraffic.setHide(hide);
-        mNetworkTrafficKeyguard.setHide(hide);
+    public void setNetworkTrafficHideTraffic(boolean hide, int threshold, boolean iconAsIndicator) {
+        mNetworkTraffic.setHide(hide, threshold, iconAsIndicator);
+        mNetworkTrafficKeyguard.setHide(hide, threshold, iconAsIndicator);
     }
 
     public void updateNetworkTrafficColors(boolean animate) {

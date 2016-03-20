@@ -62,7 +62,12 @@ public class NetworkTraffic extends LinearLayout implements
     private boolean mShowText;
     private boolean mShowIcon;
     private boolean mIsBit;
+
     private boolean mHide;
+    private int mThreshold;
+    private boolean mIconAsIndicator;
+    private long mUpValue = 0;
+    private long mDownValue = 0;
 
     private final int mTxtSizeSingle;
     private final int mTxtSizeDual;
@@ -139,8 +144,7 @@ public class NetworkTraffic extends LinearLayout implements
 
     @Override
     public void onNetworkTrafficChanged(Traffic traffic) {
-        updateDrawable(traffic.activityUp, traffic.activityDown);
-        updateText(traffic);
+        updateTraffic(traffic);
     }
 
     public void setShow(boolean show) {
@@ -185,12 +189,22 @@ public class NetworkTraffic extends LinearLayout implements
         }
     }
 
-    public void setHide(boolean hide) {
+    public void setHide(boolean hide, int threshold, boolean iconAsIndicator) {
         mHide = hide;
+        if (threshold > 0) {
+            mThreshold = threshold * 1024;
+        } else {
+            mThreshold = threshold;
+        }
+        mIconAsIndicator = iconAsIndicator;
 
         if (isTrafficEnabled()) {
             onNetworkTrafficChanged(mNetworkTrafficController.getTraffic());
         }
+    }
+
+    private boolean shouldHide(long speed) {
+        return speed <= mThreshold;
     }
 
     public void setTextColor(int color) {
@@ -206,11 +220,13 @@ public class NetworkTraffic extends LinearLayout implements
 
     }
 
-    private void updateText(Traffic traffic) {
-        if (mTextView == null) {
+    private void updateTraffic(Traffic traffic) {
+        if (mTextView == null || mIconView == null) {
             return;
         }
 
+        mUpValue = traffic.upValue;
+        mDownValue = traffic.downValue;
         String output = "";
         String outputUp = "";
         String outputDown = "";
@@ -225,12 +241,12 @@ public class NetworkTraffic extends LinearLayout implements
                     : (traffic.downBytesValue + blankSpace + traffic.downBytesUnit);
 
             if (mHide) {
-                if (mShowUl && traffic.activityUp && mShowDl && traffic.activityDown) {
+                if (mShowUl && !shouldHide(mUpValue) && mShowDl && !shouldHide(mDownValue)) {
                     output = outputUp + "\n" + outputDown;
                     textSize = mTxtSizeDual;
-                } else if (mShowUl && traffic.activityUp) {
+                } else if (mShowUl && !shouldHide(mUpValue)) {
                     output = outputUp;
-                } else if (mShowDl && traffic.activityDown) {
+                } else if (mShowDl && !shouldHide(mDownValue)) {
                     output = outputDown;
                 } else {
                     visible = false;
@@ -258,13 +274,15 @@ public class NetworkTraffic extends LinearLayout implements
         } else if (!visible && mTextView.getVisibility() != View.GONE) {
             mTextView.setVisibility(View.GONE);
         }
+        if (mHide) {
+            updateDrawable(mIconAsIndicator ? traffic.activityUp : !shouldHide(mUpValue),
+                    mIconAsIndicator ? traffic.activityDown : !shouldHide(mDownValue));
+        } else {
+            updateDrawable(true, true);
+        }
     }
 
     private void updateDrawable(boolean showUp, boolean showDown) {
-        if (mIconView == null) {
-            return;
-        }
-
         Drawable drawable = null;
         boolean iconVisible = false;
 

@@ -164,6 +164,8 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         final String defaultBytesUnit =
                 mResources.getString(R.string.network_traffic_unit_bytes_per_second);
 
+        long trafficUpValue = 0;
+        long trafficDownValue = 0;
         String trafficUpBitsValue = defaultValue;
         String trafficUpBytesValue = defaultValue;
         String trafficDownBitsValue = defaultValue;
@@ -181,6 +183,7 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         long newTxBytes = currentTxBytes - mTotalTxBytes;
 
         if (newTxBytes != 0) {
+            trafficUpValue = newTxBytes * 1000 / td;
             trafficUpBitsValue = formatTraffic(newTxBytes * 8000 / td);
             trafficUpBytesValue = formatTraffic(newTxBytes * 1000 / td);
             trafficUpBitsUnit = getUnit(newTxBytes * 8000 / td, true);
@@ -188,6 +191,7 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
             trafficActivityUp = true;
         }
         if (newRxBytes != 0 ) {
+            trafficDownValue = newRxBytes * 1000 / td;
             trafficDownBitsValue = formatTraffic(newRxBytes * 8000 / td);
             trafficDownBytesValue = formatTraffic(newRxBytes * 1000 / td);
             trafficDownBitsUnit = getUnit(newRxBytes * 8000 / td, true);
@@ -195,6 +199,8 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
             trafficActivityDown = true;
         }
 
+        mTraffic.upValue = trafficUpValue;
+        mTraffic.downValue = trafficDownValue;
         mTraffic.upBitsValue = trafficUpBitsValue;
         mTraffic.upBytesValue = trafficUpBytesValue;
         mTraffic.downBitsValue = trafficDownBitsValue;
@@ -278,6 +284,8 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         final String defaultBytesUnit =
                 mResources.getString(R.string.network_traffic_unit_bytes_per_second);
 
+        traffic.upValue = 0;
+        traffic.downValue = 0;
         traffic.upBitsValue = defaultValue;
         traffic.upBytesValue = defaultValue;
         traffic.downBitsValue = defaultValue;

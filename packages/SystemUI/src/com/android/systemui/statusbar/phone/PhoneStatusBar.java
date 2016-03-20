@@ -601,6 +601,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_THRESHOLD),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_AS_INDICATOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -761,7 +767,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_BIT_BYTE))) {
                 setNetworkTrafficIsBit();
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC))) {
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_THRESHOLD))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_AS_INDICATOR))) {
                 setNetworkTrafficHideTraffic();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_TRAFFIC_TEXT_COLOR))
@@ -2592,9 +2602,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void setNetworkTrafficHideTraffic() {
         final boolean hide = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_NETWORK_TRAFFIC_HIDE_TRAFFIC, 1) == 1;
+        final int threshold = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_THRESHOLD, 0);
+        final boolean iconAsIndicator = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_NETWORK_TRAFFIC_ICON_AS_INDICATOR, 1) == 1;
 
         if (mIconController != null) {
-            mIconController.setNetworkTrafficHideTraffic(hide);
+            mIconController.setNetworkTrafficHideTraffic(hide, threshold, iconAsIndicator);
         }
     }
 

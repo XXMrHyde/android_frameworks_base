@@ -26,6 +26,8 @@ public interface NetworkTrafficController {
     }
 
     public static class Traffic {
+        public long upValue = 0;
+        public long downValue = 0;
         public String upBitsValue = null;
         public String upBytesValue = null;
         public String downBitsValue = null;
