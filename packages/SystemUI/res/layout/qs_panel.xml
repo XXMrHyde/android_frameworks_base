@@ -19,6 +19,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+    <View
+        android:id="@+id/quick_settings_container_bg"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/expanded_bars_background" />
+
     <include layout="@layout/status_bar_expanded_bars" />
 
 </com.android.systemui.qs.QSContainer>

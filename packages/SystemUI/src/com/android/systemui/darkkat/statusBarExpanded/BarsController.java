@@ -40,6 +40,7 @@ import com.android.systemui.darkkat.statusBarExpanded.bars.MobileBar;
 import com.android.systemui.darkkat.statusBarExpanded.bars.QuickAccessBar;
 import com.android.systemui.darkkat.statusBarExpanded.bars.WeatherBarContainer;
 import com.android.systemui.darkkat.statusBarExpanded.bars.WifiBar;
+import com.android.systemui.qs.QSContainer;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import com.android.systemui.statusbar.policy.BatteryBar;
@@ -58,6 +59,7 @@ public class BarsController {
     private SettingsObserver mSettingsObserver;
     private final ContentResolver mResolver;
 
+    private QSContainer mQSContainer;
     private final View mBarsContainer;
     private View mQABarContainer;
     private QuickAccessBar mQuickAccessBar;
@@ -91,6 +93,7 @@ public class BarsController {
         mSettingsObserver = new SettingsObserver(mHandler);
 
         mBarsContainer = barsContainer;
+        mQSContainer = (QSContainer) barsContainer.getParent();
         mQABarContainer = mBarsContainer.findViewById(R.id.expanded_bars_quick_access_bar_container);
         mQuickAccessBar = (QuickAccessBar) mBarsContainer.findViewById(R.id.quick_access_bar);
         mBrightnessSliderBar =
@@ -160,6 +163,7 @@ public class BarsController {
         mWeatherBarContainer.setVisibility(mShowWeatherBar ? View.INVISIBLE : View.GONE);
         mSpaceWeather.setVisibility(mShowWeatherBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void applyAdvancedBatteryStatusSettings() {
@@ -184,6 +188,7 @@ public class BarsController {
         mQABarContainer.setVisibility(mShowQuickAccessBar ? View.INVISIBLE : View.GONE);
         mSpaceQAB.setVisibility(mShowQuickAccessBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void setShowBrightnessSliderBar() {
@@ -192,6 +197,7 @@ public class BarsController {
         mBrightnessSliderBar.setVisibility(mShowBrightnessSliderBar ? View.INVISIBLE : View.GONE);
         mSpaceBrightness.setVisibility(mShowBrightnessSliderBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void setShowWifiBar() {
@@ -200,6 +206,7 @@ public class BarsController {
         mWifiBar.setVisibility(mShowWifiBar ? View.INVISIBLE : View.GONE);
         mSpaceWifi.setVisibility(mShowWifiBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void setShowMobileBar() {
@@ -208,6 +215,7 @@ public class BarsController {
         mMobileBar.setVisibility(mShowMobileBar ? View.INVISIBLE : View.GONE);
         mSpaceMobile.setVisibility(mShowMobileBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void setShowBatteryStatusBar() {
@@ -218,6 +226,7 @@ public class BarsController {
                 ? View.INVISIBLE : View.GONE);
         mSpaceBattery.setVisibility(mShowBatteryStatusBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private void setShowWeatherBar() {
@@ -226,6 +235,7 @@ public class BarsController {
         mWeatherBarContainer.setVisibility(mShowWeatherBar ? View.INVISIBLE : View.GONE);
         mSpaceWeather.setVisibility(mShowWeatherBar ? View.INVISIBLE : View.GONE);
         mBarsContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
+        mQSContainer.setVisibility(showAnyBar() ? View.INVISIBLE : View.GONE);
     }
 
     private boolean showAnyBar() {
@@ -290,6 +300,7 @@ public class BarsController {
 
     private void setBackgroundColor() {
         final int color = SBEPanelColorHelper.getBackgroundColor(mContext);
+        mQSContainer.getBgView().getBackground().setColorFilter(color, Mode.SRC_IN);
         mQABarContainer.getBackground().setColorFilter(color, Mode.SRC_IN);
         mBrightnessSliderBar.getBackground().setColorFilter(color, Mode.SRC_IN);
         mWifiBar.getBackground().setColorFilter(color, Mode.SRC_IN);
@@ -329,7 +340,7 @@ public class BarsController {
             return;
         }
         mBarsContainer.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
-        ((View) mBarsContainer.getParent()).setVisibility(
+        mQSContainer.setVisibility(
                 keyguardShowing && !visible ? View.INVISIBLE : View.VISIBLE);
         if (mShowQuickAccessBar) {
             mQABarContainer.setVisibility(visible ?  View.VISIBLE : View.INVISIBLE);

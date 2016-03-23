@@ -18,7 +18,10 @@ package com.android.systemui.qs;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
+
+import com.android.systemui.R;
 
 /**
  * Wrapper view with background which contains {@link QSPanel}
@@ -40,6 +43,10 @@ public class QSContainer extends FrameLayout {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         updateBottom();
+    }
+
+    public View getBgView() {
+        return findViewById(R.id.quick_settings_container_bg);
     }
 
     /**
