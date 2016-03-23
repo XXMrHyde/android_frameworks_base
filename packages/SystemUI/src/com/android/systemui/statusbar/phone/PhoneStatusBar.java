@@ -622,6 +622,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW_IME_ARROWS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -641,9 +650,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_ICON_COLOR),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USE_SLIM_RECENTS), false, this,
@@ -806,6 +812,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_TICKER_TEXT_COLOR))) {
                 updateTickerTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME))) {
+                UpdateEmptyShadeShowCarrierName();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME))) {
+                UpdateEmptyShadeShowWifiName();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR))) {
+                UpdateEmptyShadeTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_SHOW_IME_ARROWS))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_MENU_BUTTON_VISIBILITY))
@@ -822,9 +837,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NOTIFICATION_ICON_COLOR))) {
                 UpdateClearAllNotificationIconColor();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NOTIFICATION_TEXT_COLOR))) {
-                UpdateEmptyShadeTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.USE_SLIM_RECENTS))) {
                 updateRecents();
@@ -1357,7 +1369,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
                 .setNetworkTrafficController(mNetworkTrafficController);
-
+        mEmptyShadeView.setNetworkController(mNetworkController);
         // Set up the expanded panel bars controller
         final View barsContainer = mStatusBarWindow.findViewById(R.id.status_bar_expanded_bars_container);
         BarsController barsController = new BarsController(mContext, barsContainer);
@@ -1944,6 +1956,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         boolean showEmptyShade =
                 mState != StatusBarState.KEYGUARD &&
                         mNotificationData.getActiveNotifications().size() == 0;
+        mEmptyShadeView.setListening(showEmptyShade);
         mNotificationPanel.setShadeEmpty(showEmptyShade);
     }
 
@@ -2360,10 +2373,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setNetworkTrafficHideTraffic();
         updateNetworkTrafficColors(false);
         updateShowTicker();
+        UpdateEmptyShadeShowCarrierName();
+        UpdateEmptyShadeShowWifiName();
+        UpdateEmptyShadeTextColor();
         updateNavigationBarExtraButtons();
         updateNavigationBarColors(false);
         UpdateClearAllNotificationIconColor();
-        UpdateEmptyShadeTextColor();
     }
 
     private void updateKeyguardButtonBarVisibility(boolean isKeyguardOverflowVisible) {
@@ -2673,6 +2688,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    private void UpdateEmptyShadeShowCarrierName() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME, 0) == 1;
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.setShowCarrierName(show);
+        }
+    }
+
+    private void UpdateEmptyShadeShowWifiName() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME, 0) == 1;
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.setShowWifiName(show);
+        }
+    }
+
+    private void UpdateEmptyShadeTextColor() {
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR, 0xffffffff);
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.updateTextColor(color);
+        }
+    }
+
     private boolean isBackButtonLongClickEnabled() {
         return Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NAVIGATION_BAR_ENABLE_BACK_BUTTON_LONG_CLICK, 0) == 1;
@@ -2705,14 +2744,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Settings.System.NOTIFICATION_ICON_COLOR, 0xffffffff);
         if (mDismissView != null) {
             mDismissView.updateIconColor(color);
-        }
-    }
-
-    private void UpdateEmptyShadeTextColor() {
-        int color = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.NOTIFICATION_TEXT_COLOR, 0xffffffff);
-        if (mEmptyShadeView != null) {
-            mEmptyShadeView.updateTextColor(color);
         }
     }
 

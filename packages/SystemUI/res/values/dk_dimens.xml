@@ -41,10 +41,24 @@
     <!-- carrier text end padding -->
     <dimen name="carrier_text_end_padding">8dp</dimen>
 
-    <!-- Status bar expanded header-->
+    <!-- Status bar expanded header -->
 
-    <!-- End margin for the Settings button container in the status bar header  -->
+    <!-- End margin of the Settings button container in the status bar header  -->
     <dimen name="settings_botton_container_margin_end">16dp</dimen>
+
+    <!-- Empty shade view -->
+
+    <!-- Height of the empty shade view -->
+    <dimen name="empty_shade_view_height">64dp</dimen>
+
+    <!-- Start and end padding of the content  -->
+    <dimen name="empty_shade_view_content_padding_start_end">16dp</dimen>
+
+    <!-- Top and bottom padding of the content  -->
+    <dimen name="empty_shade_view_content_padding_top_bottom">8dp</dimen>
+
+    <!-- Top padding of the no notifications text when no other content is visible  -->
+    <dimen name="empty_shade_view_no_notifications_padding_top">8dp</dimen>
 
     <!-- Status bar expanded bars (general) -->
 

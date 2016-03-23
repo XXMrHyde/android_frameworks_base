@@ -3852,6 +3852,24 @@ public final class Settings {
         public static final String STATUS_BAR_EXPANDED_HEADER_TEXT_COLOR = "status_bar_expanded_header_text_color";
 
         /**
+         * Whether to show the carrier name on the empty shade view
+         * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME = "empty_shade_view_show_carrier_name";
+
+        /**
+         * Whether to show the wifi name on the empty shade view
+         * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_SHOW_WIFI_NAME = "empty_shade_view_show_wifi_name";
+
+        /**
+         * Color of the text on the empty shade view
+         * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_TEXT_COLOR = "empty_shade_view_text_color";
+
+        /**
          * Color of the icons on the header of the expanded status bar
          * @hide
          */
