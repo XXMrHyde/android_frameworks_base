@@ -608,6 +608,26 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(gmscorePackage, STORAGE_PERMISSIONS, userId);
             }
 
+            // Android Wear Home
+            if (mService.hasSystemFeature(PackageManager.FEATURE_WATCH)) {
+                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                homeIntent.addCategory(Intent.CATEGORY_HOME_MAIN);
+
+                PackageParser.Package wearHomePackage = getDefaultSystemHandlerActivityPackageLPr(
+                        homeIntent, userId);
+
+                if (wearHomePackage != null
+                        && doesPackageSupportRuntimePermissions(wearHomePackage)) {
+                    grantRuntimePermissionsLPw(wearHomePackage, CONTACTS_PERMISSIONS, false,
+                            userId);
+                    grantRuntimePermissionsLPw(wearHomePackage, PHONE_PERMISSIONS, true, userId);
+                    grantRuntimePermissionsLPw(wearHomePackage, MICROPHONE_PERMISSIONS, false,
+                            userId);
+                    grantRuntimePermissionsLPw(wearHomePackage, LOCATION_PERMISSIONS, false,
+                            userId);
+                }
+            }
+
             mService.mSettings.onDefaultRuntimePermissionsGrantedLPr(userId);
         }
     }
@@ -615,7 +635,10 @@ final class DefaultPermissionGrantPolicy {
     private void grantDefaultPermissionsToDefaultSystemDialerAppLPr(
             PackageParser.Package dialerPackage, int userId) {
         if (doesPackageSupportRuntimePermissions(dialerPackage)) {
-            grantRuntimePermissionsLPw(dialerPackage, PHONE_PERMISSIONS, userId);
+            boolean isPhonePermFixed =
+                    mService.hasSystemFeature(PackageManager.FEATURE_WATCH);
+            grantRuntimePermissionsLPw(
+                    dialerPackage, PHONE_PERMISSIONS, isPhonePermFixed, userId);
             grantRuntimePermissionsLPw(dialerPackage, CONTACTS_PERMISSIONS, userId);
             grantRuntimePermissionsLPw(dialerPackage, SMS_PERMISSIONS, userId);
             grantRuntimePermissionsLPw(dialerPackage, MICROPHONE_PERMISSIONS, userId);
