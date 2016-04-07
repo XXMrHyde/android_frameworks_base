@@ -4763,6 +4763,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         != FingerprintUnlockController.MODE_WAKE_AND_UNLOCK_PULSING, animate);
         mVisualizerView.setDozing(mDozing);
         mKeyguardButtonBar.setDozing(mDozing);
+        mKeyguardStatusView.setDozing(mDozing);
     }
 
     public void updateStackScrollerState(boolean goingToFullShade) {

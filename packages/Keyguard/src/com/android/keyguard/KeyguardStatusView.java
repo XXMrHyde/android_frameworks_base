@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import com.android.internal.widget.LockPatternUtils;
 
+import java.text.NumberFormat;
 import java.util.Locale;
 
 public class KeyguardStatusView extends GridLayout {
@@ -51,8 +52,13 @@ public class KeyguardStatusView extends GridLayout {
     private TextView mAlarmStatusView;
     private TextClock mDateView;
     private TextClock mClockView;
+    private TextView mAmbientDisplayBatteryView;
     private TextView mOwnerInfo;
     private KeyguardButtonBar mButtonBar;
+
+    private final int mWarningColor = 0xfff4511e; // deep orange 600
+    private int mIconColor;
+    private int mPrimaryTextColor;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -115,6 +121,7 @@ public class KeyguardStatusView extends GridLayout {
         mClockView = (TextClock) findViewById(R.id.clock_view);
         mDateView.setShowCurrentUserTime(true);
         mClockView.setShowCurrentUserTime(true);
+        mAmbientDisplayBatteryView = (TextView) findViewById(R.id.ambient_display_battery_view);
         mOwnerInfo = (TextView) findViewById(R.id.owner_info);
         mButtonBar = (KeyguardButtonBar) findViewById(R.id.button_bar);
 
@@ -219,22 +226,100 @@ public class KeyguardStatusView extends GridLayout {
     private void updateColors() {
         final ContentResolver resolver = getContext().getContentResolver();
 
-        int primaryTextColor = Settings.System.getInt(resolver,
+        mIconColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_ICON_COLOR, 0xffffffff);
+        mPrimaryTextColor = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_TEXT_COLOR, 0xffffffff);
-        // primaryTextColor with a transparency of 70%
-        int secondaryTextColor = (179 << 24) | (primaryTextColor & 0x00ffffff);
+        // mPrimaryTextColor with a transparency of 70%
+        final int secondaryTextColor = (179 << 24) | (mPrimaryTextColor & 0x00ffffff);
 
         mAlarmStatusView.setTextColor(secondaryTextColor);
         mAlarmStatusView.setCompoundDrawableTintList(ColorStateList.valueOf(secondaryTextColor));
-        mDateView.setTextColor(primaryTextColor);
-        mClockView.setTextColor(primaryTextColor);
+        mDateView.setTextColor(mPrimaryTextColor);
+        mClockView.setTextColor(mPrimaryTextColor);
         mOwnerInfo.setTextColor(secondaryTextColor);
+        if (showBattery()) {
+            refreshBatteryInfo();
+        }
+    }
+
+    private void refreshBatteryInfo() {
+        final Resources res = getContext().getResources();
+        KeyguardUpdateMonitor.BatteryStatus batteryStatus =
+                KeyguardUpdateMonitor.getInstance(mContext).getBatteryStatus();
+
+        String percentage = "";
+        int resId = 0;
+        final int lowLevel = res.getInteger(
+                com.android.internal.R.integer.config_lowBatteryWarningLevel);
+        final boolean useWarningColor = batteryStatus == null || batteryStatus.status == 1
+                || (batteryStatus.level <= lowLevel && !batteryStatus.isPluggedIn());
+
+        if (batteryStatus != null) {
+            percentage = NumberFormat.getPercentInstance().format((double) batteryStatus.level / 100.0);
+        }
+        if (batteryStatus == null || batteryStatus.status == 1) {
+            resId = R.drawable.ic_battery_unknown;
+        } else {
+            if (batteryStatus.level >= 96) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_full : R.drawable.ic_battery_full;
+            } else if (batteryStatus.level >= 90) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_90 : R.drawable.ic_battery_90;
+            } else if (batteryStatus.level >= 80) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_80 : R.drawable.ic_battery_80;
+            } else if (batteryStatus.level >= 60) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_60 : R.drawable.ic_battery_60;
+            } else if (batteryStatus.level >= 50) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_50 : R.drawable.ic_battery_50;
+            } else if (batteryStatus.level >= 30) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_30 : R.drawable.ic_battery_30;
+            } else if (batteryStatus.level >= lowLevel) {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_20;
+            } else {
+                resId = batteryStatus.isPluggedIn()
+                        ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_alert;
+            }
+        }
+        Drawable icon = resId > 0 ? res.getDrawable(resId).mutate() : null;
+        if (icon != null) {
+            icon.setTintList(ColorStateList.valueOf(useWarningColor ? mWarningColor : mIconColor));
+        }
+
+        mAmbientDisplayBatteryView.setText(percentage);
+        mAmbientDisplayBatteryView.setTextColor(useWarningColor
+                ? mWarningColor : mPrimaryTextColor);
+        mAmbientDisplayBatteryView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
     }
 
     @Override
     public boolean hasOverlappingRendering() {
         return false;
     }
+
+    public void setDozing(boolean dozing) {
+        if (dozing && showBattery()) {
+            refreshBatteryInfo();
+            if (mAmbientDisplayBatteryView.getVisibility() != View.VISIBLE) {
+                mAmbientDisplayBatteryView.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (mAmbientDisplayBatteryView.getVisibility() != View.GONE) {
+                mAmbientDisplayBatteryView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private boolean showBattery() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_BATTERY, 1) == 1;
+    } 
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.
     // This is an optimization to ensure we only recompute the patterns when the inputs change.

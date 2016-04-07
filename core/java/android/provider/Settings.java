@@ -3287,6 +3287,12 @@ public final class Settings {
         public static final String LOCK_SCREEN_BOTTOM_BUTTON_RIGHT = "lock_screen_bottom_button_right";
 
         /**
+         * Whether to show the battery status on ambient display
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_SHOW_BATTERY = "ambient_display_show_battery";
+
+        /**
          *  Color of the backgrounds on the lock screen
          * @hide
          */
