@@ -211,6 +211,14 @@ public class PopupMenu implements MenuBuilder.Callback, MenuPresenter.Callback {
     }
 
     /**
+     * Show the menu item icon.
+     * @hide
+     */
+    public void setForceShowIcon() {
+        mPopup.setForceShowIcon(true);
+    }
+
+    /**
      * Show the menu popup anchored to the view specified during construction.
      * @see #dismiss()
      */
