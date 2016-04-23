@@ -177,7 +177,7 @@ public class KeyguardButtonBar extends LinearLayout {
         if (!mEnabled || (mHideBar && mForceHideBar)) {
             setVisibility(View.GONE);
         } else {
-            setVisibility(View.VISIBLE);
+            setVisibility(mDozing && !showOnAmbientDisplay() ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -234,6 +234,12 @@ public class KeyguardButtonBar extends LinearLayout {
     public void setDozing(boolean dozing) {
         mDozing = dozing;
         setBackgroundColor();
+        updateVisibility();
+    }
+
+    private boolean showOnAmbientDisplay() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_BUTTON_BAR, 0) == 1;
     }
 
     public void doHapticKeyClick(int type) {

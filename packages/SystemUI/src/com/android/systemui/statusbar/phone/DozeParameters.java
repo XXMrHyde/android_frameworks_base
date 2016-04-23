@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +33,10 @@ import java.util.regex.Pattern;
 public class DozeParameters {
     private static final String TAG = "DozeParameters";
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+
+    private static final int MODE_NOTIFICATION_PICKUP = 0;
+    private static final int MODE_NOTIFICATION        = 1;
+    private static final int MODE_PICKUP              = 2;
 
     private static final int MAX_DURATION = 60 * 1000;
 
@@ -68,22 +73,46 @@ public class DozeParameters {
         return getBoolean("doze.display.supported", R.bool.doze_display_state_supported);
     }
 
+    private boolean getOverwriteValues() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_OVERWRITE_VALUES, 0) == 1;
+    }
+
     public int getPulseDuration(boolean pickup) {
         return getPulseInDuration(pickup) + getPulseVisibleDuration() + getPulseOutDuration();
     }
 
     public int getPulseInDuration(boolean pickup) {
-        return pickup
+        final int defaultDuration = pickup
                 ? getInt("doze.pulse.duration.in.pickup", R.integer.doze_pulse_duration_in_pickup)
                 : getInt("doze.pulse.duration.in", R.integer.doze_pulse_duration_in);
+        if (getOverwriteValues()) {
+            return pickup
+                    ? Settings.System.getInt(mContext.getContentResolver(),
+                            Settings.System.AMBIENT_DISPLAY_PULSE_IN_PICKUP, defaultDuration)
+                    : Settings.System.getInt(mContext.getContentResolver(),
+                            Settings.System.AMBIENT_DISPLAY_PULSE_IN_NOTIFICATION, defaultDuration);
+        }
+        return defaultDuration;
     }
 
     public int getPulseVisibleDuration() {
-        return getInt("doze.pulse.duration.visible", R.integer.doze_pulse_duration_visible);
+        final int defaultDuration =
+                getInt("doze.pulse.duration.visible", R.integer.doze_pulse_duration_visible);
+        if (getOverwriteValues()) {
+            return Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.AMBIENT_DISPLAY_PULSE_VISIBLE, defaultDuration);
+        }
+        return defaultDuration;
     }
 
     public int getPulseOutDuration() {
-        return getInt("doze.pulse.duration.out", R.integer.doze_pulse_duration_out);
+        final int defaultDuration = getInt("doze.pulse.duration.out", R.integer.doze_pulse_duration_out);
+        if (getOverwriteValues()) {
+            return Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.AMBIENT_DISPLAY_PULSE_OUT, defaultDuration);
+        }
+        return defaultDuration;
     }
 
     public boolean getPulseOnSigMotion() {
@@ -95,7 +124,9 @@ public class DozeParameters {
     }
 
     public boolean getPulseOnPickup() {
-        return getBoolean("doze.pulse.pickup", R.bool.doze_pulse_on_pick_up);
+        final int mode = Settings.System.getInt(mContext.getContentResolver(),
+               Settings.System.AMBIENT_DISPLAY_MODE, 0);
+        return mode == MODE_NOTIFICATION_PICKUP || mode == MODE_PICKUP;
     }
 
     public boolean getVibrateOnPickup() {
@@ -111,13 +142,21 @@ public class DozeParameters {
     }
 
     public boolean getPulseOnNotifications() {
-        return getBoolean("doze.pulse.notifications", R.bool.doze_pulse_on_notifications);
+        final int mode = Settings.System.getInt(mContext.getContentResolver(),
+               Settings.System.AMBIENT_DISPLAY_MODE, 0);
+        return mode == MODE_NOTIFICATION_PICKUP || mode == MODE_NOTIFICATION;
     }
 
     public PulseSchedule getPulseSchedule() {
-        final String spec = getString("doze.pulse.schedule", R.string.doze_pulse_schedule);
-        if (sPulseSchedule == null || !sPulseSchedule.mSpec.equals(spec)) {
-            sPulseSchedule = PulseSchedule.parse(spec);
+        final boolean scheduleEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_ENABLE_PULSE_NOTIFICATION_SCHEDULE, 1) == 1;
+        if (!scheduleEnabled) {
+            sPulseSchedule = null;
+        } else {
+            final String spec = getString("doze.pulse.schedule", R.string.doze_pulse_schedule);
+            if (sPulseSchedule == null || !sPulseSchedule.mSpec.equals(spec)) {
+                sPulseSchedule = PulseSchedule.parse(spec);
+            }
         }
         return sPulseSchedule;
     }
@@ -141,6 +180,16 @@ public class DozeParameters {
 
     private String getString(String propName, int resId) {
         return SystemProperties.get(propName, mContext.getString(resId));
+    }
+
+    public int getBrightness() {
+	    final int brightnessDefault = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_screenBrightnessDoze);
+        if (getOverwriteValues()) {
+            return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_BRIGHTNESS, brightnessDefault);
+        }
+        return brightnessDefault;
     }
 
     public static class PulseSchedule {

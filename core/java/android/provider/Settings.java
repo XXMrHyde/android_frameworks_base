@@ -3287,10 +3287,96 @@ public final class Settings {
         public static final String LOCK_SCREEN_BOTTOM_BUTTON_RIGHT = "lock_screen_bottom_button_right";
 
         /**
+         * Mode of ambient display
+         * 0: Notifications and pick up
+         * 1: Notifications
+         * 2: Pick up
+         * default: 0
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_MODE = "ambient_display_mode";
+
+        /**
          * Whether to show the battery status on ambient display
          * @hide
          */
         public static final String AMBIENT_DISPLAY_SHOW_BATTERY = "ambient_display_show_battery";
+
+        /**
+         * Whether to show the additional button bar on ambient display
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_SHOW_BUTTON_BAR = "ambient_display_show_button_bar";
+
+        /**
+         * Whether to schedule the pulse of the ambient display (notification)
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_ENABLE_PULSE_NOTIFICATION_SCHEDULE = "ambient_display_enable_pulse_notification_schedule";
+
+        /**
+         * Whether to overwrite the default ambient display values
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_OVERWRITE_VALUES = "ambient_display_overwrite_values";
+
+        /**
+         * Ambient display brightness
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_BRIGHTNESS = "ambient_display_brightness";
+
+        /**
+         * Duration of the ambient display fade in (notification), in ms
+         * 300
+         * 600
+         * 900
+         * 1500
+         * 2000
+         * default: 900
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_PULSE_IN_NOTIFICATION = "ambient_display_pulse_in_notification";
+
+        /**
+         * Duration of the ambient display fade in (pickup), in ms
+         * 300
+         * 600
+         * 900
+         * 1500
+         * 2000
+         * default: 300
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_PULSE_IN_PICKUP = "ambient_display_pulse_in_pickup";
+
+        /**
+         * Duration of the ambient display when visible, in ms
+         * 1000
+         * 1500
+         * 2000
+         * 2500
+         * 3000
+         * 3500
+         * 4000
+         * 4500
+         * 5000
+         * default: 3000
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_PULSE_VISIBLE = "ambient_display_pulse_visible";
+
+        /**
+         * Duration of the ambient display fade out, in ms
+         * 300
+         * 600
+         * 900
+         * 1500
+         * 2000
+         * default: 600
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_PULSE_OUT = "ambient_display_pulse_out";
 
         /**
          *  Color of the backgrounds on the lock screen
