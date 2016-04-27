@@ -1366,6 +1366,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         weather.setUp(this, weatherController);
         weatherKeyguard.setUp(this, weatherController);
         mKeyguardStatusBar.setWeatherController(weatherController);
+        mKeyguardStatusView.setWeatherController(weatherController);
 
         ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
                 .setNetworkTrafficController(mNetworkTrafficController);

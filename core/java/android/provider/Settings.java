@@ -3303,6 +3303,18 @@ public final class Settings {
         public static final String AMBIENT_DISPLAY_SHOW_BATTERY = "ambient_display_show_battery";
 
         /**
+         * Whether to show the weather on ambient display
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_SHOW_WEATHER = "ambient_display_show_weather";
+
+        /**
+         * Whether to show the weather location on ambient display
+         * @hide
+         */
+        public static final String AMBIENT_DISPLAY_SHOW_WEATHER_LOCATION = "ambient_display_show_weather_location";
+
+        /**
          * Whether to show the additional button bar on ambient display
          * @hide
          */

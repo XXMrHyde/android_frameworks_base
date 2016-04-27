@@ -34,9 +34,11 @@ import android.util.Slog;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.android.internal.util.cm.WeatherController;
 import com.android.internal.widget.LockPatternUtils;
 
 import java.text.NumberFormat;
@@ -52,13 +54,20 @@ public class KeyguardStatusView extends GridLayout {
     private TextView mAlarmStatusView;
     private TextClock mDateView;
     private TextClock mClockView;
+    private View mAmbientDisplayWeatherLayout;
+    private TextView mAmbientDisplayWeatherLT;
+    private TextView mAmbientDisplayWeatherC;
+    private ImageView mAmbientDisplayWeatherIcon;
     private TextView mAmbientDisplayBatteryView;
     private TextView mOwnerInfo;
     private KeyguardButtonBar mButtonBar;
 
     private final int mWarningColor = 0xfff4511e; // deep orange 600
-    private int mIconColor;
+    private int mIconColor = 0xffffffff;
     private int mPrimaryTextColor;
+    private int mSecondaryTextColor = 0xb3ffffff;;
+
+    private WeatherController mWeatherController;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -121,6 +130,10 @@ public class KeyguardStatusView extends GridLayout {
         mClockView = (TextClock) findViewById(R.id.clock_view);
         mDateView.setShowCurrentUserTime(true);
         mClockView.setShowCurrentUserTime(true);
+        mAmbientDisplayWeatherLayout = findViewById(R.id.ambient_display_weather_layout);
+        mAmbientDisplayWeatherLT = (TextView) findViewById(R.id.ambient_display_weather_location_temp);
+        mAmbientDisplayWeatherIcon = (ImageView) findViewById(R.id.ambient_display_weather_icon);
+        mAmbientDisplayWeatherC = (TextView) findViewById(R.id.ambient_display_weather_condition);
         mAmbientDisplayBatteryView = (TextView) findViewById(R.id.ambient_display_battery_view);
         mOwnerInfo = (TextView) findViewById(R.id.owner_info);
         mButtonBar = (KeyguardButtonBar) findViewById(R.id.button_bar);
@@ -144,6 +157,10 @@ public class KeyguardStatusView extends GridLayout {
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
         mOwnerInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
+    }
+
+    public void setWeatherController(WeatherController controller) {
+        mWeatherController = controller;
     }
 
     public void refreshTime() {
@@ -231,15 +248,18 @@ public class KeyguardStatusView extends GridLayout {
         mPrimaryTextColor = Settings.System.getInt(resolver,
                 Settings.System.LOCK_SCREEN_TEXT_COLOR, 0xffffffff);
         // mPrimaryTextColor with a transparency of 70%
-        final int secondaryTextColor = (179 << 24) | (mPrimaryTextColor & 0x00ffffff);
+        mSecondaryTextColor = (179 << 24) | (mPrimaryTextColor & 0x00ffffff);
 
-        mAlarmStatusView.setTextColor(secondaryTextColor);
-        mAlarmStatusView.setCompoundDrawableTintList(ColorStateList.valueOf(secondaryTextColor));
+        mAlarmStatusView.setTextColor(mSecondaryTextColor);
+        mAlarmStatusView.setCompoundDrawableTintList(ColorStateList.valueOf(mSecondaryTextColor));
         mDateView.setTextColor(mPrimaryTextColor);
         mClockView.setTextColor(mPrimaryTextColor);
-        mOwnerInfo.setTextColor(secondaryTextColor);
+        mOwnerInfo.setTextColor(mSecondaryTextColor);
         if (showBattery()) {
             refreshBatteryInfo();
+        }
+        if (showWeather()) {
+            refreshWeatherInfo();
         }
     }
 
@@ -298,20 +318,44 @@ public class KeyguardStatusView extends GridLayout {
         mAmbientDisplayBatteryView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
     }
 
+    private void refreshWeatherInfo() {
+        if (mWeatherController == null) {
+            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
+            return;
+        }
+
+        WeatherController.WeatherInfo info = mWeatherController.getWeatherInfo();
+        if (info.temp != null && info.condition != null && info.conditionDrawableMonochrome != null) {
+            String locationTemp = (showWeatherLocation() ? info.city + ", " : "") + info.temp;
+            Drawable icon = info.conditionDrawableMonochrome;
+            mAmbientDisplayWeatherLT.setText(locationTemp);
+            mAmbientDisplayWeatherC.setText(info.condition);
+            mAmbientDisplayWeatherLT.setTextColor(mPrimaryTextColor);
+            mAmbientDisplayWeatherC.setTextColor(mSecondaryTextColor);
+            icon.setTintList(ColorStateList.valueOf(mIconColor));
+            mAmbientDisplayWeatherIcon.setImageDrawable(icon);
+        } else {
+            mAmbientDisplayWeatherLT.setText("");
+            mAmbientDisplayWeatherC.setText("");
+            mAmbientDisplayWeatherIcon.setImageDrawable(null);
+            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public boolean hasOverlappingRendering() {
         return false;
     }
 
     public void setDozing(boolean dozing) {
-        if (dozing && showBattery()) {
-            refreshBatteryInfo();
-            if (mAmbientDisplayBatteryView.getVisibility() != View.VISIBLE) {
-                mAmbientDisplayBatteryView.setVisibility(View.VISIBLE);
+        mAmbientDisplayBatteryView.setVisibility(dozing && showBattery() ? View.VISIBLE : View.GONE);
+        mAmbientDisplayWeatherLayout.setVisibility(dozing && showWeather() ? View.VISIBLE : View.GONE);
+        if (dozing) {
+            if (showBattery()) {
+                refreshBatteryInfo();
             }
-        } else {
-            if (mAmbientDisplayBatteryView.getVisibility() != View.GONE) {
-                mAmbientDisplayBatteryView.setVisibility(View.GONE);
+            if (showWeather()) {
+                refreshWeatherInfo();
             }
         }
     }
@@ -319,7 +363,17 @@ public class KeyguardStatusView extends GridLayout {
     private boolean showBattery() {
         return Settings.System.getInt(getContext().getContentResolver(),
                 Settings.System.AMBIENT_DISPLAY_SHOW_BATTERY, 1) == 1;
-    } 
+    }
+
+    private boolean showWeather() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_WEATHER, 0) == 1;
+    }
+
+    private boolean showWeatherLocation() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_WEATHER_LOCATION, 1) == 1;
+    }
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.
     // This is an optimization to ensure we only recompute the patterns when the inputs change.
