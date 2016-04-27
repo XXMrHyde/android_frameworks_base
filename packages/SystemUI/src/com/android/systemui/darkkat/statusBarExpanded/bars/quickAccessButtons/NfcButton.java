@@ -57,6 +57,10 @@ public class NfcButton extends QabButton {
 
     @Override
     public void setListening(boolean listening) {
+        if (mEnabled != isNfcEnabled()) {
+            mEnabled = isNfcEnabled();
+            updateState(mEnabled);
+        }
         if (listening) {
             if (!mReceiverRegistered) {
                 mContext.registerReceiver(mReceiver,
