@@ -32,6 +32,7 @@ public class NfcButton extends QabButton {
     private NfcAdapter mNfcAdapter;
 
     private boolean mEnabled;
+    private boolean mReceiverRegistered = false;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -45,7 +46,11 @@ public class NfcButton extends QabButton {
             Drawable iconDisabled) {
         super(context, bar, iconEnabled, iconDisabled);
 
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(mContext);
+        try {
+            mNfcAdapter = NfcAdapter.getNfcAdapter(mContext);
+        } catch (UnsupportedOperationException e) {
+            mNfcAdapter = null;
+        }
         mEnabled = isNfcEnabled();
         updateState(mEnabled);
     }
@@ -53,21 +58,31 @@ public class NfcButton extends QabButton {
     @Override
     public void setListening(boolean listening) {
         if (listening) {
-            mContext.registerReceiver(mReceiver,
-                    new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED));
+            if (!mReceiverRegistered) {
+                mContext.registerReceiver(mReceiver,
+                        new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED));
+                mReceiverRegistered = true;
+            }
         } else {
-            mContext.unregisterReceiver(mReceiver);
+            if (mReceiverRegistered) {
+                mContext.unregisterReceiver(mReceiver);
+                mReceiverRegistered = false;
+            }
         }
     }
 
     @Override
     public void handleClick() {
         if (mNfcAdapter == null) {
-            return;
+            try {
+                mNfcAdapter = NfcAdapter.getNfcAdapter(mContext);
+            } catch (UnsupportedOperationException e) {
+                mNfcAdapter = null;
+            }
         }
-        if (mEnabled) {
+        if (mNfcAdapter != null && mEnabled) {
             mNfcAdapter.disable();
-        } else {
+        } else if (mNfcAdapter != null) {
             mNfcAdapter.enable();
         }
     }
@@ -78,6 +93,13 @@ public class NfcButton extends QabButton {
     }
 
     private boolean isNfcEnabled() {
+        if (mNfcAdapter == null) {
+            try {
+                mNfcAdapter = NfcAdapter.getNfcAdapter(mContext);
+            } catch (UnsupportedOperationException e) {
+                mNfcAdapter = null;
+            }
+        }
         if (mNfcAdapter == null) {
             return false;
         }
