@@ -24,6 +24,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -327,13 +328,13 @@ public class KeyguardStatusView extends GridLayout {
         WeatherController.WeatherInfo info = mWeatherController.getWeatherInfo();
         if (info.temp != null && info.condition != null && info.conditionDrawableMonochrome != null) {
             String locationTemp = (showWeatherLocation() ? info.city + ", " : "") + info.temp;
-            Drawable icon = info.conditionDrawableMonochrome;
+            Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
             mAmbientDisplayWeatherLT.setText(locationTemp);
             mAmbientDisplayWeatherC.setText(info.condition);
             mAmbientDisplayWeatherLT.setTextColor(mPrimaryTextColor);
             mAmbientDisplayWeatherC.setTextColor(mSecondaryTextColor);
-            icon.setTintList(ColorStateList.valueOf(mIconColor));
             mAmbientDisplayWeatherIcon.setImageDrawable(icon);
+            mAmbientDisplayWeatherIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
         } else {
             mAmbientDisplayWeatherLT.setText("");
             mAmbientDisplayWeatherC.setText("");

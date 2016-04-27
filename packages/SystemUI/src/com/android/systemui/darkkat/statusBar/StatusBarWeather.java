@@ -17,6 +17,7 @@
 package com.android.systemui.darkkat.statusbar;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.view.View;
@@ -85,7 +86,8 @@ public class StatusBarWeather extends LinearLayout implements
                 setVisibility(View.VISIBLE);
             }
             mTextView.setText(info.temp);
-            mIconView.setImageDrawable(info.conditionDrawableMonochrome);
+            Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
+            mIconView.setImageDrawable(icon);
         } else {
             setVisibility(View.GONE);
             mTextView.setText("");

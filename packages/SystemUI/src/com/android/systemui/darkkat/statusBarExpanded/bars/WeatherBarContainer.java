@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.PorterDuff.Mode;
 import android.provider.Settings;
@@ -228,8 +229,9 @@ public class WeatherBarContainer extends FrameLayout implements
             calendar.roll(Calendar.DAY_OF_WEEK, true);
 
             ImageView currentImage = (ImageView) currentItem.findViewById(R.id.weather_image);
-            currentImage.setImageDrawable(
-                    WeatherHelper.getCurrentConditionDrawable(mContext, info));
+            Drawable icon = WeatherHelper.getCurrentConditionDrawable(mContext, info)
+                    .getConstantState().newDrawable();
+            currentImage.setImageDrawable(icon);
             if (WeatherHelper.getIconType(mContext) == 0) {
                 currentImage.setColorFilter(iconColor, Mode.MULTIPLY);
             }
@@ -255,7 +257,9 @@ public class WeatherBarContainer extends FrameLayout implements
                 calendar.roll(Calendar.DAY_OF_WEEK, true);
 
                 ImageView image = (ImageView) forecastItem.findViewById(R.id.weather_image);
-                image.setImageDrawable(WeatherHelper.getForcastConditionDrawable(mContext, d));
+                Drawable icon = WeatherHelper.getForcastConditionDrawable(mContext, d)
+                        .getConstantState().newDrawable();
+                image.setImageDrawable(icon);
                 if (WeatherHelper.getIconType(mContext) == 0) {
                     image.setColorFilter(iconColor, Mode.MULTIPLY);
                 }
