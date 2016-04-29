@@ -565,9 +565,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_WEATHER_SHOW),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_WEATHER_TYPE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -764,9 +761,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (isLockClockInstalledAndEnabled()) {
                     updateWeatherVisibility();
                 }
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN))) {
-                setShowWeatherOnKeyguard();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_WEATHER_TYPE))) {
                 setWeatherType();
@@ -1359,13 +1353,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         WeatherControllerImpl weatherController = new WeatherControllerImpl(mContext);
         StatusBarWeather weather =
                 (StatusBarWeather) mStatusBarView.findViewById(R.id.status_bar_weather_layout);
-        StatusBarWeather weatherKeyguard =
-                (StatusBarWeather) mKeyguardStatusBar.findViewById(R.id.keyguard_weather_layout);
         weather.setOnLongClickListener(mLongPressWeatherListener);
-        weatherKeyguard.setOnLongClickListener(mLongPressWeatherListener);
         weather.setUp(this, weatherController);
-        weatherKeyguard.setUp(this, weatherController);
-        mKeyguardStatusBar.setWeatherController(weatherController);
         mKeyguardStatusView.setWeatherController(weatherController);
 
         ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
@@ -2365,7 +2354,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateWeatherVisibility();
         setWeatherType();
         updateWeatherColors(false);
-        setShowWeatherOnKeyguard();
         setShowNetworkTraffic();
         setShowNetworkTrafficOnKeyguard();
         setNetworkTrafficActivity();
@@ -2576,15 +2564,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mIconController.updateWeatherVisibility(isLockClockInstalledAndEnabled()
                     && show, forceHide, maxAllowedIcons);
         }
-    }
-
-    private void setShowWeatherOnKeyguard() {
-        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN, 0) == 1;
-        if (mIconController != null) {
-            mIconController.setShowWeatherOnKeyguard(isLockClockInstalledAndEnabled() && show);
-        }
-        mKeyguardStatusBar.updateCarrierTextLayoutParams(isLockClockInstalledAndEnabled() && show);
     }
 
     private void setWeatherType() {

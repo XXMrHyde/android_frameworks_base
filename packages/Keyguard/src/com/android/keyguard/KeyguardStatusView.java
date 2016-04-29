@@ -63,6 +63,8 @@ public class KeyguardStatusView extends GridLayout {
     private TextView mOwnerInfo;
     private KeyguardButtonBar mButtonBar;
 
+    private boolean mDozing = false;
+
     private final int mWarningColor = 0xfff4511e; // deep orange 600
     private int mIconColor = 0xffffffff;
     private int mPrimaryTextColor;
@@ -256,73 +258,84 @@ public class KeyguardStatusView extends GridLayout {
         mDateView.setTextColor(mPrimaryTextColor);
         mClockView.setTextColor(mPrimaryTextColor);
         mOwnerInfo.setTextColor(mSecondaryTextColor);
-        if (showBattery()) {
-            refreshBatteryInfo();
-        }
-        if (showWeather()) {
-            refreshWeatherInfo();
-        }
+        refreshWeatherInfo();
     }
 
     private void refreshBatteryInfo() {
-        final Resources res = getContext().getResources();
-        KeyguardUpdateMonitor.BatteryStatus batteryStatus =
-                KeyguardUpdateMonitor.getInstance(mContext).getBatteryStatus();
-
-        String percentage = "";
-        int resId = 0;
-        final int lowLevel = res.getInteger(
-                com.android.internal.R.integer.config_lowBatteryWarningLevel);
-        final boolean useWarningColor = batteryStatus == null || batteryStatus.status == 1
-                || (batteryStatus.level <= lowLevel && !batteryStatus.isPluggedIn());
-
-        if (batteryStatus != null) {
-            percentage = NumberFormat.getPercentInstance().format((double) batteryStatus.level / 100.0);
-        }
-        if (batteryStatus == null || batteryStatus.status == 1) {
-            resId = R.drawable.ic_battery_unknown;
-        } else {
-            if (batteryStatus.level >= 96) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_full : R.drawable.ic_battery_full;
-            } else if (batteryStatus.level >= 90) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_90 : R.drawable.ic_battery_90;
-            } else if (batteryStatus.level >= 80) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_80 : R.drawable.ic_battery_80;
-            } else if (batteryStatus.level >= 60) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_60 : R.drawable.ic_battery_60;
-            } else if (batteryStatus.level >= 50) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_50 : R.drawable.ic_battery_50;
-            } else if (batteryStatus.level >= 30) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_30 : R.drawable.ic_battery_30;
-            } else if (batteryStatus.level >= lowLevel) {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_20;
-            } else {
-                resId = batteryStatus.isPluggedIn()
-                        ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_alert;
+        if (!mDozing) {
+            if (mAmbientDisplayBatteryView.getVisibility() != View.GONE) {
+                mAmbientDisplayBatteryView.setVisibility(View.GONE);
             }
-        }
-        Drawable icon = resId > 0 ? res.getDrawable(resId).mutate() : null;
-        if (icon != null) {
-            icon.setTintList(ColorStateList.valueOf(useWarningColor ? mWarningColor : mIconColor));
-        }
+        } else if (showBatteryOnAmbientDisplay()) {
+            if (mAmbientDisplayBatteryView.getVisibility() != View.VISIBLE) {
+                mAmbientDisplayBatteryView.setVisibility(View.VISIBLE);
+            }
+            final Resources res = getContext().getResources();
+            KeyguardUpdateMonitor.BatteryStatus batteryStatus =
+                    KeyguardUpdateMonitor.getInstance(mContext).getBatteryStatus();
 
-        mAmbientDisplayBatteryView.setText(percentage);
-        mAmbientDisplayBatteryView.setTextColor(useWarningColor
-                ? mWarningColor : mPrimaryTextColor);
-        mAmbientDisplayBatteryView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+            String percentage = "";
+            int resId = 0;
+            final int lowLevel = res.getInteger(
+                    com.android.internal.R.integer.config_lowBatteryWarningLevel);
+            final boolean useWarningColor = batteryStatus == null || batteryStatus.status == 1
+                    || (batteryStatus.level <= lowLevel && !batteryStatus.isPluggedIn());
+
+            if (batteryStatus != null) {
+                percentage = NumberFormat.getPercentInstance().format((double) batteryStatus.level / 100.0);
+            }
+            if (batteryStatus == null || batteryStatus.status == 1) {
+                resId = R.drawable.ic_battery_unknown;
+            } else {
+                if (batteryStatus.level >= 96) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_full : R.drawable.ic_battery_full;
+                } else if (batteryStatus.level >= 90) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_90 : R.drawable.ic_battery_90;
+                } else if (batteryStatus.level >= 80) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_80 : R.drawable.ic_battery_80;
+                } else if (batteryStatus.level >= 60) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_60 : R.drawable.ic_battery_60;
+                } else if (batteryStatus.level >= 50) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_50 : R.drawable.ic_battery_50;
+                } else if (batteryStatus.level >= 30) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_30 : R.drawable.ic_battery_30;
+                } else if (batteryStatus.level >= lowLevel) {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_20;
+                } else {
+                    resId = batteryStatus.isPluggedIn()
+                            ? R.drawable.ic_battery_charging_20 : R.drawable.ic_battery_alert;
+                }
+            }
+            Drawable icon = resId > 0 ? res.getDrawable(resId).mutate() : null;
+            if (icon != null) {
+                icon.setTintList(ColorStateList.valueOf(useWarningColor ? mWarningColor : mIconColor));
+            }
+
+            mAmbientDisplayBatteryView.setText(percentage);
+            mAmbientDisplayBatteryView.setTextColor(useWarningColor
+                    ? mWarningColor : mPrimaryTextColor);
+            mAmbientDisplayBatteryView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+        }
     }
 
     private void refreshWeatherInfo() {
         if (mWeatherController == null) {
             mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
             return;
+        }
+
+        final boolean visible = (showWeather() && !mDozing) || (showWeatherOnAmbientDisplay() && mDozing);
+        if (visible && mAmbientDisplayWeatherLayout.getVisibility() != View.VISIBLE) {
+            mAmbientDisplayWeatherLayout.setVisibility(View.VISIBLE);
+        } else if (!visible && mAmbientDisplayWeatherLayout.getVisibility() != View.GONE) {
+            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
         }
 
         WeatherController.WeatherInfo info = mWeatherController.getWeatherInfo();
@@ -349,31 +362,29 @@ public class KeyguardStatusView extends GridLayout {
     }
 
     public void setDozing(boolean dozing) {
-        mAmbientDisplayBatteryView.setVisibility(dozing && showBattery() ? View.VISIBLE : View.GONE);
-        mAmbientDisplayWeatherLayout.setVisibility(dozing && showWeather() ? View.VISIBLE : View.GONE);
-        if (dozing) {
-            if (showBattery()) {
-                refreshBatteryInfo();
-            }
-            if (showWeather()) {
-                refreshWeatherInfo();
-            }
-        }
-    }
-
-    private boolean showBattery() {
-        return Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.AMBIENT_DISPLAY_SHOW_BATTERY, 1) == 1;
+        mDozing = dozing;
+        refreshBatteryInfo();
+        refreshWeatherInfo();
     }
 
     private boolean showWeather() {
         return Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.AMBIENT_DISPLAY_SHOW_WEATHER, 0) == 1;
+                Settings.System.LOCK_SCREEN_SHOW_WEATHER, 0) == 1;
     }
 
     private boolean showWeatherLocation() {
         return Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.AMBIENT_DISPLAY_SHOW_WEATHER_LOCATION, 1) == 1;
+                Settings.System.LOCK_SCREEN_SHOW_WEATHER_LOCATION, 1) == 1;
+    }
+
+    private boolean showBatteryOnAmbientDisplay() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_BATTERY, 1) == 1;
+    }
+
+    private boolean showWeatherOnAmbientDisplay() {
+        return Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.AMBIENT_DISPLAY_SHOW_WEATHER, 0) == 1;
     }
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.

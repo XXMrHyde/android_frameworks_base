@@ -118,7 +118,6 @@ public class StatusBarIconController implements Tunable {
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
     private StatusBarWeather mWeatherLayout;
-    private StatusBarWeather mWeatherLayoutKeyguard;
     private NetworkTraffic mNetworkTraffic;
     private NetworkTraffic mNetworkTrafficKeyguard;
     private Ticker mTicker;
@@ -225,7 +224,6 @@ public class StatusBarIconController implements Tunable {
         mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
         mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
         mWeatherLayout = (StatusBarWeather) statusBar.findViewById(R.id.status_bar_weather_layout);
-        mWeatherLayoutKeyguard = (StatusBarWeather) keyguardStatusBar.findViewById(R.id.keyguard_weather_layout);
         mNetworkTraffic = (NetworkTraffic) statusBar.findViewById(R.id.network_traffic_layout);
         mNetworkTrafficKeyguard = (NetworkTraffic) keyguardStatusBar.findViewById(
                 R.id.keyguard_network_traffic_layout);
@@ -944,13 +942,8 @@ public class StatusBarIconController implements Tunable {
         mWeatherLayout.setShow(show);
     }
 
-    public void setShowWeatherOnKeyguard(boolean show) {
-        mWeatherLayoutKeyguard.setShow(show);
-    }
-
     public void setWeatherType(int type) {
         mWeatherLayout.setType(type);
-        mWeatherLayoutKeyguard.setType(type);
     }
 
     public void updateWeatherColors(boolean animate) {
@@ -967,8 +960,6 @@ public class StatusBarIconController implements Tunable {
             mWeatherTextColorTint = mWeatherTextColor;
             mWeatherIconColorTint = mWeatherIconColor;
         }
-        mWeatherLayoutKeyguard.setTextColor(mWeatherTextColor);
-        mWeatherLayoutKeyguard.setIconColor(mWeatherIconColor);
     }
 
     public void setShowNetworkTraffic(boolean show) {

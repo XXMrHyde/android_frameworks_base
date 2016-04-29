@@ -3237,6 +3237,18 @@ public final class Settings {
         public static final String LOCK_SCREEN_VISUALIZER_USE_CUSTOM_COLOR = "lock_screen_visualizer_use_custom_color";
 
         /**
+         * Whether to show the weather on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_SHOW_WEATHER = "lock_screen_show_weather";
+
+        /**
+         * Whether to show the weather location on the lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_SHOW_WEATHER_LOCATION = "lock_screen_show_weather_location";
+
+        /**
          *  Config of the button bar buttons
          * @hide
          */
@@ -3307,12 +3319,6 @@ public final class Settings {
          * @hide
          */
         public static final String AMBIENT_DISPLAY_SHOW_WEATHER = "ambient_display_show_weather";
-
-        /**
-         * Whether to show the weather location on ambient display
-         * @hide
-         */
-        public static final String AMBIENT_DISPLAY_SHOW_WEATHER_LOCATION = "ambient_display_show_weather_location";
 
         /**
          * Whether to show the additional button bar on ambient display
@@ -3731,12 +3737,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_WEATHER_SHOW = "status_bar_weather_show";
-
-        /**
-         *  Whether to show the weather on the status bar of the lock screen
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_SHOW_ON_LOCK_SCREEN = "status_bar_weather_show_on_lock_screen";
 
         /**
          * Weather type
