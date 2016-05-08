@@ -15,6 +15,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+    <!-- Status bar custom background (disabled for now) -->
+    <color name="custom_background_default">#ff000000</color>
+
     <!-- Battery bar -->
     <color name="battery_bar_default_color">#FFFFFFFF</color>
 

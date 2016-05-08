@@ -3420,6 +3420,53 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_TEXT_COLOR = "lock_screen_text_color";
 
+
+        /**
+         * Background type of the custom status bar background (disabled for now)
+         * 0: Color
+         * 1: Gradient
+         * 2: Disabled
+         * default: 2
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_TYPE = "status_bar_background_type";
+
+        /**
+         * Gradient orientation of the custom status bar background (disabled for now)
+         * See: android.graphics.drawable.GradientDrawable.Orientation
+         * default: 270 (TOP_BOTTOM)
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_GRADIENT_ORIENTATION = "status_bar_background_gradient_orientation";
+
+        /**
+         * Whether to use a center color for the gradient of the custom status bar background (disabled for now)
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_GRADIENT_USE_CENTER_COLOR = "status_bar_background_gradient_use_center_color";
+
+        /**
+         * Color of the custom status bar background, (start color when background is a gradient) (disabled for now)
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_START_COLOR = "status_bar_background_start_color";
+
+        /**
+         * Center color for the gradient of the custom status bar background (disabled for now)
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_CENTER_COLOR = "status_bar_background_center_color";
+
+        /**
+         * End color for the gradient of the custom status bar background (disabled for now)
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_BACKGROUND_END_COLOR = "status_bar_background_end_color";
+
         /**
          * Whether to control brightness from status bar
          *

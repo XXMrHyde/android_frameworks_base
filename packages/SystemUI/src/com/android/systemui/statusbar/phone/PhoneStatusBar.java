@@ -53,6 +53,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+// import android.graphics.drawable.GradientDrawable;
+// import android.graphics.drawable.GradientDrawable.Orientation;
 import android.inputmethodservice.InputMethodService;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
@@ -113,6 +115,7 @@ import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
+// import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.internal.util.darkkat.WeatherHelper;
 
 import com.android.keyguard.KeyguardButtonBar;
@@ -341,6 +344,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     boolean mLeaveOpenOnKeyguardHide;
     KeyguardIndicationController mKeyguardIndicationController;
 
+/*    Custom top bar background (disabled for now)
+    private View mCustomBackground;
+    private int mCustomBackgroundType = 2;
+ */
+
     // Keyguard is going away soon.
     private boolean mKeyguardGoingAway;
     // Keyguard is actually fading away now.
@@ -471,6 +479,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
+/*
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_TYPE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_ORIENTATION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_USE_CENTER_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_START_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_CENTER_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_END_COLOR),
+                    false, this, UserHandle.USER_ALL);
+ */
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL),
                     false, this, UserHandle.USER_ALL);
@@ -676,6 +704,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.LOCK_SCREEN_TEXT_COLOR))) {
                 updateKeyguardTextColor();
+/*
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_TYPE))) {
+                updateCustomBackgroundType();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_ORIENTATION))) {
+                updateCustomBackgroundGradientOrientation();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_USE_CENTER_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_START_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_CENTER_COLOR))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_BACKGROUND_END_COLOR))) {
+                updateCustomBackgroundColors();
+ */
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL))
                 || uri.equals(Settings.System.getUriFor(
@@ -1143,6 +1188,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
+
+//        mCustomBackground = mStatusBarWindow.findViewById(R.id.custom_background);
 
         if (!ActivityManager.isHighEndGfx()) {
             mStatusBarWindow.setBackground(null);
@@ -2332,6 +2379,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void updateSettings() {
+/*
+        updateCustomBackgroundType();
+        updateCustomBackgroundGradientOrientation();
+        updateCustomBackgroundColors();
+ */
         updateKeyguardIconColor();
         updateKeyguardTextColor();
         updateBrightnessControl();
@@ -2386,6 +2438,54 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyguardButtonBar.setNotificationCountAndOverflowVisibility(
                 mKeyguardMaxNotificationCount, visibleNotifications, isKeyguardOverflowVisible);
     }
+
+/*
+    private void updateCustomBackgroundType() {
+        mCustomBackgroundType = StatusBarColorHelper.getBackgroundType(mContext);
+        if (mCustomBackgroundType == StatusBarColorHelper.BACKGROUND_TYPE_DISABLED) {
+            if (mCustomBackground.getVisibility() != View.GONE) {
+                mCustomBackground.setVisibility(View.GONE);
+            }
+        } else {
+           if (mCustomBackground.getVisibility() != View.VISIBLE) {
+                mCustomBackground.setVisibility(View.VISIBLE);
+            } 
+            updateCustomBackgroundColors();
+        }
+    }
+
+
+    private void updateCustomBackgroundGradientOrientation() {
+        Orientation orientation = Orientation.LEFT_RIGHT;
+        int intOrientation =
+                StatusBarColorHelper.getBackgroundGradientOrientation(mContext);
+        if (intOrientation == 45) {
+            orientation = Orientation.BL_TR;
+        } else if (intOrientation == 90) {
+            orientation = Orientation.BOTTOM_TOP;
+        } else if (intOrientation == 135) {
+            orientation = Orientation.BR_TL;
+        } else if (intOrientation == 180) {
+            orientation = Orientation.RIGHT_LEFT;
+        } else if (intOrientation == 225) {
+            orientation = Orientation.TR_BL;
+        } else if (intOrientation == 270) {
+            orientation = Orientation.TOP_BOTTOM;
+        } else if (intOrientation == 315) {
+            orientation = Orientation.TL_BR;
+        }
+
+        ((GradientDrawable) mCustomBackground.getBackground())
+                .setOrientation(orientation);
+    }
+
+    private void updateCustomBackgroundColors() {
+        if (mCustomBackgroundType != StatusBarColorHelper.BACKGROUND_TYPE_DISABLED) {
+            ((GradientDrawable) mCustomBackground.getBackground())
+                    .setColors(StatusBarColorHelper.getBackgroundColors(mContext));
+        }
+    }
+ */
 
     public void updateKeyguardIconColor() {
         int iconColor =
@@ -2821,8 +2921,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if ((state1 & StatusBarManager.DISABLE_NOTIFICATION_ICONS) != 0) {
                 haltTicker();
                 mIconController.hideNotificationIconArea(animate);
+/*
+                if (mCustomBackgroundType != StatusBarColorHelper.BACKGROUND_TYPE_DISABLED) {
+                    if (mCustomBackground.getVisibility() != View.GONE) {
+                        mCustomBackground.setVisibility(View.GONE);
+                    }
+                }
+ */
             } else {
                 mIconController.showNotificationIconArea(animate);
+/*
+                if (mCustomBackgroundType != StatusBarColorHelper.BACKGROUND_TYPE_DISABLED
+                        && (mStatusBarMode != MODE_TRANSPARENT || mStatusBarMode == MODE_SEMI_TRANSPARENT)) {
+                   if (mCustomBackground.getVisibility() != View.VISIBLE) {
+                        mCustomBackground.setVisibility(View.VISIBLE);
+                    }
+                }
+ */
             }
         }
 
