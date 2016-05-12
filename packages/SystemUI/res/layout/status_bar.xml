@@ -29,16 +29,6 @@
     android:descendantFocusability="afterDescendants"
     >
 
-<!-- Disabled for now
-    <View
-        android:id="@+id/custom_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/custom_status_bar_bg"
-        android:visibility="gone"
-        />
--->
-
     <ImageView
         android:id="@+id/notification_lights_out"
         android:layout_width="@dimen/status_bar_icon_size"

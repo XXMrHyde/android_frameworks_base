@@ -19,64 +19,15 @@ package com.android.internal.util.darkkat;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-// import android.graphics.drawable.GradientDrawable;
 import android.provider.Settings;
 
 public class StatusBarColorHelper {
-//    public static final int BACKGROUND_TYPE_GRADIENT = 1;
-//    public static final int BACKGROUND_TYPE_DISABLED = 2;
-
     private static final int WHITE =
             0xffffffff;
     private static final int BLACK =
             0xff000000;
     private static final int MATERIAL_TEAL_500 =
             0xff009688;
-
-/* Disabled for now
-    public static int getBackgroundType(Context context) {
-        return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_BACKGROUND_TYPE,
-                BACKGROUND_TYPE_DISABLED);
-    }
-
-    public static int getBackgroundGradientOrientation(Context context) {
-        return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_ORIENTATION, 270);
-    }
-
-    private static boolean useBgGradientCenterColor(Context context) {
-        return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_BACKGROUND_GRADIENT_USE_CENTER_COLOR,
-                0) == 1;
-    }
-
-    public static int[] getBackgroundColors(Context context) {
-        int startColor = Settings.System.getInt(context.getContentResolver(),
-                Settings.System.STATUS_BAR_BACKGROUND_START_COLOR, BLACK);
-        int[] colors;
-        if (getBackgroundType(context) == BACKGROUND_TYPE_GRADIENT) {
-            int centerColor = useBgGradientCenterColor(context)
-                    ? Settings.System.getInt(context.getContentResolver(),
-                            Settings.System.STATUS_BAR_BACKGROUND_CENTER_COLOR, BLACK)
-                    : 0;
-            int endColor = Settings.System.getInt(context.getContentResolver(),
-                    Settings.System.STATUS_BAR_BACKGROUND_END_COLOR, BLACK);
-
-            colors = new int[useBgGradientCenterColor(context) ? 3 : 2];
-            colors[0] = startColor;
-            if (useBgGradientCenterColor(context)) {
-                colors[1] = centerColor;
-            }
-            colors[useBgGradientCenterColor(context) ? 2 : 1] = endColor;
-        } else {
-            colors = new int[2];
-            colors[0] = startColor;
-            colors[1] = startColor;
-        }
-        return colors;
-    }
- */
 
     public static int getUserIconColor(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
