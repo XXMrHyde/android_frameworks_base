@@ -111,8 +111,9 @@ import android.widget.Toast;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
-import com.android.internal.util.cm.WeatherControllerImpl;
 import com.android.internal.util.darkkat.DeviceUtils;
+// import com.android.internal.util.darkkat.StatusBarColorHelper;
+import com.android.internal.util.darkkat.WeatherServiceControllerImpl;
 import com.android.internal.util.darkkat.WeatherHelper;
 
 import com.android.keyguard.KeyguardButtonBar;
@@ -758,7 +759,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_WEATHER_HIDE))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS))) {
-                if (isLockClockInstalledAndEnabled()) {
+                if (WeatherHelper.isWeatherServiceAvailable(mContext)) {
                     updateWeatherVisibility();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
@@ -1350,12 +1351,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNetworkTrafficController = new NetworkTrafficControllerImpl(mContext);
 
-        WeatherControllerImpl weatherController = new WeatherControllerImpl(mContext);
+        WeatherServiceControllerImpl weatherServiceController = new WeatherServiceControllerImpl(mContext);
         StatusBarWeather weather =
                 (StatusBarWeather) mStatusBarView.findViewById(R.id.status_bar_weather_layout);
-        weather.setOnLongClickListener(mLongPressWeatherListener);
-        weather.setUp(this, weatherController);
-        mKeyguardStatusView.setWeatherController(weatherController);
+        weather.setUp(this, weatherServiceController);
+        mKeyguardStatusView.setWeatherController(weatherServiceController);
 
         ((NetworkTraffic) mStatusBarView.findViewById(R.id.network_traffic_layout))
                 .setNetworkTrafficController(mNetworkTrafficController);
@@ -1365,7 +1365,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         BarsController barsController = new BarsController(mContext, barsContainer);
         barsController.setUp(this, mBluetoothController, mNetworkController, mNetworkTrafficController,
                 mRotationLockController, mLocationController, mHotspotController, mFlashlightController,
-                mBatteryController, weatherController);
+                mBatteryController, weatherServiceController);
         mNotificationPanel.setBarsController(barsController);
 
         mKeyguardStatusBar.setNetworkTrafficController(mNetworkTrafficController);
@@ -1536,16 +1536,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         public void onClick(View v) {
             awakenDreams();
             toggleRecentApps();
-        }
-    };
-
-    private View.OnLongClickListener mLongPressWeatherListener =
-            new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            startForecastActivity();
-            return true;
         }
     };
 
@@ -1982,7 +1972,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateNotificationShade();
         mIconController.updateNotificationIcons(mNotificationData);
         updateCarrierTextVisibility();
-        if (isLockClockInstalledAndEnabled()) {
+        if (WeatherHelper.isWeatherServiceAvailable(mContext)) {
             updateWeatherVisibility();
         }
     }
@@ -2561,7 +2551,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final int maxAllowedIcons = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_WEATHER_NUMBER_OF_NOTIFICATION_ICONS, 1);
         if (mIconController != null) {
-            mIconController.updateWeatherVisibility(isLockClockInstalledAndEnabled()
+            mIconController.updateWeatherVisibility(WeatherHelper.isWeatherServiceAvailable(mContext)
                     && show, forceHide, maxAllowedIcons);
         }
     }
@@ -5372,22 +5362,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public VisualizerView getVisualizer() {
         return mVisualizerView;
-    }
-
-    public void startForecastActivity() {
-        if (!isLockClockInstalledAndEnabled()) {
-            return;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(WeatherControllerImpl.COMPONENT_WEATHER_FORECAST);
-        startActivity(intent, true /* dismissShade */);
-    }
-
-    public boolean isLockClockInstalledAndEnabled() {
-        return WeatherHelper.getLockClockAvailability(mContext)
-                == WeatherHelper.LOCK_CLOCK_ENABLED;
     }
 
     private final class ShadeUpdates {

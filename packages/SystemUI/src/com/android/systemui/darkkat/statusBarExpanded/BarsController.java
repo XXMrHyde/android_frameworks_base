@@ -29,9 +29,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.internal.util.cm.WeatherController;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.SBEPanelColorHelper;
+import com.android.internal.util.darkkat.WeatherServiceController;
 
 import com.android.systemui.darkkat.NetworkTrafficController;
 import com.android.systemui.darkkat.statusBarExpanded.bars.BatteryStatusBar;
@@ -132,7 +132,7 @@ public class BarsController {
     public void setUp(PhoneStatusBar statusBar, BluetoothController bluetooth, NetworkController network,
             NetworkTrafficController networkTraffic, RotationLockController rotationLock,
             LocationController location, HotspotController hotspot, FlashlightController flashlight,
-            BatteryController battery, WeatherController weather) {
+            BatteryController battery, WeatherServiceController weather) {
         mQuickAccessBar.setUp(statusBar, bluetooth, network, rotationLock, location, hotspot, flashlight);
         mWifiBar.setNetworkController(network);
         mWifiBar.setNetworkTrafficController(networkTraffic);

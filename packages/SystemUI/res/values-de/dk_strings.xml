@@ -39,17 +39,17 @@
     <string name="network_traffic_unit_mega_bytes_per_second">MB/s</string>
 
     <!-- Weather panel -->
-    <string name="weather_lock_clock_missing_title">\"cLock\" ist nicht installiert</string>
-    <string name="weather_lock_clock_missing_summary">Um die Wetter Funtion nutzen zu können, muss die App LockClock \"cLock\" installiert sein</string>
-    <string name="weather_lock_clock_disabled_title">\'cLock\' ist deaktiviert</string>
-    <string name="weather_lock_clock_disabled_summary">Klicke auf die Schaltfläche rechts,\num \'cLock\' zu aktivieren.</string>
+    <string name="weather_dk_weather_service_missing_title">\"DK Wetter Dienst\" ist nicht installiert</string>
+    <string name="weather_dk_weather_service_missing_summary">Um die Wetter Funtion nutzen zu können, muss die App DKWeatherService \"DK Wetter Dienst\" installiert sein</string>
+    <string name="weather_dk_weather_service_disabled_title">\'DK Wetter Dienst\' ist deaktiviert</string>
+    <string name="weather_dk_weather_service_disabled_summary">Klicke auf die Schaltfläche rechts,\num \'DK Wetter Dienst\' zu aktivieren.</string>
     <string name="weather_info_not_available_title">Wetter ist nicht verfügbar</string>
     <string name="weather_info_not_available_summary">Klicke auf die Schaltfläche rechts,\num das Wetter (neu) einzurichten.</string>
-    <string name="enable_lock_clock_dialog_title">LockClock \'cLock\' aktivieren</string>
-    <string name="enable_lock_clock_dialog_message">Klicke auf \'Öffnen\' um die LockClock Anwendungsdetail Einstellungen zu öffnen\nStarte das Telefon neu, nachdem LockClock aktiviert wurde.</string>
-    <string name="enable_lock_clock_dialog_tablet_message">Klicke auf \'Öffnen\' um die LockClock Anwendungsdetail Einstellungen zu öffnen\nStarte das Tablet neu, nachdem LockClock aktiviert wurde.</string>
-    <string name="enable_lock_clock_dialog_open">Öffnen</string>
-    <string name="enable_lock_clock_dialog_cancel">Abbrechen</string>
+    <string name="enable_dk_weather_service_dialog_title">DKWeatherService \"DK Wetter Dienst\" aktivieren</string>
+    <string name="enable_dk_weather_service_dialog_message">Klicke auf \'Öffnen\' um die DKWeatherService Anwendungsdetail Einstellungen zu öffnen\nStarte das Telefon neu, nachdem DK Weather Service aktiviert wurde.</string>
+    <string name="enable_dk_weather_service_dialog_tablet_message">Klicke auf \'Öffnen\' um die DKWeatherService Anwendungsdetail Einstellungen zu öffnen\nStarte das Tablet neu, nachdem DK Weather Service aktiviert wurde.</string>
+    <string name="enable_dk_weather_service_dialog_open">Öffnen</string>
+    <string name="enable_dk_weather_service_dialog_cancel">Abbrechen</string>
 
     <!-- Navigation bar long click back message -->
     <string name="app_killed_message">Anwendung beendet</string>
