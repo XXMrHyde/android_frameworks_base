@@ -112,7 +112,6 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.darkkat.DeviceUtils;
-// import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.internal.util.darkkat.WeatherServiceControllerImpl;
 import com.android.internal.util.darkkat.WeatherHelper;
 
