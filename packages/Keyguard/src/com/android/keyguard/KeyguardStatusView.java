@@ -39,7 +39,7 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.android.internal.util.cm.WeatherController;
+import com.android.internal.util.darkkat.WeatherServiceController;
 import com.android.internal.widget.LockPatternUtils;
 
 import java.text.NumberFormat;
@@ -55,10 +55,10 @@ public class KeyguardStatusView extends GridLayout {
     private TextView mAlarmStatusView;
     private TextClock mDateView;
     private TextClock mClockView;
-    private View mAmbientDisplayWeatherLayout;
-    private TextView mAmbientDisplayWeatherLT;
-    private TextView mAmbientDisplayWeatherC;
-    private ImageView mAmbientDisplayWeatherIcon;
+    private View mWeatherLayout;
+    private TextView mWeatherLocationTemp;
+    private ImageView mWeatherIcon;
+    private TextView mWeatherCondition;
     private TextView mAmbientDisplayBatteryView;
     private TextView mOwnerInfo;
     private KeyguardButtonBar mButtonBar;
@@ -70,7 +70,7 @@ public class KeyguardStatusView extends GridLayout {
     private int mPrimaryTextColor;
     private int mSecondaryTextColor = 0xb3ffffff;;
 
-    private WeatherController mWeatherController;
+    private WeatherServiceController mWeatherController;
 
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
 
@@ -133,10 +133,10 @@ public class KeyguardStatusView extends GridLayout {
         mClockView = (TextClock) findViewById(R.id.clock_view);
         mDateView.setShowCurrentUserTime(true);
         mClockView.setShowCurrentUserTime(true);
-        mAmbientDisplayWeatherLayout = findViewById(R.id.ambient_display_weather_layout);
-        mAmbientDisplayWeatherLT = (TextView) findViewById(R.id.ambient_display_weather_location_temp);
-        mAmbientDisplayWeatherIcon = (ImageView) findViewById(R.id.ambient_display_weather_icon);
-        mAmbientDisplayWeatherC = (TextView) findViewById(R.id.ambient_display_weather_condition);
+        mWeatherLayout = findViewById(R.id.weather_layout);
+        mWeatherLocationTemp = (TextView) findViewById(R.id.weather_location_temp);
+        mWeatherIcon = (ImageView) findViewById(R.id.weather_icon);
+        mWeatherCondition = (TextView) findViewById(R.id.weather_condition);
         mAmbientDisplayBatteryView = (TextView) findViewById(R.id.ambient_display_battery_view);
         mOwnerInfo = (TextView) findViewById(R.id.owner_info);
         mButtonBar = (KeyguardButtonBar) findViewById(R.id.button_bar);
@@ -162,7 +162,7 @@ public class KeyguardStatusView extends GridLayout {
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
     }
 
-    public void setWeatherController(WeatherController controller) {
+    public void setWeatherController(WeatherServiceController controller) {
         mWeatherController = controller;
     }
 
@@ -327,32 +327,33 @@ public class KeyguardStatusView extends GridLayout {
 
     private void refreshWeatherInfo() {
         if (mWeatherController == null) {
-            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
+            mWeatherLayout.setVisibility(View.GONE);
             return;
         }
 
         final boolean visible = (showWeather() && !mDozing) || (showWeatherOnAmbientDisplay() && mDozing);
-        if (visible && mAmbientDisplayWeatherLayout.getVisibility() != View.VISIBLE) {
-            mAmbientDisplayWeatherLayout.setVisibility(View.VISIBLE);
-        } else if (!visible && mAmbientDisplayWeatherLayout.getVisibility() != View.GONE) {
-            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
+        if (visible && mWeatherLayout.getVisibility() != View.VISIBLE) {
+            mWeatherLayout.setVisibility(View.VISIBLE);
+        } else if (!visible && mWeatherLayout.getVisibility() != View.GONE) {
+            mWeatherLayout.setVisibility(View.GONE);
         }
 
-        WeatherController.WeatherInfo info = mWeatherController.getWeatherInfo();
+        WeatherServiceController.WeatherInfo info = mWeatherController.getWeatherInfo();
         if (info.temp != null && info.condition != null && info.conditionDrawableMonochrome != null) {
-            String locationTemp = (showWeatherLocation() ? info.city + ", " : "") + info.temp;
+            String locationTemp = (showWeatherLocation()
+                    ? info.city + ", " : "") + info.temp + info.tempUnits;
             Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
-            mAmbientDisplayWeatherLT.setText(locationTemp);
-            mAmbientDisplayWeatherC.setText(info.condition);
-            mAmbientDisplayWeatherLT.setTextColor(mPrimaryTextColor);
-            mAmbientDisplayWeatherC.setTextColor(mSecondaryTextColor);
-            mAmbientDisplayWeatherIcon.setImageDrawable(icon);
-            mAmbientDisplayWeatherIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
+            mWeatherLocationTemp.setText(locationTemp);
+            mWeatherCondition.setText(info.condition);
+            mWeatherLocationTemp.setTextColor(mPrimaryTextColor);
+            mWeatherCondition.setTextColor(mSecondaryTextColor);
+            mWeatherIcon.setImageDrawable(icon);
+            mWeatherIcon.setColorFilter(mIconColor, Mode.MULTIPLY);
         } else {
-            mAmbientDisplayWeatherLT.setText("");
-            mAmbientDisplayWeatherC.setText("");
-            mAmbientDisplayWeatherIcon.setImageDrawable(null);
-            mAmbientDisplayWeatherLayout.setVisibility(View.GONE);
+            mWeatherLocationTemp.setText("");
+            mWeatherCondition.setText("");
+            mWeatherIcon.setImageDrawable(null);
+            mWeatherLayout.setVisibility(View.GONE);
         }
     }
 

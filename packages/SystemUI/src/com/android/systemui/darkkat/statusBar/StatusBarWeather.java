@@ -25,20 +25,20 @@ import android.widget.LinearLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.internal.util.cm.WeatherController;
+import com.android.internal.util.darkkat.WeatherServiceController;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 public class StatusBarWeather extends LinearLayout implements
-        WeatherController.Callback {
+        WeatherServiceController.Callback {
 
     private static final int WEATHER_TYPE_TEXT      = 0;
     private static final int WEATHER_TYPE_ICON      = 1;
     private static final int WEATHER_TYPE_TEXT_ICON = 2;
 
     private PhoneStatusBar mStatusBar;
-    private WeatherController mWeatherController;
+    private WeatherServiceController mWeatherController;
 
     private TextView mTextView;
     private ImageView mIconView;
@@ -74,22 +74,26 @@ public class StatusBarWeather extends LinearLayout implements
         }
     }
 
-    public void setUp(PhoneStatusBar statusBar, WeatherController weather) {
+    public void setUp(PhoneStatusBar statusBar, WeatherServiceController weather) {
         mStatusBar = statusBar;
         mWeatherController = weather;
     }
 
     @Override
-    public void onWeatherChanged(WeatherController.WeatherInfo info) {
+    public void onWeatherChanged(WeatherServiceController.WeatherInfo info) {
         if (info.temp != null && info.condition != null) {
             if (mShow) {
-                setVisibility(View.VISIBLE);
+                if (getVisibility() != View.VISIBLE) {
+                    setVisibility(View.VISIBLE);
+                }
             }
-            mTextView.setText(info.temp);
+            mTextView.setText(info.temp + info.tempUnits);
             Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
             mIconView.setImageDrawable(icon);
         } else {
-            setVisibility(View.GONE);
+            if (getVisibility() != View.GONE) {
+                setVisibility(View.GONE);
+            }
             mTextView.setText("");
             mIconView.setImageDrawable(null);
         }
@@ -98,13 +102,20 @@ public class StatusBarWeather extends LinearLayout implements
 
     public void setShow(boolean show) {
         mShow = show;
-        if (mShow && getVisibility() != View.VISIBLE) {
-            setVisibility(View.VISIBLE);
+        if (mShow) {
+            if (getVisibility() != View.VISIBLE) {
+                setVisibility(View.VISIBLE);
+            }
             if (mWeatherController != null) {
                 mWeatherController.addCallback(this);
             }
-        } else if (!mShow && getVisibility() != View.GONE) {
-            setVisibility(View.GONE);
+        } else {
+            if (getVisibility() != View.GONE) {
+                setVisibility(View.GONE);
+            }
+            if (mWeatherController != null) {
+                mWeatherController.removeCallback(this);
+            }
         }
     }
 

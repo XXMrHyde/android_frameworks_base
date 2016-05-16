@@ -39,17 +39,17 @@
     <string name="network_traffic_unit_mega_bytes_per_second">MB/s</string>
 
     <!-- Weather panel -->
-    <string name="weather_lock_clock_missing_title">\'cLock\' is not installed</string>
-    <string name="weather_lock_clock_missing_summary">To use the weather feature, the app LockClock \'cLock\' has to be installed</string>
-    <string name="weather_lock_clock_disabled_title">\'cLock\' is disabled</string>
-    <string name="weather_lock_clock_disabled_summary">click the button on the right,\nto enable \'cLock\'.</string>
+    <string name="weather_dk_weather_service_missing_title">\'DK Weather Service\' is not installed</string>
+    <string name="weather_dk_weather_service_missing_summary">To use the weather feature, the app DKWeatherService \'DK Weather Service\' has to be installed</string>
+    <string name="weather_dk_weather_service_disabled_title">\'DK Weather Service\' is disabled</string>
+    <string name="weather_dk_weather_service_disabled_summary">click the button on the right,\nto enable \'DK Weather Service\'.</string>
     <string name="weather_info_not_available_title">Weather is not available</string>
     <string name="weather_info_not_available_summary">click the button on the right,\nto (re) setup the weather.</string>
-    <string name="enable_lock_clock_dialog_title">Enable LockClock \'cLock\'</string>
-    <string name="enable_lock_clock_dialog_message">Click \'Open\' to open the LockClock app detail settings\nReboot your phone after LockClock was enabled.</string>
-    <string name="enable_lock_clock_dialog_tablet_message">Click \'Open\' to open the LockClock app detail settings\nReboot your tablet after LockClock was enabled.</string>
-    <string name="enable_lock_clock_dialog_open">Open</string>
-    <string name="enable_lock_clock_dialog_cancel">Cancel</string>
+    <string name="enable_dk_weather_service_dialog_title">Enable DKWeatherService \'DK Weather Service\'</string>
+    <string name="enable_dk_weather_service_dialog_message">Click \'Open\' to open the DKWeatherService app detail settings\nReboot your phone after DKWeatherService was enabled.</string>
+    <string name="enable_dk_weather_service_dialog_tablet_message">Click \'Open\' to open the DKWeatherService app detail settings\nReboot your tablet after DKWeatherService was enabled.</string>
+    <string name="enable_dk_weather_service_dialog_open">Open</string>
+    <string name="enable_dk_weather_service_dialog_cancel">Cancel</string>
 
     <!-- Navigation bar long click back message -->
     <string name="app_killed_message">Application killed</string>

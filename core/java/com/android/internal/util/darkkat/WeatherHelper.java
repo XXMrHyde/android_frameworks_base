@@ -16,73 +16,67 @@
 
 package com.android.internal.util.darkkat;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.preference.PreferenceActivity;
 import android.provider.Settings;
 
-import com.android.internal.util.cm.WeatherController.DayForecast;
-import com.android.internal.util.cm.WeatherController.WeatherInfo;
+import com.android.internal.util.darkkat.WeatherServiceController.DayForecast;
+import com.android.internal.util.darkkat.WeatherServiceController.WeatherInfo;
 
 public class WeatherHelper {
-    private static final String LOCK_CLOCK_PACKAGE_NAME =
-            "com.cyanogenmod.lockclock";
-    private static final String LOCK_CLOCK_PREFERENCE_NAME =
-            "com.cyanogenmod.lockclock.preference.Preferences";
-    private static final String LOCK_CLOCK_WEATHER_SETTINGS_CLASS_NAME =
-            "com.cyanogenmod.lockclock.preference.WeatherSettingPreferences";
-    private static final ComponentName COMPONENT_LOCK_CLOCK_PREFERENCE =
-            new ComponentName(LOCK_CLOCK_PACKAGE_NAME, LOCK_CLOCK_PREFERENCE_NAME);
+    public static final int ICON_MONOCHROME = 0;
+    public static final int ICON_COLORED    = 1;
+    public static final int ICON_VCLOUDS    = 2;
 
-    private static final int ICON_MONOCHROME = 0;
-    private static final int ICON_COLORED    = 1;
-    private static final int ICON_VCLOUDS    = 2;
+    public static final int PACKAGE_ENABLED  = 0;
+    public static final int PACKAGE_DISABLED = 1;
+    public static final int PACKAGE_MISSING  = 2;
 
-    public static final int LOCK_CLOCK_ENABLED  = 0;
-    public static final int LOCK_CLOCK_DISABLED = 1;
-    public static final int LOCK_CLOCK_MISSING  = 2;
-
-    public static int getLockClockAvailability(Context context) {
+    public static int getWeatherServiceAvailability(Context context) {
         boolean isInstalled = false;
-        int availability = LOCK_CLOCK_MISSING;
+        int availability = PACKAGE_MISSING;
 
         PackageManager pm = context.getPackageManager();
         try {
-            pm.getPackageInfo(LOCK_CLOCK_PACKAGE_NAME, PackageManager.GET_ACTIVITIES);
+            pm.getPackageInfo(WeatherServiceControllerImpl.PACKAGE_NAME,
+                    PackageManager.GET_ACTIVITIES);
             isInstalled = true;
         } catch (PackageManager.NameNotFoundException e) {
             // Do nothing
         }
 
         if (isInstalled) {
-            final int enabledState = pm.getApplicationEnabledSetting(LOCK_CLOCK_PACKAGE_NAME);
+            final int enabledState = pm.getApplicationEnabledSetting(
+                    WeatherServiceControllerImpl.PACKAGE_NAME);
             if (enabledState == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
                     || enabledState == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER) {
-                availability = LOCK_CLOCK_DISABLED;
+                availability = PACKAGE_DISABLED;
             } else {
-                availability = LOCK_CLOCK_ENABLED;
+                availability = PACKAGE_ENABLED;
             }
         }
         return availability;
     }
 
-    public static Intent getLockClockAppDetailSettingsIntent() {
+    public static boolean isWeatherServiceAvailable(Context context) {
+        return getWeatherServiceAvailability(context)
+                == PACKAGE_ENABLED;
+    }
+
+    public static Intent getWeatherServiceAppDetailSettingsIntent() {
         Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        i.setData(Uri.parse("package:" + LOCK_CLOCK_PACKAGE_NAME));
+        i.setData(Uri.parse("package:" + WeatherServiceControllerImpl.PACKAGE_NAME));
         return i;
     }
 
-    public static Intent getWeatherSettingsIntent() {
-        Intent i = new Intent();
-        i.setAction(Intent.ACTION_MAIN);
-        i.setComponent(COMPONENT_LOCK_CLOCK_PREFERENCE);
-        i.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT,
-                LOCK_CLOCK_WEATHER_SETTINGS_CLASS_NAME);
-        return i;
+    public static Intent getWeatherServiceSettingsIntent() {
+        Intent settings = new Intent(Intent.ACTION_MAIN)
+                .setClassName(WeatherServiceControllerImpl.PACKAGE_NAME,
+                WeatherServiceControllerImpl.PACKAGE_NAME + ".SettingsActivity");
+        return settings;
     }
 
     public static boolean showCurrent(Context context) {
