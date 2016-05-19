@@ -341,7 +341,7 @@ public class KeyguardStatusView extends GridLayout {
         WeatherServiceController.WeatherInfo info = mWeatherController.getWeatherInfo();
         if (info.temp != null && info.condition != null && info.conditionDrawableMonochrome != null) {
             String locationTemp = (showWeatherLocation()
-                    ? info.city + ", " : "") + info.temp + info.tempUnits;
+                    ? info.city + ", " : "") + info.temp;
             Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
             mWeatherLocationTemp.setText(locationTemp);
             mWeatherCondition.setText(info.condition);

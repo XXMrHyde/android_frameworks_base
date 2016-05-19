@@ -87,7 +87,7 @@ public class StatusBarWeather extends LinearLayout implements
                     setVisibility(View.VISIBLE);
                 }
             }
-            mTextView.setText(info.temp + info.tempUnits);
+            mTextView.setText(info.temp);
             Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
             mIconView.setImageDrawable(icon);
         } else {

@@ -33,8 +33,7 @@ public interface WeatherServiceController {
     }
     public static class WeatherInfo {
         public String city = null;
-        public String windSpeed = null;
-        public String windDirection = null;
+        public String wind = null;
         public int conditionCode = 0;
         public Drawable conditionDrawableMonochrome = null;
         public Drawable conditionDrawableColored = null;
@@ -42,10 +41,8 @@ public interface WeatherServiceController {
         public String temp = null;
         public String humidity = null;
         public String condition = null;
-        public Long timeStamp = null;
+        public String timeStamp = null;
         public List<DayForecast> forecasts;
-        public String tempUnits;
-        public String windUnits;
     }
 
     public static class DayForecast {
@@ -57,6 +54,5 @@ public interface WeatherServiceController {
         public Drawable conditionDrawableMonochrome;
         public Drawable conditionDrawableColored;
         public Drawable conditionDrawableVClouds;
-        public String date;
     }
 }

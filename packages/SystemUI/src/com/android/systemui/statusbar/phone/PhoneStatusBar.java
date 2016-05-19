@@ -1538,6 +1538,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
+    private View.OnLongClickListener mLongPressWeatherListener =
+            new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+//            mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            startForecastActivity();
+            return true;
+        }
+    };
+
     private long mLastLockToAppLongPress;
     private View.OnLongClickListener mLongPressBackRecentsListener =
             new View.OnLongClickListener() {
@@ -5361,6 +5371,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public VisualizerView getVisualizer() {
         return mVisualizerView;
+    }
+
+    public void startForecastActivity() {
+        if (!WeatherHelper.isWeatherServiceAvailable(mContext)) {
+            return;
+        }
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(WeatherServiceControllerImpl.COMPONENT_WEATHER_FORECAST);
+        startActivity(intent, true /* dismissShade */);
     }
 
     private final class ShadeUpdates {

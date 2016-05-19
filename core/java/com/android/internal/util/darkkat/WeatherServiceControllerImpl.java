@@ -19,6 +19,7 @@
  */
 package com.android.internal.util.darkkat;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +43,9 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
     private static final String TAG = "WeatherService:WeatherServiceController";
     public static final String PACKAGE_NAME = "net.darkkatroms.weather";
 
+    public static final ComponentName COMPONENT_WEATHER_FORECAST = new ComponentName(
+            "net.darkkatroms.weather", "net.darkkatroms.weather.ForecastActivity");
+
     private static final Uri WEATHER_URI
             = Uri.parse("content://net.darkkatroms.weather.provider/weather");
     private static final Uri SETTINGS_URI
@@ -59,7 +63,6 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
             "forecast_condition",
             "forecast_condition_code",
             "time_stamp",
-            "forecast_date"
     };
     private static final String[] SETTINGS_PROJECTION = new String[] {
             "enabled",
@@ -139,8 +142,7 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                         c.moveToPosition(i);
                         if (i == 0) {
                             mCachedInfo.city = c.getString(0);
-                            mCachedInfo.windSpeed = getFormattedValue(c.getFloat(1));
-                            mCachedInfo.windDirection = String.valueOf(c.getInt(2)) + "\u00b0";
+                            mCachedInfo.wind = c.getString(1);
                             mCachedInfo.conditionCode = c.getInt(3);
                             mCachedInfo.conditionDrawableMonochrome = getIcon(mCachedInfo.conditionCode,
                                     WeatherHelper.ICON_MONOCHROME);
@@ -148,14 +150,14 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                                     WeatherHelper.ICON_COLORED);
                             mCachedInfo.conditionDrawableVClouds = getIcon(mCachedInfo.conditionCode,
                                     WeatherHelper.ICON_VCLOUDS);
-                            mCachedInfo.temp = getFormattedValue(c.getFloat(4)) + "\u00b0";
+                            mCachedInfo.temp = c.getString(4);
                             mCachedInfo.humidity = c.getString(5);
                             mCachedInfo.condition = c.getString(6);
-                            mCachedInfo.timeStamp = Long.valueOf(c.getString(11));
+                            mCachedInfo.timeStamp = c.getString(11);
                         } else {
                             DayForecast day = new DayForecast();
-                            day.low = getFormattedValue(c.getFloat(7)) + "\u00b0";
-                            day.high = getFormattedValue(c.getFloat(8)) + "\u00b0";
+                            day.low = c.getString(7);
+                            day.high = c.getString(8);
                             day.condition = c.getString(9);
                             day.conditionCode = c.getInt(10);
                             day.conditionDrawableMonochrome = getIcon(day.conditionCode,
@@ -164,7 +166,6 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                                     WeatherHelper.ICON_COLORED);
                             day.conditionDrawableVClouds = getIcon(day.conditionCode,
                                     WeatherHelper.ICON_VCLOUDS);
-                            day.date = c.getString(12);
                             forecastList.add(day);
                         }
                     }
@@ -174,7 +175,6 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                 c.close();
             }
         }
-        updateUnits();
         if (DEBUG) Log.d(TAG, "queryWeather " + mCachedInfo);
     }
 
@@ -214,44 +214,6 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
         } catch (PackageManager.NameNotFoundException e) {
             return null;
         }
-    }
-
-    private static String getFormattedValue(float value) {
-        if (Float.isNaN(value)) {
-            return "-";
-        }
-        String formatted = mNoDigitsFormat.format(value);
-        if (formatted.equals("-0")) {
-            formatted = "0";
-        }
-        return formatted;
-    }
-
-    private void updateUnits() {
-        if (!WeatherHelper.isWeatherServiceAvailable(mContext)) {
-            return;
-        }
-        final Cursor c = mContext.getContentResolver().query(SETTINGS_URI, SETTINGS_PROJECTION,
-                null, null, null);
-        if (c != null) {
-            int count = c.getCount();
-            if (count == 1) {
-                c.moveToPosition(0);
-                mMetric = c.getInt(1) == 0;
-                if (mCachedInfo != null) {
-                    mCachedInfo.tempUnits = getTemperatureUnit();
-                    mCachedInfo.windUnits = getWindUnit();
-                }
-            }
-        }
-    }
-
-    private String getTemperatureUnit() {
-        return mMetric ? "C" : "F";
-    }
-
-    private String getWindUnit() {
-        return mMetric ? "km/h":"mph";
     }
 
     private void fireCallback() {
