@@ -194,6 +194,14 @@ public class WeatherBarContainer extends FrameLayout implements
             });
             mWeatherBar.setOnLongClickListener(null);
             mWeatherBar.setVisibility(View.GONE);
+            mWeatherBar.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
+                    mStatusBar.startForecastActivity();
+                    return true;
+                }
+            });
         } else {
             mNoWeatherLayout.setVisibility(View.GONE);
             mWeatherSettingsButton.setOnClickListener(null);
@@ -228,7 +236,7 @@ public class WeatherBarContainer extends FrameLayout implements
                 currentImage.setColorFilter(iconColor, Mode.MULTIPLY);
             }
             TextView temp = (TextView) currentItem.findViewById(R.id.weather_temp);
-            temp.setText(info.temp + info.tempUnits);
+            temp.setText(info.temp);
             temp.setTextColor(textColorPrimary);
 
             mWeatherBar.addView(currentItem,
