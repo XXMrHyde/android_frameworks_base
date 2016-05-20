@@ -182,7 +182,7 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
         long newRxBytes = currentRxBytes - mTotalRxBytes;
         long newTxBytes = currentTxBytes - mTotalTxBytes;
 
-        if (newTxBytes != 0) {
+        if (newTxBytes != 0 && td != 0) {
             trafficOutSpeed = newTxBytes * 1000 / td;
             formattedOutSpeedInBits = formatTraffic(newTxBytes * 8000 / td);
             formattedOutSpeedInBytes = formatTraffic(newTxBytes * 1000 / td);
@@ -190,7 +190,7 @@ public class NetworkTrafficControllerImpl implements NetworkTrafficController {
             formattedOutUnitAsBytes = getUnit(newTxBytes * 1000 / td, false);
             trafficActivityOut = true;
         }
-        if (newRxBytes != 0 ) {
+        if (newRxBytes != 0 && td != 0) {
             trafficInSpeed = newRxBytes * 1000 / td;
             formattedInSpeedInBits = formatTraffic(newRxBytes * 8000 / td);
             formattedInSpeedInBytes = formatTraffic(newRxBytes * 1000 / td);
