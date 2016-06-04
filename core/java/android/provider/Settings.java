@@ -4302,6 +4302,74 @@ public final class Settings {
         public static final String NAVIGATION_BAR_BUTTON_RIPPLE_COLOR = "navigation_bar_button_ripple_color";
 
         /**
+         * Detailed weather view theme
+         * 0 = Material
+         * 1 = Darkkat
+         * 2 = Material light
+         * default: 0
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_THEME = "detailed_weather_theme";
+
+        /**
+         * Condition icon on the detailed weather view
+         * 0 - Monochrome
+         * 1 - Colored
+         * 2 - VClouds
+         * default: 0
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONDITION_ICON = "detailed_weather_condition_icon";
+
+        /**
+         * Wether to customize the detailed weather view colors
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CUSTOMIZE_COLORS = "detailed_weather_customize_colors";
+
+        /**
+         * Detailed weather view status bar background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_STATUS_BAR_BG_COLOR = "detailed_weather_status_bar_bg_color";
+
+        /**
+         * Detailed weather view action bar background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_BG_COLOR = "detailed_weather_action_bar_bg_color";
+
+        /**
+         * Detailed weather view content background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONTENT_BG_COLOR = "detailed_weather_content_bg_color";
+
+        /**
+         * Detailed weather view action bar text color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_TEXT_COLOR = "detailed_weather_action_bar_text_color";
+
+        /**
+         * Detailed weather view content text color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONTENT_TEXT_COLOR = "detailed_weather_content_text_color";
+
+        /**
+         * Detailed weather view action bar icon color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_ICON_COLOR = "detailed_weather_action_bar_icon_color";
+
+        /**
+         * Detailed weather view condition image color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONDITION_IMAGE_COLOR = "detailed_weather_condition_image_color";
+
+        /**
          * Whether to use a progress dialog for the boot dialog
          * @hide
          */

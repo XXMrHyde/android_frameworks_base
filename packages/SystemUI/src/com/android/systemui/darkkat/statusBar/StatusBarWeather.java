@@ -81,13 +81,13 @@ public class StatusBarWeather extends LinearLayout implements
 
     @Override
     public void onWeatherChanged(WeatherServiceController.WeatherInfo info) {
-        if (info.temp != null && info.condition != null) {
+        if (info.formattedTemperature != null && info.condition != null) {
             if (mShow) {
                 if (getVisibility() != View.VISIBLE) {
                     setVisibility(View.VISIBLE);
                 }
             }
-            mTextView.setText(info.temp);
+            mTextView.setText(info.formattedTemperature);
             Drawable icon = info.conditionDrawableMonochrome.getConstantState().newDrawable();
             mIconView.setImageDrawable(icon);
         } else {

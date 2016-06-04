@@ -33,26 +33,41 @@ public interface WeatherServiceController {
     }
     public static class WeatherInfo {
         public String city = null;
-        public String wind = null;
+        public String condition = null;
         public int conditionCode = 0;
         public Drawable conditionDrawableMonochrome = null;
         public Drawable conditionDrawableColored = null;
         public Drawable conditionDrawableVClouds = null;
-        public String temp = null;
-        public String humidity = null;
-        public String condition = null;
-        public String timeStamp = null;
+        public String formattedTemperature = null;
+        public String temperatureLow = null;
+        public String temperatureHigh = null;
+        public String formattedTemperatureLow = null;
+        public String formattedTemperatureHigh = null;
+        public String formattedHumidity = null;
+        public String formattedWind = null;
+        public String formattedPressure = null;
+        public String formattedRain1H = null;
+        public String formattedRain3H = null;
+        public String formattedSnow1H = null;
+        public String formattedSnow3H = null;
         public List<DayForecast> forecasts;
+        public String timestamp = null;
     }
 
     public static class DayForecast {
-        public String low;
-        public String high;
         public String condition;
         public int conditionCode;
-        public Drawable conditionDrawable;
         public Drawable conditionDrawableMonochrome;
         public Drawable conditionDrawableColored;
         public Drawable conditionDrawableVClouds;
+        public String temperatureLow;
+        public String temperatureHigh;
+        public String formattedTemperatureLow;
+        public String formattedTemperatureHigh;
+        public String formattedHumidity;
+        public String formattedWind;
+        public String formattedPressure;
+        public String formattedRain;
+        public String formattedSnow;
     }
 }

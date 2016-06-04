@@ -43,8 +43,8 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
     private static final String TAG = "WeatherService:WeatherServiceController";
     public static final String PACKAGE_NAME = "net.darkkatroms.weather";
 
-    public static final ComponentName COMPONENT_WEATHER_FORECAST = new ComponentName(
-            "net.darkkatroms.weather", "net.darkkatroms.weather.ForecastActivity");
+    public static final ComponentName COMPONENT_DETAILED_WEATHER = new ComponentName(
+            "net.darkkatroms.weather", "net.darkkatroms.weather.DetailedWeatherActivity");
 
     private static final Uri WEATHER_URI
             = Uri.parse("content://net.darkkatroms.weather.provider/weather");
@@ -52,17 +52,32 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
             = Uri.parse("content://net.darkkatroms.weather.provider/settings");
     private static final String[] WEATHER_PROJECTION = new String[] {
             "city",
-            "wind_speed",
-            "wind_direction",
-            "condition_code",
-            "temperature",
-            "humidity",
             "condition",
-            "forecast_low",
-            "forecast_high",
+            "condition_code",
+            "formatted_temperature",
+            "temperature_low",
+            "temperature_hight",
+            "formatted_temperature_low",
+            "formatted_temperature_hight",
+            "formatted_humidity",
+            "formatted_wind",
+            "formatted_pressure",
+            "formatted_rain1h",
+            "formatted_rain3h",
+            "formatted_snow1h",
+            "formatted_snow3h",
+            "time_stamp",
             "forecast_condition",
             "forecast_condition_code",
-            "time_stamp",
+            "forecast_temperature_low",
+            "forecast_temperature_high",
+            "forecast_formatted_temperature_low",
+            "forecast_formatted_temperature_high",
+            "forecast_formatted_humidity",
+            "forecast_formatted_wind",
+            "forecast_formatted_pressure",
+            "forecast_formatted_rainh",
+            "forecast_formatted_snowh"
     };
     private static final String[] SETTINGS_PROJECTION = new String[] {
             "enabled",
@@ -142,30 +157,46 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                         c.moveToPosition(i);
                         if (i == 0) {
                             mCachedInfo.city = c.getString(0);
-                            mCachedInfo.wind = c.getString(1);
-                            mCachedInfo.conditionCode = c.getInt(3);
+                            mCachedInfo.condition = c.getString(1);
+                            mCachedInfo.conditionCode = c.getInt(2);
                             mCachedInfo.conditionDrawableMonochrome = getIcon(mCachedInfo.conditionCode,
                                     WeatherHelper.ICON_MONOCHROME);
                             mCachedInfo.conditionDrawableColored = getIcon(mCachedInfo.conditionCode,
                                     WeatherHelper.ICON_COLORED);
                             mCachedInfo.conditionDrawableVClouds = getIcon(mCachedInfo.conditionCode,
                                     WeatherHelper.ICON_VCLOUDS);
-                            mCachedInfo.temp = c.getString(4);
-                            mCachedInfo.humidity = c.getString(5);
-                            mCachedInfo.condition = c.getString(6);
-                            mCachedInfo.timeStamp = c.getString(11);
+                            mCachedInfo.formattedTemperature = c.getString(3);
+                            mCachedInfo.temperatureLow = c.getString(4);
+                            mCachedInfo.temperatureHigh = c.getString(5);
+                            mCachedInfo.formattedTemperatureLow = c.getString(6);
+                            mCachedInfo.formattedTemperatureHigh = c.getString(7);
+                            mCachedInfo.formattedHumidity = c.getString(8);
+                            mCachedInfo.formattedWind = c.getString(9);
+                            mCachedInfo.formattedPressure = c.getString(10);
+                            mCachedInfo.formattedRain1H = c.getString(11);
+                            mCachedInfo.formattedRain3H = c.getString(12);
+                            mCachedInfo.formattedSnow1H = c.getString(13);
+                            mCachedInfo.formattedSnow3H = c.getString(14);
+                            mCachedInfo.timestamp = c.getString(15);
                         } else {
                             DayForecast day = new DayForecast();
-                            day.low = c.getString(7);
-                            day.high = c.getString(8);
-                            day.condition = c.getString(9);
-                            day.conditionCode = c.getInt(10);
+                            day.condition = c.getString(16);
+                            day.conditionCode = c.getInt(17);
                             day.conditionDrawableMonochrome = getIcon(day.conditionCode,
                                     WeatherHelper.ICON_MONOCHROME);
                             day.conditionDrawableColored = getIcon(day.conditionCode,
                                     WeatherHelper.ICON_COLORED);
                             day.conditionDrawableVClouds = getIcon(day.conditionCode,
                                     WeatherHelper.ICON_VCLOUDS);
+                            day.temperatureLow = c.getString(18);
+                            day.temperatureHigh = c.getString(19);
+                            day.formattedTemperatureLow = c.getString(20);
+                            day.formattedTemperatureHigh = c.getString(21);
+                            day.formattedHumidity = c.getString(22);
+                            day.formattedWind = c.getString(23);
+                            day.formattedPressure = c.getString(24);
+                            day.formattedRain = c.getString(25);
+                            day.formattedSnow = c.getString(26);
                             forecastList.add(day);
                         }
                     }
