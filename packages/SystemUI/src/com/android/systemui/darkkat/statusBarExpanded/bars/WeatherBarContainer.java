@@ -113,7 +113,7 @@ public class WeatherBarContainer extends FrameLayout implements
 
     @Override
     public void onWeatherChanged(WeatherServiceController.WeatherInfo info) {
-        if (info.temp != null && info.condition != null) {
+        if (info.formattedTemperature != null && info.condition != null) {
             mWeatherAvailable = true;
         } else {
             mWeatherAvailable = false;
@@ -198,7 +198,7 @@ public class WeatherBarContainer extends FrameLayout implements
                 @Override
                 public boolean onLongClick(View v) {
                     doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
-                    mStatusBar.startForecastActivity();
+                    mStatusBar.showDetailedWeather();
                     return true;
                 }
             });
@@ -224,7 +224,7 @@ public class WeatherBarContainer extends FrameLayout implements
             View currentItem = inflater.inflate(R.layout.weather_bar_current_item, null);
 
             TextView updateTime = (TextView) currentItem.findViewById(R.id.weather_update_time);
-            updateTime.setText(getUpdateTime(info));
+            updateTime.setText(getUpdateTime(info.timestamp));
             updateTime.setTextColor(textColorPrimary);
             calendar.roll(Calendar.DAY_OF_WEEK, true);
 
@@ -236,7 +236,7 @@ public class WeatherBarContainer extends FrameLayout implements
                 currentImage.setColorFilter(iconColor, Mode.MULTIPLY);
             }
             TextView temp = (TextView) currentItem.findViewById(R.id.weather_temp);
-            temp.setText(info.temp);
+            temp.setText(info.formattedTemperature);
             temp.setTextColor(textColorPrimary);
 
             mWeatherBar.addView(currentItem,
@@ -264,7 +264,7 @@ public class WeatherBarContainer extends FrameLayout implements
                     image.setColorFilter(iconColor, Mode.MULTIPLY);
                 }
                 TextView temps = (TextView) forecastItem.findViewById(R.id.forecast_temps);
-                temps.setText(d.low + " | " + d.high);
+                temps.setText(d.temperatureLow + " | " + d.temperatureHigh);
                 temps.setTextColor(textColorSecondary);
 
                 mWeatherBar.addView(forecastItem,
@@ -319,15 +319,16 @@ public class WeatherBarContainer extends FrameLayout implements
                 | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
     }
 
-    private String getUpdateTime(WeatherServiceController.WeatherInfo info) {
-        if (info.timeStamp != null) {
-            Date lastUpdate = new Date(info.timeStamp);
+    private String getUpdateTime(String timestamp) {
+        String updateTime = "";
+        if (timestamp != null) {
+            updateTime = timestamp;
+            Date lastUpdate = new Date(updateTime);
             StringBuilder sb = new StringBuilder();
             sb.append(DateFormat.getTimeFormat(mContext).format(lastUpdate));
             return sb.toString();
         } else {
-            String empty = "";
-            return empty;
+            return updateTime;
         }
     }
 

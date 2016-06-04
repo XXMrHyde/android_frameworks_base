@@ -1543,7 +1543,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public boolean onLongClick(View v) {
 //            mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            startForecastActivity();
+            showDetailedWeather();
             return true;
         }
     };
@@ -5373,14 +5373,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return mVisualizerView;
     }
 
-    public void startForecastActivity() {
+    public void showDetailedWeather() {
         if (!WeatherHelper.isWeatherServiceAvailable(mContext)) {
             return;
         }
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setComponent(WeatherServiceControllerImpl.COMPONENT_WEATHER_FORECAST);
+        intent.setComponent(WeatherServiceControllerImpl.COMPONENT_DETAILED_WEATHER);
         startActivity(intent, true /* dismissShade */);
     }
 
