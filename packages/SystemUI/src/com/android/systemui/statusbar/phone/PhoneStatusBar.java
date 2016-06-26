@@ -111,6 +111,7 @@ import android.widget.Toast;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.darkkat.DetailedWeatherHelper;
 import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.internal.util.darkkat.WeatherServiceControllerImpl;
 import com.android.internal.util.darkkat.WeatherHelper;
@@ -1543,7 +1544,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public boolean onLongClick(View v) {
 //            mStatusBarView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            showDetailedWeather();
+            showDetailedWeather(0);
             return true;
         }
     };
@@ -5373,14 +5374,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return mVisualizerView;
     }
 
-    public void showDetailedWeather() {
+    public void showDetailedWeather(int day) {
         if (!WeatherHelper.isWeatherServiceAvailable(mContext)) {
             return;
         }
 
+        Bundle b = new Bundle();
+        b.putInt(DetailedWeatherHelper.DAY_INDEX, day);
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(WeatherServiceControllerImpl.COMPONENT_DETAILED_WEATHER);
+        intent.putExtras(b);
         startActivity(intent, true /* dismissShade */);
     }
 

@@ -22,18 +22,22 @@ import android.graphics.Color;
 import android.provider.Settings;
 
 public class DetailedWeatherHelper {
+    public static final String DAY_INDEX = "day_index";
+
     public static final int THEME_MATERIAL       = 0;
     public static final int THEME_DARKKAT        = 1;
     public static final int THEME_MATERIAL_LIGHT = 2;
 
-    public static final int MATERIAL_BLUE_700 = 0xff1976d2;
-    public static final int MATERIAL_BLUE_500 = 0xff2196f3;
-    public static final int MATERIAL_GREY_850 = 0xff303030;
-    public static final int DARKKAT_BLUE_GREY = 0xff1b1f23;
-    public static final int MATERIAL_GREY_50  = 0xfffafafa;
-    public static final int White             = 0xffffffff;
-    public static final int HOLO_BLUE_LIGHT   = 0xff33b5e5;
-    public static final int BLACK             = 0xff000000;
+    public static final int MATERIAL_BLUE_700      = 0xff1976d2;
+    public static final int MATERIAL_BLUE_500      = 0xff2196f3;
+    public static final int MATERIAL_GREY_850      = 0xff303030;
+    public static final int MATERIAL_GREY_800      = 0xff424242;
+    public static final int DARKKAT_BLUE_GREY      = 0xff1b1f23;
+    public static final int DARKKAT_BLUE_BLUE_GREY = 0xff182C37;
+    public static final int MATERIAL_GREY_50       = 0xfffafafa;
+    public static final int White                  = 0xffffffff;
+    public static final int HOLO_BLUE_LIGHT        = 0xff33b5e5;
+    public static final int BLACK                  = 0xff000000;
 
     public static final int PRIMARY_TEXT_MATERIAL_ALPHA         = 255;
     public static final int SECONDARY_TEXT_MATERIAL_ALPHA       = 179;
@@ -41,21 +45,35 @@ public class DetailedWeatherHelper {
     public static final int SECONDARY_TEXT_MATERIAL_LIGHT_ALPHA = 138;
     public static final int ICON_MATERIAL_ALPHA                 = 255;
     public static final int ICON_MATERIAL_LIGHT_ALPHA           = 138;
+    public static final int RIPPLE_MATERIAL_ALPHA               = 51;
+    public static final int RIPPLE_MATERIAL_LIGHT_ALPHA         = 31;
+    public static final int DIVIDER_MATERIAL_ALPHA              = 51;
+    public static final int DIVIDER_MATERIAL_LIGHT_ALPHA        = 31;
 
-    public static final int INDEX_CONTENT_BG_COLOR      = 0;
-    public static final int INDEX_CONTENT_TEXT_COLOR    = 1;
-    public static final int INDEX_CONDITION_IMAGE_COLOR = 2;
+    public static final int INDEX_CONTENT_BG_COLOR     = 0;
+    public static final int INDEX_CARDS_BG_COLOR        = 1;
+    public static final int INDEX_CARDS_TEXT_COLOR   = 2;
+    public static final int INDEX_CARDS_ICON_COLOR   = 3;
+    public static final int INDEX_CARDS_RIPPLE_COLOR = 4;
 
     public static int[][] DEFAULT_COLORS = {
         { MATERIAL_GREY_850,
+          MATERIAL_GREY_800,
           White,
-          White },
+          White,
+          White,
+          (RIPPLE_MATERIAL_ALPHA << 24) | (White & 0x00ffffff) },
         { DARKKAT_BLUE_GREY,
+          DARKKAT_BLUE_BLUE_GREY,
           HOLO_BLUE_LIGHT,
-          HOLO_BLUE_LIGHT },
+          HOLO_BLUE_LIGHT,
+          HOLO_BLUE_LIGHT,
+          (RIPPLE_MATERIAL_ALPHA << 24) | (HOLO_BLUE_LIGHT & 0x00ffffff) },
         { MATERIAL_GREY_50,
+          White,
           (PRIMARY_TEXT_MATERIAL_LIGHT_ALPHA << 24) | (BLACK & 0x00ffffff),
-          (ICON_MATERIAL_LIGHT_ALPHA << 24) | (BLACK & 0x00ffffff) }
+          (ICON_MATERIAL_LIGHT_ALPHA << 24) | (BLACK & 0x00ffffff),
+          (RIPPLE_MATERIAL_LIGHT_ALPHA << 24) | (BLACK & 0x00ffffff) }
     };
 
     public static int getTheme(Context context) {
@@ -89,16 +107,22 @@ public class DetailedWeatherHelper {
                 DEFAULT_COLORS[getTheme(context)][INDEX_CONTENT_BG_COLOR]);
     }
 
+    public static int getCardsBackgroundColor(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DETAILED_WEATHER_CARDS_BG_COLOR,
+                DEFAULT_COLORS[getTheme(context)][INDEX_CARDS_BG_COLOR]);
+    }
+
     public static int getActionBarTextColor(Context context, boolean isPrimary) {
         final int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.DETAILED_WEATHER_ACTION_BAR_TEXT_COLOR, White);
-        int colorToUse;
+        int alpha;
         if (isPrimary) {
-            colorToUse = (PRIMARY_TEXT_MATERIAL_ALPHA << 24) | (color & 0x00ffffff);
+            alpha = PRIMARY_TEXT_MATERIAL_ALPHA;
         } else {
-            colorToUse = (SECONDARY_TEXT_MATERIAL_ALPHA << 24) | (color & 0x00ffffff);
+            alpha = SECONDARY_TEXT_MATERIAL_ALPHA;
         }
-        return colorToUse;
+        return (alpha << 24) | (color & 0x00ffffff);
     }
 
     public static ColorStateList getActionBarTabTextColors(Context context) {
@@ -114,23 +138,16 @@ public class DetailedWeatherHelper {
         return new ColorStateList(states, colors);
     }
 
-    public static int getContentTextColor(Context context, boolean isPrimary) {
+    public static int getCardsTextColor(Context context, boolean isPrimary) {
         final int color = Settings.System.getInt(context.getContentResolver(),
-                Settings.System.DETAILED_WEATHER_CONTENT_TEXT_COLOR,
-                DEFAULT_COLORS[getTheme(context)][INDEX_CONTENT_TEXT_COLOR]);
-        int colorToUse;
-        if (isPrimary) {
-            colorToUse = (getTextColorPrimaryAlpha(context) << 24) | (color & 0x00ffffff);
-        } else {
-            colorToUse = (getTextColorSecondaryAlpha(context) << 24) | (color & 0x00ffffff);
-        }
-        return colorToUse;
+                Settings.System.DETAILED_WEATHER_CARDS_TEXT_COLOR,
+                DEFAULT_COLORS[getTheme(context)][INDEX_CARDS_TEXT_COLOR]);
+        return (getTextColorAlpha(context, isPrimary) << 24) | (color & 0x00ffffff);
     }
 
     public static int getActionBarIconColor(Context context) {
         final int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.DETAILED_WEATHER_ACTION_BAR_ICON_COLOR, White);
-
         return (ICON_MATERIAL_ALPHA << 24) | (color & 0x00ffffff);
     }
 
@@ -138,32 +155,60 @@ public class DetailedWeatherHelper {
         if (getConditionIconType(context) != WeatherHelper.ICON_MONOCHROME) {
             return 0;
         } else {
-            final int color = Settings.System.getInt(context.getContentResolver(),
-                    Settings.System.DETAILED_WEATHER_CONDITION_IMAGE_COLOR,
-                    DEFAULT_COLORS[getTheme(context)][INDEX_CONDITION_IMAGE_COLOR]);
-            int alpha;
-            if (getTheme(context) == THEME_MATERIAL_LIGHT) {
-                alpha = ICON_MATERIAL_LIGHT_ALPHA;
-            } else {
-                alpha = ICON_MATERIAL_ALPHA;
-            }
-            return (alpha << 24) | (color & 0x00ffffff);
+            return getCardsIconColor(context);
         }
     }
 
-    private static int getTextColorPrimaryAlpha(Context context) {
+    public static int getCardsIconColor(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DETAILED_WEATHER_CARDS_ICON_COLOR,
+                DEFAULT_COLORS[getTheme(context)][INDEX_CARDS_ICON_COLOR]);
+        int alpha;
         if (getTheme(context) == THEME_MATERIAL_LIGHT) {
-            return PRIMARY_TEXT_MATERIAL_LIGHT_ALPHA;
+            alpha = ICON_MATERIAL_LIGHT_ALPHA;
         } else {
-            return PRIMARY_TEXT_MATERIAL_ALPHA;
+            alpha = ICON_MATERIAL_ALPHA;
         }
+        return (alpha << 24) | (color & 0x00ffffff);
     }
 
-    private static int getTextColorSecondaryAlpha(Context context) {
+    public static int getActionBarRippleColor(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DETAILED_WEATHER_ACTION_BAR_RIPPLE_COLOR, White);
+
+        return (RIPPLE_MATERIAL_ALPHA << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getCardsRippleColor(Context context) {
+        final int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DETAILED_WEATHER_CARDS_RIPPLE_COLOR,
+                DEFAULT_COLORS[getTheme(context)][INDEX_CARDS_RIPPLE_COLOR]);
+        int alpha;
         if (getTheme(context) == THEME_MATERIAL_LIGHT) {
-            return SECONDARY_TEXT_MATERIAL_LIGHT_ALPHA;
+            alpha = RIPPLE_MATERIAL_LIGHT_ALPHA;
         } else {
-            return SECONDARY_TEXT_MATERIAL_ALPHA;
+            alpha = RIPPLE_MATERIAL_ALPHA;
+        }
+        return (alpha << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getDividerAlpha(Context context) {
+        int alpha;
+        if (getTheme(context) == THEME_MATERIAL_LIGHT) {
+            alpha = DIVIDER_MATERIAL_LIGHT_ALPHA;
+        } else {
+            alpha = DIVIDER_MATERIAL_ALPHA;
+        }
+        return alpha;
+    }
+
+    private static int getTextColorAlpha(Context context, boolean isPrimary) {
+        if (getTheme(context) == THEME_MATERIAL_LIGHT) {
+            return isPrimary ? PRIMARY_TEXT_MATERIAL_LIGHT_ALPHA
+                    : SECONDARY_TEXT_MATERIAL_LIGHT_ALPHA;
+        } else {
+            return isPrimary ? PRIMARY_TEXT_MATERIAL_ALPHA
+                    : SECONDARY_TEXT_MATERIAL_ALPHA;
         }
     }
 }
