@@ -139,7 +139,6 @@ public class WeatherBarContainer extends FrameLayout implements
             mWeatherSettingsButton.setVisibility(View.INVISIBLE);
             mWeatherSettingsIcon.setVisibility(View.INVISIBLE);
             mWeatherSettingsButton.setOnClickListener(null);
-            mWeatherBar.setOnLongClickListener(null);
             mWeatherBar.setVisibility(View.GONE);
         } else if (WeatherHelper.getWeatherServiceAvailability(mContext)
                 == WeatherHelper.PACKAGE_DISABLED) {
@@ -166,7 +165,6 @@ public class WeatherBarContainer extends FrameLayout implements
                     showEnableDKWeatherServiceDialog();
                 }
             });
-            mWeatherBar.setOnLongClickListener(null);
             mWeatherBar.setVisibility(View.GONE);
         } else if (!mWeatherAvailable) {
             mNoWeatherLayout.setVisibility(View.VISIBLE);
@@ -192,16 +190,7 @@ public class WeatherBarContainer extends FrameLayout implements
                     mStatusBar.startActivity(WeatherHelper.getWeatherServiceSettingsIntent(), true);
                 }
             });
-            mWeatherBar.setOnLongClickListener(null);
             mWeatherBar.setVisibility(View.GONE);
-            mWeatherBar.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
-                    mStatusBar.showDetailedWeather();
-                    return true;
-                }
-            });
         } else {
             mNoWeatherLayout.setVisibility(View.GONE);
             mWeatherSettingsButton.setOnClickListener(null);
@@ -222,6 +211,7 @@ public class WeatherBarContainer extends FrameLayout implements
         boolean isToday = false;
         if (WeatherHelper.showCurrent(mContext)) {
             View currentItem = inflater.inflate(R.layout.weather_bar_current_item, null);
+            setItemLongClickAction(currentItem, 0);
 
             TextView updateTime = (TextView) currentItem.findViewById(R.id.weather_update_time);
             updateTime.setText(getUpdateTime(info.timestamp));
@@ -246,10 +236,12 @@ public class WeatherBarContainer extends FrameLayout implements
         }
 
         ArrayList<DayForecast> forecasts = (ArrayList) info.forecasts;
-
-        for (DayForecast d : forecasts) {
+        for (int i = 0; i < forecasts.size(); i++) {
             if (!isToday) {
+                DayForecast d = forecasts.get(i);
+
                 View forecastItem = inflater.inflate(R.layout.weather_bar_forecast_item, null);
+                setItemLongClickAction(forecastItem, i);
 
                 TextView day = (TextView) forecastItem.findViewById(R.id.forecast_day);
                 day.setText(calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()));
@@ -273,6 +265,23 @@ public class WeatherBarContainer extends FrameLayout implements
                 isToday = false;
             }
         }
+    }
+
+    public void setItemLongClickAction(View item, final int dayIndex) {
+        RippleDrawable background =
+                (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_borderless).mutate();
+        final ColorStateList color =
+                ColorStateList.valueOf(SBEPanelColorHelper.getRippleColor(mContext));
+        background.setColor(color);
+        item.setBackground(background);
+        item.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                doHapticKeyClick(HapticFeedbackConstants.LONG_PRESS);
+                mStatusBar.showDetailedWeather(dayIndex);
+                return true;
+            }
+        });
     }
 
     public void updateItems() {
@@ -303,12 +312,8 @@ public class WeatherBarContainer extends FrameLayout implements
     }
 
     public void setRippleColor() {
-        RippleDrawable background =
-                (RippleDrawable) mContext.getDrawable(R.drawable.ripple_drawable_rectangle).mutate();
         final ColorStateList color =
                 ColorStateList.valueOf(SBEPanelColorHelper.getRippleColor(mContext));
-        background.setColor(color);
-        mWeatherBar.setBackground(background);
         ((RippleDrawable) mWeatherSettingsButton.getBackground()).setColor(color);
 
     }
