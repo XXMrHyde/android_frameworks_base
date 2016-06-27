@@ -64,10 +64,5 @@ public interface WeatherServiceController {
         public String temperatureHigh;
         public String formattedTemperatureLow;
         public String formattedTemperatureHigh;
-        public String formattedHumidity;
-        public String formattedWind;
-        public String formattedPressure;
-        public String formattedRain;
-        public String formattedSnow;
     }
 }
