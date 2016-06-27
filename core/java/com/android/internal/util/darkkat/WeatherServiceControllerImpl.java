@@ -72,12 +72,7 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
             "forecast_temperature_low",
             "forecast_temperature_high",
             "forecast_formatted_temperature_low",
-            "forecast_formatted_temperature_high",
-            "forecast_formatted_humidity",
-            "forecast_formatted_wind",
-            "forecast_formatted_pressure",
-            "forecast_formatted_rainh",
-            "forecast_formatted_snowh"
+            "forecast_formatted_temperature_high"
     };
     private static final String[] SETTINGS_PROJECTION = new String[] {
             "enabled",
@@ -192,11 +187,6 @@ public class WeatherServiceControllerImpl implements WeatherServiceController {
                             day.temperatureHigh = c.getString(19);
                             day.formattedTemperatureLow = c.getString(20);
                             day.formattedTemperatureHigh = c.getString(21);
-                            day.formattedHumidity = c.getString(22);
-                            day.formattedWind = c.getString(23);
-                            day.formattedPressure = c.getString(24);
-                            day.formattedRain = c.getString(25);
-                            day.formattedSnow = c.getString(26);
                             forecastList.add(day);
                         }
                     }
