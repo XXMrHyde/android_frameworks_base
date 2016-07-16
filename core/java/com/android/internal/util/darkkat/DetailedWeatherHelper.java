@@ -76,6 +76,11 @@ public class DetailedWeatherHelper {
           (RIPPLE_MATERIAL_LIGHT_ALPHA << 24) | (BLACK & 0x00ffffff) }
     };
 
+    public static boolean showLocation(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DETAILED_WEATHER_SHOW_LOCATION, 1) == 1;
+    }
+
     public static int getTheme(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.DETAILED_WEATHER_THEME, THEME_MATERIAL);
