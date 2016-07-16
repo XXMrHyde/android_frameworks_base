@@ -4255,6 +4255,12 @@ public final class Settings {
         public static final String NAVIGATION_BAR_BUTTON_RIPPLE_COLOR = "navigation_bar_button_ripple_color";
 
         /**
+         * Wether to show the location in the detailed weather view
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_SHOW_LOCATION = "detailed_weather_show_location";
+
+        /**
          * Detailed weather view theme
          * 0 = Material
          * 1 = Darkkat
