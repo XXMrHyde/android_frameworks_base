@@ -27,6 +27,7 @@ public class QABConstants {
     public static final String BUTTON_LOCATION   = "location";
     public static final String BUTTON_NFC        = "nfc";
     public static final String BUTTON_ROTATION   = "rotation";
+    public static final String BUTTON_SYNC       = "sync";
     public static final String BUTTON_WIFI       = "wifi";
 
     public static final String BUTTON_DELIMITER  = "|";
