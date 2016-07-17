@@ -47,6 +47,7 @@ import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.Lo
 import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.NfcButton;
 import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.QabButton;
 import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.RotationLockButton;
+import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.SyncButton;
 import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.TorchButton;
 import com.android.systemui.darkkat.statusBarExpanded.bars.quickAccessButtons.WifiButton;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
@@ -174,6 +175,10 @@ public class QuickAccessBar extends LinearLayout {
             button = new RotationLockButton(mContext, this,
                     mContext.getResources().getDrawable(R.drawable.ic_qs_button_rotation),
                     mContext.getResources().getDrawable(R.drawable.ic_qs_button_rotation_off));
+        } else if (action.equals(QABConstants.BUTTON_SYNC)) {
+            button = new SyncButton(mContext, this,
+                    mContext.getResources().getDrawable(R.drawable.ic_qs_button_sync),
+                    mContext.getResources().getDrawable(R.drawable.ic_qs_button_sync_off));
         } else if (action.equals(QABConstants.BUTTON_WIFI)) {
             button = new WifiButton(mContext, this,
                     mContext.getResources().getDrawable(R.drawable.ic_qs_button_wifi),

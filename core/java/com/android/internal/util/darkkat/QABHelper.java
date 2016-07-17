@@ -115,6 +115,9 @@ public class QABHelper {
         } else if (clickAction.equals(QABConstants.BUTTON_ROTATION)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_qs_button_rotation", null, null);
+        } else if (clickAction.equals(QABConstants.BUTTON_SYNC)) {
+            resId = systemUiResources.getIdentifier(
+                        SYSTEMUI_METADATA_NAME + ":drawable/ic_qs_button_sync", null, null);
         } else if (clickAction.equals(QABConstants.BUTTON_WIFI)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_qs_button_wifi", null, null);
