@@ -50,7 +50,7 @@ public class DataButton extends QabButton {
         mAirplaneModeEnabled = Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         mEnabled = !mAirplaneModeEnabled && mMobileDataController.isMobileDataEnabled();
-        updateState(mEnabled);
+        updateState(mEnabled, true);
     }
 
     @Override
@@ -84,14 +84,14 @@ public class DataButton extends QabButton {
         @Override
         public void setMobileDataEnabled(boolean enabled) {
             mEnabled = !mAirplaneModeEnabled && enabled;
-            updateState(mEnabled);
+            updateState(mEnabled, true);
         }
 
         @Override
         public void setIsAirplaneMode(IconState icon) {
             mAirplaneModeEnabled = icon.visible;
             mEnabled = !mAirplaneModeEnabled && mMobileDataController.isMobileDataEnabled();
-            updateState(mEnabled);
+            updateState(mEnabled, true);
         }
     };
 }
