@@ -191,7 +191,11 @@ public class QuickAccessBar extends LinearLayout {
                 new LinearLayout.LayoutParams(dimens, dimens);
         button.setLayoutParams(lp);
         button.setPadding(padding, padding, padding, padding);
-        button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        if (button instanceof DataButton) {
+            button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        } else {
+            button.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
         button.setClickable(true);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

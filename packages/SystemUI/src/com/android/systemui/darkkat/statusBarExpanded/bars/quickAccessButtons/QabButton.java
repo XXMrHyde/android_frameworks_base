@@ -50,8 +50,16 @@ public class QabButton extends ImageView {
     }
 
     protected void updateState(boolean enabled) {
-        setImageDrawable(ImageHelper.resize(mContext, enabled ?
-                mIconEnabled : mIconDisabled, 32));
-        setAlpha(enabled ? 255 : 77);
+        updateState(enabled, false);
+    }
+
+    protected void updateState(boolean enabled, boolean resize) {
+        if (resize) {
+            setImageDrawable(ImageHelper.resize(mContext, enabled ?
+                    mIconEnabled : mIconDisabled, 32));
+            setAlpha(enabled ? 255 : 77);
+        } else {
+            setImageDrawable(enabled ? mIconEnabled : mIconDisabled);
+        }
     }
 }
