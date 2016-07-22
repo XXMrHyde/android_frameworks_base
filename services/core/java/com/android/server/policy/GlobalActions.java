@@ -219,8 +219,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             mSilentModeAction = new SilentModeTriStateAction(mContext, mAudioManager, mHandler);
         }
         mAirplaneModeOn = new ToggleAction(
-                R.drawable.ic_lock_airplane_mode,
-                R.drawable.ic_lock_airplane_mode_off,
+                R.drawable.ic_global_action_airplane_mode,
+                R.drawable.ic_global_action_airplane_mode_off,
                 R.string.global_actions_toggle_airplane_mode,
                 R.string.global_actions_airplane_mode_on_status,
                 R.string.global_actions_airplane_mode_off_status) {
@@ -338,7 +338,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private Action getPowerAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_off,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_global_action_power_off,
                 R.string.global_action_power_off) {
 
             @Override
@@ -361,8 +361,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private final class RebootAction extends SinglePressAction implements LongPressAction {
         private RebootAction() {
-            super(com.android.internal.R.drawable.ic_lock_reboot,
-                R.string.global_action_reboot);
+            super(com.android.internal.R.drawable.ic_global_action_reboot,
+                R.string.global_action_reboot, 315);
         }
 
         @Override
@@ -443,7 +443,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private Action getSettingsAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_settings,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_global_action_settings,
                 R.string.global_action_settings) {
 
             @Override
@@ -510,7 +510,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private Action getLockdownAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_lock,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_global_action_lock_down,
                 R.string.global_action_lockdown) {
 
             @Override
@@ -746,12 +746,22 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         private final Drawable mIcon;
         private final int mMessageResId;
         private final CharSequence mMessage;
+        private final float mIconRotation;
 
         protected SinglePressAction(int iconResId, int messageResId) {
             mIconResId = iconResId;
             mMessageResId = messageResId;
             mMessage = null;
             mIcon = null;
+            mIconRotation = 0;
+        }
+
+        protected SinglePressAction(int iconResId, int messageResId, float iconRotation) {
+            mIconResId = iconResId;
+            mMessageResId = messageResId;
+            mMessage = null;
+            mIcon = null;
+            mIconRotation = iconRotation;
         }
 
         protected SinglePressAction(int iconResId, Drawable icon, CharSequence message) {
@@ -759,6 +769,16 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             mMessageResId = 0;
             mMessage = message;
             mIcon = icon;
+            mIconRotation = 0;
+        }
+
+        protected SinglePressAction(int iconResId, Drawable icon, CharSequence message,
+                float iconRotation) {
+            mIconResId = iconResId;
+            mMessageResId = 0;
+            mMessage = message;
+            mIcon = icon;
+            mIconRotation = iconRotation;
         }
 
         protected SinglePressAction(int iconResId, CharSequence message) {
@@ -766,6 +786,15 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             mMessageResId = 0;
             mMessage = message;
             mIcon = null;
+            mIconRotation = 0;
+        }
+
+        protected SinglePressAction(int iconResId, CharSequence message, float iconRotation) {
+            mIconResId = iconResId;
+            mMessageResId = 0;
+            mMessage = message;
+            mIcon = null;
+            mIconRotation = iconRotation;
         }
 
         public boolean isEnabled() {
@@ -802,9 +831,14 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             }
             if (mIcon != null) {
                 icon.setImageDrawable(mIcon);
-                icon.setScaleType(ScaleType.CENTER_CROP);
+                if (mIconRotation != 0) {
+                    icon.setRotation(mIconRotation);
+                }
             } else if (mIconResId != 0) {
                 icon.setImageDrawable(context.getDrawable(mIconResId));
+                if (mIconRotation != 0) {
+                    icon.setRotation(mIconRotation);
+                }
             }
             if (mMessage != null) {
                 messageView.setText(mMessage);
@@ -948,8 +982,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private class SilentModeToggleAction extends ToggleAction {
         public SilentModeToggleAction() {
-            super(R.drawable.ic_audio_vol_mute,
-                    R.drawable.ic_audio_vol,
+            super(R.drawable.ic_global_action_silent_mode_mute,
+                    R.drawable.ic_global_action_silent_mode_vol,
                     R.string.global_action_toggle_silent_mode,
                     R.string.global_action_silent_mode_on_status,
                     R.string.global_action_silent_mode_off_status);

@@ -19,7 +19,16 @@
     <!-- Global actions -->
     <java-symbol type="array" name="shutdown_reboot_options" />
     <java-symbol type="array" name="shutdown_reboot_actions" />
-    <java-symbol type="drawable" name="ic_lock_reboot" />
+    <java-symbol type="color" name="global_action_silent_mode_icon_color" />
+    <java-symbol type="drawable" name="ic_global_action_power_off" />
+    <java-symbol type="drawable" name="ic_global_action_reboot" />
+    <java-symbol type="drawable" name="ic_global_action_airplane_mode" />
+    <java-symbol type="drawable" name="ic_global_action_airplane_mode_off" />
+    <java-symbol type="drawable" name="ic_global_action_silent_mode_mute" />
+    <java-symbol type="drawable" name="ic_global_action_silent_mode_vibrate" />
+    <java-symbol type="drawable" name="ic_global_action_silent_mode_vol" />
+    <java-symbol type="drawable" name="ic_global_action_settings" />
+    <java-symbol type="drawable" name="ic_global_action_lock_down" />
     <java-symbol type="string" name="global_action_reboot" />
     <java-symbol type="string" name="shutdown_reboot_dlg_confirm_title" />
     <java-symbol type="string" name="shutdown_reboot_dlg_title" />
