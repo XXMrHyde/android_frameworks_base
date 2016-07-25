@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2016 DarkKat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+
+    <style name="ThemeDarkKat" parent="Theme.Material">
+        <item name="colorForeground">@color/foreground_darkkat</item>
+        <item name="colorForegroundInverse">@color/foreground_darkkat_light</item>
+        <item name="colorBackground">@color/background_darkkat</item>
+        <item name="colorBackgroundFloating">@color/background_floating_darkkat</item>
+        <item name="colorBackgroundCacheHint">@color/background_cache_hint_selector_darkkat</item>
+
+        <item name="colorAccent">@color/accent_material_light</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlNormal">?attr/textColorSecondary</item>
+        <item name="colorControlHighlight">@color/ripple_darkkat</item>
+
+        <item name="textColorPrimary">@color/primary_text_darkkat</item>
+        <item name="textColorPrimaryInverse">@color/primary_text_darkkat_light</item>
+        <item name="textColorPrimaryDisableOnly">@color/primary_text_disable_only_darkkat</item>
+        <item name="textColorSecondary">@color/secondary_text_darkkat</item>
+        <item name="textColorSecondaryInverse">@color/secondary_text_darkkat_light</item>
+        <item name="textColorTertiary">@color/secondary_text_darkkat</item>
+        <item name="textColorTertiaryInverse">@color/secondary_text_darkkat_light</item>
+        <item name="textColorHint">@color/hint_foreground_darkkat</item>
+        <item name="textColorHintInverse">@color/hint_foreground_darkkat_light</item>
+        <item name="textColorHighlight">@color/highlighted_text_darkkat</item>
+        <item name="textColorHighlightInverse">@color/highlighted_text_darkkat</item>
+        <item name="textColorAlertDialogListItem">@color/primary_text_darkkat</item>
+
+        <item name="dialogTheme">@style/ThemeDarkKat.Dialog</item>
+        <item name="dialogTitleIconsDecorLayout">@layout/dialog_title_icons_material</item>
+        <item name="dialogCustomTitleDecorLayout">@layout/dialog_custom_title_material</item>
+        <item name="dialogTitleDecorLayout">@layout/dialog_title_material</item>
+
+        <item name="alertDialogTheme">@style/ThemeDarkKat.Dialog.Alert</item>
+        <item name="alertDialogStyle">@style/AlertDialogDarkKat</item>
+        <item name="alertDialogIcon">@drawable/ic_dialog_alert_material</item>
+    </style>
+
+    <style name="ThemeDarkKat.Dialog">
+        <item name="colorBackground">?attr/colorBackgroundFloating</item>
+
+        <item name="windowFrame">@null</item>
+        <item name="windowTitleStyle">@style/DialogWindowTitleDarkKat</item>
+        <item name="windowTitleBackgroundStyle">@style/DialogWindowTitleBackground.Material</item>
+        <item name="windowBackground">@drawable/dialog_background_material</item>
+        <item name="windowElevation">@dimen/floating_window_z</item>
+        <item name="windowIsFloating">true</item>
+        <item name="windowContentOverlay">@null</item>
+        <item name="windowAnimationStyle">@style/Animation.Material.Dialog</item>
+        <item name="windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="windowCloseOnTouchOutside">@bool/config_closeDialogWhenTouchOutside</item>
+
+        <item name="colorBackgroundCacheHint">@null</item>
+
+        <item name="listPreferredItemPaddingLeft">24dip</item>
+        <item name="listPreferredItemPaddingRight">24dip</item>
+        <item name="listPreferredItemPaddingStart">24dip</item>
+        <item name="listPreferredItemPaddingEnd">24dip</item>
+
+        <item name="listDivider">@null</item>
+
+        <item name="preferencePanelStyle">@style/PreferencePanel.Dialog</item>
+    </style>
+
+    <style name="ThemeDarkKat.Dialog.Alert">
+        <item name="windowMinWidthMajor">@dimen/dialog_min_width_major</item>
+        <item name="windowMinWidthMinor">@dimen/dialog_min_width_minor</item>
+    </style>
+</resources>

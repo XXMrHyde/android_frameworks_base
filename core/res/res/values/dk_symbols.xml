@@ -16,6 +16,11 @@
 
 <resources>
 
+    <!-- Theme Darkkat -->
+    <java-symbol type="style" name="ThemeDarkKat" />
+    <java-symbol type="style" name="ThemeDarkKat.Dialog" />
+    <java-symbol type="style" name="ThemeDarkKat.Dialog.Alert" />
+
     <!-- Global actions -->
     <java-symbol type="array" name="shutdown_reboot_options" />
     <java-symbol type="array" name="shutdown_reboot_actions" />
