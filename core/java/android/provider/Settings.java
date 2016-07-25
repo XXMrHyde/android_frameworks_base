@@ -3215,6 +3215,16 @@ public final class Settings {
         // DarkKat additions start
 
         /**
+         * Theme of the power menu and boot dialog
+         * 0 = Material
+         * 1 = Darkkat
+         * 2 = Material light
+         * default: 0
+         * @hide
+         */
+        public static final String POWER_MENU_BOOT_DIALOG_THEME = "power_menu_boot_dialog_theme";
+
+        /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide

@@ -103,6 +103,9 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private static final String GLOBAL_ACTION_KEY_VOICEASSIST = "voiceassist";
     private static final String GLOBAL_ACTION_KEY_ASSIST = "assist";
 
+    private static final int THEME_MATERIAL       = 0;
+    private static final int THEME_MATERIAL_LIGHT = 2;
+
     private final Context mContext;
     private final WindowManagerFuncs mWindowManagerFuncs;
     private final AudioManager mAudioManager;
@@ -115,6 +118,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private ToggleAction mAirplaneModeOn;
 
     private MyAdapter mAdapter;
+
+    private int mThemeSetting;
 
     private boolean mKeyguardShowing = false;
     private boolean mDeviceProvisioned = false;
@@ -129,6 +134,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
      */
     public GlobalActions(Context context, WindowManagerFuncs windowManagerFuncs) {
         mContext = context;
+        mThemeSetting = getThemeSetting();
+        if (mThemeSetting != THEME_MATERIAL_LIGHT) {
+            mContext.setTheme(getThemeResId());
+        }
+
         mWindowManagerFuncs = windowManagerFuncs;
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mDreamManager = IDreamManager.Stub.asInterface(
@@ -157,6 +167,21 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useFixedVolume);
+    }
+
+    private int getThemeSetting() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+    }
+
+    private int getThemeResId() {
+        int themeResId = com.android.internal.R.style.Theme_Material_Light;
+        if (getThemeSetting() != THEME_MATERIAL_LIGHT) {
+            themeResId = getThemeSetting() == THEME_MATERIAL
+                    ? com.android.internal.R.style.Theme_Material
+                    : com.android.internal.R.style.ThemeDarkKat;
+        }
+        return themeResId;
     }
 
     /**
@@ -212,6 +237,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
      * @return A new dialog.
      */
     private GlobalActionsDialog createDialog() {
+        if (mThemeSetting != getThemeSetting()) {
+            mThemeSetting = getThemeSetting();
+            mContext.setTheme(getThemeResId());
+        }
+
         // Simple toggle style if there's no vibrator, otherwise use a tri-state
         if (!mHasVibrator) {
             mSilentModeAction = new SilentModeToggleAction();

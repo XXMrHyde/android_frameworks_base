@@ -110,6 +110,9 @@ public final class ShutdownThread extends Thread {
     // static instance of this thread
     private static final ShutdownThread sInstance = new ShutdownThread();
 
+    private static final int THEME_MATERIAL       = 0;
+    private static final int THEME_MATERIAL_LIGHT = 2;
+
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
@@ -197,7 +200,7 @@ public final class ShutdownThread extends Thread {
                 if (advancedReboot && !locked) {
                     mRebootAction = ACTION_REBOOT;
                     // Include options in power menu for rebooting into recovery or bootloader
-                    sConfirmDialog = new AlertDialog.Builder(context)
+                    sConfirmDialog = new AlertDialog.Builder(context, getThemeResId(context))
                             .setTitle(titleResourceId)
                             .setSingleChoiceItems(com.android.internal.R.array.shutdown_reboot_options, 0, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
@@ -250,7 +253,7 @@ public final class ShutdownThread extends Thread {
             }
 
             if (sConfirmDialog == null) {
-                sConfirmDialog = new AlertDialog.Builder(context)
+                sConfirmDialog = new AlertDialog.Builder(context, getThemeResId(context))
                         .setTitle(titleResourceId)
                         .setMessage(resourceId)
                         .setPositiveButton(com.android.internal.R.string.yes, new DialogInterface.OnClickListener() {
@@ -343,7 +346,7 @@ public final class ShutdownThread extends Thread {
         }
 
         // Throw up a system dialog to indicate the device is rebooting / shutting down.
-        ProgressDialog pd = new ProgressDialog(context);
+        ProgressDialog pd = new ProgressDialog(context, getThemeResId(context));
 
         // Path 1: Reboot to recovery and install the update
         //   Condition: mRebootReason == REBOOT_RECOVERY, mRebootUpdate == True
@@ -840,5 +843,17 @@ public final class ShutdownThread extends Thread {
         if (!done[0]) {
             Log.w(TAG, "Timed out waiting for uncrypt.");
         }
+    }
+
+    private static int getThemeResId(Context context) {
+        int themeSetting = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+        int themeResId = 0;
+        if (themeSetting != THEME_MATERIAL_LIGHT) {
+            themeResId = themeSetting == THEME_MATERIAL
+                    ? com.android.internal.R.style.Theme_Material_Dialog_Alert
+                    : com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+        }
+        return themeResId;
     }
 }

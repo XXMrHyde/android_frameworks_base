@@ -201,6 +201,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static public final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
     static public final String SYSTEM_DIALOG_REASON_ASSIST = "assist";
 
+    private static final int THEME_MATERIAL       = 0;
+    private static final int THEME_MATERIAL_LIGHT = 2;
+
     /**
      * These are the system UI flags that, when changing, can cause the layout
      * of the screen to change.
@@ -6138,7 +6141,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             PackageManager.FEATURE_TELEVISION)) {
                         theme = com.android.internal.R.style.Theme_Leanback_Dialog_Alert;
                     } else {
-                        theme = 0;
+                        int themeSetting = Settings.System.getInt(mContext.getContentResolver(),
+                                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+                        if (themeSetting != THEME_MATERIAL_LIGHT) {
+                            theme = themeSetting == THEME_MATERIAL
+                                    ? com.android.internal.R.style.Theme_Material_Dialog_Alert
+                                    : com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+                        } else {
+                            theme = 0;
+                        }
                     }
 
                     mBootMsgDialog = new ProgressDialog(mContext, theme) {
