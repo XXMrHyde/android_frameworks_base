@@ -61,7 +61,8 @@ public class BatteryMeterView extends View implements DemoMode,
     private final Paint mFramePaint, mBatteryPaint, mWarningTextPaint, mTextPaint, mBoltPaint;
     private float mTextHeight, mWarningTextHeight;
     private int mIconTint = Color.WHITE;
-
+    private final int mFrameColor;
+    private int mTextColor = Color.WHITE;
     private int mHeight;
     private int mWidth;
     private String mWarningString;
@@ -104,7 +105,7 @@ public class BatteryMeterView extends View implements DemoMode,
         final Resources res = context.getResources();
         TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,
                 defStyle, 0);
-        final int frameColor = atts.getColor(R.styleable.BatteryMeterView_frameColor,
+        mFrameColor = atts.getColor(R.styleable.BatteryMeterView_frameColor,
                 context.getColor(R.color.batterymeter_frame_color));
         TypedArray levels = res.obtainTypedArray(R.array.batterymeter_color_levels);
         TypedArray colors = res.obtainTypedArray(R.array.batterymeter_color_values);
@@ -130,7 +131,7 @@ public class BatteryMeterView extends View implements DemoMode,
                 R.fraction.battery_subpixel_smoothing_right, 1, 1);
 
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mFramePaint.setColor(frameColor);
+        mFramePaint.setColor(mFrameColor);
         mFramePaint.setDither(true);
         mFramePaint.setStrokeWidth(0);
         mFramePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -239,7 +240,7 @@ public class BatteryMeterView extends View implements DemoMode,
 
         // If we are in power save mode, always use the normal color.
         if (mPowerSaveEnabled) {
-            return mColors[mColors.length-1];
+            return mIconTint;
         }
         int thresh, color = 0;
         for (int i=0; i<mColors.length; i+=2) {
@@ -258,24 +259,66 @@ public class BatteryMeterView extends View implements DemoMode,
         return color;
     }
 
-    public void setDarkIntensity(float darkIntensity) {
-        int backgroundColor = getBackgroundColor(darkIntensity);
-        int fillColor = getFillColor(darkIntensity);
+    private int getTextColorForLevel(int percent) {
+
+        // If we are in power save mode, always use the normal color.
+        if (mPowerSaveEnabled) {
+            return mTextColor;
+        }
+        int thresh, color = 0;
+        for (int i=0; i<mColors.length; i+=2) {
+            thresh = mColors[i];
+            color = mColors[i+1];
+            if (percent <= thresh) {
+
+                // Respect tinting for "normal" level
+                if (i == mColors.length-2) {
+                    return mTextColor;
+                } else {
+                    return color;
+                }
+            }
+        }
+        return color;
+    }
+
+    public void setIconColor(int fillColor) {
+        int frameColor = (mFrameColor & 0xff000000) | (fillColor & 0x00ffffff);
         mIconTint = fillColor;
-        mFramePaint.setColor(backgroundColor);
-        mBoltPaint.setColor(fillColor);
+        mFramePaint.setColor(frameColor);
         mChargeColor = fillColor;
         invalidate();
     }
 
-    private int getBackgroundColor(float darkIntensity) {
-        return getColorForDarkIntensity(
-                darkIntensity, mLightModeBackgroundColor, mDarkModeBackgroundColor);
+    public void setTextColor(int textColor) {
+        mTextColor = textColor;
+        mBoltPaint.setColor(textColor);
+        invalidate();
     }
 
-    private int getFillColor(float darkIntensity) {
-        return getColorForDarkIntensity(
-                darkIntensity, mLightModeFillColor, mDarkModeFillColor);
+    public void setDarkIntensity(float darkIntensity, int fillColor, int fillColorDark,
+            int textColor, int textColorDark) {
+        int backgroundTint = getBackgroundColor(darkIntensity, fillColor, fillColorDark);
+        int fillTint = getFillColor(darkIntensity, fillColor, fillColorDark);
+        int textTint = getFillColor(darkIntensity, textColor, textColorDark);
+        mIconTint = fillTint;
+        mTextColor = textTint;
+        mFramePaint.setColor(backgroundTint);
+        mBoltPaint.setColor(textTint);
+        mChargeColor = fillTint;
+        invalidate();
+    }
+
+    private int getBackgroundColor(float darkIntensity, int lightColor, int darkColor) {
+        int lightModeColor = (mLightModeBackgroundColor & 0xff000000) | (lightColor & 0x00ffffff);
+        int darkModeColor = (mDarkModeBackgroundColor & 0xff000000) | (darkColor & 0x00ffffff);
+        return getColorForDarkIntensity(darkIntensity, lightModeColor, darkModeColor);
+    }
+
+    private int getFillColor(float darkIntensity, int lightColor, int darkColor) {
+        int lightModeColor = (mLightModeFillColor & 0xff000000) | (lightColor & 0x00ffffff);
+        int darkModeColor = (mDarkModeFillColor & 0xff000000) | (darkColor & 0x00ffffff);
+        return getColorForDarkIntensity(darkIntensity, lightModeColor, darkModeColor);
     }
 
     private int getColorForDarkIntensity(float darkIntensity, int lightColor, int darkColor) {
@@ -383,7 +426,7 @@ public class BatteryMeterView extends View implements DemoMode,
         float pctX = 0, pctY = 0;
         String pctText = null;
         if (!tracker.plugged && level > mCriticalLevel && mShowPercent) {
-            mTextPaint.setColor(getColorForLevel(level));
+            mTextPaint.setColor(getTextColorForLevel(level));
             mTextPaint.setTextSize(height *
                     (SINGLE_DIGIT_PERCENT ? 0.75f
                             : (tracker.level == 100 ? 0.38f : 0.5f)));

@@ -16,6 +16,8 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -24,6 +26,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.view.View;
@@ -36,6 +39,8 @@ import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
+import com.android.internal.util.darkkat.ColorHelper;
+import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -79,16 +84,20 @@ public class StatusBarIconController implements Tunable {
     private int mIconSize;
     private int mIconHPadding;
 
-    private int mIconTint = Color.WHITE;
     private float mDarkIntensity;
+    private int mTextColor;
+    private int mIconTint;
+    private int mBatteryTextColor;
 
     private boolean mTransitionPending;
     private boolean mTintChangePending;
     private float mPendingDarkIntensity;
     private ValueAnimator mTintAnimator;
+    private Animator mColorTransitionAnimator;
 
-    private int mDarkModeIconColorSingleTone;
-    private int mLightModeIconColorSingleTone;
+    private boolean mAnimateTextColor = false;
+    private boolean mAnimateIconColor = false;
+    private boolean mAnimateBatteryTextColor = false;
 
     private final Handler mHandler;
     private boolean mTransitionDeferring;
@@ -123,12 +132,16 @@ public class StatusBarIconController implements Tunable {
                 android.R.interpolator.linear_out_slow_in);
         mFastOutSlowIn = AnimationUtils.loadInterpolator(mContext,
                 android.R.interpolator.fast_out_slow_in);
-        mDarkModeIconColorSingleTone = context.getColor(R.color.dark_mode_icon_color_single_tone);
-        mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
+
+        mTextColor = StatusBarColorHelper.getTextColor(mContext);
+        mIconTint = StatusBarColorHelper.getIconColor(mContext);
+        mBatteryTextColor = StatusBarColorHelper.getBatteryTextColor(mContext);
+
         mHandler = new Handler();
         updateResources();
 
         TunerService.get(mContext).addTunable(this, ICON_BLACKLIST);
+        mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
     }
 
     @Override
@@ -372,8 +385,12 @@ public class StatusBarIconController implements Tunable {
 
     private void setIconTintInternal(float darkIntensity) {
         mDarkIntensity = darkIntensity;
+        mTextColor = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                StatusBarColorHelper.getTextColor(mContext),
+                StatusBarColorHelper.getTextColorDarkMode(mContext));
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+                StatusBarColorHelper.getIconColor(mContext),
+                StatusBarColorHelper.getIconColorDarkMode(mContext));
         applyIconTint();
     }
 
@@ -390,10 +407,15 @@ public class StatusBarIconController implements Tunable {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
             v.setImageTintList(ColorStateList.valueOf(mIconTint));
         }
-        mSignalCluster.setIconTint(mIconTint, mDarkIntensity);
+        mSignalCluster.setIconTint(mIconTint, StatusBarColorHelper.getIconColorDarkMode(mContext),
+                mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
-        mBatteryMeterView.setDarkIntensity(mDarkIntensity);
-        mClock.setTextColor(mIconTint);
+        mBatteryMeterView.setDarkIntensity(mDarkIntensity,
+                StatusBarColorHelper.getIconColor(mContext),
+                StatusBarColorHelper.getIconColorDarkMode(mContext),
+                StatusBarColorHelper.getBatteryTextColor(mContext),
+                StatusBarColorHelper.getBatteryTextColorDarkMode(mContext));
+        mClock.setTextColor(mTextColor);
         applyNotificationIconsTint();
     }
 
@@ -461,5 +483,84 @@ public class StatusBarIconController implements Tunable {
             }
         }
         return ret;
+    }
+
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(300);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                if (mAnimateTextColor) {
+                    final int blended = ColorHelper.getBlendColor(mTextColor,
+                            StatusBarColorHelper.getTextColor(mContext), position);
+                    mClock.setTextColor(blended);
+                }
+                if (mAnimateIconColor) {
+                    final int blended = ColorHelper.getBlendColor(mIconTint,
+                            StatusBarColorHelper.getIconColor(mContext), position);
+                    for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
+                        StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
+                        v.setImageTintList(ColorStateList.valueOf(blended));
+                    }
+                    mSignalCluster.setIconTint(blended, 0, mDarkIntensity);
+                    mMoreIcon.setImageTintList(ColorStateList.valueOf(blended));
+                    mBatteryMeterView.setIconColor(blended);
+                    for (int i = 0; i < mNotificationIcons.getChildCount(); i++) {
+                        StatusBarIconView v = (StatusBarIconView) mNotificationIcons.getChildAt(i);
+                        boolean isPreL = Boolean.TRUE.equals(v.getTag(R.id.icon_is_pre_L));
+                        boolean colorize = !isPreL || isGrayscale(v);
+                        if (colorize) {
+                            v.setImageTintList(ColorStateList.valueOf(blended));
+                        }
+                    }
+                }
+                if (mAnimateBatteryTextColor) {
+                    final int blended = ColorHelper.getBlendColor(mBatteryTextColor,
+                            StatusBarColorHelper.getBatteryTextColor(mContext), position);
+                    mBatteryMeterView.setTextColor(blended);
+                }
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mAnimateTextColor) {
+                    mTextColor = StatusBarColorHelper.getTextColor(mContext);
+                    mAnimateTextColor = false;
+                }
+                if (mAnimateIconColor) {
+                    mIconTint = StatusBarColorHelper.getIconColor(mContext);
+                    mAnimateIconColor = false;
+                }
+                if (mAnimateBatteryTextColor) {
+                    mBatteryTextColor = StatusBarColorHelper.getBatteryTextColor(mContext);
+                    mAnimateBatteryTextColor = false;
+                }
+            }
+        });
+        return animator;
+    }
+
+    public void updateTextColor() {
+        mAnimateTextColor = true;
+        if (!mAnimateBatteryTextColor && !mAnimateIconColor) {
+            mColorTransitionAnimator.start();
+        }
+    }
+
+    public void updateIconColor() {
+        mAnimateIconColor = true;
+        if (!mAnimateTextColor && !mAnimateBatteryTextColor) {
+            mColorTransitionAnimator.start();
+        }
+    }
+
+    public void updateBatteryTextColor() {
+        mAnimateBatteryTextColor = true;
+        if (!mAnimateTextColor && !mAnimateIconColor) {
+            mColorTransitionAnimator.start();
+        }
     }
 }

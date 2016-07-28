@@ -3225,6 +3225,43 @@ public final class Settings {
         public static final String POWER_MENU_BOOT_DIALOG_THEME = "power_menu_boot_dialog_theme";
 
         /**
+         * Color of the text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_TEXT_COLOR = "status_bar_text_color";
+
+        /**
+         * Color of the icons on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_ICON_COLOR = "status_bar_icon_color";
+
+        /**
+         * Color of the text on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_TEXT_COLOR_DARK_MODE = "status_bar_text_color_dark_mode";
+
+        /**
+         * Color of the icons on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_ICON_COLOR_DARK_MODE = "status_bar_icon_color_dark_mode";
+
+        /**
+         * Color of the battery status text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_COLOR = "status_bar_battery_text_color";
+
+        /**
+         * Color of the battery status text on the status bar, (dark mode)
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_TEXT_COLOR_DARK_MODE =
+                "status_bar_battery_text_color_dark_mode";
+
+        /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide
