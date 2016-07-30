@@ -44,6 +44,7 @@ import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
@@ -69,8 +70,11 @@ public class StatusBarIconController implements Tunable {
     private static final int CLOCK_STYLE_CENTERED = 1;
     private static final int CLOCK_STYLE_HIDDEN   = 2;
 
+    private static final int BATTERY_INDICATOR_HIDDEN   = 3;
+
     private Context mContext;
     private PhoneStatusBar mPhoneStatusBar;
+    private KeyguardStatusBarView mKeyguardStatusBarView;
     private Interpolator mLinearOutSlowIn;
     private Interpolator mFastOutSlowIn;
     private DemoStatusIcons mDemoStatusIcons;
@@ -84,6 +88,10 @@ public class StatusBarIconController implements Tunable {
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
     private BatteryMeterView mBatteryMeterView;
+    private BatteryMeterView mBatteryMeterViewKeyguard;
+    private TextView mBatteryLevelKeyguard;
+    private BatteryBar mBatteryBar;
+    private BatteryBar mBatteryBarKeyguard;
     private Clock mClockDefault;
     private Clock mClockCentered;
     private LinearLayout mCenterClockLayout;
@@ -107,6 +115,8 @@ public class StatusBarIconController implements Tunable {
     private boolean mAnimateBatteryTextColor = false;
 
     private int mClockStyle;
+    private int mBatteryIndicator;
+    private boolean mShowBatteryBar = false;
 
     private final Handler mHandler;
     private boolean mTransitionDeferring;
@@ -122,10 +132,11 @@ public class StatusBarIconController implements Tunable {
         }
     };
 
-    public StatusBarIconController(Context context, View statusBar, View keyguardStatusBar,
-            PhoneStatusBar phoneStatusBar) {
+    public StatusBarIconController(Context context, View statusBar,
+            KeyguardStatusBarView keyguardStatusBar, PhoneStatusBar phoneStatusBar) {
         mContext = context;
         mPhoneStatusBar = phoneStatusBar;
+        mKeyguardStatusBarView = keyguardStatusBar;
         mNotificationColorUtil = NotificationColorUtil.getInstance(context);
         mSystemIconArea = (LinearLayout) statusBar.findViewById(R.id.system_icon_area);
         mStatusIcons = (LinearLayout) statusBar.findViewById(R.id.statusIcons);
@@ -136,6 +147,10 @@ public class StatusBarIconController implements Tunable {
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
         mStatusIconsKeyguard = (LinearLayout) keyguardStatusBar.findViewById(R.id.statusIcons);
         mBatteryMeterView = (BatteryMeterView) statusBar.findViewById(R.id.battery);
+        mBatteryMeterViewKeyguard = (BatteryMeterView) keyguardStatusBar.findViewById(R.id.battery);
+        mBatteryLevelKeyguard = (TextView) keyguardStatusBar.findViewById(R.id.battery_level);
+        mBatteryBar = (BatteryBar) statusBar.findViewById(R.id.battery_bar);
+        mBatteryBarKeyguard = (BatteryBar) keyguardStatusBar.findViewById(R.id.battery_bar);
         mClockDefault = (Clock) statusBar.findViewById(R.id.clock);
         mClockCentered = (Clock) statusBar.findViewById(R.id.center_clock);
         mCenterClockLayout = (LinearLayout) statusBar.findViewById(R.id.center_clock_layout);
@@ -275,12 +290,18 @@ public class StatusBarIconController implements Tunable {
         if (mClockStyle == CLOCK_STYLE_CENTERED) {
             animateHide(mCenterClockLayout, animate);
         }
+        if (mShowBatteryBar) {
+            animateHide(mBatteryBar, animate);
+        }
     }
 
     public void showSystemIconArea(boolean animate) {
         animateShow(mSystemIconArea, animate);
         if (mClockStyle == CLOCK_STYLE_CENTERED) {
             animateShow(mCenterClockLayout, animate);
+        }
+        if (mShowBatteryBar) {
+            animateShow(mBatteryBar, animate);
         }
     }
 
@@ -447,6 +468,9 @@ public class StatusBarIconController implements Tunable {
                 StatusBarColorHelper.getIconColorDarkMode(mContext),
                 StatusBarColorHelper.getBatteryTextColor(mContext),
                 StatusBarColorHelper.getBatteryTextColorDarkMode(mContext));
+        mBatteryBar.setDarkIntensity(mDarkIntensity,
+                StatusBarColorHelper.getIconColor(mContext),
+                StatusBarColorHelper.getIconColorDarkMode(mContext));
         mClockDefault.setTextColor(mTextColor);
         mClockCentered.setTextColor(mTextColor);
         applyNotificationIconsTint();
@@ -544,7 +568,12 @@ public class StatusBarIconController implements Tunable {
                     }
                     mSignalCluster.setIconTint(blended, 0, mDarkIntensity);
                     mMoreIcon.setImageTintList(ColorStateList.valueOf(blended));
-                    mBatteryMeterView.setIconColor(blended);
+                    if (mBatteryIndicator != BATTERY_INDICATOR_HIDDEN) {
+                        mBatteryMeterView.setIconColor(blended);
+                    }
+                    if (mShowBatteryBar) {
+                        mBatteryBar.setIconColor(blended);
+                    }
                     for (int i = 0; i < mNotificationIcons.getChildCount(); i++) {
                         StatusBarIconView v = (StatusBarIconView) mNotificationIcons.getChildAt(i);
                         boolean isPreL = Boolean.TRUE.equals(v.getTag(R.id.icon_is_pre_L));
@@ -581,33 +610,48 @@ public class StatusBarIconController implements Tunable {
         return animator;
     }
 
-    public void updateTextColor() {
-        mAnimateTextColor = true;
-
-        if (mClockStyle == CLOCK_STYLE_DEFAULT || mClockStyle == CLOCK_STYLE_HIDDEN) {
+    public void updateTextColor(boolean animate) {
+        mAnimateTextColor = animate;
+        if (!mAnimateBatteryTextColor && !mAnimateIconColor && mAnimateTextColor) {
+            mColorTransitionAnimator.start();
+        }
+        if (mClockStyle == CLOCK_STYLE_DEFAULT || mClockStyle == CLOCK_STYLE_HIDDEN
+                || !mAnimateTextColor) {
             mClockCentered.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         }
-        if (mClockStyle == CLOCK_STYLE_CENTERED || mClockStyle == CLOCK_STYLE_HIDDEN) {
+        if (mClockStyle == CLOCK_STYLE_CENTERED || mClockStyle == CLOCK_STYLE_HIDDEN
+                || !mAnimateTextColor) {
             mClockDefault.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         }
-
-        if (!mAnimateBatteryTextColor && !mAnimateIconColor) {
-            mColorTransitionAnimator.start();
-        }
+        mBatteryLevelKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
     }
 
-    public void updateIconColor() {
-        mAnimateIconColor = true;
-        if (!mAnimateTextColor && !mAnimateBatteryTextColor) {
+    public void updateIconColor(boolean animate) {
+        mAnimateIconColor = animate;
+        if (!mAnimateTextColor && !mAnimateBatteryTextColor && mAnimateIconColor) {
             mColorTransitionAnimator.start();
         }
+        if (mBatteryIndicator == BATTERY_INDICATOR_HIDDEN) {
+            mBatteryMeterView.setIconColor(StatusBarColorHelper.getIconColor(mContext));
+        }
+        if (!mShowBatteryBar) {
+            mBatteryBar.setIconColor(StatusBarColorHelper.getIconColor(mContext));
+        }
+        mBatteryMeterViewKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
+        mBatteryBarKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
     }
 
-    public void updateBatteryTextColor() {
-        mAnimateBatteryTextColor = true;
-        if (!mAnimateTextColor && !mAnimateIconColor) {
-            mColorTransitionAnimator.start();
+    public void updateBatteryTextColor(boolean animate) {
+        if (mBatteryIndicator != BATTERY_INDICATOR_HIDDEN && animate) {
+            mAnimateBatteryTextColor = true;
+            if (!mAnimateTextColor && !mAnimateIconColor) {
+                mColorTransitionAnimator.start();
+            }
+        } else {
+            mBatteryTextColor = StatusBarColorHelper.getBatteryTextColor(mContext);
+            mBatteryMeterView.setTextColor(mBatteryTextColor);
         }
+        mBatteryMeterViewKeyguard.setTextColor(StatusBarColorHelper.getBatteryTextColor(mContext));
     }
 
     public void updateClockStyle(int clockStyle) {
@@ -636,5 +680,41 @@ public class StatusBarIconController implements Tunable {
     public void updateClockSettings() {
         mClockDefault.updateSettings();
         mClockCentered.updateSettings();
+    }
+
+    public void updateBatteryIndicator(int indicator) {
+        mBatteryIndicator = indicator;
+        mBatteryMeterView.updateBatteryIndicator(mBatteryIndicator);
+        mBatteryMeterViewKeyguard.updateBatteryIndicator(mBatteryIndicator);
+        mKeyguardStatusBarView.updateBatteryLevelVisibility();
+    }
+
+    public void updateBatteryBarVisibility(boolean show, boolean showOnKeyguard) {
+        mShowBatteryBar = show;
+        mBatteryBar.setVisibility(mShowBatteryBar ? View.VISIBLE : View.GONE);
+        mBatteryBarKeyguard.setVisibility(showOnKeyguard ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateBatteryTextVisibility(boolean show) {
+        mBatteryMeterView.setTextVisibility(show);
+        mBatteryMeterViewKeyguard.setTextVisibility(show);
+        mKeyguardStatusBarView.updateBatteryLevelVisibility();
+    }
+
+    public void updateBatteryCircleDots(int interval, int length) {
+        mBatteryMeterView.updateCircleDots(interval, length);
+        mBatteryMeterViewKeyguard.updateCircleDots(interval, length);
+    }
+
+    public void updateShowChargeAnimation(boolean show) {
+        mBatteryMeterView.setShowChargeAnimation(show);
+        mBatteryMeterViewKeyguard.setShowChargeAnimation(show);
+        mBatteryBar.setShowChargeAnimation(show);
+        mBatteryBarKeyguard.setShowChargeAnimation(show);
+    }
+
+    public void updateCutOutBatteryText(boolean cutOut) {
+        mBatteryMeterView.setCutOutText(cutOut);
+        mBatteryMeterViewKeyguard.setCutOutText(cutOut);
     }
 }

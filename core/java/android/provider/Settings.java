@@ -3316,6 +3316,64 @@ public final class Settings {
         public static final String STATUS_BAR_DATE_FORMAT = "status_bar_date_format";
 
         /**
+         * Icon of the battery on the status bar
+         * 0 - Battery portrait
+         * 1 - Battery landscape
+         * 2 - Circle
+         * 3 - Hidden
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR = "status_bar_battery_status_icon_indicator";
+
+        /**
+         *  Whether to show the battery bar on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR = "status_bar_show_battery_bar";
+
+        /**
+         *  Whether to show the battery bar on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR_LOCK_SCREEN = "status_bar_show_battery_bar_lock_screen";
+
+        /**
+         *  Whether to show the battery status text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
+
+        /**
+         * Dot interval of the battery circle icon on the status bar
+         * 0 - No dots
+         * 1 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
+
+        /**
+         * Dot length of the battery circle icon on the status bar
+         * 0 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
+
+        /**
+         *  Whether to show a battery charging animation on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION = "status_bar_battery_status_show_charge_animation";
+
+        /**
+         *  Whether to cut the battery percentage out of the battery status icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT = "status_bar_battery_status_cut_out_text";
+
+        /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide

@@ -19,6 +19,8 @@ package com.android.systemui.statusbar.phone;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
@@ -104,7 +107,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         } else if (mMultiUserSwitch.getParent() == this && mKeyguardUserSwitcherShowing) {
             removeView(mMultiUserSwitch);
         }
-        mBatteryLevel.setVisibility(mBatteryCharging ? View.VISIBLE : View.GONE);
+        updateBatteryLevelVisibility();
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -139,6 +142,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
         ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
+        ((BatteryBar) findViewById(R.id.battery_bar)).setBatteryController(batteryController);
     }
 
     public void setUserSwitcherController(UserSwitcherController controller) {
@@ -239,6 +243,22 @@ public class KeyguardStatusBarView extends RelativeLayout
             mMultiUserSwitch.animate().cancel();
             mMultiUserSwitch.setAlpha(1f);
         }
+    }
+
+    public void updateBatteryLevelVisibility() {
+        mBatteryLevel.setVisibility(showBattery() && mBatteryCharging && !showBatteryText() ? View.VISIBLE : View.GONE);
+    }
+
+    private boolean showBattery() {
+        return Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR, 0,
+                UserHandle.USER_CURRENT) != 3;
+    }
+
+    private boolean showBatteryText() {
+        return Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.STATUS_BAR_BATTERY_STATUS_SHOW_TEXT, 0,
+                UserHandle.USER_CURRENT) == 1;
     }
 
     @Override
