@@ -41,6 +41,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
 import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.StatusBarColorHelper;
+import com.android.keyguard.CarrierText;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
@@ -82,8 +83,10 @@ public class StatusBarIconController implements Tunable {
 
     private LinearLayout mSystemIconArea;
     private LinearLayout mStatusIcons;
-    private SignalClusterView mSignalCluster;
     private LinearLayout mStatusIconsKeyguard;
+    private SignalClusterView mSignalCluster;
+    private SignalClusterView mSignalClusterKeyguard;
+    private CarrierText mCarrierTextKeyguard;
     private IconMerger mNotificationIcons;
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
@@ -141,6 +144,8 @@ public class StatusBarIconController implements Tunable {
         mSystemIconArea = (LinearLayout) statusBar.findViewById(R.id.system_icon_area);
         mStatusIcons = (LinearLayout) statusBar.findViewById(R.id.statusIcons);
         mSignalCluster = (SignalClusterView) statusBar.findViewById(R.id.signal_cluster);
+        mSignalClusterKeyguard = (SignalClusterView) keyguardStatusBar.findViewById(R.id.signal_cluster);
+        mCarrierTextKeyguard = (CarrierText) keyguardStatusBar.findViewById(R.id.keyguard_carrier_text);
         mNotificationIconArea = statusBar.findViewById(R.id.notification_icon_area_inner);
         mNotificationIcons = (IconMerger) statusBar.findViewById(R.id.notificationIcons);
         mMoreIcon = (ImageView) statusBar.findViewById(R.id.moreIcon);
@@ -623,6 +628,7 @@ public class StatusBarIconController implements Tunable {
                 || !mAnimateTextColor) {
             mClockDefault.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         }
+        mCarrierTextKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         mBatteryLevelKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
     }
 
@@ -637,6 +643,12 @@ public class StatusBarIconController implements Tunable {
         if (!mShowBatteryBar) {
             mBatteryBar.setIconColor(StatusBarColorHelper.getIconColor(mContext));
         }
+        for (int i = 0; i < mStatusIconsKeyguard.getChildCount(); i++) {
+            StatusBarIconView v = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(i);
+            v.setImageTintList(ColorStateList.valueOf(StatusBarColorHelper.getIconColor(mContext)));
+        }
+        mSignalClusterKeyguard.setIconTint(StatusBarColorHelper.getIconColor(mContext), 0,
+                mDarkIntensity);
         mBatteryMeterViewKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
         mBatteryBarKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
     }
