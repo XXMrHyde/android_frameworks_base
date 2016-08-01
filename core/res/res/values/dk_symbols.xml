@@ -20,6 +20,9 @@
     <java-symbol type="style" name="ThemeDarkKat" />
     <java-symbol type="style" name="ThemeDarkKat.Dialog" />
     <java-symbol type="style" name="ThemeDarkKat.Dialog.Alert" />
+    <java-symbol type="style" name="ThemeDarkKat.Blue" />
+    <java-symbol type="style" name="ThemeDarkKat.Blue.Dialog" />
+    <java-symbol type="style" name="ThemeDarkKat.Blue.Dialog.Alert" />
 
     <!-- Global actions -->
     <java-symbol type="array" name="shutdown_reboot_options" />

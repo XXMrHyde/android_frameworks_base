@@ -3217,9 +3217,10 @@ public final class Settings {
         /**
          * Theme of the power menu and boot dialog
          * 0 = Material
-         * 1 = Darkkat
-         * 2 = Material light
-         * default: 0
+         * 1 = Material light
+         * 2 = Darkkat
+         * 3 = Darkkat-Blue
+         * default: 2
          * @hide
          */
         public static final String POWER_MENU_BOOT_DIALOG_THEME = "power_menu_boot_dialog_theme";

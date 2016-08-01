@@ -25,6 +25,8 @@
         <item name="singleChoiceItemLayout">@layout/select_dialog_singlechoice_material</item>
     </style>
 
+    <style name="AlertDialogDarkKat.Blue" />
+
     <style name="DialogWindowTitleDarkKat" parent="DialogWindowTitle.Material">
         <item name="textAppearance">@style/TextAppearanceDarkKatTitle</item>
     </style>

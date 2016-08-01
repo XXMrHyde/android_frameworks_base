@@ -19,14 +19,14 @@
     <!-- Theme Darkkat -->
     <color name="background_darkkat_blue_grey">#ff1b1f23</color>
     <color name="background_darkkat_blue_blue_grey">#ff1F2429</color>
-
-    <color name="foreground_darkkat">@color/holo_blue_light</color>
-    <color name="foreground_darkkat_light">@color/holo_blue_light</color>
     <color name="background_darkkat">@color/background_darkkat_blue_grey</color>
     <color name="background_floating_darkkat">@color/background_darkkat_blue_blue_grey</color>
 
-    <color name="primary_text_default_darkkat">@color/holo_blue_light</color>
-    <color name="primary_text_default_darkkat_light">#de33b5e5</color>
-    <color name="secondary_text_default_darkkat">#b333b5e5</color>
-    <color name="secondary_text_default_darkkat_light">#8a33b5e5</color>
+    <!-- Theme Darkkat Blue -->
+    <color name="foreground_darkkat_blue">@color/holo_blue_light</color>
+    <color name="foreground_darkkat_light_blue">@color/holo_blue_light</color>
+    <color name="primary_text_default_darkkat_blue">@color/holo_blue_light</color>
+    <color name="primary_text_default_darkkat_light_blue">#de33b5e5</color>
+    <color name="secondary_text_default_darkkat_blue">#b333b5e5</color>
+    <color name="secondary_text_default_darkkat_light_blue">#8a33b5e5</color>
 </resources>

@@ -104,7 +104,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private static final String GLOBAL_ACTION_KEY_ASSIST = "assist";
 
     private static final int THEME_MATERIAL       = 0;
-    private static final int THEME_MATERIAL_LIGHT = 2;
+    private static final int THEME_MATERIAL_LIGHT = 1;
+    private static final int THEME_DARKKAT        = 2;
 
     private final Context mContext;
     private final WindowManagerFuncs mWindowManagerFuncs;
@@ -171,15 +172,19 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private int getThemeSetting() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_DARKKAT);
     }
 
     private int getThemeResId() {
         int themeResId = com.android.internal.R.style.Theme_Material_Light;
         if (getThemeSetting() != THEME_MATERIAL_LIGHT) {
-            themeResId = getThemeSetting() == THEME_MATERIAL
-                    ? com.android.internal.R.style.Theme_Material
-                    : com.android.internal.R.style.ThemeDarkKat;
+            if (getThemeSetting() == THEME_MATERIAL) {
+                themeResId = com.android.internal.R.style.Theme_Material;
+            } else if (getThemeSetting() == THEME_DARKKAT) {
+                themeResId = com.android.internal.R.style.ThemeDarkKat;
+            } else {
+                themeResId = com.android.internal.R.style.ThemeDarkKat_Blue;
+            }
         }
         return themeResId;
     }

@@ -202,7 +202,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static public final String SYSTEM_DIALOG_REASON_ASSIST = "assist";
 
     private static final int THEME_MATERIAL       = 0;
-    private static final int THEME_MATERIAL_LIGHT = 2;
+    private static final int THEME_MATERIAL_LIGHT = 1;
+    private static final int THEME_DARKKAT        = 2;
 
     /**
      * These are the system UI flags that, when changing, can cause the layout
@@ -6142,11 +6143,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         theme = com.android.internal.R.style.Theme_Leanback_Dialog_Alert;
                     } else {
                         int themeSetting = Settings.System.getInt(mContext.getContentResolver(),
-                                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+                                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_DARKKAT);
                         if (themeSetting != THEME_MATERIAL_LIGHT) {
-                            theme = themeSetting == THEME_MATERIAL
-                                    ? com.android.internal.R.style.Theme_Material_Dialog_Alert
-                                    : com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+                            if (themeSetting == THEME_MATERIAL) {
+                                theme = com.android.internal.R.style.Theme_Material_Dialog_Alert;
+                            } else if (themeSetting == THEME_DARKKAT) {
+                                theme = com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+                            } else {
+                                theme = com.android.internal.R.style.ThemeDarkKat_Blue_Dialog_Alert;
+                            }
                         } else {
                             theme = 0;
                         }

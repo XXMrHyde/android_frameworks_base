@@ -111,7 +111,8 @@ public final class ShutdownThread extends Thread {
     private static final ShutdownThread sInstance = new ShutdownThread();
 
     private static final int THEME_MATERIAL       = 0;
-    private static final int THEME_MATERIAL_LIGHT = 2;
+    private static final int THEME_MATERIAL_LIGHT = 1;
+    private static final int THEME_DARKKAT        = 2;
 
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -847,13 +848,18 @@ public final class ShutdownThread extends Thread {
 
     private static int getThemeResId(Context context) {
         int themeSetting = Settings.System.getInt(context.getContentResolver(),
-                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_MATERIAL);
+                Settings.System.POWER_MENU_BOOT_DIALOG_THEME, THEME_DARKKAT);
         int themeResId = 0;
         if (themeSetting != THEME_MATERIAL_LIGHT) {
-            themeResId = themeSetting == THEME_MATERIAL
-                    ? com.android.internal.R.style.Theme_Material_Dialog_Alert
-                    : com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+            if (themeSetting == THEME_MATERIAL) {
+                themeResId = com.android.internal.R.style.Theme_Material_Dialog_Alert;
+            } else if (themeSetting == THEME_DARKKAT) {
+                themeResId = com.android.internal.R.style.ThemeDarkKat_Dialog_Alert;
+            } else {
+                themeResId = com.android.internal.R.style.ThemeDarkKat_Blue_Dialog_Alert;
+            }
         }
+
         return themeResId;
     }
 }

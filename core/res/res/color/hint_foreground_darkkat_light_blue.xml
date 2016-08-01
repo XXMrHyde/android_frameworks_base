@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 The Android Open Source Project
+<!-- Copyright (C) 2015 The Android Open Source Project
 
      Copyright (C) 2016 DarkKat
 
@@ -17,8 +17,6 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false"
-          android:alpha="@dimen/disabled_alpha_material_dark"
-          android:color="@color/foreground_darkkat"/>
-    <item android:color="@color/foreground_darkkat"/>
+    <item android:alpha="@dimen/hint_alpha_material_light"
+          android:color="@color/foreground_darkkat_light_blue" />
 </selector>
