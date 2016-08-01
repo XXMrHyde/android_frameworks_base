@@ -62,6 +62,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
+                <com.android.systemui.darkkat.statusbar.StatusBarNetworkNames
+                    android:id="@+id/status_bar_network_names"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/network_names_margin_start"
+                    android:layout_marginEnd="@dimen/network_names_margin_end"
+                    android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                    android:textSize="@dimen/network_names_dual_text_size"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone" />
                 <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
                     android:layout_width="@dimen/status_bar_icon_size"
                     android:layout_height="match_parent"

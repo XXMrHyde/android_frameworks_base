@@ -41,11 +41,11 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.NotificationColorUtil;
 import com.android.internal.util.darkkat.ColorHelper;
 import com.android.internal.util.darkkat.StatusBarColorHelper;
-import com.android.keyguard.CarrierText;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.darkkat.statusbar.BatteryBar;
+import com.android.systemui.darkkat.statusbar.StatusBarNetworkNames;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
@@ -86,7 +86,8 @@ public class StatusBarIconController implements Tunable {
     private LinearLayout mStatusIconsKeyguard;
     private SignalClusterView mSignalCluster;
     private SignalClusterView mSignalClusterKeyguard;
-    private CarrierText mCarrierTextKeyguard;
+    private StatusBarNetworkNames mNetworkNames;
+    private StatusBarNetworkNames mNetworkNamesKeyguard;
     private IconMerger mNotificationIcons;
     private View mNotificationIconArea;
     private ImageView mMoreIcon;
@@ -117,6 +118,7 @@ public class StatusBarIconController implements Tunable {
     private boolean mAnimateIconColor = false;
     private boolean mAnimateBatteryTextColor = false;
 
+    private boolean mShowNetworkNames = false;
     private int mClockStyle;
     private int mBatteryIndicator;
     private boolean mShowBatteryBar = false;
@@ -145,7 +147,9 @@ public class StatusBarIconController implements Tunable {
         mStatusIcons = (LinearLayout) statusBar.findViewById(R.id.statusIcons);
         mSignalCluster = (SignalClusterView) statusBar.findViewById(R.id.signal_cluster);
         mSignalClusterKeyguard = (SignalClusterView) keyguardStatusBar.findViewById(R.id.signal_cluster);
-        mCarrierTextKeyguard = (CarrierText) keyguardStatusBar.findViewById(R.id.keyguard_carrier_text);
+        mNetworkNames = (StatusBarNetworkNames) statusBar.findViewById(R.id.status_bar_network_names);
+        mNetworkNamesKeyguard =
+                (StatusBarNetworkNames) keyguardStatusBar.findViewById(R.id.keyguard_network_names);
         mNotificationIconArea = statusBar.findViewById(R.id.notification_icon_area_inner);
         mNotificationIcons = (IconMerger) statusBar.findViewById(R.id.notificationIcons);
         mMoreIcon = (ImageView) statusBar.findViewById(R.id.moreIcon);
@@ -465,6 +469,7 @@ public class StatusBarIconController implements Tunable {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
             v.setImageTintList(ColorStateList.valueOf(mIconTint));
         }
+        mNetworkNames.setTextColor(mTextColor);
         mSignalCluster.setIconTint(mIconTint, StatusBarColorHelper.getIconColorDarkMode(mContext),
                 mDarkIntensity);
         mMoreIcon.setImageTintList(ColorStateList.valueOf(mIconTint));
@@ -557,6 +562,9 @@ public class StatusBarIconController implements Tunable {
                 if (mAnimateTextColor) {
                     final int blended = ColorHelper.getBlendColor(mTextColor,
                             StatusBarColorHelper.getTextColor(mContext), position);
+                    if (mShowNetworkNames) {
+                        mNetworkNames.setTextColor(blended);
+                    }
                     if (mClockStyle == CLOCK_STYLE_DEFAULT) {
                         mClockDefault.setTextColor(blended);
                     }
@@ -620,15 +628,16 @@ public class StatusBarIconController implements Tunable {
         if (!mAnimateBatteryTextColor && !mAnimateIconColor && mAnimateTextColor) {
             mColorTransitionAnimator.start();
         }
-        if (mClockStyle == CLOCK_STYLE_DEFAULT || mClockStyle == CLOCK_STYLE_HIDDEN
-                || !mAnimateTextColor) {
+        if (!mShowNetworkNames || !mAnimateTextColor) {
+            mNetworkNames.setTextColor(StatusBarColorHelper.getTextColor(mContext));
+        }
+        if (mClockStyle != CLOCK_STYLE_CENTERED || !mAnimateTextColor) {
             mClockCentered.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         }
-        if (mClockStyle == CLOCK_STYLE_CENTERED || mClockStyle == CLOCK_STYLE_HIDDEN
-                || !mAnimateTextColor) {
+        if (mClockStyle != CLOCK_STYLE_DEFAULT || !mAnimateTextColor) {
             mClockDefault.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         }
-        mCarrierTextKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
+        mNetworkNamesKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
         mBatteryLevelKeyguard.setTextColor(StatusBarColorHelper.getTextColor(mContext));
     }
 
@@ -666,6 +675,24 @@ public class StatusBarIconController implements Tunable {
         mBatteryMeterViewKeyguard.setTextColor(StatusBarColorHelper.getBatteryTextColor(mContext));
     }
 
+    public void updateNetworkNamesOnStatusbar(boolean showCarrier, boolean showWifi,
+            boolean forceHide, int maxAllowedIcons) {
+        mShowNetworkNames = showCarrier || showWifi;
+        boolean forceHideByNumberOfIcons = false;
+        if (forceHide && mNotificationIcons.getChildCount() >= maxAllowedIcons) {
+            forceHideByNumberOfIcons = true;
+        }
+        mNetworkNames.setShowNames(showCarrier, showWifi);
+        mNetworkNames.setVisibility(mShowNetworkNames && !forceHideByNumberOfIcons
+                ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateNetworkNamesOnKeyguardStatusbar(boolean showCarrier, boolean showWifi) {
+        boolean show = showCarrier || showWifi;
+        mNetworkNamesKeyguard.setShowNames(showCarrier, showWifi);
+        mNetworkNamesKeyguard.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     public void updateClockStyle(int clockStyle) {
         mClockStyle = clockStyle;
 
@@ -686,6 +713,7 @@ public class StatusBarIconController implements Tunable {
                 mClockCentered.setVisibility(View.GONE);
                 break;
         }
+        mNetworkNames.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
         mNotificationIcons.setCenteredClock(mClockStyle == CLOCK_STYLE_CENTERED);
     }
 

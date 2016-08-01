@@ -3262,6 +3262,55 @@ public final class Settings {
                 "status_bar_battery_text_color_dark_mode";
 
         /**
+         *  Whether to show the name of the carrier on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER =
+                "status_bar_network_names_show_carrier";
+
+        /**
+         *  Whether to show the name of the carrier on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER_ON_LOCK_SCREEN =
+                "status_bar_network_names_show_carrier_on_lock_screen";
+
+        /**
+         *  Whether to show the name of the wifi network on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_SHOW_WIFI =
+                "status_bar_network_names_show_wifi";
+
+        /**
+         *  Whether to show the name of the wifi network on the status bar of the lock screen
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_SHOW_WIFI_ON_LOCK_SCREEN =
+                "status_bar_network_names_show_wifi_on_lock_screen";
+
+        /**
+         * Wether to hide the carrier label on the status bar,
+         * when the custom number of notifications is reached
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_HIDE = "status_bar_network_names_hide";
+
+        /**
+         * Hide the network names on the status bar when the notification icons will reach this number
+         * 1: 1 notification icon (always)
+         * 2: 2 notification icons
+         * 3: 3 notification icons
+         * 4: 4 notification icons
+         * 5: 5 notification icons
+         * 6: 6 notification icons
+         * default: 1
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_NAMES_NUMBER_OF_NOTIFICATION_ICONS =
+                "status_bar_network_names_number_of_notification_icons";
+
+        /**
          * Clock and date position on the status bar
          * 0: Right clock
          * 1: Center clock

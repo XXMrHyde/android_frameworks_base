@@ -100,6 +100,7 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.darkkat.DeviceUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -112,6 +113,7 @@ import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.statusbar.BatteryBar;
+import com.android.systemui.darkkat.statusbar.StatusBarNetworkNames;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
@@ -425,6 +427,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER_ON_LOCK_SCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI_ON_LOCK_SCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_HIDE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_NUMBER_OF_NOTIFICATION_ICONS),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_POSITION),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -479,6 +499,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))) {
                 updateStatusBarBatteryTextColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_HIDE))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_NUMBER_OF_NOTIFICATION_ICONS))) {
+                updateNetworkNamesOnStatusbar();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER_ON_LOCK_SCREEN))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI_ON_LOCK_SCREEN))) {
+                updateNetworkNamesOnKeyguardStatusbar();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK_DATE_POSITION))) {
                 updateClockStyle();
@@ -981,6 +1015,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (isAPhone) {
             mNetworkController.addEmergencyListener(mHeader);
         }
+
+        ((StatusBarNetworkNames) mKeyguardStatusBar.findViewById(R.id.keyguard_network_names))
+                .setNetworkController(mNetworkController);
+        ((StatusBarNetworkNames) mStatusBarView.findViewById(R.id.status_bar_network_names))
+                .setNetworkController(mNetworkController);
 
         mFlashlightController = new FlashlightController(mContext);
         mKeyguardBottomArea.setFlashlightController(mFlashlightController);
@@ -1613,6 +1652,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         updateNotificationShade();
         mIconController.updateNotificationIcons(mNotificationData);
+        updateNetworkNamesOnStatusbar();
     }
 
     @Override
@@ -1933,6 +1973,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateStatusBarTextColor(false);
         updateStatusBarIconColor(false);
         updateStatusBarBatteryTextColor(false);
+        updateNetworkNamesOnStatusbar();
+        updateNetworkNamesOnKeyguardStatusbar();
         updateClockStyle();
         updateClockSettings();
         updateBatteryIndicator();
@@ -1958,6 +2000,37 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateStatusBarBatteryTextColor(boolean animate) {
         if (mIconController != null) {
             mIconController.updateBatteryTextColor(animate);
+        }
+    }
+
+    private void updateNetworkNamesOnStatusbar() {
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        final boolean showCarrier = DeviceUtils.deviceSupportsMobileData(mContext)
+                && Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER, 0) == 1;
+        final boolean showWifi = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI, 0) == 1;
+        final boolean forceHide = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_HIDE, 1) == 1;
+        final int maxAllowedIcons = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_NUMBER_OF_NOTIFICATION_ICONS, 1);
+        if (mIconController != null) {
+            mIconController.updateNetworkNamesOnStatusbar(showCarrier, showWifi, forceHide,
+                    maxAllowedIcons);
+        }
+    }
+
+    private void updateNetworkNamesOnKeyguardStatusbar() {
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        final boolean showCarrier = DeviceUtils.deviceSupportsMobileData(mContext)
+                && Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER_ON_LOCK_SCREEN, 1) == 1;
+        final boolean showWifi = Settings.System.getInt(resolver,
+                Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_WIFI_ON_LOCK_SCREEN, 0) == 1;
+        if (mIconController != null) {
+            mIconController.updateNetworkNamesOnKeyguardStatusbar(showCarrier, showWifi);
         }
     }
 
