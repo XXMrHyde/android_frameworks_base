@@ -221,6 +221,7 @@ public class StatusBarIconController implements Tunable {
         mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, mIconSize));
         applyIconTint();
+        updateStatusIconKeyguardColor();
     }
 
     public void updateSystemIcon(String slot, int index, int viewIndex,
@@ -230,6 +231,7 @@ public class StatusBarIconController implements Tunable {
         view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
         view.set(icon);
         applyIconTint();
+        updateStatusIconKeyguardColor();
     }
 
     public void removeSystemIcon(String slot, int index, int viewIndex) {
@@ -652,14 +654,18 @@ public class StatusBarIconController implements Tunable {
         if (!mShowBatteryBar) {
             mBatteryBar.setIconColor(StatusBarColorHelper.getIconColor(mContext));
         }
-        for (int i = 0; i < mStatusIconsKeyguard.getChildCount(); i++) {
-            StatusBarIconView v = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(i);
-            v.setImageTintList(ColorStateList.valueOf(StatusBarColorHelper.getIconColor(mContext)));
-        }
+        updateStatusIconKeyguardColor();
         mSignalClusterKeyguard.setIconTint(StatusBarColorHelper.getIconColor(mContext), 0,
                 mDarkIntensity);
         mBatteryMeterViewKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
         mBatteryBarKeyguard.setIconColor(StatusBarColorHelper.getIconColor(mContext));
+    }
+
+    public void updateStatusIconKeyguardColor() {
+        for (int i = 0; i < mStatusIconsKeyguard.getChildCount(); i++) {
+            StatusBarIconView v = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(i);
+            v.setImageTintList(ColorStateList.valueOf(StatusBarColorHelper.getIconColor(mContext)));
+        }
     }
 
     public void updateBatteryTextColor(boolean animate) {
