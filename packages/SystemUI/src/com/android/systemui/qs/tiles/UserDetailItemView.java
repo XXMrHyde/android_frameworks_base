@@ -19,6 +19,7 @@ package com.android.systemui.qs.tiles;
 import com.android.internal.util.ArrayUtils;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.statusbar.phone.UserAvatarView;
 
 import android.content.Context;
@@ -90,9 +91,34 @@ public class UserDetailItemView extends LinearLayout {
         mAvatar.setBitmap(picture);
     }
 
+    public void bind(String name, Bitmap picture, boolean isCurrent) {
+        mName.setText(name);
+        if (!isCurrent) {
+            mName.setTextColor((mName.getCurrentTextColor() & 0xff000000)
+                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        } else {
+            mName.setTextColor(QSColorHelper.getAccentColor(mContext));
+        }
+        mAvatar.setBitmap(picture);
+        mAvatar.setActiveFrameColor(QSColorHelper.getAccentColor(mContext));
+    }
+
     public void bind(String name, Drawable picture) {
         mName.setText(name);
         mAvatar.setDrawable(picture);
+    }
+
+    public void bind(String name, Drawable picture, boolean isCurrent, boolean colorize) {
+        int color = colorize ? QSColorHelper.getIconColor(mContext) : 0;
+        mName.setText(name);
+        if (!isCurrent) {
+            mName.setTextColor((mName.getCurrentTextColor() & 0xff000000)
+                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        } else {
+            mName.setTextColor(QSColorHelper.getAccentColor(mContext));
+        }
+        mAvatar.setDrawable(picture, color);
+        mAvatar.setActiveFrameColor(QSColorHelper.getAccentColor(mContext));
     }
 
     @Override

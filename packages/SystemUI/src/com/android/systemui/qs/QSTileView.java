@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.qs.QSTile.AnimationIcon;
 import com.android.systemui.qs.QSTile.State;
 
@@ -93,6 +94,7 @@ public class QSTileView extends ViewGroup {
         mDivider.setBackgroundColor(context.getColor(R.color.qs_tile_divider));
         final int dh = res.getDimensionPixelSize(R.dimen.qs_tile_divider_height);
         mDivider.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, dh));
+        setDividerColor();
         addView(mDivider);
 
         setClickable(true);
@@ -139,9 +141,12 @@ public class QSTileView extends ViewGroup {
         if (mDual) {
             mDualLabel = new QSDualTileLabel(mContext);
             mDualLabel.setId(View.generateViewId());
-            mDualLabel.setBackgroundResource(R.drawable.btn_borderless_rect);
+            RippleDrawable bg = (RippleDrawable) res.getDrawable(
+                    R.drawable.btn_borderless_rect).mutate();
+            bg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+            mDualLabel.setBackground(bg);
             mDualLabel.setFirstLineCaret(mContext.getDrawable(R.drawable.qs_dual_tile_caret));
-            mDualLabel.setTextColor(mContext.getColor(R.color.qs_tile_text));
+            mDualLabel.setTextColor(QSColorHelper.getTextColor(mContext));
             mDualLabel.setPadding(0, mDualTileVerticalPaddingPx, 0, mDualTileVerticalPaddingPx);
             mDualLabel.setTypeface(CONDENSED);
             mDualLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -159,7 +164,8 @@ public class QSTileView extends ViewGroup {
             mDualLabel.setAccessibilityTraversalAfter(mTopBackgroundView.getId());
         } else {
             mLabel = new TextView(mContext);
-            mLabel.setTextColor(mContext.getColor(R.color.qs_tile_text));
+            mLabel.setTextColor((mLabel.getCurrentTextColor() & 0xff000000)
+                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
             mLabel.setGravity(Gravity.CENTER_HORIZONTAL);
             mLabel.setMinLines(2);
             mLabel.setPadding(0, 0, 0, 0);
@@ -181,6 +187,8 @@ public class QSTileView extends ViewGroup {
             recreateLabel();
         }
         if (mTileBackground instanceof RippleDrawable) {
+            ((RippleDrawable) mTileBackground).setColor(
+                    QSColorHelper.getRippleColorStateList(mContext));
             setRipple((RippleDrawable) mTileBackground);
         }
         if (dual) {
@@ -315,6 +323,9 @@ public class QSTileView extends ViewGroup {
                 d.setAutoMirrored(true);
             }
             iv.setImageDrawable(d);
+            if (d != null) {
+                d.setTint(QSColorHelper.getIconColor(mContext));
+            }
             iv.setTag(R.id.qs_icon_tag, state.icon);
             if (d instanceof Animatable) {
                 Animatable a = (Animatable) d;
@@ -347,6 +358,55 @@ public class QSTileView extends ViewGroup {
         }
         firstView.setAccessibilityTraversalAfter(previousView.getId());
         return lastView;
+    }
+
+    public void setTextColor() {
+        if (mDualLabel != null) {
+            mDualLabel.setTextColor(QSColorHelper.getTextColor(mContext));
+        }
+        if (mLabel != null) {
+            mLabel.setTextColor((mLabel.getCurrentTextColor() & 0xff000000)
+                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        }
+    }
+
+    public void setIconColor() {
+        if (mIcon instanceof ImageView) {
+            if (((ImageView) mIcon).getDrawable() != null) {
+                ((ImageView) mIcon).getDrawable().setTint(QSColorHelper.getIconColor(mContext));
+            }
+        } else if (mIcon instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) mIcon).getChildCount(); i++) {
+                if (((ViewGroup) mIcon).getChildAt(i) instanceof ImageView) {
+                    ImageView iv = (ImageView) ((ViewGroup) mIcon).getChildAt(i);
+                    if (iv.getDrawable() != null) {
+                        iv.getDrawable().setTint(QSColorHelper.getIconColor(mContext));
+                    }
+                }
+            }
+        }
+        mDivider.setBackgroundTintList(QSColorHelper.getIconColorStateList(mContext));
+        if (mDualLabel != null) {
+            mDualLabel.setIconColor();
+        }
+    }
+
+    public void setRippleColor() {
+        if (mTileBackground instanceof RippleDrawable) {
+            ((RippleDrawable) mTileBackground).setColor(
+                    QSColorHelper.getRippleColorStateList(mContext));
+        }
+        if (mDualLabel != null) {
+            if (mDualLabel.getBackground() instanceof RippleDrawable) {
+                RippleDrawable bg = (RippleDrawable) mDualLabel.getBackground().mutate();
+                bg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+                mDualLabel.setBackground(bg);
+            }
+        }
+    }
+
+    public void setDividerColor() {
+        mDivider.setBackgroundTintList(QSColorHelper.getIconColorStateList(mContext));
     }
 
     private class H extends Handler {

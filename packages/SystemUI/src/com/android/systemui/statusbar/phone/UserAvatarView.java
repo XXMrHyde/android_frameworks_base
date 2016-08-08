@@ -198,6 +198,10 @@ public class UserAvatarView extends View {
     }
 
     public void setDrawable(Drawable d) {
+        setDrawable(d, 0);
+    }
+
+    public void setDrawable(Drawable d, int color) {
         if (mDrawable != null) {
             mDrawable.setCallback(null);
             unscheduleDrawable(mDrawable);
@@ -210,6 +214,9 @@ public class UserAvatarView extends View {
             }
             d.setLayoutDirection(getLayoutDirection());
             configureBounds();
+            if (color != 0) {
+                d.setTint(color);
+            }
         }
         if (d != null) {
             mBitmap = null;

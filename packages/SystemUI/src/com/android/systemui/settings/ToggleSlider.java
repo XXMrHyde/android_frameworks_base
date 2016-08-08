@@ -17,8 +17,11 @@
 package com.android.systemui.settings;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 
 public class ToggleSlider extends RelativeLayout {
@@ -135,6 +139,32 @@ public class ToggleSlider extends RelativeLayout {
             copy.recycle();
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    public void setBackgroundColor() {
+        if (mSlider.getThumb() instanceof LayerDrawable) {
+            ((LayerDrawable) mSlider.getThumb()).findDrawableByLayerId(R.id.background)
+                    .setTint(QSColorHelper.getBackgroundColor(mContext));
+        }
+    }
+
+    public void setAccentColor() {
+        mSlider.setProgressTintList(QSColorHelper.getAccentColorStateList(mContext));
+    }
+
+    public void setIconColor() {
+        if (mSlider.getThumb() instanceof LayerDrawable) {
+            ((LayerDrawable) mSlider.getThumb()).findDrawableByLayerId(R.id.color_fill)
+                    .setTint(QSColorHelper.getIconColor(mContext));
+        }
+        mSlider.setProgressBackgroundTintList(QSColorHelper.getIconColorStateList(mContext));
+    }
+
+    public void setRippleColor() {
+        if (mSlider.getBackground() instanceof RippleDrawable) {
+            ((RippleDrawable) mSlider.getBackground()).setColor(
+                    QSColorHelper.getRippleColorStateList(mContext));
+        }
     }
 
     private final OnCheckedChangeListener mCheckListener = new OnCheckedChangeListener() {

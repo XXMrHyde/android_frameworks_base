@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 
 import java.util.Objects;
 
@@ -98,6 +99,7 @@ public class QSDualTileLabel extends LinearLayout {
 
     public void setFirstLineCaret(Drawable d) {
         mFirstLineCaret.setImageDrawable(d);
+        mFirstLineCaret.setImageTintList(QSColorHelper.getIconColorStateList(mContext));
         if (d != null) {
             final int h = d.getIntrinsicHeight();
             mFirstLine.setMinHeight(h);
@@ -133,8 +135,10 @@ public class QSDualTileLabel extends LinearLayout {
     }
 
     public void setTextColor(int color) {
-        mFirstLine.setTextColor(color);
-        mSecondLine.setTextColor(color);
+        mFirstLine.setTextColor((mFirstLine.getCurrentTextColor() & 0xff000000)
+            | (color & 0x00ffffff));
+        mSecondLine.setTextColor((mSecondLine.getCurrentTextColor() & 0xff000000)
+            | (color & 0x00ffffff));
         rescheduleUpdateText();
     }
 
@@ -191,6 +195,10 @@ public class QSDualTileLabel extends LinearLayout {
         mFirstLine.setText(mText.substring(0, lastWordBoundary));
         mSecondLine.setText(mText.substring(lastWordBoundary).trim());
         mSecondLine.setVisibility(VISIBLE);
+    }
+
+    public void setIconColor() {
+        mFirstLineCaret.setImageTintList(QSColorHelper.getIconColorStateList(mContext));
     }
 
     private final Runnable mUpdateText = new Runnable() {

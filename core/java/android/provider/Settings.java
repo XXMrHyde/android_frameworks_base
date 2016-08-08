@@ -3263,6 +3263,36 @@ public final class Settings {
                 "status_bar_battery_text_color_dark_mode";
 
         /**
+         * Color of the quick settings panel background
+         * @hide
+         */
+        public static final String QS_BACKGROUND_COLOR = "qs_background_color";
+
+        /**
+         * Color of the quick settings accent
+         * @hide
+         */
+        public static final String QS_ACCENT_COLOR = "qs_accent_color";
+
+        /**
+         * Color of the quick settings text
+         * @hide
+         */
+        public static final String QS_TEXT_COLOR = "qs_text_color";
+
+        /**
+         * Color of the quick settings icons
+         * @hide
+         */
+        public static final String QS_ICON_COLOR = "qs_icons_color";
+
+        /**
+         * Color of the quick settings icon background ripple effect
+         * @hide
+         */
+        public static final String QS_RIPPLE_COLOR = "qs_ripple_color";
+
+        /**
          *  Whether to show the name of the carrier on the status bar
          * @hide
          */

@@ -193,6 +193,13 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
         return string;
     }
 
+    public void updateDeatilItems() {
+        if (mDetailAdapter == null) {
+            return;
+        }
+        mDetailAdapter.updateItems();
+    }
+
     private static final class CallbackInfo {
         boolean enabled;
         boolean connected;

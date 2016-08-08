@@ -18,10 +18,12 @@ package com.android.systemui.qs.tiles;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.qs.PseudoGridView;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 
 import android.content.Context;
+import android.graphics.drawable.RippleDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,14 +69,16 @@ public class UserDetailView extends PseudoGridView {
             UserSwitcherController.UserRecord item = getItem(position);
             UserDetailItemView v = UserDetailItemView.convertOrInflate(
                     mContext, convertView, parent);
+            ((RippleDrawable) v.getBackground()).setColor(
+                    QSColorHelper.getRippleColorStateList(mContext));
             if (v != convertView) {
                 v.setOnClickListener(this);
             }
             String name = getName(mContext, item);
             if (item.picture == null) {
-                v.bind(name, getDrawable(mContext, item));
+                v.bind(name, getDrawable(mContext, item), item.isCurrent, item.isAddUser);
             } else {
-                v.bind(name, item.picture);
+                v.bind(name, item.picture, item.isCurrent);
             }
             v.setActivated(item.isCurrent);
             v.setTag(item);

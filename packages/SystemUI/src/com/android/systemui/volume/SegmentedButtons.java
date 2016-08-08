@@ -17,6 +17,8 @@
 package com.android.systemui.volume;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.RippleDrawable;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -109,6 +111,22 @@ public class SegmentedButtons extends LinearLayout {
     private void fireInteraction() {
         if (mCallback != null) {
             mCallback.onInteraction();
+        }
+    }
+
+    public void setTextColor(ColorStateList colors) {
+        for (int i = 0; i < getChildCount(); i++) {
+            final TextView tv = (TextView) getChildAt(i);
+            tv.setTextColor(colors);
+        }
+    }
+
+    public void setRippleColor(ColorStateList color) {
+        for (int i = 0; i < getChildCount(); i++) {
+            final View v = getChildAt(i);
+            RippleDrawable bg = (RippleDrawable) v.getBackground().mutate();
+            bg.setColor(color);
+            v.setBackground(bg);
         }
     }
 

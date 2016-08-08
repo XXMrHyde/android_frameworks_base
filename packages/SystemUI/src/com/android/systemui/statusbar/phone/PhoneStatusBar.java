@@ -114,6 +114,7 @@ import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.darkkat.statusbar.StatusBarNetworkNames;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.keyguard.KeyguardViewMediator;
@@ -277,7 +278,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     UserSwitcherController mUserSwitcherController;
     NextAlarmController mNextAlarmController;
     KeyguardMonitor mKeyguardMonitor;
-    BrightnessMirrorController mBrightnessMirrorController;
+    BrightnessMirrorController mBrightnessMirrorController = null;
     AccessibilityController mAccessibilityController;
     FingerprintUnlockController mFingerprintUnlockController;
 
@@ -307,6 +308,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     TextView mNotificationPanelDebugText;
 
     // settings
+    private View mQSContainer;
     private QSPanel mQSPanel;
 
     // top bar
@@ -427,6 +429,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_BACKGROUND_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_ACCENT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_RIPPLE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -499,6 +516,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))) {
                 updateStatusBarBatteryTextColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_BACKGROUND_COLOR))) {
+                updateQSBackgroundColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_ACCENT_COLOR))) {
+                updateQSAccentColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_TEXT_COLOR))) {
+                updateQSTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_ICON_COLOR))) {
+                updateQSIconColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_RIPPLE_COLOR))) {
+                updateQSRippleColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER))
                 || uri.equals(Settings.System.getUriFor(
@@ -1039,7 +1071,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
 
         // Set up the quick settings tile panel
+        mQSContainer = mStatusBarWindow.findViewById(R.id.quick_settings_container);
         mQSPanel = (QSPanel) mStatusBarWindow.findViewById(R.id.quick_settings_panel);
+        if (mQSContainer != null) {
+            mQSContainer.setBackgroundTintList(QSColorHelper.getBackgroundColorStateList(mContext));
+        }
         if (mQSPanel != null) {
             final QSTileHost qsh = new QSTileHost(mContext, this,
                     mBluetoothController, mLocationController, mRotationLockController,
@@ -1049,8 +1085,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mSecurityController);
             mQSPanel.setHost(qsh);
             mQSPanel.setTiles(qsh.getTiles());
-            mBrightnessMirrorController = new BrightnessMirrorController(mStatusBarWindow);
-            mQSPanel.setBrightnessMirror(mBrightnessMirrorController);
             mHeader.setQSPanel(mQSPanel);
             qsh.setCallback(new QSTileHost.Callback() {
                 @Override
@@ -1997,9 +2031,43 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+
     private void updateStatusBarBatteryTextColor(boolean animate) {
         if (mIconController != null) {
             mIconController.updateBatteryTextColor(animate);
+        }
+    }
+
+    private void updateQSBackgroundColor() {
+        if (mQSContainer != null) {
+            mQSContainer.setBackgroundTintList(QSColorHelper.getBackgroundColorStateList(mContext));
+        }
+        if (mQSPanel != null) {
+           mQSPanel.setBackgroundColor();
+        }
+    }
+
+    private void updateQSAccentColor() {
+        if (mQSPanel != null) {
+           mQSPanel.setAccentColor();
+        }
+    }
+
+    private void updateQSTextColor() {
+        if (mQSPanel != null) {
+           mQSPanel.setTextColor();
+        }
+    }
+
+    private void updateQSIconColor() {
+        if (mQSPanel != null) {
+           mQSPanel.setIconColor();
+        }
+    }
+
+    private void updateQSRippleColor() {
+        if (mQSPanel != null) {
+           mQSPanel.setRippleColor();
         }
     }
 

@@ -34,6 +34,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
 import com.android.systemui.SysUIToast;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.statusbar.policy.ZenModeController;
 import com.android.systemui.volume.ZenModePanel;
@@ -188,6 +189,22 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         }
     }
 
+    public void updateDndModePanelBackground() {
+        mDetailAdapter.updateDndModePanelBackground();
+    }
+
+    public void updateDeatailTextColor() {
+        mDetailAdapter.updateDeatailTextColor();
+    }
+
+    public void updateDeatailIconColor() {
+        mDetailAdapter.updateDeatailIconColor();
+    }
+
+    public void updateDeatailRippleColor() {
+        mDetailAdapter.updateDeatailRippleColor();
+    }
+
     private final OnSharedPreferenceChangeListener mPrefListener
             = new OnSharedPreferenceChangeListener() {
         @Override
@@ -216,6 +233,7 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
     };
 
     private final class DndDetailAdapter implements DetailAdapter, OnAttachStateChangeListener {
+        private ZenModePanel mZenModePanel = null;
 
         @Override
         public int getTitle() {
@@ -248,15 +266,23 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
 
         @Override
         public View createDetailView(Context context, View convertView, ViewGroup parent) {
-            final ZenModePanel zmp = convertView != null ? (ZenModePanel) convertView
+            mZenModePanel = convertView != null ? (ZenModePanel) convertView
                     : (ZenModePanel) LayoutInflater.from(context).inflate(
                             R.layout.zen_mode_panel, parent, false);
             if (convertView == null) {
-                zmp.init(mController);
-                zmp.addOnAttachStateChangeListener(this);
-                zmp.setCallback(mZenModePanelCallback);
+                mZenModePanel.init(mController);
+                mZenModePanel.addOnAttachStateChangeListener(this);
+                mZenModePanel.setCallback(mZenModePanelCallback);
+                mZenModePanel.setZenModePanelBackgroundColor(
+                        QSColorHelper.getDndModePanelBackgroundColor(context));
+                mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(context),
+                        QSColorHelper.getTextColor(mContext), QSColorHelper.getAccentColor(mContext));
+                mZenModePanel.setZenModeIconColor(
+                        QSColorHelper.getDndModeConditionsIconColors(mContext),
+                                QSColorHelper.getIconColorStateList(mContext));
+                mZenModePanel.setZenModeRippleColor(QSColorHelper.getRippleColorStateList(mContext));
             }
-            return zmp;
+            return mZenModePanel;
         }
 
         @Override
@@ -267,6 +293,34 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         @Override
         public void onViewDetachedFromWindow(View v) {
             mShowingDetail = false;
+        }
+
+        private void updateDndModePanelBackground() {
+            if (mZenModePanel != null) {
+                mZenModePanel.setZenModePanelBackgroundColor(
+                        QSColorHelper.getDndModePanelBackgroundColor(mContext));
+            }
+        }
+
+        private void updateDeatailTextColor() {
+            if (mZenModePanel != null) {
+                mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(mContext),
+                        QSColorHelper.getTextColor(mContext), QSColorHelper.getAccentColor(mContext));
+            }
+        }
+
+        private void updateDeatailIconColor() {
+            if (mZenModePanel != null) {
+                mZenModePanel.setZenModeIconColor(
+                        QSColorHelper.getDndModeConditionsIconColors(mContext),
+                                QSColorHelper.getIconColorStateList(mContext));
+            }
+        }
+
+        private void updateDeatailRippleColor() {
+            if (mZenModePanel != null) {
+                mZenModePanel.setZenModeRippleColor(QSColorHelper.getRippleColorStateList(mContext));
+            }
         }
     }
 

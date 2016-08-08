@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -36,7 +38,10 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.qs.QSTile.DetailAdapter;
+import com.android.systemui.qs.tiles.DndTile;
+import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.settings.ToggleSlider;
 import com.android.systemui.statusbar.phone.QSTileHost;
@@ -89,9 +94,25 @@ public class QSPanel extends ViewGroup {
         mContext = context;
 
         mDetail = LayoutInflater.from(context).inflate(R.layout.qs_detail, this, false);
+        ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
+                R.id.qs_detail_transition_background).setTint(
+                        QSColorHelper.getBackgroundColor(mContext));
+        ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
+                R.id.qs_detail_transition_color).setTint(
+                        QSColorHelper.getIconColor(mContext));
         mDetailContent = (ViewGroup) mDetail.findViewById(android.R.id.content);
         mDetailSettingsButton = (TextView) mDetail.findViewById(android.R.id.button2);
+        mDetailSettingsButton.setTextColor((mDetailSettingsButton.getCurrentTextColor() & 0xff000000)
+                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        RippleDrawable sbbg = (RippleDrawable) mDetailSettingsButton.getBackground().mutate();
+        sbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+        mDetailSettingsButton.setBackground(sbbg);
         mDetailDoneButton = (TextView) mDetail.findViewById(android.R.id.button1);
+        mDetailDoneButton.setTextColor((mDetailDoneButton.getCurrentTextColor() & 0xff000000)
+                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        RippleDrawable dbbg = (RippleDrawable) mDetailDoneButton.getBackground().mutate();
+        dbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+        mDetailDoneButton.setBackground(dbbg);
         updateDetailText();
         mDetail.setVisibility(GONE);
         mDetail.setClickable(true);
@@ -107,6 +128,10 @@ public class QSPanel extends ViewGroup {
         mBrightnessController = new BrightnessController(getContext(),
                 (ImageView) findViewById(R.id.brightness_icon),
                 (ToggleSlider) findViewById(R.id.brightness_slider));
+        mBrightnessController.setBackgroundColor();
+        mBrightnessController.setAccentColor();
+        mBrightnessController.setIconColor();
+        mBrightnessController.setRippleColor();
 
         mDetailDoneButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -218,6 +243,74 @@ public class QSPanel extends ViewGroup {
             r.tile.refreshState();
         }
         mFooter.refreshState();
+    }
+
+    public void setBackgroundColor() {
+        mBrightnessController.setBackgroundColor();
+        ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
+                R.id.qs_detail_transition_background).setTint(
+                        QSColorHelper.getBackgroundColor(mContext));
+        for (TileRecord r : mRecords) {
+            if (r.tile instanceof DndTile) {
+                ((DndTile) r.tile).updateDndModePanelBackground();
+            }
+        }
+    }
+
+    public void setAccentColor() {
+        mBrightnessController.setAccentColor();
+        for (TileRecord r : mRecords) {
+            if (r.tile instanceof DndTile) {
+                ((DndTile) r.tile).updateDeatailTextColor();
+                ((DndTile) r.tile).updateDeatailIconColor();
+            }
+        }
+    }
+
+    public void setTextColor() {
+        for (TileRecord r : mRecords) {
+            r.tileView.setTextColor();
+            if (r.tile instanceof DndTile) {
+                ((DndTile) r.tile).updateDeatailTextColor();
+            }
+        }
+        mDetailSettingsButton.setTextColor((mDetailSettingsButton.getCurrentTextColor() & 0xff000000)
+                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        mDetailDoneButton.setTextColor((mDetailDoneButton.getCurrentTextColor() & 0xff000000)
+                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+        mFooter.setTextColor();
+    }
+
+    public void setIconColor() {
+        mBrightnessController.setIconColor();
+        ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
+                R.id.qs_detail_transition_color).setTint(
+                        QSColorHelper.getIconColor(mContext));
+        for (TileRecord r : mRecords) {
+            r.tileView.setIconColor();
+            if (r.tile instanceof WifiTile) {
+                ((WifiTile) r.tile).updateDeatilItems();
+            } else if (r.tile instanceof DndTile) {
+                ((DndTile) r.tile).updateDeatailIconColor();
+            }
+        }
+        mFooter.setIconColor();
+    }
+
+    public void setRippleColor() {
+        mBrightnessController.setRippleColor();
+        for (TileRecord r : mRecords) {
+            r.tileView.setRippleColor();
+            if (r.tile instanceof DndTile) {
+                ((DndTile) r.tile).updateDeatailRippleColor();
+            }
+        }
+        RippleDrawable sbbg = (RippleDrawable) mDetailSettingsButton.getBackground().mutate();
+        sbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+        mDetailSettingsButton.setBackground(sbbg);
+        RippleDrawable dbbg = (RippleDrawable) mDetailDoneButton.getBackground().mutate();
+        dbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
+        mDetailDoneButton.setBackground(dbbg);
     }
 
     public void showDetailAdapter(boolean show, DetailAdapter adapter, int[] locationInWindow) {
