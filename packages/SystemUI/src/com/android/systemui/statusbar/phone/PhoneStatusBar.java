@@ -114,6 +114,7 @@ import com.android.systemui.R;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.darkkat.statusbar.StatusBarNetworkNames;
+import com.android.systemui.darkkat.util.HeaderColorHelper;
 import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -429,6 +430,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_BACKGROUND_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_ACCENT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_RIPPLE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADER_BATTERY_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -516,6 +535,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_BATTERY_TEXT_COLOR))) {
                 updateStatusBarBatteryTextColor(true);
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_BACKGROUND_COLOR))) {
+                updateHeaderBackgroundColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_ACCENT_COLOR))) {
+                updateHeaderAccentColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_TEXT_COLOR))) {
+                updateHeaderTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_ICON_COLOR))) {
+                updateHeaderIconColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_RIPPLE_COLOR))) {
+                updateHeaderRippleColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADER_BATTERY_TEXT_COLOR))) {
+                updateHeaderBatteryTextColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_BACKGROUND_COLOR))) {
                 updateQSBackgroundColor();
@@ -976,6 +1013,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mHeader = (StatusBarHeaderView) mStatusBarWindow.findViewById(R.id.header);
         mHeader.setActivityStarter(this);
+        mHeader.setBackgroundTintList(
+                HeaderColorHelper.getBackgroundColorStateList(mContext));
+        mHeader.setAccentColor();
+        mHeader.setTextColor();
+        mHeader.setIconColor();
+        mHeader.setRippleColor();
+        mHeader.setBatteryTextColor();
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
         mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
         mKeyguardBottomArea =
@@ -2035,6 +2079,43 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateStatusBarBatteryTextColor(boolean animate) {
         if (mIconController != null) {
             mIconController.updateBatteryTextColor(animate);
+        }
+    }
+
+    private void updateHeaderBackgroundColor() {
+        if (mHeader != null) {
+            mHeader.setBackgroundTintList(
+                    HeaderColorHelper.getBackgroundColorStateList(mContext));
+        }
+    }
+
+    private void updateHeaderAccentColor() {
+        if (mHeader != null) {
+            mHeader.setAccentColor();
+        }
+    }
+
+    private void updateHeaderTextColor() {
+        if (mHeader != null) {
+            mHeader.setTextColor();
+        }
+    }
+
+    private void updateHeaderIconColor() {
+        if (mHeader != null) {
+            mHeader.setIconColor();
+        }
+    }
+
+    private void updateHeaderRippleColor() {
+        if (mHeader != null) {
+            mHeader.setRippleColor();
+        }
+    }
+
+    private void updateHeaderBatteryTextColor() {
+        if (mHeader != null) {
+            mHeader.setBatteryTextColor();
         }
     }
 

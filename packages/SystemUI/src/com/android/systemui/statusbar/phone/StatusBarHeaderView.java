@@ -20,6 +20,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Outline;
@@ -44,8 +45,10 @@ import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.HeaderColorHelper;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
+import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl.EmergencyListener;
 import com.android.systemui.statusbar.policy.NextAlarmController;
@@ -75,8 +78,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private TextView mDateCollapsed;
     private TextView mDateExpanded;
     private LinearLayout mSystemIcons;
-    private View mSignalCluster;
+    private SignalClusterView mSignalCluster;
     private SettingsButton mSettingsButton;
+    private ImageView mTunerIconView;
     private View mSettingsContainer;
     private View mQsDetailHeader;
     private TextView mQsDetailHeaderTitle;
@@ -84,6 +88,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private ImageView mQsDetailHeaderProgress;
     private TextView mEmergencyCallsOnly;
     private TextView mBatteryLevel;
+    private BatteryMeterView mBatteryMeterView;
     private TextView mAlarmStatus;
 
     private boolean mShowEmergencyCallsOnly;
@@ -149,6 +154,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
+        mTunerIconView = (ImageView) findViewById(R.id.tuner_icon);
         mQsDetailHeader = findViewById(R.id.qs_detail_header);
         mQsDetailHeader.setAlpha(0);
         mQsDetailHeaderTitle = (TextView) mQsDetailHeader.findViewById(android.R.id.title);
@@ -156,9 +162,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mQsDetailHeaderProgress = (ImageView) findViewById(R.id.qs_detail_header_progress);
         mEmergencyCallsOnly = (TextView) findViewById(R.id.header_emergency_calls_only);
         mBatteryLevel = (TextView) findViewById(R.id.battery_level);
+        mBatteryMeterView = (BatteryMeterView) findViewById(R.id.battery);
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
-        mSignalCluster = findViewById(R.id.signal_cluster);
+        mSignalCluster = (SignalClusterView) findViewById(R.id.signal_cluster);
         mSystemIcons = (LinearLayout) findViewById(R.id.system_icons);
         loadDimens();
         updateVisibilities();
@@ -278,7 +285,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
-        ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
+        mBatteryMeterView.setBatteryController(batteryController);
     }
 
     public void setNextAlarmController(NextAlarmController nextAlarmController) {
@@ -341,8 +348,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
         mEmergencyCallsOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly ? VISIBLE : GONE);
         mBatteryLevel.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
-        mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(
-                TunerService.isTunerEnabled(mContext) ? View.VISIBLE : View.INVISIBLE);
+        mTunerIconView.setVisibility(TunerService.isTunerEnabled(mContext)
+                ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void updateSignalClusterDetachment() {
@@ -427,6 +434,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmShowing = nextAlarm != null;
         updateEverything();
         requestCaptureValues();
+        setAlarmStatusIconColor();
     }
 
     private void updateClickTargets() {
@@ -480,6 +488,73 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
         setClipping(height);
         updateLayoutValues(t);
+    }
+
+    public void setAccentColor() {
+        mQsDetailHeaderSwitch.setTrackTintList(
+                HeaderColorHelper.getDetailHeaderSwitchTrackColors(mContext));
+        mQsDetailHeaderSwitch.setThumbTintList(
+                HeaderColorHelper.getDetailHeaderSwitchThumbColors(mContext));
+    }
+
+    public void setTextColor() {
+        int color = HeaderColorHelper.getHeaderTextColor(mContext);
+        mTime.setTextColor((mTime.getCurrentTextColor() & 0xff000000) | (color & 0x00ffffff));
+        mAmPm.setTextColor((mAmPm.getCurrentTextColor() & 0xff000000) | (color & 0x00ffffff));
+        mDateCollapsed.setTextColor((mDateCollapsed.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+        mDateExpanded.setTextColor((mDateExpanded.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+        mQsDetailHeaderTitle.setTextColor((mQsDetailHeaderTitle.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+        mEmergencyCallsOnly.setTextColor((mEmergencyCallsOnly.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+        mBatteryLevel.setTextColor((mBatteryLevel.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+        mAlarmStatus.setTextColor((mAlarmStatus.getCurrentTextColor() & 0xff000000)
+                | (color & 0x00ffffff));
+    }
+
+    public void setIconColor() {
+        mSettingsButton.setImageTintList(HeaderColorHelper.getIconColorStateList(mContext));
+        mTunerIconView.setImageTintList(HeaderColorHelper.getTunerIconColorStateList(mContext));
+        mBatteryMeterView.setIconColor(HeaderColorHelper.getHeaderIconColor(mContext));
+        mSignalCluster.setIconTint(HeaderColorHelper.getHeaderIconColor(mContext), 0, 0);
+        setAlarmStatusIconColor();
+        mQsDetailHeaderSwitch.setTrackTintList(
+                HeaderColorHelper.getDetailHeaderSwitchTrackColors(mContext));
+        mQsDetailHeaderSwitch.setThumbTintList(
+                HeaderColorHelper.getDetailHeaderSwitchThumbColors(mContext));
+    }
+
+    private void setAlarmStatusIconColor() {
+        mAlarmStatus.setCompoundDrawableTintList(
+                HeaderColorHelper.getIconColorStateList(mContext));
+    }
+
+    public void setRippleColor() {
+        applyRippleColor(null);
+        applyRippleColor(mSystemIconsSuperContainer);
+        applyRippleColor(mSettingsButton);
+        applyRippleColor(mAlarmStatus);
+        applyRippleColor(mQsDetailHeader);
+        applyRippleColor(mQsDetailHeaderSwitch);
+    }
+
+    private void applyRippleColor(View v) {
+        ColorStateList color = HeaderColorHelper.getRippleColorStateList(mContext);
+        if (v == null) { 
+            ((RippleDrawable) getBackground()).setColor(color);
+        } else {
+            RippleDrawable rd = (RippleDrawable) v.getBackground();
+            rd.mutate();
+            rd.setColor(color);
+            v.setBackground(rd);
+        }
+    }
+
+    public void setBatteryTextColor() {
+        mBatteryMeterView.setTextColor(HeaderColorHelper.getHeaderBatteryTextColor(mContext));
     }
 
     private void updateLayoutValues(float t) {

@@ -3263,6 +3263,42 @@ public final class Settings {
                 "status_bar_battery_text_color_dark_mode";
 
         /**
+         * Color of the background on the status bar expanded header
+         * @hide
+         */
+        public static final String HEADER_BACKGROUND_COLOR = "header_background_color";
+
+        /**
+         * Color of the accent on the status bar expanded header
+         * @hide
+         */
+        public static final String HEADER_ACCENT_COLOR = "header_accent_color";
+
+        /**
+         * Color of the text on the status bar expanded header
+         * @hide
+         */
+        public static final String HEADER_TEXT_COLOR = "header_text_color";
+
+        /**
+         * Color of the icons on the status bar expanded header
+         * @hide
+         */
+        public static final String HEADER_ICON_COLOR = "header_icons_color";
+
+        /**
+         * Color of the ripple effect on the status bar expanded header 
+         * @hide
+         */
+        public static final String HEADER_RIPPLE_COLOR = "header_ripple_color";
+
+        /**
+         * Color of the battery status text on the status bar expanded header
+         * @hide
+         */
+        public static final String HEADER_BATTERY_TEXT_COLOR = "header_battery_text_color";
+
+        /**
          * Color of the quick settings panel background
          * @hide
          */
@@ -3287,7 +3323,7 @@ public final class Settings {
         public static final String QS_ICON_COLOR = "qs_icons_color";
 
         /**
-         * Color of the quick settings icon background ripple effect
+         * Color of the quick settings ripple effect
          * @hide
          */
         public static final String QS_RIPPLE_COLOR = "qs_ripple_color";
