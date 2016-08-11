@@ -189,8 +189,8 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         }
     }
 
-    public void updateDndModePanelBackground() {
-        mDetailAdapter.updateDndModePanelBackground();
+    public void updateDeatailBackgroundColor() {
+        mDetailAdapter.updateDeatailBackgroundColor();
     }
 
     public void updateDeatailTextColor() {
@@ -273,14 +273,14 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
                 mZenModePanel.init(mController);
                 mZenModePanel.addOnAttachStateChangeListener(this);
                 mZenModePanel.setCallback(mZenModePanelCallback);
-                mZenModePanel.setZenModePanelBackgroundColor(
+                mZenModePanel.setBackgroundColor(
                         QSColorHelper.getDndModePanelBackgroundColor(context));
-                mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(context),
+                mZenModePanel.setTextColor(QSColorHelper.getDndModeButtonTextColors(context),
                         QSColorHelper.getQSTextColor(mContext), QSColorHelper.getQSAccentColor(mContext));
-                mZenModePanel.setZenModeIconColor(
+                mZenModePanel.setIconColor(
                         QSColorHelper.getDndModeConditionsIconColors(mContext),
                                 QSColorHelper.getIconColorStateList(mContext));
-                mZenModePanel.setZenModeRippleColor(QSColorHelper.getRippleColorStateList(mContext));
+                mZenModePanel.setRippleColor(QSColorHelper.getRippleColorStateList(mContext));
             }
             return mZenModePanel;
         }
@@ -295,23 +295,23 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
             mShowingDetail = false;
         }
 
-        private void updateDndModePanelBackground() {
+        private void updateDeatailBackgroundColor() {
             if (mZenModePanel != null) {
-                mZenModePanel.setZenModePanelBackgroundColor(
+                mZenModePanel.setBackgroundColor(
                         QSColorHelper.getDndModePanelBackgroundColor(mContext));
             }
         }
 
         private void updateDeatailTextColor() {
             if (mZenModePanel != null) {
-                mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(mContext),
+                mZenModePanel.setTextColor(QSColorHelper.getDndModeButtonTextColors(mContext),
                         QSColorHelper.getQSTextColor(mContext), QSColorHelper.getQSAccentColor(mContext));
             }
         }
 
         private void updateDeatailIconColor() {
             if (mZenModePanel != null) {
-                mZenModePanel.setZenModeIconColor(
+                mZenModePanel.setIconColor(
                         QSColorHelper.getDndModeConditionsIconColors(mContext),
                                 QSColorHelper.getIconColorStateList(mContext));
             }
@@ -319,7 +319,7 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
 
         private void updateDeatailRippleColor() {
             if (mZenModePanel != null) {
-                mZenModePanel.setZenModeRippleColor(QSColorHelper.getRippleColorStateList(mContext));
+                mZenModePanel.setRippleColor(QSColorHelper.getRippleColorStateList(mContext));
             }
         }
     }

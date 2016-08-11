@@ -252,7 +252,7 @@ public class QSPanel extends ViewGroup {
                         QSColorHelper.getQSBackgroundColor(mContext));
         for (TileRecord r : mRecords) {
             if (r.tile instanceof DndTile) {
-                ((DndTile) r.tile).updateDndModePanelBackground();
+                ((DndTile) r.tile).updateDeatailBackgroundColor();
             }
         }
     }
