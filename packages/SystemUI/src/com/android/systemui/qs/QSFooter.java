@@ -66,7 +66,7 @@ public class QSFooter implements OnClickListener, DialogInterface.OnClickListene
         mFooterText = (TextView) mRootView.findViewById(R.id.footer_text);
         mFooterIcon = (ImageView) mRootView.findViewById(R.id.footer_icon);
         mFooterText.setTextColor((mFooterText.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(context) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(context) & 0x00ffffff));
         mFooterIcon.setImageTintList(QSColorHelper.getIconColorStateList(context));
         mContext = context;
         mMainHandler = new Handler();
@@ -198,7 +198,7 @@ public class QSFooter implements OnClickListener, DialogInterface.OnClickListene
 
     public void setTextColor() {
         mFooterText.setTextColor((mFooterText.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
     }
 
     public void setIconColor() {

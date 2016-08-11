@@ -95,12 +95,12 @@ public class UserDetailItemView extends LinearLayout {
         mName.setText(name);
         if (!isCurrent) {
             mName.setTextColor((mName.getCurrentTextColor() & 0xff000000)
-                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                    | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         } else {
-            mName.setTextColor(QSColorHelper.getAccentColor(mContext));
+            mName.setTextColor(QSColorHelper.getQSAccentColor(mContext));
         }
         mAvatar.setBitmap(picture);
-        mAvatar.setActiveFrameColor(QSColorHelper.getAccentColor(mContext));
+        mAvatar.setActiveFrameColor(QSColorHelper.getQSAccentColor(mContext));
     }
 
     public void bind(String name, Drawable picture) {
@@ -109,16 +109,16 @@ public class UserDetailItemView extends LinearLayout {
     }
 
     public void bind(String name, Drawable picture, boolean isCurrent, boolean colorize) {
-        int color = colorize ? QSColorHelper.getIconColor(mContext) : 0;
+        int color = colorize ? QSColorHelper.getQSIconColor(mContext) : 0;
         mName.setText(name);
         if (!isCurrent) {
             mName.setTextColor((mName.getCurrentTextColor() & 0xff000000)
-                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                    | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         } else {
-            mName.setTextColor(QSColorHelper.getAccentColor(mContext));
+            mName.setTextColor(QSColorHelper.getQSAccentColor(mContext));
         }
         mAvatar.setDrawable(picture, color);
-        mAvatar.setActiveFrameColor(QSColorHelper.getAccentColor(mContext));
+        mAvatar.setActiveFrameColor(QSColorHelper.getQSAccentColor(mContext));
     }
 
     @Override

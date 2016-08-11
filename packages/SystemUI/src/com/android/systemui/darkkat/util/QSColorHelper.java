@@ -28,13 +28,13 @@ public class QSColorHelper extends StatusBarExpandedColorHelper {
     public static final int BLACK             = 0xff000000;
 
     public static ColorStateList getBackgroundColorStateList(Context context) {
-        return ColorStateList.valueOf(getBackgroundColor(context));
+        return ColorStateList.valueOf(getQSBackgroundColor(context));
     }
 
     public static ColorStateList getDndModePanelBackgroundColor(Context context) {
         int colorLight = BLACK;
         int colorDark = WHITE;
-        if (ColorHelper.isColorDark(getBackgroundColor(context))) {
+        if (ColorHelper.isColorDark(getQSBackgroundColor(context))) {
             return ColorStateList.valueOf(colorDark);
         } else {
             return ColorStateList.valueOf(colorLight);
@@ -42,7 +42,7 @@ public class QSColorHelper extends StatusBarExpandedColorHelper {
     }
 
     public static ColorStateList getAccentColorStateList(Context context) {
-        return ColorStateList.valueOf(getAccentColor(context));
+        return ColorStateList.valueOf(getQSAccentColor(context));
     }
 
     public static ColorStateList getDndModeButtonTextColors(Context context) {
@@ -51,15 +51,15 @@ public class QSColorHelper extends StatusBarExpandedColorHelper {
             new int[]{}
         };
         int colors[] = new int[] {
-            getAccentColor(context),
-            getTextColor(context)
+            getQSAccentColor(context),
+            getQSTextColor(context)
         };
 
         return new ColorStateList(states, colors);
     }
 
     public static ColorStateList getIconColorStateList(Context context) {
-        return ColorStateList.valueOf(getIconColor(context));
+        return ColorStateList.valueOf(getQSIconColor(context));
     }
 
     public static ColorStateList getDndModeConditionsIconColors(Context context) {
@@ -68,14 +68,14 @@ public class QSColorHelper extends StatusBarExpandedColorHelper {
             new int[]{}
         };
         int colors[] = new int[] {
-            getAccentColor(context),
-            getIconColor(context)
+            getQSAccentColor(context),
+            getQSIconColor(context)
         };
 
         return new ColorStateList(states, colors);
     }
 
     public static ColorStateList getRippleColorStateList(Context context) {
-        return ColorStateList.valueOf(getRippleColor(context));
+        return ColorStateList.valueOf(getQSRippleColor(context));
     }
 }

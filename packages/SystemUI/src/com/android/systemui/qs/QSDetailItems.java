@@ -111,7 +111,7 @@ public class QSDetailItems extends FrameLayout {
         mEmptyIcon.setImageResource(icon);
         mEmptyIcon.setImageTintList(QSColorHelper.getIconColorStateList(mContext));
         mEmptyText.setTextColor((mEmptyText.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         mEmptyText.setText(text);
     }
 
@@ -192,18 +192,18 @@ public class QSDetailItems extends FrameLayout {
         if (item.overlay != null) {
             item.overlay.setBounds(0, 0, item.overlay.getIntrinsicWidth(),
                     item.overlay.getIntrinsicHeight());
-            item.overlay.setTint(QSColorHelper.getIconColor(mContext));
+            item.overlay.setTint(QSColorHelper.getQSIconColor(mContext));
             iv.getOverlay().add(item.overlay);
         }
         final TextView title = (TextView) view.findViewById(android.R.id.title);
         title.setTextColor((title.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         title.setText(item.line1);
         final TextView summary = (TextView) view.findViewById(android.R.id.summary);
         final boolean twoLines = !TextUtils.isEmpty(item.line2);
         title.setMaxLines(twoLines ? 1 : 2);
         summary.setVisibility(twoLines ? VISIBLE : GONE);
-        summary.setTextColor(QSColorHelper.getAccentColor(mContext));
+        summary.setTextColor(QSColorHelper.getQSAccentColor(mContext));
         summary.setText(twoLines ? item.line2 : null);
         view.setOnClickListener(new OnClickListener() {
             @Override

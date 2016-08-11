@@ -144,7 +144,7 @@ public class ToggleSlider extends RelativeLayout {
     public void setBackgroundColor() {
         if (mSlider.getThumb() instanceof LayerDrawable) {
             ((LayerDrawable) mSlider.getThumb()).findDrawableByLayerId(R.id.background)
-                    .setTint(QSColorHelper.getBackgroundColor(mContext));
+                    .setTint(QSColorHelper.getQSBackgroundColor(mContext));
         }
     }
 
@@ -155,7 +155,7 @@ public class ToggleSlider extends RelativeLayout {
     public void setIconColor() {
         if (mSlider.getThumb() instanceof LayerDrawable) {
             ((LayerDrawable) mSlider.getThumb()).findDrawableByLayerId(R.id.color_fill)
-                    .setTint(QSColorHelper.getIconColor(mContext));
+                    .setTint(QSColorHelper.getQSIconColor(mContext));
         }
         mSlider.setProgressBackgroundTintList(QSColorHelper.getIconColorStateList(mContext));
     }

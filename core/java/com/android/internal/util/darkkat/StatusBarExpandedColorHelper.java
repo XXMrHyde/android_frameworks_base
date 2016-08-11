@@ -72,31 +72,31 @@ public class StatusBarExpandedColorHelper {
         return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
     }
 
-    public static int getBackgroundColor(Context context) {
+    public static int getQSBackgroundColor(Context context) {
         int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.QS_BACKGROUND_COLOR, SYSTEMUI_PRIMARY);
         return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
     }
 
-    public static int getAccentColor(Context context) {
+    public static int getQSAccentColor(Context context) {
         int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.QS_ACCENT_COLOR, DEEP_TEAL_200);
         return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
     }
 
-    public static int getTextColor(Context context) {
+    public static int getQSTextColor(Context context) {
         int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.QS_TEXT_COLOR, WHITE);
         return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
     }
 
-    public static int getIconColor(Context context) {
+    public static int getQSIconColor(Context context) {
         int color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.QS_ICON_COLOR, WHITE);
         return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
     }
 
-    public static int getRippleColor(Context context) {
+    public static int getQSRippleColor(Context context) {
         int color = color = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.QS_RIPPLE_COLOR, WHITE);
         return (RIPPLE_ALPHA << 24) | (color & 0x00ffffff);

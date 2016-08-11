@@ -102,15 +102,15 @@ public class DataUsageGraph extends View {
 
     public void setAccentColor() {
         mUsageColor = (mUsageColor & 0xff000000)
-                | (QSColorHelper.getAccentColor(mContext));
+                | (QSColorHelper.getQSAccentColor(mContext));
         postInvalidate();
     }
 
     public void setIconColor() {
         mTrackColor = (mTrackColor & 0xff000000)
-                | (QSColorHelper.getIconColor(mContext) & 0x00ffffff);
+                | (QSColorHelper.getQSIconColor(mContext) & 0x00ffffff);
         mWarningColor = (mWarningColor & 0xff000000)
-                | (QSColorHelper.getIconColor(mContext) & 0x00ffffff);
+                | (QSColorHelper.getQSIconColor(mContext) & 0x00ffffff);
         postInvalidate();
     }
 }

@@ -276,7 +276,7 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
                 mZenModePanel.setZenModePanelBackgroundColor(
                         QSColorHelper.getDndModePanelBackgroundColor(context));
                 mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(context),
-                        QSColorHelper.getTextColor(mContext), QSColorHelper.getAccentColor(mContext));
+                        QSColorHelper.getQSTextColor(mContext), QSColorHelper.getQSAccentColor(mContext));
                 mZenModePanel.setZenModeIconColor(
                         QSColorHelper.getDndModeConditionsIconColors(mContext),
                                 QSColorHelper.getIconColorStateList(mContext));
@@ -305,7 +305,7 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         private void updateDeatailTextColor() {
             if (mZenModePanel != null) {
                 mZenModePanel.setZenModeTextColor(QSColorHelper.getDndModeButtonTextColors(mContext),
-                        QSColorHelper.getTextColor(mContext), QSColorHelper.getAccentColor(mContext));
+                        QSColorHelper.getQSTextColor(mContext), QSColorHelper.getQSAccentColor(mContext));
             }
         }
 

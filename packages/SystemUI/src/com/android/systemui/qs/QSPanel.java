@@ -96,20 +96,20 @@ public class QSPanel extends ViewGroup {
         mDetail = LayoutInflater.from(context).inflate(R.layout.qs_detail, this, false);
         ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
                 R.id.qs_detail_transition_background).setTint(
-                        QSColorHelper.getBackgroundColor(mContext));
+                        QSColorHelper.getQSBackgroundColor(mContext));
         ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
                 R.id.qs_detail_transition_color).setTint(
-                        QSColorHelper.getIconColor(mContext));
+                        QSColorHelper.getQSIconColor(mContext));
         mDetailContent = (ViewGroup) mDetail.findViewById(android.R.id.content);
         mDetailSettingsButton = (TextView) mDetail.findViewById(android.R.id.button2);
         mDetailSettingsButton.setTextColor((mDetailSettingsButton.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         RippleDrawable sbbg = (RippleDrawable) mDetailSettingsButton.getBackground().mutate();
         sbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
         mDetailSettingsButton.setBackground(sbbg);
         mDetailDoneButton = (TextView) mDetail.findViewById(android.R.id.button1);
         mDetailDoneButton.setTextColor((mDetailDoneButton.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         RippleDrawable dbbg = (RippleDrawable) mDetailDoneButton.getBackground().mutate();
         dbbg.setColor(QSColorHelper.getRippleColorStateList(mContext));
         mDetailDoneButton.setBackground(dbbg);
@@ -249,7 +249,7 @@ public class QSPanel extends ViewGroup {
         mBrightnessController.setBackgroundColor();
         ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
                 R.id.qs_detail_transition_background).setTint(
-                        QSColorHelper.getBackgroundColor(mContext));
+                        QSColorHelper.getQSBackgroundColor(mContext));
         for (TileRecord r : mRecords) {
             if (r.tile instanceof DndTile) {
                 ((DndTile) r.tile).updateDndModePanelBackground();
@@ -275,9 +275,9 @@ public class QSPanel extends ViewGroup {
             }
         }
         mDetailSettingsButton.setTextColor((mDetailSettingsButton.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         mDetailDoneButton.setTextColor((mDetailDoneButton.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         mFooter.setTextColor();
     }
 
@@ -285,7 +285,7 @@ public class QSPanel extends ViewGroup {
         mBrightnessController.setIconColor();
         ((TransitionDrawable) mDetail.getBackground()).findDrawableByLayerId(
                 R.id.qs_detail_transition_color).setTint(
-                        QSColorHelper.getIconColor(mContext));
+                        QSColorHelper.getQSIconColor(mContext));
         for (TileRecord r : mRecords) {
             r.tileView.setIconColor();
             if (r.tile instanceof WifiTile) {

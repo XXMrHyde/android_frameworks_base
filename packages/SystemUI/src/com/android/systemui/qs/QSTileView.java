@@ -146,7 +146,7 @@ public class QSTileView extends ViewGroup {
             bg.setColor(QSColorHelper.getRippleColorStateList(mContext));
             mDualLabel.setBackground(bg);
             mDualLabel.setFirstLineCaret(mContext.getDrawable(R.drawable.qs_dual_tile_caret));
-            mDualLabel.setTextColor(QSColorHelper.getTextColor(mContext));
+            mDualLabel.setTextColor(QSColorHelper.getQSTextColor(mContext));
             mDualLabel.setPadding(0, mDualTileVerticalPaddingPx, 0, mDualTileVerticalPaddingPx);
             mDualLabel.setTypeface(CONDENSED);
             mDualLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -165,7 +165,7 @@ public class QSTileView extends ViewGroup {
         } else {
             mLabel = new TextView(mContext);
             mLabel.setTextColor((mLabel.getCurrentTextColor() & 0xff000000)
-                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                    | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
             mLabel.setGravity(Gravity.CENTER_HORIZONTAL);
             mLabel.setMinLines(2);
             mLabel.setPadding(0, 0, 0, 0);
@@ -324,7 +324,7 @@ public class QSTileView extends ViewGroup {
             }
             iv.setImageDrawable(d);
             if (d != null) {
-                d.setTint(QSColorHelper.getIconColor(mContext));
+                d.setTint(QSColorHelper.getQSIconColor(mContext));
             }
             iv.setTag(R.id.qs_icon_tag, state.icon);
             if (d instanceof Animatable) {
@@ -362,25 +362,25 @@ public class QSTileView extends ViewGroup {
 
     public void setTextColor() {
         if (mDualLabel != null) {
-            mDualLabel.setTextColor(QSColorHelper.getTextColor(mContext));
+            mDualLabel.setTextColor(QSColorHelper.getQSTextColor(mContext));
         }
         if (mLabel != null) {
             mLabel.setTextColor((mLabel.getCurrentTextColor() & 0xff000000)
-                    | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                    | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         }
     }
 
     public void setIconColor() {
         if (mIcon instanceof ImageView) {
             if (((ImageView) mIcon).getDrawable() != null) {
-                ((ImageView) mIcon).getDrawable().setTint(QSColorHelper.getIconColor(mContext));
+                ((ImageView) mIcon).getDrawable().setTint(QSColorHelper.getQSIconColor(mContext));
             }
         } else if (mIcon instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) mIcon).getChildCount(); i++) {
                 if (((ViewGroup) mIcon).getChildAt(i) instanceof ImageView) {
                     ImageView iv = (ImageView) ((ViewGroup) mIcon).getChildAt(i);
                     if (iv.getDrawable() != null) {
-                        iv.getDrawable().setTint(QSColorHelper.getIconColor(mContext));
+                        iv.getDrawable().setTint(QSColorHelper.getQSIconColor(mContext));
                     }
                 }
             }

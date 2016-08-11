@@ -65,7 +65,7 @@ public class DataUsageDetailView extends LinearLayout {
         final Resources res = mContext.getResources();
         final int titleId;
         final long bytes;
-        int usageColor = QSColorHelper.getAccentColor(mContext);
+        int usageColor = QSColorHelper.getQSAccentColor(mContext);
         final String top;
         String bottom = null;
         if (info.usageLevel < info.warningLevel || info.limitLevel <= 0) {
@@ -95,7 +95,7 @@ public class DataUsageDetailView extends LinearLayout {
 
         final TextView title = (TextView) findViewById(android.R.id.title);
         title.setTextColor((title.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         title.setText(titleId);
         final TextView usage = (TextView) findViewById(R.id.usage_text);
         usage.setText(formatBytes(bytes));
@@ -106,20 +106,20 @@ public class DataUsageDetailView extends LinearLayout {
         graph.setIconColor();
         final TextView carrier = (TextView) findViewById(R.id.usage_carrier_text);
         carrier.setTextColor((carrier.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         carrier.setText(info.carrier);
         final TextView period = (TextView) findViewById(R.id.usage_period_text);
         period.setTextColor((period.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         period.setText(info.period);
         final TextView infoTop = (TextView) findViewById(R.id.usage_info_top_text);
         infoTop.setTextColor((infoTop.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         infoTop.setVisibility(top != null ? View.VISIBLE : View.GONE);
         infoTop.setText(top);
         final TextView infoBottom = (TextView) findViewById(R.id.usage_info_bottom_text);
         infoBottom.setTextColor((infoBottom.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getTextColor(mContext) & 0x00ffffff));
+                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
         infoBottom.setVisibility(bottom != null ? View.VISIBLE : View.GONE);
         infoBottom.setText(bottom);
     }
