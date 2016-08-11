@@ -536,6 +536,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         applyRippleColor(null);
         applyRippleColor(mSystemIconsSuperContainer);
         applyRippleColor(mSettingsButton);
+        applyRippleColor(mMultiUserSwitch);
         applyRippleColor(mAlarmStatus);
         applyRippleColor(mQsDetailHeader);
         applyRippleColor(mQsDetailHeaderSwitch);
