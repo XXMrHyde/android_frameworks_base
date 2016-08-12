@@ -3440,7 +3440,41 @@ public final class Settings {
          * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR = "status_bar_battery_status_icon_indicator";
+        public static final String STATUS_BAR_BATTERY_STATUS_ICON_INDICATOR =
+                "status_bar_battery_status_icon_indicator";
+
+        /**
+         *  Whether to show the battery status text on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT =
+                "status_bar_battery_status_show_text";
+
+        /**
+         * Dot interval of the battery circle icon on the status bar
+         * 0 - No dots
+         * 1 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL =
+                "status_bar_battery_status_circle_dot_interval";
+
+        /**
+         * Dot length of the battery circle icon on the status bar
+         * 0 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH =
+                "status_bar_battery_status_circle_dot_length";
+
+        /**
+         *  Whether to cut the battery percentage out of the battery status icon on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT =
+                "status_bar_battery_status_cut_out_text";
 
         /**
          *  Whether to show the battery bar on the status bar
@@ -3452,42 +3486,73 @@ public final class Settings {
          *  Whether to show the battery bar on the status bar of the lock screen
          * @hide
          */
-        public static final String STATUS_BAR_SHOW_BATTERY_BAR_LOCK_SCREEN = "status_bar_show_battery_bar_lock_screen";
-
-        /**
-         *  Whether to show the battery status text on the status bar
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_TEXT = "status_bar_battery_status_show_text";
-
-        /**
-         * Dot interval of the battery circle icon on the status bar
-         * 0 - No dots
-         * 1 - 10
-         * default: 0
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_INTERVAL = "status_bar_battery_status_circle_dot_interval";
-
-        /**
-         * Dot length of the battery circle icon on the status bar
-         * 0 - 10
-         * default: 0
-         * @hide
-         */
-        public static final String STATUS_BAR_BATTERY_STATUS_CIRCLE_DOT_LENGTH = "status_bar_battery_status_circle_dot_length";
+        public static final String STATUS_BAR_SHOW_BATTERY_BAR_LOCK_SCREEN =
+                "status_bar_show_battery_bar_lock_screen";
 
         /**
          *  Whether to show a battery charging animation on the status bar
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION = "status_bar_battery_status_show_charge_animation";
+        public static final String STATUS_BAR_BATTERY_STATUS_SHOW_CHARGE_ANIMATION =
+                "status_bar_battery_status_show_charge_animation";
 
         /**
-         *  Whether to cut the battery percentage out of the battery status icon on the status bar
+         * Icon of the battery on the header of the expanded status bar
+         * 0 - Battery portrait
+         * 1 - Battery landscape
+         * 2 - Circle
+         * 3 - Hidden
+         * default: 0
          * @hide
          */
-        public static final String STATUS_BAR_BATTERY_STATUS_CUT_OUT_TEXT = "status_bar_battery_status_cut_out_text";
+        public static final String HEADER_BATTERY_STATUS_ICON_INDICATOR =
+                "header_battery_status_icon_indicator";
+
+        /**
+         *  Whether to show the battery status text on the header of the expanded status bar
+         * @hide
+         */
+        public static final String HEADER_BATTERY_STATUS_SHOW_TEXT = "header_battery_status_show_text";
+
+        /**
+         * Dot interval of the battery circle icon on the header of the expanded status bar
+         * 0 - No dots
+         * 1 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String HEADER_BATTERY_STATUS_CIRCLE_DOT_INTERVAL =
+                "header_battery_status_circle_dot_interval";
+
+        /**
+         * Dot length of the battery circle icon on the header of the expanded status bar
+         * 0 - 10
+         * default: 0
+         * @hide
+         */
+        public static final String HEADER_BATTERY_STATUS_CIRCLE_DOT_LENGTH =
+                "header_battery_status_circle_dot_length";
+
+        /**
+         * Whether to cut the battery percentage out of the battery status icon on the
+         * header of the expanded status bar
+         * @hide
+         */
+        public static final String HEADER_BATTERY_STATUS_CUT_OUT_TEXT =
+                "header_battery_status_cut_out_text";
+
+        /**
+         *  Whether to show the battery bar on the header of the expanded status bar
+         * @hide
+         */
+        public static final String HEADER_SHOW_BATTERY_BAR = "header_show_battery_bar";
+
+        /**
+         *  Whether to show a battery charging animation on the header of the expanded status bar
+         * @hide
+         */
+        public static final String HEADER_BATTERY_STATUS_SHOW_CHARGE_ANIMATION =
+                "header_battery_status_show_charge_animation";
 
         /**
          * Whether to include advanced reboot options in power menu for 

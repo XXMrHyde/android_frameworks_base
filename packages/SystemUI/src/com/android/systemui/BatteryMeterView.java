@@ -47,7 +47,6 @@ public class BatteryMeterView extends View implements DemoMode,
         BatteryController.BatteryStateChangeCallback {
     public static final String TAG = BatteryMeterView.class.getSimpleName();
     public static final String ACTION_LEVEL_TEST = "com.android.systemui.BATTERY_LEVEL_TEST";
-    public static final String SHOW_PERCENT_SETTING = "status_bar_show_battery_percent";
 
     private static final int FULL = 96;
     private static final boolean SINGLE_DIGIT_PERCENT = false;
@@ -105,9 +104,6 @@ public class BatteryMeterView extends View implements DemoMode,
     private int mLightModeFillColor;
 
     private BatteryController mBatteryController;
-    private final SettingObserver mSettingObserver = new SettingObserver();
-    private boolean mUseSystemUITuner = true;
-    private boolean mSystemUITunerRegistered = false;
     protected boolean mAttached;
 
     private final class BatteryTracker extends BroadcastReceiver {
@@ -261,8 +257,6 @@ public class BatteryMeterView extends View implements DemoMode,
         mLightModeFillColor = context.getColor(R.color.light_mode_icon_color_dual_tone_fill);
 
         mBatteryMeterDrawable = createBatteryMeterDrawable(mBatteryMeterMode);
-        updateShowPercent();
-
     }
 
     protected BatteryMeterDrawable createBatteryMeterDrawable(BatteryMeterMode mode) {
@@ -292,11 +286,6 @@ public class BatteryMeterView extends View implements DemoMode,
             mTracker.onReceive(getContext(), sticky);
         }
         mBatteryController.addStateChangedCallback(this);
-        if (!mSystemUITunerRegistered && mUseSystemUITuner) {
-            getContext().getContentResolver().registerContentObserver(
-                    Settings.System.getUriFor(SHOW_PERCENT_SETTING), false, mSettingObserver);
-            mSystemUITunerRegistered = true;
-        }
         mAttached = true;
     }
 
@@ -306,10 +295,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
         getContext().unregisterReceiver(mTracker);
         mBatteryController.removeStateChangedCallback(this);
-        if (mSystemUITunerRegistered) {
-            getContext().getContentResolver().unregisterContentObserver(mSettingObserver);
-            mSystemUITunerRegistered = false;
-        }
         mAttached = false;
     }
 
@@ -355,11 +340,6 @@ public class BatteryMeterView extends View implements DemoMode,
         if (!mIsAnimating) {
             invalidateIfVisible();
         }
-    }
-
-    private void updateShowPercent() {
-        mShowPercent = 0 != Settings.System.getInt(getContext().getContentResolver(),
-                SHOW_PERCENT_SETTING, 0);
     }
 
     private int getColorForLevel(int percent) {
@@ -509,13 +489,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
     public void setTextVisibility(boolean show) {
         mShowPercent = show;
-        if (mUseSystemUITuner) {
-            mUseSystemUITuner = false;
-        }
-        if (mSystemUITunerRegistered) {
-            getContext().getContentResolver().unregisterContentObserver(mSettingObserver);
-            mSystemUITunerRegistered = false;
-        }
         if (!mIsAnimating) {
             invalidateIfVisible();
         }
@@ -1159,18 +1132,5 @@ public class BatteryMeterView extends View implements DemoMode,
         }
 
         postInvalidateDelayed(50);
-    }
-
-    private final class SettingObserver extends ContentObserver {
-        public SettingObserver() {
-            super(new Handler());
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            super.onChange(selfChange, uri);
-            updateShowPercent();
-            postInvalidate();
-        }
     }
 }

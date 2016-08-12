@@ -195,4 +195,14 @@
         android:padding="2dp"
         />
 
+    <com.android.systemui.darkkat.statusbar.BatteryBar
+        android:id="@+id/header_battery_bar"
+        style="@style/BatteryBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"
+        />
+
 </com.android.systemui.statusbar.phone.StatusBarHeaderView>

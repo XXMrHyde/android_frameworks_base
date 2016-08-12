@@ -45,6 +45,7 @@ import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.darkkat.util.HeaderColorHelper;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
@@ -67,6 +68,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private boolean mExpanded;
     private boolean mListening;
 
+    private BatteryBar mBatteryBar;
     private ViewGroup mSystemIconsContainer;
     private View mSystemIconsSuperContainer;
     private View mDateGroup;
@@ -140,6 +142,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        mBatteryBar = (BatteryBar) findViewById(R.id.header_battery_bar);
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mSystemIconsContainer = (ViewGroup) findViewById(R.id.system_icons_container);
         mSystemIconsSuperContainer.setOnClickListener(this);
@@ -285,6 +288,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
+        mBatteryBar.setBatteryController(batteryController);
         mBatteryMeterView.setBatteryController(batteryController);
     }
 
@@ -516,6 +520,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     public void setIconColor() {
+        mBatteryBar.setIconColor(HeaderColorHelper.getHeaderIconColor(mContext));
         mSettingsButton.setImageTintList(HeaderColorHelper.getIconColorStateList(mContext));
         mTunerIconView.setImageTintList(HeaderColorHelper.getTunerIconColorStateList(mContext));
         mBatteryMeterView.setIconColor(HeaderColorHelper.getHeaderIconColor(mContext));
@@ -556,6 +561,31 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void setBatteryTextColor() {
         mBatteryMeterView.setTextColor(HeaderColorHelper.getHeaderBatteryTextColor(mContext));
+    }
+
+    public void updateBatteryIndicator(int indicator) {
+        mBatteryMeterView.updateBatteryIndicator(indicator);
+    }
+
+    public void updateBatteryTextVisibility(boolean show) {
+        mBatteryMeterView.setTextVisibility(show);
+    }
+
+    public void updateBatteryCircleDots(int interval, int length) {
+        mBatteryMeterView.updateCircleDots(interval, length);
+    }
+
+    public void updateCutOutBatteryText(boolean cutOut) {
+        mBatteryMeterView.setCutOutText(cutOut);
+    }
+
+    public void updateBatteryBarVisibility(boolean show) {
+        mBatteryBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateShowChargeAnimation(boolean show) {
+        mBatteryBar.setShowChargeAnimation(show);
+        mBatteryMeterView.setShowChargeAnimation(show);
     }
 
     private void updateLayoutValues(float t) {

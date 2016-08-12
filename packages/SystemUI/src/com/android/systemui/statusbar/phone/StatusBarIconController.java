@@ -735,12 +735,6 @@ public class StatusBarIconController implements Tunable {
         mKeyguardStatusBarView.updateBatteryLevelVisibility();
     }
 
-    public void updateBatteryBarVisibility(boolean show, boolean showOnKeyguard) {
-        mShowBatteryBar = show;
-        mBatteryBar.setVisibility(mShowBatteryBar ? View.VISIBLE : View.GONE);
-        mBatteryBarKeyguard.setVisibility(showOnKeyguard ? View.VISIBLE : View.GONE);
-    }
-
     public void updateBatteryTextVisibility(boolean show) {
         mBatteryMeterView.setTextVisibility(show);
         mBatteryMeterViewKeyguard.setTextVisibility(show);
@@ -752,15 +746,21 @@ public class StatusBarIconController implements Tunable {
         mBatteryMeterViewKeyguard.updateCircleDots(interval, length);
     }
 
+    public void updateCutOutBatteryText(boolean cutOut) {
+        mBatteryMeterView.setCutOutText(cutOut);
+        mBatteryMeterViewKeyguard.setCutOutText(cutOut);
+    }
+
+    public void updateBatteryBarVisibility(boolean show, boolean showOnKeyguard) {
+        mShowBatteryBar = show;
+        mBatteryBar.setVisibility(mShowBatteryBar ? View.VISIBLE : View.GONE);
+        mBatteryBarKeyguard.setVisibility(showOnKeyguard ? View.VISIBLE : View.GONE);
+    }
+
     public void updateShowChargeAnimation(boolean show) {
         mBatteryMeterView.setShowChargeAnimation(show);
         mBatteryMeterViewKeyguard.setShowChargeAnimation(show);
         mBatteryBar.setShowChargeAnimation(show);
         mBatteryBarKeyguard.setShowChargeAnimation(show);
-    }
-
-    public void updateCutOutBatteryText(boolean cutOut) {
-        mBatteryMeterView.setCutOutText(cutOut);
-        mBatteryMeterViewKeyguard.setCutOutText(cutOut);
     }
 }
