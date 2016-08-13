@@ -3329,6 +3329,26 @@ public final class Settings {
         public static final String QS_RIPPLE_COLOR = "qs_ripple_color";
 
         /**
+         * Color of the no notifications text on the expanded status bar
+         * @hide
+         */
+        public static final String NO_NOTIFICATIONS_TEXT_COLOR = "no_notifications_text_color";
+
+        /**
+         * Color of the dismiss all icon on the expanded status bar
+         * @hide
+         */
+        public static final String DISMISS_ALL_NOTIFICATIONS_ICON_COLOR =
+                "dismiss_all_notifications_icon_color";
+
+        /**
+         * Color of the dismiss all ripple effect on the expanded status bar
+         * @hide
+         */
+        public static final String DISMISS_ALL_NOTIFICATIONS_RIPPLE_COLOR =
+                "dismiss_all_notifications_ripple_color";
+
+        /**
          *  Whether to show the name of the carrier on the status bar
          * @hide
          */

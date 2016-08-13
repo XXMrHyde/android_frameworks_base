@@ -17,10 +17,12 @@
 package com.android.systemui.statusbar;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,5 +130,16 @@ public class DismissViewButton extends Button {
      */
     public boolean isButtonStatic() {
         return mActiveDrawable == mStaticDismissDrawable;
+    }
+
+   public void setIconColor(int color) {
+        mStaticDismissDrawable.setTint(color);
+        mAnimatedDismissDrawable.setTint(color);
+    }
+
+   public void setRippleColor(ColorStateList color) {
+        RippleDrawable bg = (RippleDrawable) getBackground().mutate();
+        bg.setColor(color);
+        setBackground(bg);
     }
 }

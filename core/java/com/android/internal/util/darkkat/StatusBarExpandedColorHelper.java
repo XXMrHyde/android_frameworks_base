@@ -101,4 +101,22 @@ public class StatusBarExpandedColorHelper {
                 Settings.System.QS_RIPPLE_COLOR, WHITE);
         return (RIPPLE_ALPHA << 24) | (color & 0x00ffffff);
     }
+
+    public static int getNoNotificationsTextColor(Context context) {
+        int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.NO_NOTIFICATIONS_TEXT_COLOR, WHITE);
+        return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getNotificationsDismissAllIconColor(Context context) {
+        int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DISMISS_ALL_NOTIFICATIONS_ICON_COLOR, WHITE);
+        return (FULLY_OPAQUE_ALPHA << 24) | (color & 0x00ffffff);
+    }
+
+    public static int getNotificationsDismissAllRippleColor(Context context) {
+        int color = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.DISMISS_ALL_NOTIFICATIONS_RIPPLE_COLOR, WHITE);
+        return (RIPPLE_ALPHA << 24) | (color & 0x00ffffff);
+    }
 }

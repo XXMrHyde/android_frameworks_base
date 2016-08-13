@@ -115,6 +115,7 @@ import com.android.systemui.assist.AssistManager;
 import com.android.systemui.darkkat.statusbar.BatteryBar;
 import com.android.systemui.darkkat.statusbar.StatusBarNetworkNames;
 import com.android.systemui.darkkat.util.HeaderColorHelper;
+import com.android.systemui.darkkat.util.NotificationColorHelper;
 import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -463,6 +464,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.QS_RIPPLE_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NO_NOTIFICATIONS_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISMISS_ALL_NOTIFICATIONS_ICON_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISMISS_ALL_NOTIFICATIONS_RIPPLE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -589,6 +599,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.QS_RIPPLE_COLOR))) {
                 updateQSRippleColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NO_NOTIFICATIONS_TEXT_COLOR))) {
+                updateNoNotificationsTextColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DISMISS_ALL_NOTIFICATIONS_ICON_COLOR))) {
+                updateDismissAllNotificationIconColor();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DISMISS_ALL_NOTIFICATIONS_RIPPLE_COLOR))) {
+                updateDismissAllNotificationRippleColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_NAMES_SHOW_CARRIER))
                 || uri.equals(Settings.System.getUriFor(
@@ -2092,6 +2111,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateStatusBarTextColor(false);
         updateStatusBarIconColor(false);
         updateStatusBarBatteryTextColor(false);
+        updateNoNotificationsTextColor();
+        updateDismissAllNotificationIconColor();
+        updateDismissAllNotificationRippleColor();
         updateNetworkNamesOnStatusbar();
         updateNetworkNamesOnKeyguardStatusbar();
         updateClockStyle();
@@ -2196,6 +2218,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateQSRippleColor() {
         if (mQSPanel != null) {
            mQSPanel.setRippleColor();
+        }
+    }
+
+    private void updateNoNotificationsTextColor() {
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.setNoNotificationsTextColor(
+                    NotificationColorHelper.getNoNotificationsTextColor(mContext));
+        }
+    }
+
+    private void updateDismissAllNotificationIconColor() {
+        if (mDismissView != null) {
+            mDismissView.updateIconColor(
+                    NotificationColorHelper.getDismissAllIconColor(mContext));
+        }
+    }
+
+    private void updateDismissAllNotificationRippleColor() {
+        if (mDismissView != null) {
+            mDismissView.updateRippleColor(
+                    NotificationColorHelper.getDismissAllRippleColorStateList(mContext));
         }
     }
 

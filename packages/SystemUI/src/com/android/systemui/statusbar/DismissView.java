@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -75,5 +76,13 @@ public class DismissView extends StackScrollerDecorView {
 
     public boolean isButtonVisible() {
         return mDismissButton.isButtonStatic();
+    }
+
+    public void updateIconColor(int color) {
+        mDismissButton.setIconColor(color);
+    }
+
+    public void updateRippleColor(ColorStateList color) {
+        mDismissButton.setRippleColor(color);
     }
 }
