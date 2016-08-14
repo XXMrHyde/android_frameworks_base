@@ -42,6 +42,7 @@ import android.widget.ScrollView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
+import com.android.systemui.darkkat.util.QSColorHelper;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.QSTile.Host.Callback;
@@ -107,6 +108,7 @@ public class QsTuner extends Fragment implements Callback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         mScrollRoot = (ScrollView) inflater.inflate(R.layout.tuner_qs, container, false);
+        mScrollRoot.setBackgroundTintList(QSColorHelper.getBackgroundColorStateList(getContext()));
 
         mQsPanel = new DraggableQsPanel(getContext());
         mTileHost = new CustomHost(getContext());
@@ -115,6 +117,9 @@ public class QsTuner extends Fragment implements Callback {
         mQsPanel.setHost(mTileHost);
         mQsPanel.refreshAllTiles();
         ((ViewGroup) mScrollRoot.findViewById(R.id.all_details)).addView(mQsPanel, 0);
+
+        mScrollRoot.findViewById(R.id.tuner_qs_tile_divider).setBackgroundTintList(
+                QSColorHelper.getIconColorStateList(getContext()));
 
         mDropTarget = (FrameLayout) mScrollRoot.findViewById(R.id.remove_target);
         setupDropTarget();
@@ -481,7 +486,7 @@ public class QsTuner extends Fragment implements Callback {
         public boolean onDrag(View v, DragEvent event) {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    mView.setBackgroundColor(0x77ffffff);
+                    mView.setBackgroundColor(QSColorHelper.getQSRippleColor(getContext()));
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
                     stopDrag();

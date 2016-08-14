@@ -30,6 +30,7 @@
         android:orientation="vertical">
 
         <View
+            android:id="@+id/tuner_qs_tile_divider"
             android:background="@color/qs_tile_divider"
             android:layout_width="match_parent"
             android:layout_height="2dp" />
