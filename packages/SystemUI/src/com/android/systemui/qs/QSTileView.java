@@ -57,7 +57,7 @@ public class QSTileView extends ViewGroup {
     private final int mTilePaddingBelowIconPx;
 
     private final View mIcon;
-    private TextView mLabel;
+    private QSDualTileLabel mLabel;
     private Drawable mTileBackground;
 
     private boolean mShowDetailOnClick;
@@ -102,7 +102,8 @@ public class QSTileView extends ViewGroup {
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         updateTopPadding();
-        FontSizeUtils.updateFontSize(mLabel, R.dimen.qs_tile_text_size);
+        mLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.qs_tile_text_size));
     }
 
     protected View createIcon() {
@@ -112,18 +113,14 @@ public class QSTileView extends ViewGroup {
         return icon;
     }
 
-    private TextView createLabel() {
+    private QSDualTileLabel createLabel() {
         final Resources res = mContext.getResources();
         final int horizontalPaddingPx = res.getDimensionPixelSize(
                 R.dimen.qs_tile_label_padding_horizontal);
 
 
-        TextView label = new TextView(mContext);
-        label.setTextColor((label.getCurrentTextColor() & 0xff000000)
-                | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
-        label.setGravity(Gravity.CENTER);
-        label.setSingleLine(true);
-        label.setEllipsize(TruncateAt.END);
+        QSDualTileLabel label = new QSDualTileLabel(mContext);
+        label.setTextColor();
         label.setPadding(horizontalPaddingPx, 0, horizontalPaddingPx, 0);
         label.setTypeface(CONDENSED);
         label.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -160,7 +157,7 @@ public class QSTileView extends ViewGroup {
         final int h = MeasureSpec.getSize(heightMeasureSpec);
         final int iconSpec = exactly(mIconSizePx);
         mIcon.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.AT_MOST), iconSpec);
-        mLabel.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
+        mLabel.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
         setMeasuredDimension(w, h);
     }
 
@@ -184,8 +181,7 @@ public class QSTileView extends ViewGroup {
         }
         top = mIcon.getBottom();
         top += mTilePaddingBelowIconPx;
-        final int labelleft = (w - mLabel.getMeasuredWidth()) / 2;
-        layout(mLabel, labelleft, top);
+        layout(mLabel, 0, top);
     }
 
     private void updateRippleSize(int width, int height) {
@@ -248,10 +244,7 @@ public class QSTileView extends ViewGroup {
     }
 
     public void setTextColor() {
-        if (mLabel != null) {
-            mLabel.setTextColor((mLabel.getCurrentTextColor() & 0xff000000)
-                    | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
-        }
+        mLabel.setTextColor();
     }
 
     public void setIconColor() {
@@ -269,7 +262,7 @@ public class QSTileView extends ViewGroup {
                 }
             }
         }
-        mLabel.setCompoundDrawableTintList(QSColorHelper.getIconColorStateList(mContext));
+        mLabel.setIconColor();
     }
 
     public void setRippleColor() {
@@ -284,13 +277,11 @@ public class QSTileView extends ViewGroup {
         mShowDetailOnClick = show;
         if (changed) {
             if (mShowDetailOnClick) {
-                mLabel.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                        R.drawable.ic_qs_show_detail_on_click, 0);
+                mLabel.setFirstLineCaret(mContext.getDrawable(R.drawable.ic_qs_show_detail_on_click));
             } else {
-                mLabel.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                mLabel.setFirstLineCaret(null);
             }
         }
-        mLabel.setCompoundDrawableTintList(QSColorHelper.getIconColorStateList(mContext));
     }
 
     private class H extends Handler {

@@ -57,26 +57,27 @@ public class QSDualTileLabel extends LinearLayout {
         setOrientation(LinearLayout.VERTICAL);
 
         mHorizontalPaddingPx = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.qs_dual_tile_padding_horizontal);
+                .getDimensionPixelSize(R.dimen.qs_tile_label_padding_horizontal);
 
-        mFirstLine = initTextView();
-        mFirstLine.setPadding(mHorizontalPaddingPx, 0, mHorizontalPaddingPx, 0);
         final LinearLayout firstLineLayout = new LinearLayout(mContext);
+        mFirstLine = initTextView();
+        mSecondLine = initTextView();
+        mFirstLineCaret = new ImageView(mContext);
+
         firstLineLayout.setPadding(0, 0, 0, 0);
         firstLineLayout.setOrientation(LinearLayout.HORIZONTAL);
         firstLineLayout.setClickable(false);
         firstLineLayout.setBackground(null);
-        firstLineLayout.addView(mFirstLine);
-        mFirstLineCaret = new ImageView(mContext);
-        mFirstLineCaret.setScaleType(ImageView.ScaleType.MATRIX);
-        mFirstLineCaret.setClickable(false);
-        firstLineLayout.addView(mFirstLineCaret);
-        addView(firstLineLayout, newLinearLayoutParams());
-
-        mSecondLine = initTextView();
-        mSecondLine.setPadding(mHorizontalPaddingPx, 0, mHorizontalPaddingPx, 0);
+        mFirstLine.setPadding(0, 0, 0, 0);
         mSecondLine.setEllipsize(TruncateAt.END);
         mSecondLine.setVisibility(GONE);
+        mFirstLineCaret.setScaleType(ImageView.ScaleType.CENTER);
+        mFirstLineCaret.setClickable(false);
+
+        firstLineLayout.addView(mFirstLine);
+        firstLineLayout.addView(mFirstLineCaret, new LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+        addView(firstLineLayout, newLinearLayoutParams());
         addView(mSecondLine, newLinearLayoutParams());
 
         addOnLayoutChangeListener(new OnLayoutChangeListener() {
@@ -95,16 +96,6 @@ public class QSDualTileLabel extends LinearLayout {
                 new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER_HORIZONTAL;
         return lp;
-    }
-
-    public void setFirstLineCaret(Drawable d) {
-        mFirstLineCaret.setImageDrawable(d);
-        mFirstLineCaret.setImageTintList(QSColorHelper.getIconColorStateList(mContext));
-        if (d != null) {
-            final int h = d.getIntrinsicHeight();
-            mFirstLine.setMinHeight(h);
-            mFirstLine.setPadding(mHorizontalPaddingPx, 0, 0, 0);
-        }
     }
 
     private TextView initTextView() {
@@ -134,17 +125,15 @@ public class QSDualTileLabel extends LinearLayout {
         rescheduleUpdateText();
     }
 
-    public void setTextColor(int color) {
-        mFirstLine.setTextColor((mFirstLine.getCurrentTextColor() & 0xff000000)
-            | (color & 0x00ffffff));
-        mSecondLine.setTextColor((mSecondLine.getCurrentTextColor() & 0xff000000)
-            | (color & 0x00ffffff));
-        rescheduleUpdateText();
-    }
-
     public void setTypeface(Typeface tf) {
         mFirstLine.setTypeface(tf);
         mSecondLine.setTypeface(tf);
+        rescheduleUpdateText();
+    }
+
+    public void setFirstLineCaret(Drawable d) {
+        mFirstLineCaret.setImageDrawable(d);
+        mFirstLineCaret.setImageTintList(QSColorHelper.getIconColorStateList(mContext));
         rescheduleUpdateText();
     }
 
@@ -161,8 +150,9 @@ public class QSDualTileLabel extends LinearLayout {
             mSecondLine.setVisibility(GONE);
             return;
         }
-        final float maxWidth = getWidth() - mFirstLineCaret.getWidth() - mHorizontalPaddingPx
-                - getPaddingLeft() - getPaddingRight();
+        final float firstLineCaretWidth = mFirstLineCaret.getDrawable() != null
+                ? mFirstLineCaret.getWidth() : 0;
+        final float maxWidth = getWidth() - firstLineCaretWidth - getPaddingLeft() - getPaddingRight();
         float width = mFirstLine.getPaint().measureText(mText);
         if (width <= maxWidth) {
             mFirstLine.setText(mText);
@@ -195,6 +185,13 @@ public class QSDualTileLabel extends LinearLayout {
         mFirstLine.setText(mText.substring(0, lastWordBoundary));
         mSecondLine.setText(mText.substring(lastWordBoundary).trim());
         mSecondLine.setVisibility(VISIBLE);
+    }
+
+    public void setTextColor() {
+        mFirstLine.setTextColor((mFirstLine.getCurrentTextColor() & 0xff000000)
+            | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
+        mSecondLine.setTextColor((mSecondLine.getCurrentTextColor() & 0xff000000)
+            | (QSColorHelper.getQSTextColor(mContext) & 0x00ffffff));
     }
 
     public void setIconColor() {
