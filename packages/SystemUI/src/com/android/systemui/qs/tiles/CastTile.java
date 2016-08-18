@@ -38,8 +38,7 @@ import java.util.Set;
 
 /** Quick settings tile: Cast **/
 public class CastTile extends QSTile<QSTile.BooleanState> {
-    private static final Intent CAST_SETTINGS =
-            new Intent(Settings.ACTION_CAST_SETTINGS);
+    private static final Intent CAST_SETTINGS = new Intent(Settings.ACTION_CAST_SETTINGS);
 
     private final CastController mController;
     private final CastDetailAdapter mDetailAdapter;
@@ -88,6 +87,16 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     protected void handleClick() {
         MetricsLogger.action(mContext, getMetricsCategory());
         showDetail(true);
+    }
+
+    @Override
+    protected void handleLongClick() {
+        mHost.startActivityDismissingKeyguard(CAST_SETTINGS);
+    }
+
+    @Override
+    public boolean showDetailOnClick() {
+        return true;
     }
 
     @Override

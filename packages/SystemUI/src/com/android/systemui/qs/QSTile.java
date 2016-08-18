@@ -85,10 +85,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
         mHandler = new H(host.getLooper());
     }
 
-    public boolean supportsDualTargets() {
-        return false;
-    }
-
     public Host getHost() {
         return mHost;
     }
@@ -118,10 +114,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
 
     public void click() {
         mHandler.sendEmptyMessage(H.CLICK);
-    }
-
-    public void secondaryClick() {
-        mHandler.sendEmptyMessage(H.SECONDARY_CLICK);
     }
 
     public void longClick() {
@@ -175,12 +167,12 @@ public abstract class QSTile<TState extends State> implements Listenable {
         handleRefreshState(null);
     }
 
-    protected void handleSecondaryClick() {
+    protected void handleLongClick() {
         // optional
     }
 
-    protected void handleLongClick() {
-        // optional
+    public boolean showDetailOnClick() {
+        return false;
     }
 
     protected void handleClearState() {
@@ -248,15 +240,14 @@ public abstract class QSTile<TState extends State> implements Listenable {
     protected final class H extends Handler {
         private static final int SET_CALLBACK = 1;
         private static final int CLICK = 2;
-        private static final int SECONDARY_CLICK = 3;
-        private static final int LONG_CLICK = 4;
-        private static final int REFRESH_STATE = 5;
-        private static final int SHOW_DETAIL = 6;
-        private static final int USER_SWITCH = 7;
-        private static final int TOGGLE_STATE_CHANGED = 8;
-        private static final int SCAN_STATE_CHANGED = 9;
-        private static final int DESTROY = 10;
-        private static final int CLEAR_STATE = 11;
+        private static final int LONG_CLICK = 3;
+        private static final int REFRESH_STATE = 4;
+        private static final int SHOW_DETAIL = 5;
+        private static final int USER_SWITCH = 6;
+        private static final int TOGGLE_STATE_CHANGED = 7;
+        private static final int SCAN_STATE_CHANGED = 8;
+        private static final int DESTROY = 9;
+        private static final int CLEAR_STATE = 10;
 
         private H(Looper looper) {
             super(looper);
@@ -273,9 +264,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
                     name = "handleClick";
                     mAnnounceNextStateChange = true;
                     handleClick();
-                } else if (msg.what == SECONDARY_CLICK) {
-                    name = "handleSecondaryClick";
-                    handleSecondaryClick();
                 } else if (msg.what == LONG_CLICK) {
                     name = "handleLongClick";
                     handleLongClick();
@@ -434,7 +422,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
         public Icon icon;
         public String label;
         public String contentDescription;
-        public String dualLabelContentDescription;
         public boolean autoMirrorDrawable = true;
 
         public boolean copyTo(State other) {
@@ -444,14 +431,11 @@ public abstract class QSTile<TState extends State> implements Listenable {
                     || !Objects.equals(other.icon, icon)
                     || !Objects.equals(other.label, label)
                     || !Objects.equals(other.contentDescription, contentDescription)
-                    || !Objects.equals(other.autoMirrorDrawable, autoMirrorDrawable)
-                    || !Objects.equals(other.dualLabelContentDescription,
-                    dualLabelContentDescription);
+                    || !Objects.equals(other.autoMirrorDrawable, autoMirrorDrawable);
             other.visible = visible;
             other.icon = icon;
             other.label = label;
             other.contentDescription = contentDescription;
-            other.dualLabelContentDescription = dualLabelContentDescription;
             other.autoMirrorDrawable = autoMirrorDrawable;
             return changed;
         }
@@ -467,7 +451,6 @@ public abstract class QSTile<TState extends State> implements Listenable {
             sb.append(",icon=").append(icon);
             sb.append(",label=").append(label);
             sb.append(",contentDescription=").append(contentDescription);
-            sb.append(",dualLabelContentDescription=").append(dualLabelContentDescription);
             sb.append(",autoMirrorDrawable=").append(autoMirrorDrawable);
             return sb.append(']');
         }

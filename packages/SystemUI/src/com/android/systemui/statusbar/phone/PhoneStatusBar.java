@@ -553,6 +553,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADER_BATTERY_STATUS_SHOW_CHARGE_ANIMATION),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_BRIGHTNESS_SLIDER),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_BLUETOOTH_DETAIL_ON_CLICK),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_DND_DETAIL_ON_CLICK),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_WIFI_DETAIL_ON_CLICK),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -678,6 +690,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.HEADER_BATTERY_STATUS_SHOW_CHARGE_ANIMATION))) {
                 updateHeaderShowChargeAnimation();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_BRIGHTNESS_SLIDER))) {
+                updateQsShowBrightnessSlider();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_BLUETOOTH_DETAIL_ON_CLICK))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_DND_DETAIL_ON_CLICK))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_SHOW_WIFI_DETAIL_ON_CLICK))) {
+                updateQsShowDetailOnClick();
             }
         }
     }
@@ -2399,6 +2421,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Settings.System.HEADER_BATTERY_STATUS_SHOW_CHARGE_ANIMATION, 0) == 1;
         if (mHeader != null) {
             mHeader.updateShowChargeAnimation(show);
+        }
+    }
+
+    private void updateQsShowBrightnessSlider() {
+        if (mQSPanel != null) {
+            mQSPanel.setShowBrightnessSlider();
+        }
+    }
+
+    private void updateQsShowDetailOnClick() {
+        if (mQSPanel != null) {
+           mQSPanel.updateShowDetailOnClick();
         }
     }
 

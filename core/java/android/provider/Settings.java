@@ -3575,6 +3575,31 @@ public final class Settings {
                 "header_battery_status_show_charge_animation";
 
         /**
+         * Whether to show the brightness slider in quick settings panel.
+         *
+         * @hide
+         */
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
+
+        /**
+         * Whether to show the bluetooth detail view, or to toggle the bluetooth state
+         * @hide
+         */
+        public static final String QS_SHOW_BLUETOOTH_DETAIL_ON_CLICK = "qs_show_bluetooth_detail_on_click";
+
+        /**
+         * Whether to show the dnd detail view, or to toggle the dnd state
+         * @hide
+         */
+        public static final String QS_SHOW_DND_DETAIL_ON_CLICK = "qs_show_dnd_detail_on_click";
+
+        /**
+         * Whether to show the wifi detail view, or to toggle the wifi state
+         * @hide
+         */
+        public static final String QS_SHOW_WIFI_DETAIL_ON_CLICK = "qs_show_wifi_detail_on_click";
+
+        /**
          * Whether to include advanced reboot options in power menu for 
          * quick rebooting, rebooting into recovery and rebooting into bootloader
          * @hide

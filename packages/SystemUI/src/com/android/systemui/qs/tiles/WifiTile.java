@@ -58,11 +58,6 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public boolean supportsDualTargets() {
-        return true;
-    }
-
-    @Override
     protected SignalState newTileState() {
         return new SignalState();
     }
@@ -97,22 +92,32 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
 
     @Override
     protected void handleClick() {
-        mState.copyTo(mStateBeforeClick);
-        MetricsLogger.action(mContext, getMetricsCategory(), !mState.enabled);
-        mController.setWifiEnabled(!mState.enabled);
+        if (showDetailOnClick()) {
+            if (!mWifiController.canConfigWifi()) {
+                mHost.startActivityDismissingKeyguard(WIFI_SETTINGS);
+                return;
+            }
+            if (!mState.enabled) {
+                mController.setWifiEnabled(true);
+                mState.enabled = true;
+            }
+            showDetail(true);
+        } else {
+            mState.copyTo(mStateBeforeClick);
+            MetricsLogger.action(mContext, getMetricsCategory(), !mState.enabled);
+            mController.setWifiEnabled(!mState.enabled);
+        }
     }
 
     @Override
-    protected void handleSecondaryClick() {
-        if (!mWifiController.canConfigWifi()) {
-            mHost.startActivityDismissingKeyguard(new Intent(Settings.ACTION_WIFI_SETTINGS));
-            return;
-        }
-        if (!mState.enabled) {
-            mController.setWifiEnabled(true);
-            mState.enabled = true;
-        }
-        showDetail(true);
+    protected void handleLongClick() {
+        mHost.startActivityDismissingKeyguard(WIFI_SETTINGS);
+    }
+
+    @Override
+    public boolean showDetailOnClick() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_SHOW_WIFI_DETAIL_ON_CLICK, 0) == 1;
     }
 
     @Override
@@ -158,11 +163,6 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
         state.contentDescription = mContext.getString(
                 R.string.accessibility_quick_settings_wifi,
                 signalContentDescription);
-        String wifiName = state.label;
-        if (state.connected) {
-            wifiName = r.getString(R.string.accessibility_wifi_name, state.label);
-        }
-        state.dualLabelContentDescription = wifiName;
     }
 
     @Override

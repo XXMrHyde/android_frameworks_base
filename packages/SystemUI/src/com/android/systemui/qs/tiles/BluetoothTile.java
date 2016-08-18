@@ -50,11 +50,6 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
     }
 
     @Override
-    public boolean supportsDualTargets() {
-        return true;
-    }
-
-    @Override
     public DetailAdapter getDetailAdapter() {
         return mDetailAdapter;
     }
@@ -75,18 +70,28 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
 
     @Override
     protected void handleClick() {
-        final boolean isEnabled = (Boolean)mState.value;
-        MetricsLogger.action(mContext, getMetricsCategory(), !isEnabled);
-        mController.setBluetoothEnabled(!isEnabled);
+        if (showDetailOnClick()) {
+            if (!mState.value) {
+                mState.value = true;
+                mController.setBluetoothEnabled(true);
+            }
+            showDetail(true);
+        } else {
+            final boolean isEnabled = (Boolean)mState.value;
+            MetricsLogger.action(mContext, getMetricsCategory(), !isEnabled);
+            mController.setBluetoothEnabled(!isEnabled);
+        }
     }
 
     @Override
-    protected void handleSecondaryClick() {
-        if (!mState.value) {
-            mState.value = true;
-            mController.setBluetoothEnabled(true);
-        }
-        showDetail(true);
+    public void handleLongClick() {
+        mHost.startActivityDismissingKeyguard(BLUETOOTH_SETTINGS);
+    }
+
+    @Override
+    public boolean showDetailOnClick() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_SHOW_BLUETOOTH_DETAIL_ON_CLICK, 0) == 1;
     }
 
     @Override
@@ -124,13 +129,6 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
             state.contentDescription = mContext.getString(
                     R.string.accessibility_quick_settings_bluetooth_off);
         }
-
-        String bluetoothName = state.label;
-        if (connected) {
-            bluetoothName = state.dualLabelContentDescription = mContext.getString(
-                    R.string.accessibility_bluetooth_name, state.label);
-        }
-        state.dualLabelContentDescription = bluetoothName;
     }
 
     @Override

@@ -30,4 +30,9 @@
 
     <!-- Text margin end -->
     <dimen name="network_names_margin_end">8dp</dimen>
+
+    <!-- QS -->
+
+    <!-- Left and right padding of the label -->
+    <dimen name="qs_tile_label_padding_horizontal">6dp</dimen>
 </resources>

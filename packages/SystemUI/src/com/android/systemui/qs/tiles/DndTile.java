@@ -117,8 +117,22 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         } else {
             int zen = Prefs.getInt(mContext, Prefs.Key.DND_FAVORITE_ZEN, Global.ZEN_MODE_ALARMS);
             mController.setZen(zen, null, TAG);
-            showDetail(true);
+            if (showDetailOnClick()) {
+                showDetail(true);
+            }
         }
+    }
+
+    @Override
+    public void handleLongClick() {
+        mHost.startActivityDismissingKeyguard(ZEN_SETTINGS);
+    }
+
+    @Override
+    public boolean showDetailOnClick() {
+        // When Dnd is enabled, a click always toggles the Dnd state
+        return !mState.value && Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.QS_SHOW_DND_DETAIL_ON_CLICK, 1) == 1;
     }
 
     @Override

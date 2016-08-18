@@ -200,7 +200,7 @@ public class QsTuner extends Fragment implements Callback {
         else if (spec.equals("cell")) return R.string.quick_settings_cellular_detail_title;
         else if (spec.equals("airplane")) return R.string.airplane_mode;
         else if (spec.equals("dnd")) return R.string.quick_settings_dnd_label;
-        else if (spec.equals("rotation")) return R.string.quick_settings_rotation_locked_label;
+        else if (spec.equals("rotation")) return R.string.quick_settings_rotation_unlocked_label;
         else if (spec.equals("flashlight")) return R.string.quick_settings_flashlight_label;
         else if (spec.equals("location")) return R.string.quick_settings_location_label;
         else if (spec.equals("cast")) return R.string.quick_settings_cast_title;
@@ -396,11 +396,6 @@ public class QsTuner extends Fragment implements Callback {
         }
 
         @Override
-        public boolean supportsDualTargets() {
-            return "wifi".equals(mSpec) || "bt".equals(mSpec);
-        }
-
-        @Override
         public void setListening(boolean listening) {
         }
 
@@ -438,16 +433,16 @@ public class QsTuner extends Fragment implements Callback {
 
         private int getIcon() {
             if (mSpec.equals("wifi")) return R.drawable.ic_qs_wifi_full_3;
-            else if (mSpec.equals("bt")) return R.drawable.ic_qs_bluetooth_connected;
-            else if (mSpec.equals("inversion")) return R.drawable.ic_invert_colors_enable;
+            else if (mSpec.equals("bt")) return R.drawable.ic_qs_bluetooth_on;
+            else if (mSpec.equals("inversion")) return R.drawable.ic_invert_colors_disable;
             else if (mSpec.equals("cell")) return R.drawable.ic_qs_signal_full_3;
-            else if (mSpec.equals("airplane")) return R.drawable.ic_signal_airplane_enable;
+            else if (mSpec.equals("airplane")) return R.drawable.ic_signal_airplane_disable;
             else if (mSpec.equals("dnd")) return R.drawable.ic_qs_dnd_on;
             else if (mSpec.equals("rotation")) return R.drawable.ic_portrait_from_auto_rotate;
-            else if (mSpec.equals("flashlight")) return R.drawable.ic_signal_flashlight_enable;
-            else if (mSpec.equals("location")) return R.drawable.ic_signal_location_enable;
+            else if (mSpec.equals("flashlight")) return R.drawable.ic_signal_flashlight_disable;
+            else if (mSpec.equals("location")) return R.drawable.ic_signal_location_disable;
             else if (mSpec.equals("cast")) return R.drawable.ic_qs_cast_on;
-            else if (mSpec.equals("hotspot")) return R.drawable.ic_hotspot_enable;
+            else if (mSpec.equals("hotspot")) return R.drawable.ic_hotspot_disable;
             return R.drawable.android;
         }
 
@@ -512,6 +507,11 @@ public class QsTuner extends Fragment implements Callback {
         public DraggableQsPanel(Context context) {
             super(context);
             mBrightnessView.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected boolean showBrightnessSlider() {
+            return false;
         }
 
         @Override
