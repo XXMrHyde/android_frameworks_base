@@ -21,6 +21,7 @@
         <item name="colorBackgroundCacheHint">@color/background_cache_hint_selector_darkkat</item>
         <item name="colorAccent">@color/accent_material_light</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="colorControlNormal">?attr/textColorPrimary</item>
         <item name="textColorHighlight">@color/highlighted_text_darkkat</item>
         <item name="textColorHighlightInverse">@color/highlighted_text_darkkat</item>
         <item name="dialogTheme">@style/ThemeDarkKat.Dialog</item>
@@ -29,12 +30,13 @@
         <item name="dialogTitleDecorLayout">@layout/dialog_title_material</item>
         <item name="alertDialogTheme">@style/ThemeDarkKat.Dialog.Alert</item>
         <item name="alertDialogStyle">@style/AlertDialogDarkKat</item>
+        <item name="alertDialogIcon">@drawable/ic_dialog_alert_material</item>
     </style>
 
     <style name="ThemeDarkKat.Blue">
         <item name="colorForeground">@color/foreground_darkkat_blue</item>
         <item name="colorForegroundInverse">@color/foreground_darkkat_light_blue</item>
-        <item name="colorControlNormal">?attr/textColorSecondary</item>
+        <item name="colorControlNormal">?attr/textColorPrimary</item>
         <item name="colorControlHighlight">@color/ripple_darkkat_blue</item>
         <item name="textColorPrimary">@color/primary_text_darkkat_blue</item>
         <item name="textColorPrimaryInverse">@color/primary_text_darkkat_light_blue</item>

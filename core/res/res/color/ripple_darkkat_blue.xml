@@ -17,6 +17,6 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:alpha="@dimen/highlight_alpha_material_dark"
+    <item android:alpha="@dimen/highlight_alpha_material_colored"
           android:color="@color/foreground_darkkat_blue" />
 </selector>
