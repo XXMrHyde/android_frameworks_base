@@ -3349,6 +3349,82 @@ public final class Settings {
                 "dismiss_all_notifications_ripple_color";
 
         /**
+         * Detailed weather view theme
+         * 0 = Material
+         * 1 = Darkkat
+         * 2 = Material light
+         * default: 0
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_THEME = "detailed_weather_theme";
+
+        /**
+         * Wether to customize the detailed weather view colors
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CUSTOMIZE_COLORS = "detailed_weather_customize_colors";
+
+        /**
+         * Detailed weather view status bar background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_STATUS_BAR_BG_COLOR = "detailed_weather_status_bar_bg_color";
+
+        /**
+         * Detailed weather view action bar background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_BG_COLOR = "detailed_weather_action_bar_bg_color";
+
+        /**
+         * Detailed weather view content background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONTENT_BG_COLOR = "detailed_weather_content_bg_color";
+
+        /**
+         * Detailed weather view cards background color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CARDS_BG_COLOR = "detailed_weather_cards_bg_color";
+
+        /**
+         * Detailed weather view action bar text color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_TEXT_COLOR = "detailed_weather_action_bar_text_color";
+
+        /**
+         * Detailed weather view cards text color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CARDS_TEXT_COLOR = "detailed_weather_cards_text_color";
+
+        /**
+         * Detailed weather view action bar icon color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_ICON_COLOR = "detailed_weather_action_bar_icon_color";
+
+        /**
+         * Detailed weather view cards icon color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CARDS_ICON_COLOR = "detailed_weather_cards_icon_color";
+
+        /**
+         * Detailed weather view action bar ripple color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACTION_BAR_RIPPLE_COLOR = "detailed_weather_action_bar_ripple_color";
+
+        /**
+         * Detailed weather view cards ripple color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CARDS_RIPPLE_COLOR = "detailed_weather_cards_ripple_color";
+
+        /**
          *  Whether to show the name of the carrier on the status bar
          * @hide
          */
@@ -3598,6 +3674,22 @@ public final class Settings {
          * @hide
          */
         public static final String QS_SHOW_WIFI_DETAIL_ON_CLICK = "qs_show_wifi_detail_on_click";
+
+        /**
+         * Wether to show the location in the detailed weather view
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_SHOW_LOCATION = "detailed_weather_show_location";
+
+        /**
+         * Condition icon on the detailed weather view
+         * 0 - Monochrome
+         * 1 - Colored
+         * 2 - VClouds
+         * default: 0
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_CONDITION_ICON = "detailed_weather_condition_icon";
 
         /**
          * Whether to include advanced reboot options in power menu for 
