@@ -3371,6 +3371,12 @@ public final class Settings {
         public static final String DETAILED_WEATHER_STATUS_BAR_BG_COLOR = "detailed_weather_status_bar_bg_color";
 
         /**
+         * Detailed weather view accent color
+         * @hide
+         */
+        public static final String DETAILED_WEATHER_ACCENT_COLOR = "detailed_weather_accent_color";
+
+        /**
          * Detailed weather view action bar background color
          * @hide
          */
